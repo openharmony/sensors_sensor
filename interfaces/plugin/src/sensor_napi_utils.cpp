@@ -256,7 +256,8 @@ void ConvertToArray(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_val
 {
     napi_get_undefined(env, &result[0]);
     napi_create_array(env, &result[1]);
-    CreateNapiArray(env, asyncCallbackInfo->data.reserveData.reserve, asyncCallbackInfo->data.reserveData.length, result[1]);
+    CreateNapiArray(env, asyncCallbackInfo->data.reserveData.reserve,
+        asyncCallbackInfo->data.reserveData.length, result[1]);
 }
 
 void ConvertToRotationMatrix(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2])
@@ -265,10 +266,12 @@ void ConvertToRotationMatrix(napi_env env, AsyncCallbackInfo *asyncCallbackInfo,
     napi_create_object(env, &result[1]);
     napi_value rotation = nullptr;
     napi_create_array(env, &rotation);
-    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.rotationMatrix, THREE_DIMENSIONAL_MATRIX_LENGTH, rotation);
+    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.rotationMatrix,
+        THREE_DIMENSIONAL_MATRIX_LENGTH, rotation);
     napi_value inclination = nullptr;
     napi_create_array(env, &inclination);
-    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.inclinationMatrix, THREE_DIMENSIONAL_MATRIX_LENGTH, inclination);
+    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.inclinationMatrix,
+        THREE_DIMENSIONAL_MATRIX_LENGTH, inclination);
     napi_set_named_property(env, result[1], "rotation", rotation);
     napi_set_named_property(env, result[1], "inclination", inclination);
 }
