@@ -255,7 +255,9 @@ void ConvertToNumber(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_va
 void ConvertToArray(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2])
 {
     napi_get_undefined(env, &result[0]);
-    CreateNapiArray(env, asyncCallbackInfo->data.reserveData.reserve, asyncCallbackInfo->data.reserveData.length, result[1]);
+    napi_create_array(env, &result[1]);
+    CreateNapiArray(env, asyncCallbackInfo->data.reserveData.reserve,
+        asyncCallbackInfo->data.reserveData.length, result[1]);
 }
 
 void ConvertToRotationMatrix(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2])
@@ -263,9 +265,13 @@ void ConvertToRotationMatrix(napi_env env, AsyncCallbackInfo *asyncCallbackInfo,
     napi_get_undefined(env, &result[0]);
     napi_create_object(env, &result[1]);
     napi_value rotation = nullptr;
-    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.rotationMatrix, THREE_DIMENSIONAL_MATRIX_LENGTH, rotation);
+    napi_create_array(env, &rotation);
+    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.rotationMatrix,
+        THREE_DIMENSIONAL_MATRIX_LENGTH, rotation);
     napi_value inclination = nullptr;
-    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.inclinationMatrix, THREE_DIMENSIONAL_MATRIX_LENGTH, inclination);
+    napi_create_array(env, &inclination);
+    CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.inclinationMatrix,
+        THREE_DIMENSIONAL_MATRIX_LENGTH, inclination);
     napi_set_named_property(env, result[1], "rotation", rotation);
     napi_set_named_property(env, result[1], "inclination", inclination);
 }
@@ -291,7 +297,6 @@ napi_value GreateBusinessError(napi_env env, int32_t errCode, string errMessage,
 
 void CreateNapiArray(napi_env env, float *data, int32_t dataLength, napi_value result)
 {
-    napi_create_array(env, &result);
     for (int32_t index = 0; index < dataLength; index++) {
         napi_value message = nullptr;
         napi_create_double(env, data[index], &message);
