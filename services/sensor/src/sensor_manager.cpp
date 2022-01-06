@@ -86,8 +86,8 @@ bool SensorManager::ResetBestSensorParams(uint32_t sensorId)
         return false;
     }
     SensorBasicInfo sensorInfo = clientInfo_.GetBestSensorInfo(sensorId);
-    auto ret = sensorHdiConnection_.SetBatch(sensorId, sensorInfo.GetSamplingPeriodNs(), 
-                                                  sensorInfo.GetMaxReportDelayNs());
+    auto ret = sensorHdiConnection_.SetBatch(sensorId,
+        sensorInfo.GetSamplingPeriodNs(), sensorInfo.GetMaxReportDelayNs());
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s SetBatch failed", __func__);
         return false;

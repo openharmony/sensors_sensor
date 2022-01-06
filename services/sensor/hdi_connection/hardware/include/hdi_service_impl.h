@@ -16,8 +16,8 @@
 #ifndef HDI_SERVICE_IMPL_H
 #define HDI_SERVICE_IMPL_H
 
-#include "sensor_if.h"
 #include "sensor_agent_type.h"
+#include "sensor_if.h"
 #include "singleton.h"
 #include <atomic>
 #include <thread>
@@ -25,7 +25,7 @@
 
 namespace OHOS {
 namespace Sensors {
-class HdiServiceImpl : public Singleton<HdiServiceImpl>{
+class HdiServiceImpl : public Singleton<HdiServiceImpl> {
 public:
     HdiServiceImpl() = default;
 

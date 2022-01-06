@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#ifndef HDI_CONNECTION_V1_0_H
-#define HDI_CONNECTION_V1_0_H
+#ifndef HDI_CONNECTION_H
+#define HDI_CONNECTION_H
 
 #include "i_sensor_hdi_connection.h"
 
 namespace OHOS {
 namespace Sensors {
-class HdiConnectionV1_0 : public ISensorHdiConnection {
+class HdiConnection : public ISensorHdiConnection {
 public:
-    HdiConnectionV1_0() = default;
+    HdiConnection() = default;
 
-    virtual ~HdiConnectionV1_0() {}
+    virtual ~HdiConnection() {}
 
     int32_t ConnectHdi() override;
 
@@ -51,10 +51,10 @@ public:
     sptr<ReportDataCallback> getReportDataCallback();
 
 private:
-    DISALLOW_COPY_AND_MOVE(HdiConnectionV1_0);
+    DISALLOW_COPY_AND_MOVE(HdiConnection);
     static ZReportDataCb reportDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // HDI_CONNECTION_V1_0_H
+#endif  // HDI_CONNECTION_H

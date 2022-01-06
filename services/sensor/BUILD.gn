@@ -18,7 +18,7 @@ ohos_shared_library("libsensor_service") {
   sources = [
     "hdi_connection/adapter/compatible_connection/src/compatible_connection.cpp",
     "hdi_connection/adapter/direct_connection/src/direct_connection.cpp",
-    "hdi_connection/adapter/v1_0_connection/src/hdi_connection_v1_0.cpp",
+    "hdi_connection/adapter/v1_0_connection/src/hdi_connection.cpp",
     "hdi_connection/adapter/v1_0_connection/src/sensor_event_callback.cpp",
     "hdi_connection/hardware/src/hdi_service_impl.cpp",
     "hdi_connection/interface/src/sensor_hdi_connection.cpp",

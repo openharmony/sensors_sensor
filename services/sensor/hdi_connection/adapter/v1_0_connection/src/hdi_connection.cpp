@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "hdi_connection_v1_0.h"
+#include "hdi_connection.h"
 
 #include "sensor_interface_proxy.h"
 #include "sensor_event_callback.h"
@@ -26,15 +26,15 @@ using hdi::sensor::v1_0::ISensorInterface;
 using hdi::sensor::v1_0::ISensorCallback;
 using hdi::sensor::v1_0::HdfSensorInformation;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnectionV1_0" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnection" };
 sptr<ISensorInterface> sensorInterface_ = nullptr;
 sptr<ISensorCallback> eventCallback_ = new SensorEventCallback();
 }
 
-ZReportDataCb HdiConnectionV1_0::reportDataCb_ = nullptr;
-sptr<ReportDataCallback> HdiConnectionV1_0::reportDataCallback_ = nullptr;
+ZReportDataCb HdiConnection::reportDataCb_ = nullptr;
+sptr<ReportDataCallback> HdiConnection::reportDataCallback_ = nullptr;
 
-int32_t HdiConnectionV1_0::ConnectHdi()
+int32_t HdiConnection::ConnectHdi()
 {
     sensorInterface_ = ISensorInterface::Get();
     if (sensorInterface_ == nullptr) {
@@ -44,7 +44,7 @@ int32_t HdiConnectionV1_0::ConnectHdi()
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::GetSensorList(std::vector<Sensor>& sensorList)
+int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     HiLog::Info(LABEL, "%{public}s in", __func__);
     std::vector<HdfSensorInformation> sensorInfos;
@@ -53,15 +53,11 @@ int32_t HdiConnectionV1_0::GetSensorList(std::vector<Sensor>& sensorList)
         HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
         return ret;
     }
-    HiLog::Info(LABEL, "%{public}s sensor size: %{public}d", __func__, sensorInfos.size());
-    for (int32_t i = 0; i < sensorInfos.size(); i++) {
+    for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
         const std::string sensorName(sensorInfos[i].sensorName);
         const std::string vendorName(sensorInfos[i].vendorName);
         const int32_t sensorId = sensorInfos[i].sensorId;
-        const float power = sensorInfos[i].power;
         const float maxRange = sensorInfos[i].maxRange;
-        HiLog::Info(LABEL, "%{public}s i: %{public}d sensorid: %{public}d sensorName: %{public}s, vendorName: %{public}s, power: %{public}f, maxRange: %{public}f",
-            __func__, i, sensorId, sensorName.c_str(), vendorName.c_str(), power, maxRange);
         Sensor sensor;
         sensor.SetSensorId(sensorId);
         sensor.SetMaxRange(maxRange);
@@ -72,7 +68,7 @@ int32_t HdiConnectionV1_0::GetSensorList(std::vector<Sensor>& sensorList)
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::EnableSensor(uint32_t sensorId)
+int32_t HdiConnection::EnableSensor(uint32_t sensorId)
 {
     int32_t ret = sensorInterface_->Enable(sensorId);
     if (ret < 0) {
@@ -82,7 +78,7 @@ int32_t HdiConnectionV1_0::EnableSensor(uint32_t sensorId)
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::DisableSensor(uint32_t sensorId)
+int32_t HdiConnection::DisableSensor(uint32_t sensorId)
 {
     int32_t ret = sensorInterface_->Disable(sensorId);
     if (ret < 0) {
@@ -92,7 +88,7 @@ int32_t HdiConnectionV1_0::DisableSensor(uint32_t sensorId)
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
+int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
     int32_t ret = sensorInterface_->SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret < 0) {
@@ -102,7 +98,7 @@ int32_t HdiConnectionV1_0::SetBatch(int32_t sensorId, int64_t samplingInterval, 
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::SetMode(int32_t sensorId, int32_t mode)
+int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     int32_t ret = sensorInterface_->SetMode(sensorId, mode);
     if (ret < 0) {
@@ -112,7 +108,7 @@ int32_t HdiConnectionV1_0::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::SetOption(int32_t sensorId, uint32_t option)
+int32_t HdiConnection::SetOption(int32_t sensorId, uint32_t option)
 {
     int32_t ret = sensorInterface_->SetOption(sensorId, option);
     if (ret < 0) {
@@ -122,7 +118,7 @@ int32_t HdiConnectionV1_0::SetOption(int32_t sensorId, uint32_t option)
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     if (reportDataCallback == nullptr) {
         HiLog::Error(LABEL, "%{public}s failed, reportDataCallback cannot be null", __func__);
@@ -138,7 +134,7 @@ int32_t HdiConnectionV1_0::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCa
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::DestroyHdiConnection()
+int32_t HdiConnection::DestroyHdiConnection()
 {
     int32_t ret = sensorInterface_->Unregister(0);
     if (ret < 0) {
@@ -148,12 +144,12 @@ int32_t HdiConnectionV1_0::DestroyHdiConnection()
     return ERR_OK;
 }
 
-int32_t HdiConnectionV1_0::RunCommand(uint32_t sensorId, int32_t cmd, int32_t params)
+int32_t HdiConnection::RunCommand(uint32_t sensorId, int32_t cmd, int32_t params)
 {
     return 0;
 }
 
-ZReportDataCb HdiConnectionV1_0::getReportDataCb()
+ZReportDataCb HdiConnection::getReportDataCb()
 {
     if (reportDataCb_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
@@ -161,7 +157,7 @@ ZReportDataCb HdiConnectionV1_0::getReportDataCb()
     return reportDataCb_;
 }
 
-sptr<ReportDataCallback> HdiConnectionV1_0::getReportDataCallback()
+sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
 {
     if (reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCallback_ cannot be null", __func__);

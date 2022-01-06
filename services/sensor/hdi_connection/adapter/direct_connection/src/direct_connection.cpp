@@ -55,10 +55,7 @@ int32_t DirectConnection::GetSensorList(std::vector<Sensor>& sensorList)
         const std::string sensorName(sensorInfo->sensorName);
         const std::string vendorName(sensorInfo->vendorName);
         const int32_t sensorId = sensorInfo->sensorId;
-        const float power = sensorInfo->power;
         const float maxRange = sensorInfo->maxRange;
-        HiLog::Info(LABEL, "%{public}s i: %{public}d sensorid: %{public}d sensorName: %{public}s, vendorName: %{public}s, power: %{public}f, maxRange: %{public}f",
-            __func__, i, sensorId, sensorName.c_str(), vendorName.c_str(), power, maxRange);
         Sensor sensor;
         sensor.SetSensorId(sensorId);
         sensor.SetMaxRange(maxRange);

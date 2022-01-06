@@ -43,15 +43,11 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
         HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
         return ret;
     }
-    HiLog::Info(LABEL, "%{public}s sensor size: %{public}d", __func__, sensorInfos.size());
-    for (int32_t i = 0; i < sensorInfos.size(); i++) {
+    for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
         const std::string sensorName(sensorInfos[i].sensorName);
         const std::string vendorName(sensorInfos[i].vendorName);
         const int32_t sensorId = sensorInfos[i].sensorId;
-        const float power = sensorInfos[i].power;
         const float maxRange = sensorInfos[i].maxRange;
-        HiLog::Info(LABEL, "%{public}s i: %{public}d sensorid: %{public}d sensorName: %{public}s, vendorName: %{public}s, power: %{public}f, maxRange: %{public}f",
-            __func__, i, sensorId, sensorName.c_str(), vendorName.c_str(), power, maxRange);
         Sensor sensor;
         sensor.SetSensorId(sensorId);
         sensor.SetMaxRange(maxRange);
@@ -122,7 +118,7 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
     HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if ((event == nullptr) || (event->dataLen == 0)) {
         HiLog::Error(LABEL, "%{public}s event is NULL", __func__);
-        return ERR_INVALID_VALUE; 
+        return ERR_INVALID_VALUE;
     }
 
     if (reportDataCb_ == nullptr) {

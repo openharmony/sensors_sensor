@@ -16,7 +16,7 @@
 
 #include "compatible_connection.h"
 #include "direct_connection.h"
-#include "hdi_connection_v1_0.h"
+#include "hdi_connection.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
@@ -30,7 +30,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Sens
 
 int32_t SensorHdiConnection::ConnectHdi()
 {
-    iSensorHdiConnection_ = std::make_unique<HdiConnectionV1_0>();
+    iSensorHdiConnection_ = std::make_unique<HdiConnection>();
     int32_t ret = iSensorHdiConnection_->ConnectHdi();
     if (ret != 0) {
         HiLog::Error(LABEL, "%{public}s connect hdi v1_0 failed", __func__);

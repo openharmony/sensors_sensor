@@ -24,7 +24,8 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiServiceImpl" };
-
+constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
+constexpr int32_t CONVERT_MULTIPLES = 1000;
 std::vector<SensorInformation> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 0, 9999.0, 0.000001, 23.0},
 };
@@ -52,7 +53,7 @@ void HdiServiceImpl::DataReportThread()
 {
     HiLog::Info(LABEL, "%{public}s in", __func__);
     while (true) {
-        usleep(g_samplingInterval / 1000);
+        usleep(g_samplingInterval / CONVERT_MULTIPLES);
         g_callback(&testEvent);
         if (g_isStop) {
             break;
@@ -112,7 +113,7 @@ int32_t HdiServiceImpl::SetBatch(int32_t sensorId, int64_t samplingInterval, int
 {
     HiLog::Info(LABEL, "%{public}s in", __func__);
     if (samplingInterval < 0 || reportInterval < 0) {
-        samplingInterval = 200000000;
+        samplingInterval = SAMPLING_INTERVAL_NS;
         reportInterval = 0;
     }
     g_samplingInterval = samplingInterval;

@@ -14,18 +14,16 @@
  */
 
 #include "sensor_event_callback.h"
-
-#include "hdi_connection_v1_0.h"
+#include "hdi_connection.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
-
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnectionV1_0" };
-std::unique_ptr<HdiConnectionV1_0> hdiConnectionV1_0_ = std::make_unique<HdiConnectionV1_0>();
+constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnection" };
+std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 }
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
@@ -40,11 +38,11 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
         .dataLen = event.dataLen
     };
     sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
-    for (int32_t i = 0; i < event.data.size(); i ++ ) {
+    for (int32_t i = 0; i < static_cast<int32_t>(event.data.size()); i++) {
         sensorEvent.data[i] = event.data[i];
     }
-    ZReportDataCb reportDataCb_ = hdiConnectionV1_0_->getReportDataCb();
-    sptr<ReportDataCallback> reportDataCallback_ = hdiConnectionV1_0_->getReportDataCallback();
+    ZReportDataCb reportDataCb_ = HdiConnection_->getReportDataCb();
+    sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->getReportDataCallback();
     if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
         return ERR_NO_INIT;

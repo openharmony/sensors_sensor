@@ -16,10 +16,10 @@
 #ifndef I_SENSOR_HDI_CONNECTION_H
 #define I_SENSOR_HDI_CONNECTION_H
 
+#include <condition_variable>
+#include <mutex>
 #include "report_data_callback.h"
 #include "sensor.h"
-#include <mutex>
-#include <condition_variable>
 
 namespace OHOS {
 namespace Sensors {
