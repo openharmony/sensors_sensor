@@ -15,6 +15,7 @@
 #include "compatible_connection.h"
 
 #include <cstring>
+#include "securec.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
@@ -128,8 +129,22 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
         return ERR_NO_INIT;
     }
-    (void)(reportDataCallback_->*reportDataCb_)(reinterpret_cast<const struct SensorEvent*>(event), 
-                                                reportDataCallback_);
+
+    struct SensorEvent sensorEvent = {
+        .sensorTypeId = event->sensorId,
+        .version = event->version,
+        .timestamp = event->timestamp,
+        .option = event->option,
+        .mode = event->mode,
+        .dataLen = event->dataLen
+    };
+    sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
+    if (memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen) != EOK) {
+        HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
+        return COPY_ERR;
+    }
+
+    (void)(reportDataCallback_->*reportDataCb_)(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }

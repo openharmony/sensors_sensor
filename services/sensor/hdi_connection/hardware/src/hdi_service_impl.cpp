@@ -29,10 +29,10 @@ std::vector<SensorInformation> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 0, 9999.0, 0.000001, 23.0},
 };
 std::vector<int32_t> supportSensors = {0};
-uint8_t testData[] = {(uint8_t)9806.649414};
-constexpr struct SensorEvents testEvent = {
+float testData[] = {9.8};
+struct SensorEvents testEvent = {
     .sensorId = 0,
-    .data = testData,
+    .data = (uint8_t *)testData,
     .dataLen = 4
 };
 }
