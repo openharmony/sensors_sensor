@@ -360,8 +360,8 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
         HiLog::Error(LABEL, "%{public}s dataCallback cannot be null", __func__);
         return INVALID_POINTER;
     }
-    std::unique_lock<std::mutex> lk(SensorServiceImpl::dataMutex_);
-    SensorServiceImpl::dataCondition_.wait(lk);
+    std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
+    ISensorHdiConnection::dataCondition_.wait(lk);
     auto &eventsBuf = dataCallback->GetEventData();
     if (eventsBuf.eventNum <= 0) {
         HiLog::Error(LABEL, "%{public}s data cannot be empty", __func__);
