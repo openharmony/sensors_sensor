@@ -127,7 +127,6 @@ bool SensorService::InitSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
-    HiLog::Info(LABEL, "%{public}s HYH_TEST list size: %{public}d", __func__, sensors_.size());
     if (ret < 0) {
         HiLog::Error(LABEL, "%{public}s GetSensorList failed", __func__);
         return false;

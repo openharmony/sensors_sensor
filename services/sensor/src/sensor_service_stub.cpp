@@ -155,7 +155,6 @@ ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel
     (void)data;
     std::vector<Sensor> sensors(GetSensorList());
     int32_t sensorCount = int32_t { sensors.size() };
-    HiLog::Debug(LABEL, "%{public}s sensorCount : %{public}d", __func__, sensorCount);
     reply.WriteInt32(sensorCount);
     for (int32_t i = 0; i < sensorCount; i++) {
         bool flag = sensors[i].Marshalling(reply);
