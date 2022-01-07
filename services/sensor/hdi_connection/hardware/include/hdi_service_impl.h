@@ -16,12 +16,12 @@
 #ifndef HDI_SERVICE_IMPL_H
 #define HDI_SERVICE_IMPL_H
 
-#include "sensor_agent_type.h"
-#include "sensor_if.h"
-#include "singleton.h"
 #include <atomic>
 #include <thread>
 #include <vector>
+#include "sensor_agent_type.h"
+#include "sensor_if.h"
+#include "singleton.h"
 
 namespace OHOS {
 namespace Sensors {
