@@ -99,9 +99,9 @@ void SensorService::OnStart()
 
 bool SensorService::InitInterface()
 {
-    auto ret = sensorServiceImpl_.InitSensorServiceImpl();
+    auto ret = sensorHdiConnection_.ConnectHdi();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitSensorServiceImpl failed", __func__);
+        HiLog::Error(LABEL, "%{public}s connect hdi failed", __func__);
         return false;
     }
     return true;
@@ -115,7 +115,7 @@ bool SensorService::InitDataCallback()
         return false;
     }
     ZReportDataCb cb = &ReportDataCallback::ZReportDataCallback;
-    auto ret = sensorServiceImpl_.RegisteDataReport(cb, reportDataCallback_);
+    auto ret = sensorHdiConnection_.RegisteDataReport(cb, reportDataCallback_);
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s RegisterDataReport failed", __func__);
         return false;
@@ -126,7 +126,11 @@ bool SensorService::InitDataCallback()
 bool SensorService::InitSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
-    sensors_ = sensorServiceImpl_.GetSensorList();
+    int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
+    if (ret < 0) {
+        HiLog::Error(LABEL, "%{public}s GetSensorList failed", __func__);
+        return false;
+    }
     {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         for (const auto &it : sensors_) {
@@ -262,7 +266,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         return ret;
     }
 
-    ret = sensorServiceImpl_.EnableSensor(sensorId);
+    ret = sensorHdiConnection_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s EnableSensor failed", __func__);
         clientInfo_.RemoveSubscriber(sensorId, this->GetCallingPid());
@@ -294,7 +298,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
         HiLog::Warn(LABEL, "%{public}s other client is using this sensor now, cannot disable", __func__);
         return ERR_OK;
     }
-    if (sensorServiceImpl_.DisableSensor(sensorId) != ERR_OK) {
+    if (sensorHdiConnection_.DisableSensor(sensorId) != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s DisableSensor failed", __func__);
         return DISABLE_SENSOR_ERR;
     }
@@ -331,7 +335,7 @@ ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t 
         }
         return retFlush;
     }
-    if (sensorServiceImpl_.RunCommand(sensorId, cmdType, params) != ERR_OK) {
+    if (sensorHdiConnection_.RunCommand(sensorId, cmdType, params) != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s RunCommand failed", __func__);
         return RUN_COMMAND_ERR;
     }
@@ -343,7 +347,11 @@ ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t 
 std::vector<Sensor> SensorService::GetSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
-    sensors_ = sensorServiceImpl_.GetSensorList();
+    int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
+    if (ret < 0) {
+        HiLog::Error(LABEL, "%{public}s GetSensorList failed", __func__);
+        return sensors_;
+    }
     for (const auto &it : sensors_) {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         sensorMap_.insert(std::make_pair(it.GetSensorId(), it));

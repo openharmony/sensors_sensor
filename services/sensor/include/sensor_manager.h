@@ -23,7 +23,7 @@
 #include "client_info.h"
 #include "flush_info_record.h"
 #include "sensor_data_processer.h"
-#include "sensor_service_impl.h"
+#include "sensor_hdi_connection.h"
 #include "sensor_agent_type.h"
 
 namespace OHOS {
@@ -43,7 +43,7 @@ public:
     void GetPackageNameFromUid(int32_t uid, std::string &packageName);
 
 private:
-    SensorServiceImpl &sensorServiceImpl_ = SensorServiceImpl::GetInstance();
+    SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     std::thread dataThread_;
     sptr<SensorDataProcesser> sensorDataProcesser_;

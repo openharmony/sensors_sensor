@@ -28,7 +28,7 @@
 #include "report_data_callback.h"
 #include "sensor.h"
 #include "sensors_log_domain.h"
-#include "sensor_service_impl.h"
+#include "sensor_hdi_connection.h"
 #include "sensor_agent_type.h"
 
 namespace OHOS {

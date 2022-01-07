@@ -24,7 +24,7 @@
 namespace OHOS {
 namespace Sensors {
 constexpr int32_t CIRCULAR_BUF_LEN = 1024;
-constexpr int32_t SENSOR_DATA_LENGHT = 1024;
+constexpr int32_t SENSOR_DATA_LENGHT = 64;
 
 struct CircularEventBuf {
     struct  SensorEvent *circularBuf;

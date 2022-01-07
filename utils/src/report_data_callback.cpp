@@ -57,27 +57,13 @@ int32_t ReportDataCallback::ZReportDataCallback(const struct SensorEvent* event,
         HiLog::Error(LABEL, "%{public}s callback or circularBuf or event cannot be null", __func__);
         return ERROR;
     }
-    struct SensorEvent  eventCopy = {
-        .sensorTypeId = event->sensorTypeId,
-        .version = event->version,
-        .timestamp = event->timestamp,
-        .option = event->option,
-        .mode = event->mode,
-        .dataLen = event->dataLen
-    };
-    eventCopy.data = new uint8_t[SENSOR_DATA_LENGHT];
-    HiLog::Info(LABEL, "%{public}s dataLength: %{public}d", __func__, event->dataLen);
-    if (memcpy_s(eventCopy.data, event->dataLen, event->data, event->dataLen) != EOK) {
-        HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
-        return COPY_ERR;
-    }
     int32_t leftSize = CIRCULAR_BUF_LEN - cb->eventsBuf_.eventNum;
     int32_t toEndLen = CIRCULAR_BUF_LEN - cb->eventsBuf_.writePosition;
     if (toEndLen == 0) {
-            cb->eventsBuf_.circularBuf[0] = eventCopy;
+            cb->eventsBuf_.circularBuf[0] = *event;
             cb->eventsBuf_.writePosition = 1 - toEndLen;
     } else {
-            cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = eventCopy;
+            cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *event;
             cb->eventsBuf_.writePosition += 1;
     }
     if (leftSize < 1) {

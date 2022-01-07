@@ -16,6 +16,12 @@ import("//build/ohos.gni")
 SUBSYSTEM_DIR = "//base/sensors"
 ohos_shared_library("libsensor_service") {
   sources = [
+    "hdi_connection/adapter/compatible_connection/src/compatible_connection.cpp",
+    "hdi_connection/adapter/direct_connection/src/direct_connection.cpp",
+    "hdi_connection/adapter/v1_0_connection/src/hdi_connection.cpp",
+    "hdi_connection/adapter/v1_0_connection/src/sensor_event_callback.cpp",
+    "hdi_connection/hardware/src/hdi_service_impl.cpp",
+    "hdi_connection/interface/src/sensor_hdi_connection.cpp",
     "src/client_info.cpp",
     "src/fifo_cache_data.cpp",
     "src/flush_info_record.cpp",
@@ -24,7 +30,6 @@ ohos_shared_library("libsensor_service") {
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
     "src/sensor_service.cpp",
-    "src/sensor_service_impl.cpp",
     "src/sensor_service_stub.cpp",
   ]
 
@@ -37,11 +42,17 @@ ohos_shared_library("libsensor_service") {
     "$SUBSYSTEM_DIR/sensor/utils/include",
     "$SUBSYSTEM_DIR/sensor/services/sensor/include",
     "//drivers/peripheral/sensor/interfaces/include",
+    "hdi_connection/interface/include",
+    "hdi_connection/adapter/direct_connection/include",
+    "hdi_connection/adapter/v1_0_connection/include",
+    "hdi_connection/hardware/include",
+    "hdi_connection/adapter/compatible_connection/include",
   ]
 
   deps = [
     "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils",
     "//drivers/peripheral/sensor/hal:hdi_sensor",
+    "//drivers/peripheral/sensor/interfaces/hdi/sensor/v1_0:libsensor_proxy",
     "//utils/native/base:utils",
   ]
 
@@ -49,7 +60,6 @@ ohos_shared_library("libsensor_service") {
     "aafwk_standard:base",
     "aafwk_standard:intent",
     "appexecfwk_standard:appexecfwk_base",
-    "appexecfwk_standard:appexecfwk_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
