@@ -36,7 +36,7 @@ ohos_shared_library("libsensor_service") {
   include_dirs = [
     "include",
     "$SUBSYSTEM_DIR/sensor/frameworks/native/sensor/include",
-    "$SUBSYSTEM_DIR/sensor/interfaces/innerkits/include",
+    "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/sensor/utils/include",

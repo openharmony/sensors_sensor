@@ -35,7 +35,7 @@ ohos_shared_library("libsensor_native") {
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/sensor/utils/include",
     "$SUBSYSTEM_DIR/sensor/services/sensor/include",
-    "$SUBSYSTEM_DIR/sensor/interfaces/innerkits/include",
+    "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
     "//foundation/appexecfwk/standard/libs/test/moduletest/common/event_handler",
   ]
