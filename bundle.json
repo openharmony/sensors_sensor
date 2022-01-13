@@ -1,5 +1,5 @@
 {
-  "name": "@openharmony/sensor",
+  "name": "@ohos/sensor",
   "description": "Obtaining sensor data",
   "version": "3.1",
   "license": "Apache License 2.0",
