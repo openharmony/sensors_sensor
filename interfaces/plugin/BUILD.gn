@@ -30,12 +30,12 @@ ohos_shared_library("sensor") {
     "./src/sensor_js.cpp",
     "./src/sensor_napi_utils.cpp",
   ]
-  deps = [
-    "../native:sensor_interface_native",
-    "//foundation/ace/napi:ace_napi",
-    "//utils/native/base:utils",
+  deps = [ "../native:sensor_interface_native" ]
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "napi:ace_napi",
+    "utils_base:utils",
   ]
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
   relative_install_dir = "module"
   part_name = "sensor"
   subsystem_name = "sensors"

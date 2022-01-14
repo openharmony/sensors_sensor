@@ -46,10 +46,12 @@ ohos_shared_library("sensor_interface_native") {
     "$SUBSYSTEM_DIR/frameworks/native/sensor:libsensor_native",
     "$SUBSYSTEM_DIR/interfaces/native:libsensor_ndk",
     "$SUBSYSTEM_DIR/utils:libsensor_utils",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler:libeventhandler",
-    "//utils/native/base:utils",
   ]
-  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  external_deps = [
+    "appexecfwk_standard:libeventhandler",
+    "hiviewdfx_hilog_native:libhilog",
+    "utils_base:utils",
+  ]
   part_name = "sensor"
   subsystem_name = "sensors"
 }

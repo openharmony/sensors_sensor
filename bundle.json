@@ -1,0 +1,55 @@
+{
+  "name": "@ohos/sensor",
+  "description": "Obtaining sensor data",
+  "version": "3.1",
+  "license": "Apache License 2.0",
+  "component": {
+    "name": "sensor",
+    "subsystem": "sensors",
+    "syscap": ["SystemCapability.Sensors.Sensor"],
+    "features": [],
+    "adapted_system_type": [ "standard" ],
+    "rom": "340KB",
+    "ram": "~4KB",
+    "deps": {
+      "components": [
+        "libhilog",
+        "ipc_core",
+        "system_ability_fwk",
+        "samgr_proxy",
+        "utils_base",
+        "libeventhandler",
+        "libpermissionsdk_standard",
+        "ace_napi",
+        "libhisysevent",
+        "hdi_sensor"
+      ],
+      "third_party": []
+    },
+    "build": {
+      "sub_component": [
+          "//base/sensors/sensor/interfaces/native:sensor_ndk_target",
+          "//base/sensors/sensor/interfaces/plugin:sensor_js_target",
+          "//base/sensors/sensor/frameworks/native/sensor:sensor_native_target",
+          "//base/sensors/sensor/services/sensor:sensor_service_target",
+          "//base/sensors/sensor/utils:sensor_utils_target",
+          "//base/sensors/sensor/sa_profile:sensors_sa_profiles"
+      ],
+      "inner_kits": [
+        {
+          "name": "//base/sensors/sensor/interfaces/native:sensor_interface_native",
+          "header": {
+            "header_files": [
+              "sensor_agent_type.h",
+              "sensor_agent.h"
+            ],
+            "header_base": "//base/sensors/sensor/interfaces/native/include"
+          }
+        }
+      ],
+      "test": [
+          "//base/sensors/sensor/interfaces/plugin/test/unittest:unittest"
+      ]
+    }
+  }
+}
