@@ -136,7 +136,7 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
 
 int32_t HdiConnection::DestroyHdiConnection()
 {
-    int32_t ret = sensorInterface_->Unregister(0);
+    int32_t ret = sensorInterface_->Unregister(0, eventCallback_);
     if (ret < 0) {
         HiLog::Error(LABEL, "%{public}s failed", __func__);
         return ret;
