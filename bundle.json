@@ -3,6 +3,9 @@
   "description": "Obtaining sensor data",
   "version": "3.1",
   "license": "Apache License 2.0",
+  "segment": {
+    "destPath": "base/sensors/sensor"
+  },
   "component": {
     "name": "sensor",
     "subsystem": "sensors",
@@ -13,15 +16,15 @@
     "ram": "~4096KB",
     "deps": {
       "components": [
-        "libhilog",
-        "ipc_core",
-        "system_ability_fwk",
-        "samgr_proxy",
+        "hiviewdfx_hilog_native",
+        "ipc",
+        "safwk",
+        "samgr_standard",
         "utils_base",
-        "libeventhandler",
-        "libpermissionsdk_standard",
-        "ace_napi",
-        "libhisysevent",
+        "appexecfwk_standard",
+        "permission_standard",
+        "napi",
+        "hisysevent_native",
         "hdi_sensor"
       ],
       "third_party": []
