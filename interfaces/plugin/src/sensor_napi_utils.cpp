@@ -171,7 +171,9 @@ std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
     {TRANSFORM_COORDINATE_SYSTEM, ConvertToArray},
     {CREATE_QUATERNION, ConvertToArray},
     {GET_DIRECTION, ConvertToArray},
-    {ROTATION_INCLINATION_MATRIX, ConvertToRotationMatrix}
+    {ROTATION_INCLINATION_MATRIX, ConvertToRotationMatrix},
+    {GET_SENSOR_LIST, ConvertToSensorInfos},
+    {GET_SINGLE_SENSOR, ConvertToSingleSensor},
 };
 
 void getJsonObject(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result)
@@ -203,6 +205,60 @@ void getJsonObject(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_valu
     napi_value totalIntensity = nullptr;
     napi_create_double(env, asyncCallbackInfo->data.geomagneticData.totalIntensity, &totalIntensity);
     napi_set_named_property(env, result, "totalIntensity", totalIntensity);
+}
+
+void ConvertToSensorInfo(napi_env env, SensorInfo sensorInfo, napi_value result)
+{
+    napi_value sensorName = nullptr;
+    napi_create_string_latin1(env, sensorInfo.sensorName, NAPI_AUTO_LENGTH, &sensorName);
+    napi_set_named_property(env, result, "sensorName", sensorName);
+
+    napi_value vendorName = nullptr;
+    napi_create_string_latin1(env, sensorInfo.vendorName, NAPI_AUTO_LENGTH, &vendorName);
+    napi_set_named_property(env, result, "vendorName", vendorName);
+
+    napi_value firmwareVersion = nullptr;
+    napi_create_string_latin1(env, sensorInfo.firmwareVersion, NAPI_AUTO_LENGTH, &firmwareVersion);
+    napi_set_named_property(env, result, "firmwareVersion", firmwareVersion);
+
+    napi_value hardwareVersion = nullptr;
+    napi_create_string_latin1(env, sensorInfo.hardwareVersion, NAPI_AUTO_LENGTH, &hardwareVersion);
+    napi_set_named_property(env, result, "hardwareVersion", hardwareVersion);
+
+    napi_value sensorTypeId = nullptr;
+    napi_create_double(env, sensorInfo.sensorTypeId, &sensorTypeId);
+    napi_set_named_property(env, result, "sensorTypeId", sensorTypeId);
+
+    napi_value maxRange = nullptr;
+    napi_create_double(env, sensorInfo.maxRange, &maxRange);
+    napi_set_named_property(env, result, "maxRange", maxRange);
+
+    napi_value precision = nullptr;
+    napi_create_double(env, sensorInfo.precision, &precision);
+    napi_set_named_property(env, result, "precision", precision);
+
+    napi_value power = nullptr;
+    napi_create_double(env, sensorInfo.power, &power);
+    napi_set_named_property(env, result, "power", power);
+}
+
+void ConvertToSingleSensor(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2])
+{
+    napi_get_undefined(env, &result[0]);
+    napi_create_object(env, &result[1]);
+    ConvertToSensorInfo(env, asyncCallbackInfo->sensorInfos[0], result[1]);
+}
+
+void ConvertToSensorInfos(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2])
+{
+    napi_get_undefined(env, &result[0]);
+    napi_create_array(env, &result[1]);
+    for (size_t i = 0; i < asyncCallbackInfo->sensorInfos.size(); i++) {
+        napi_value sensorInfo = nullptr;
+        napi_create_object(env, &sensorInfo);
+        ConvertToSensorInfo(env, asyncCallbackInfo->sensorInfos[i], sensorInfo);
+        napi_set_element(env, result[1], i, sensorInfo);
+    }
 }
 
 void ConvertToFailData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2])
