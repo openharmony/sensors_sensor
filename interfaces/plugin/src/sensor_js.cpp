@@ -466,6 +466,8 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
         HiLog::Error(LABEL, "%{public}s argument should be napi_function type!", __func__);
         napi_value result;
         napi_get_undefined(env, &result);
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return result;
     }
     napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
