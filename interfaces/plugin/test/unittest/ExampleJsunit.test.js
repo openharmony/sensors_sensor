@@ -2902,4 +2902,129 @@ describe("SensorJsTest", function () {
             done()
         });
     })
+
+    /*
+    * @tc.name: SensorJsTest_111
+    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("SensorJsTest_111", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_111----------------------------------");
+        sensor.getSensorList().then((data) => {
+            console.info("---------------------------SensorJsTest_111 callback in-----------" + data.length);
+            for (var i = 0; i < data.length; i++) {
+                console.info("SensorJsTest_111 " + JSON.stringify(data[i]));
+            }
+            expect(true).assertTrue();
+            done();
+        }, (error)=>{
+            console.info('SensorJsTest_111 failed');
+            expect(false).assertTrue();
+            done();
+        });
+    })
+
+    /*
+    * @tc.name: SensorJsTest_112
+    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("SensorJsTest_112", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_112----------------------------------");
+        sensor.getSensorList((error, data) => {
+            if (error) {
+                console.info('SensorJsTest_112 failed');
+                expect(false).assertTrue();
+            } else {
+                console.info("---------------------------SensorJsTest_112 callback in-----------" + data.length);
+                for (var i = 0; i < data.length; i++) {
+                    console.info("SensorJsTest_112 " + JSON.stringify(data[i]));
+                }
+                expect(true).assertTrue();
+            }
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: SensorJsTest_113
+    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("SensorJsTest_113", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_113----------------------------------");
+        sensor.getSingleSensor(0, (error, data) => {
+            if (error) {
+                console.info('SensorJsTest_113 failed');
+                expect(false).assertTrue();
+            } else {
+                console.info("---------------------------SensorJsTest_113 callback in-----------" + data.length);
+                console.info("SensorJsTest_113 " + JSON.stringify(data));
+                expect(true).assertTrue();
+            }
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: SensorJsTest_114
+    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("SensorJsTest_114", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_114----------------------------------");
+        sensor.getSingleSensor(-1, (error, data) => {
+            if (error) {
+                console.info('SensorJsTest_114 failed');
+                expect(true).assertTrue();
+            } else {
+                console.info("---------------------------SensorJsTest_114 callback in-----------" + data.length);
+                console.info("SensorJsTest_114 " + JSON.stringify(data));
+                expect(false).assertTrue();
+            }
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: SensorJsTest_115
+    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("SensorJsTest_115", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_115----------------------------------");
+        sensor.getSingleSensor(0).then((data) => {
+            console.info("SensorJsTest_115 " + JSON.stringify(data));
+            expect(true).assertTrue();
+            done()
+        }, (error)=>{
+            console.info('SensorJsTest_115 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: SensorJsTest_116
+    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("SensorJsTest_116", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_116----------------------------------");
+        sensor.getSingleSensor(-1).then((data) => {
+            console.info("SensorJsTest_116 " + JSON.stringify(data));
+            expect(false).assertTrue();
+            done()
+        }, (error)=>{
+            console.info('SensorJsTest_116 success');
+            expect(true).assertTrue();
+            done()
+        });
+    })
 })

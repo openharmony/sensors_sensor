@@ -83,6 +83,8 @@ typedef enum CallbackDataType {
     CREATE_QUATERNION = 9,
     GET_DIRECTION = 10,
     ROTATION_INCLINATION_MATRIX = 11,
+    GET_SENSOR_LIST = 12,
+    GET_SINGLE_SENSOR = 13
 } CallbackDataType;
 
 struct AsyncCallbackInfo {
@@ -93,6 +95,7 @@ struct AsyncCallbackInfo {
     CallbackData data;
     BusinessError error;
     CallbackDataType type;
+    vector<SensorInfo> sensorInfos;
 };
 
 using ConvertDataFunc = void(*)(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
@@ -143,4 +146,8 @@ void ConvertToRotationMatrix(napi_env env, AsyncCallbackInfo *asyncCallbackInfo,
 void ConvertToSensorData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
 
 void CreateNapiArray(napi_env env, float *data, int32_t dataLength, napi_value result);
+
+void ConvertToSensorInfos(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+
+void ConvertToSingleSensor(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
 #endif // SENSOR_NAPI_UTILS_H

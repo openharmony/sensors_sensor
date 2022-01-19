@@ -466,6 +466,8 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
         HiLog::Error(LABEL, "%{public}s argument should be napi_function type!", __func__);
         napi_value result;
         napi_get_undefined(env, &result);
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
         return result;
     }
     napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
@@ -697,6 +699,111 @@ static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
+static napi_value GetSensorList(napi_env env, napi_callback_info info)
+{
+    HiLog::Info(LABEL, "%{public}s in", __func__);
+    size_t argc = 1;
+    napi_value args[1] = { 0 };
+    napi_value thisVar = nullptr;
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
+    if (argc < 0 || argc > 1) {
+        HiLog::Error(LABEL, "%{public}s the number of input parameters does not match", __func__);
+        return nullptr;
+    }
+    SensorInfo *sensorInfos = nullptr;
+    int32_t count = 0;
+    AsyncCallbackInfo *asyncCallbackInfo = new AsyncCallbackInfo {
+        .env = env,
+        .asyncWork = nullptr,
+        .deferred = nullptr,
+        .type = GET_SENSOR_LIST,
+    };
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret < 0) {
+        HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
+        asyncCallbackInfo->type = FAIL;
+        asyncCallbackInfo->error.code = ret;
+    } else {
+        for (int32_t i = 0; i < count; i++) {
+            asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
+        }
+    }
+
+    if (argc == 0) {
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
+        NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+        asyncCallbackInfo->deferred = deferred;
+        EmitPromiseWork(asyncCallbackInfo);
+        return promise;
+    }
+    if (!IsMatchType(env, args[0], napi_function)) {
+        HiLog::Error(LABEL, "%{public}s argument should be napi_function type", __func__);
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        return nullptr;
+    }
+    napi_create_reference(env, args[0], 1, &asyncCallbackInfo->callback[0]);
+    EmitAsyncCallbackWork(asyncCallbackInfo);
+    return nullptr;
+}
+
+static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
+{
+    HiLog::Info(LABEL, "%{public}s in", __func__);
+    size_t argc = 2;
+    napi_value args[2] = { 0 };
+    napi_value thisVar = nullptr;
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
+    if (argc < 1 || argc > 2 || !IsMatchType(env, args[0], napi_number)) {
+        HiLog::Error(LABEL, "%{public}s the number of input parameters does not match", __func__);
+        return nullptr;
+    }
+    AsyncCallbackInfo *asyncCallbackInfo = new AsyncCallbackInfo {
+        .env = env,
+        .asyncWork = nullptr,
+        .deferred = nullptr,
+        .type = GET_SINGLE_SENSOR,
+    };
+    SensorInfo *sensorInfos = nullptr;
+    int32_t count = 0;
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret < 0) {
+        HiLog::Error(LABEL, "%{public}s get sensorlist failed", __func__);
+        asyncCallbackInfo->type = FAIL;
+        asyncCallbackInfo->error.code = ret;
+    } else {
+        int32_t sensorTypeId = GetCppInt32(args[0], env);
+        for (int32_t i = 0; i < count; i++) {
+            if (sensorInfos[i].sensorTypeId == sensorTypeId) {
+                asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
+                break;
+            }
+        }
+        if (asyncCallbackInfo->sensorInfos.empty()) {
+            HiLog::Error(LABEL, "%{public}s not find sensorTypeId: %{public}d", __func__, sensorTypeId);
+            asyncCallbackInfo->type = FAIL;
+        }
+    }
+    if (argc == 1) {
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
+        NAPI_CALL(env, napi_create_promise(env, &deferred, &promise));
+        asyncCallbackInfo->deferred = deferred;
+        EmitPromiseWork(asyncCallbackInfo);
+        return promise;
+    }
+    if (!IsMatchType(env, args[1], napi_function)) {
+        HiLog::Error(LABEL, "%{public}s argument should be napi_function type!", __func__);
+        delete asyncCallbackInfo;
+        asyncCallbackInfo = nullptr;
+        return nullptr;
+    }
+    napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    EmitAsyncCallbackWork(asyncCallbackInfo);
+    return nullptr;
+}
+
 EXTERN_C_START
 
 static napi_value Init(napi_env env, napi_value exports)
@@ -712,7 +819,9 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("createQuaternion", CreateQuaternion),
         DECLARE_NAPI_FUNCTION("getAltitude", GetAltitude),
         DECLARE_NAPI_FUNCTION("getGeomagneticDip", GetGeomagneticDip),
-        DECLARE_NAPI_FUNCTION("createRotationMatrix", CreateRotationMatrix)
+        DECLARE_NAPI_FUNCTION("createRotationMatrix", CreateRotationMatrix),
+        DECLARE_NAPI_FUNCTION("getSensorList", GetSensorList),
+        DECLARE_NAPI_FUNCTION("getSingleSensor", GetSingleSensor),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc));
     return exports;
