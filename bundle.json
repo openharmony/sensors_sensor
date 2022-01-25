@@ -25,7 +25,7 @@
         "permission_standard",
         "napi",
         "hisysevent_native",
-        "hdi_sensor"
+        "sensor_device_driver"
       ],
       "third_party": []
     },

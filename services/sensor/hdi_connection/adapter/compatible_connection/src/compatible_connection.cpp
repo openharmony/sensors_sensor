@@ -29,7 +29,8 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Comp
 
 ZReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
 sptr<ReportDataCallback> CompatibleConnection::reportDataCallback_ = nullptr;
-
+std::mutex ISensorHdiConnection::dataMutex_;
+std::condition_variable ISensorHdiConnection::dataCondition_;
 int32_t CompatibleConnection::ConnectHdi()
 {
     return ERR_OK;

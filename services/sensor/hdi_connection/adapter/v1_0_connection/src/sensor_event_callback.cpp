@@ -25,7 +25,6 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 }
-
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
 {
     HiLog::Debug(LABEL, "%{public}s begin", __func__);

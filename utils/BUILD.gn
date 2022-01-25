@@ -33,7 +33,6 @@ ohos_shared_library("libsensor_utils") {
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include/message_parcel.h",
   ]
-  deps = [ "//drivers/peripheral/sensor/hal:hdi_sensor" ]
 
   external_deps = [
     "hisysevent_native:libhisysevent",
