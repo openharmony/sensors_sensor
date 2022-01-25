@@ -15,7 +15,6 @@
 #include "sensor_hdi_connection.h"
 
 #include "compatible_connection.h"
-#include "direct_connection.h"
 #include "hdi_connection.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
@@ -31,21 +30,24 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Sens
 int32_t SensorHdiConnection::ConnectHdi()
 {
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
+    int32_t ret = connectHdiService();
+    if (ret != ERR_OK) {
+        HiLog::Error(LABEL, "%{public}s connect hdi service failed, try to connect compatible connection",
+            __func__);
+        iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
+        ret = connectHdiService();
+    }
+    if (ret != ERR_OK) {
+        HiLog::Error(LABEL, "%{public}s connect hdi failed", __func__);
+    }
+    return ERR_OK;
+}
+
+int32_t SensorHdiConnection::connectHdiService()
+{
     int32_t ret = iSensorHdiConnection_->ConnectHdi();
     if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s connect hdi v1_0 failed", __func__);
-        iSensorHdiConnection_ = std::make_unique<DirectConnection>();
-        ret = iSensorHdiConnection_->ConnectHdi();
-    }
-
-    if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s hdi direct connection failed", __func__);
-        iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
-        ret = iSensorHdiConnection_->ConnectHdi();
-    }
-
-    if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s hdi connection failed", __func__);
+        HiLog::Error(LABEL, "%{public}s connect hdi service failed", __func__);
         return CONNECT_SENSOR_HDF_ERR;
     }
     ret = iSensorHdiConnection_->GetSensorList(sensorList_);
