@@ -312,7 +312,7 @@ void HdiConnection::reconnect()
         return;
     }
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
-    for(const auto &sensorInfo: sensorBasicInfoMap_) {
+    for (const auto &sensorInfo: sensorBasicInfoMap_) {
         int32_t sensorTypeId = sensorInfo.first;
         ret = SetBatch(sensorTypeId, sensorInfo.second.GetSamplingPeriodNs(),
             sensorInfo.second.GetMaxReportDelayNs());
