@@ -17,8 +17,8 @@
 #define SENSOR_EVENT_CALLBACK_H
 
 #include "sensor_callback_service.h"
-using hdi::sensor::v1_0::HdfSensorEvents;
-using hdi::sensor::v1_0::SensorCallbackStub;
+using sensor::v1_0::HdfSensorEvents;
+using sensor::v1_0::SensorCallbackStub;
 
 namespace OHOS {
 namespace Sensors {
