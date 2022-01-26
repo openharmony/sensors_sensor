@@ -59,7 +59,7 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::EnableSensor(uint32_t sensorId)
+int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorId);
     if (ret < 0) {
@@ -69,7 +69,7 @@ int32_t CompatibleConnection::EnableSensor(uint32_t sensorId)
     return ERR_OK;
 };
 
-int32_t CompatibleConnection::DisableSensor(uint32_t sensorId)
+int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorId);
     if (ret < 0) {
@@ -99,12 +99,12 @@ int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::RunCommand(uint32_t sensorId, int32_t cmd, int32_t params)
+int32_t CompatibleConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
 {
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::SetOption(int32_t sensorId, uint32_t option)
+int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 {
     int32_t ret = hdiServiceImpl_.SetOption(sensorId, option);
     if (ret != 0) {
