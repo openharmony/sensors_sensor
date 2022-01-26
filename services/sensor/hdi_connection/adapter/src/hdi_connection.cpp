@@ -22,9 +22,9 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-using hdi::sensor::v1_0::ISensorInterface;
-using hdi::sensor::v1_0::ISensorCallback;
-using hdi::sensor::v1_0::HdfSensorInformation;
+using sensor::v1_0::ISensorInterface;
+using sensor::v1_0::ISensorCallback;
+using sensor::v1_0::HdfSensorInformation;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnection" };
 sptr<ISensorInterface> sensorInterface_ = nullptr;
