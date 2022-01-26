@@ -14,13 +14,14 @@
  */
 #include "hdi_connection.h"
 
-#include "sensor_interface_proxy.h"
-#include "sensor_event_callback.h"
-#include "sensors_errors.h"
-#include "sensors_log_domain.h"
 #include <map>
 #include <mutex>
 #include <thread>
+
+#include "sensor_event_callback.h"
+#include "sensor_interface_proxy.h"
+#include "sensors_errors.h"
+#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -172,7 +173,7 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
 {
     HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (reportDataCallback == nullptr || sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s failed, reportDataCallback or sensorInterface_ or eventCallback_ cannot be null", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, reportDataCallback or sensorInterface_ cannot be null", __func__);
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->Register(0, eventCallback_);
@@ -234,7 +235,7 @@ void HdiConnection::updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
     sensorBasicInfoMap_[sensorId] = sensorBasicInfo;
 }
 
-void HdiConnection::setSensorBasicInfoState(int32_t sensorId, enum SensorState state)
+void HdiConnection::setSensorBasicInfoState(int32_t sensorId, SensorState state)
 {
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     auto it = sensorBasicInfoMap_.find(sensorId);
@@ -311,7 +312,7 @@ void HdiConnection::reconnect()
         return;
     }
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
-    for(const auto &sensorInfo : sensorBasicInfoMap_) {
+    for(const auto &sensorInfo: sensorBasicInfoMap_) {
         int32_t sensorTypeId = sensorInfo.first;
         ret = SetBatch(sensorTypeId, sensorInfo.second.GetSamplingPeriodNs(),
             sensorInfo.second.GetMaxReportDelayNs());
