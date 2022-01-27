@@ -61,7 +61,7 @@ void SensorService::OnDump()
 
 void SensorService::OnStart()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (state_ == SensorServiceState::STATE_RUNNING) {
         HiLog::Warn(LABEL, "%{public}s SensorService has already started", __func__);
         return;
@@ -147,11 +147,16 @@ bool SensorService::InitSensorPolicy()
 
 void SensorService::OnStop()
 {
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (state_ == SensorServiceState::STATE_STOPPED) {
         HiLog::Warn(LABEL, "%{public}s already stopped", __func__);
         return;
     }
     state_ = SensorServiceState::STATE_STOPPED;
+    int32_t ret = sensorHdiConnection_.DestroyHdiConnection();
+    if (ret != ERR_OK) {
+        HiLog::Error(LABEL, "%{public}s destroy hdi connect fail", __func__);
+    }
 }
 
 void SensorService::ReportSensorUsedInfo(uint32_t sensorId, bool enable)

@@ -16,7 +16,9 @@
 #ifndef HDI_CONNECTION_H
 #define HDI_CONNECTION_H
 
+#include "death_recipient_template.h"
 #include "i_sensor_hdi_connection.h"
+#include "sensor_basic_info.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -30,17 +32,17 @@ public:
 
     int32_t GetSensorList(std::vector<Sensor>& sensorList) override;
 
-    int32_t EnableSensor(uint32_t sensorId) override;
+    int32_t EnableSensor(int32_t sensorId) override;
 
-    int32_t DisableSensor(uint32_t sensorId)  override;
+    int32_t DisableSensor(int32_t sensorId)  override;
 
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
 
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
 
-    int32_t SetOption(int32_t sensorId, uint32_t option) override;
+    int32_t SetOption(int32_t sensorId, int32_t option) override;
 
-    int32_t RunCommand(uint32_t sensorId, int32_t cmd, int32_t params) override;
+    int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params) override;
 
     int32_t RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
 
@@ -50,10 +52,18 @@ public:
 
     sptr<ReportDataCallback> getReportDataCallback();
 
+    void ProcessDeathObserver(const wptr<IRemoteObject> &object);
 private:
     DISALLOW_COPY_AND_MOVE(HdiConnection);
     static ZReportDataCb reportDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
+    sptr<IRemoteObject::DeathRecipient> hdiDeathObserver_;
+    void RegisterHdiDeathRecipient();
+    void UnregisterHdiDeathRecipient();
+    void reconnect();
+    void updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    void setSensorBasicInfoState(int32_t sensorId, SensorState state);
+    void deleteSensorBasicInfoState(int32_t sensorId);
 };
 }  // namespace Sensors
 }  // namespace OHOS

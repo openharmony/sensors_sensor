@@ -64,7 +64,7 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
     return ERR_OK;
 }
 
-int32_t SensorHdiConnection::EnableSensor(uint32_t sensorId)
+int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
     int32_t ret = iSensorHdiConnection_->EnableSensor(sensorId);
     if (ret != 0) {
@@ -74,7 +74,7 @@ int32_t SensorHdiConnection::EnableSensor(uint32_t sensorId)
     return ret;
 };
 
-int32_t SensorHdiConnection::DisableSensor(uint32_t sensorId)
+int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
     int32_t ret = iSensorHdiConnection_->DisableSensor(sensorId);
     if (ret != 0) {
@@ -104,7 +104,7 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
     return ret;
 }
 
-int32_t SensorHdiConnection::SetOption(int32_t sensorId, uint32_t option)
+int32_t SensorHdiConnection::SetOption(int32_t sensorId, int32_t option)
 {
     int32_t ret = iSensorHdiConnection_->SetOption(sensorId, option);
     if (ret != 0) {
@@ -114,7 +114,7 @@ int32_t SensorHdiConnection::SetOption(int32_t sensorId, uint32_t option)
     return ret;
 }
 
-int32_t SensorHdiConnection::RunCommand(uint32_t sensorId, int32_t cmd, int32_t params)
+int32_t SensorHdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
 {
     int32_t ret = iSensorHdiConnection_->RunCommand(sensorId, cmd, params);
     if (ret != 0) {
