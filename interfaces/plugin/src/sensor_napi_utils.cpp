@@ -146,7 +146,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_ORIENTATION, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_GRAVITY, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_LINEAR_ACCELERATION, { "x", "y", "z" } },
-    { SENSOR_TYPE_ID_ROTATION_VECTOR, { "x", "y", "z" } },
+    { SENSOR_TYPE_ID_ROTATION_VECTOR, { "x", "y", "z", "w" } },
     { SENSOR_TYPE_ID_AMBIENT_TEMPERATURE, { "temperature" } },
     { SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED, { "x", "y", "z", "biasX", "biasY", "biasZ" } },
     { SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, { "x", "y", "z", "biasX", "biasY", "biasZ" } },
