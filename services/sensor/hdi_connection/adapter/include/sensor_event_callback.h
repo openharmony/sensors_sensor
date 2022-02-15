@@ -16,9 +16,10 @@
 #ifndef SENSOR_EVENT_CALLBACK_H
 #define SENSOR_EVENT_CALLBACK_H
 
-#include "sensor_callback_service.h"
-using sensor::v1_0::HdfSensorEvents;
-using sensor::v1_0::SensorCallbackStub;
+#include "sensor_callback_stub.h"
+
+using OHOS::HDI::Sensor::V1_0::HdfSensorEvents;
+using OHOS::HDI::Sensor::V1_0::SensorCallbackStub;
 
 namespace OHOS {
 namespace Sensors {
@@ -32,4 +33,3 @@ public:
 }  // namespace Sensors
 }  // namespace OHOS
 #endif // SENSOR_EVENT_CALLBACK_H
-
