@@ -180,7 +180,6 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
 ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                                 const sptr<IRemoteObject> &sensorClient)
 {
-    HiLog::Debug(LABEL, "%{public}s sendFd: %{public}d", __func__, sensorBasicDataChannel->GetSendDataFd());
     if (sensorBasicDataChannel == nullptr || sensorClient == nullptr) {
         HiLog::Error(LABEL, "%{public}s sensorBasicDataChannel or sensorClient cannot be null", __func__);
         return OBJECT_NULL;
