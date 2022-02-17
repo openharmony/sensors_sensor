@@ -40,7 +40,6 @@ constexpr int32_t MAX_DMUP_PARAM = 2;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 constexpr uint32_t REPORT_STATUS_LEN = 20;
-int32_t g_sendFd = 0;
 enum {
     FLUSH = 0,
     SET_MODE,
@@ -367,7 +366,6 @@ std::vector<Sensor> SensorService::GetSensorList()
 ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                            const sptr<IRemoteObject> &sensorClient)
 {
-    g_sendFd = sensorBasicDataChannel->GetSendDataFd();
     if ((sensorBasicDataChannel == nullptr)) {
         HiLog::Error(LABEL, "%{public}s sensorBasicDataChannel cannot be null", __func__);
         return ERR_NO_INIT;

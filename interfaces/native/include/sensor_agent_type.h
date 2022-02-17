@@ -128,12 +128,6 @@ typedef struct SensorEvent {
     uint32_t dataLen;      /**< Sensor data length */
 } SensorEvent;
 
-struct Test {
-char ip[30];
-char name[30];
-int32_t *data;
-};
-
 /**
  * @brief Defines the callback for data reporting by the sensor agent.
  *
