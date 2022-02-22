@@ -267,6 +267,7 @@ void HdiConnection::RegisterHdiDeathRecipient()
         return;
     }
     sensorInterface_->AsObject()->AddDeathRecipient(hdiDeathObserver_);
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 void HdiConnection::UnregisterHdiDeathRecipient()
