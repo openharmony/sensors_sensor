@@ -79,7 +79,7 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID() ,sensorId)) {
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }
@@ -91,7 +91,7 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID() ,sensorId)) {
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }
@@ -103,7 +103,7 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID() ,sensorId)) {
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }
@@ -115,7 +115,7 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID() ,sensorId)) {
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }

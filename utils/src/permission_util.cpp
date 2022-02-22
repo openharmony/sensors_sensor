@@ -51,11 +51,11 @@ bool PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t se
     std::string permissionName = sensorPermissions_[sensorTypeId];
     int32_t result = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
     if (result == PERMISSION_GRANTED) {
-        HiLog::Error(LABEL, "%{public}s sensorid: %{public}d grant failed, result: %{public}d",
-			__func__, sensorTypeId, result);
+        HiLog::Error(LABEL, "%{public}s sensorId: %{public}d grant failed, result: %{public}d",
+            __func__, sensorTypeId, result);
         return false;
     }
-    HiLog::Debug(LABEL, "%{public}s sensorid: %{public}d grant success", __func__, sensorTypeId);
+    HiLog::Debug(LABEL, "%{public}s sensorId: %{public}d grant success", __func__, sensorTypeId);
     return true;
 }
 }  // namespace Sensors
