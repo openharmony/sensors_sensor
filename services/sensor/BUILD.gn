@@ -49,10 +49,10 @@ ohos_shared_library("libsensor_service") {
   deps = [ "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils" ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "permission_standard:libpermissionsdk_standard",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
     "sensor_device_driver:libsensor_proxy_1.0",

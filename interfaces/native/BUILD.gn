@@ -36,8 +36,6 @@ ohos_shared_library("sensor_interface_native") {
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/utils/include",
-
-    #"//drivers/peripheral/sensor/interfaces/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
     "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",

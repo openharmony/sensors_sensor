@@ -372,7 +372,8 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
     }
     auto pid = this->GetCallingPid();
     auto uid = this->GetCallingUid();
-    if (!clientInfo_.UpdateUid(pid, uid)) {
+    auto callerToken = this->GetCallingTokenID();
+    if (!clientInfo_.UpdateAppThreadInfo(pid, uid, callerToken)) {
         HiLog::Error(LABEL, "%{public}s UpdateUid failed", __func__);
         return UPDATE_UID_ERR;
     }
@@ -380,7 +381,6 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
         HiLog::Error(LABEL, "%{public}s UpdateSensorChannel failed", __func__);
         return UPDATE_SENSOR_CHANNEL_ERR;
     }
-    AppThreadInfo appThreadInfo(pid, uid);
     sensorBasicDataChannel->SetSensorStatus(true);
     RegisterClientDeathRecipient(sensorClient, pid);
     return ERR_OK;

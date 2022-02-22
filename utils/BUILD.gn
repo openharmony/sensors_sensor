@@ -31,10 +31,10 @@ ohos_shared_library("libsensor_utils") {
     "//utils/system/safwk/native/include",
     "//drivers/peripheral/sensor/interfaces/include",
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include/message_parcel.h",
   ]
 
   external_deps = [
+    "access_token:libaccesstoken_sdk",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
