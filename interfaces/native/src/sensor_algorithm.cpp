@@ -31,7 +31,7 @@ int32_t SensorAlgorithm::createQuaternion(std::vector<float> rotationVector, std
         HiLog::Error(LABEL, "%{public}s Invalid input rotationVector parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
-    if (static_cast<int32_t>(quaternion.size()) < 4) {
+    if (static_cast<int32_t>(quaternion.size()) < QUATERNION_LENGTH) {
         HiLog::Error(LABEL, "%{public}s Invalid input quaternion parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
@@ -220,7 +220,8 @@ int32_t SensorAlgorithm::getDirection(std::vector<float> rotationMatrix, std::ve
 int32_t SensorAlgorithm::createRotationMatrix(std::vector<float> rotationVector, std::vector<float> &rotationMatrix)
 {
     int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
-    if ((static_cast<int32_t>(rotationVector.size()) < ROTATION_VECTOR_LENGTH) || ((rotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)
+    if ((static_cast<int32_t>(rotationVector.size()) < ROTATION_VECTOR_LENGTH)
+        || ((rotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)
         && (rotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH))) {
         HiLog::Error(LABEL, "%{public}s Invalid input rotationMatrix parameter", __func__);
         return OHOS::Sensors::ERROR;
