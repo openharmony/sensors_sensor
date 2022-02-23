@@ -16,7 +16,7 @@
 #include "permission_util.h"
 
 #include <thread>
-
+#include "sensor_agent_type.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
@@ -26,16 +26,6 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_UTILS, "PermissionUtil" };
-constexpr uint32_t SENSOR_ACCELEROMETER_ID = 256;
-constexpr uint32_t SENSOR_ACCELEROMETER_UNCALIBRATED_ID = 65792;
-constexpr uint32_t SENSOR_LINEAR_ACCELERATION_ID = 131328;
-constexpr uint32_t SENSOR_GYROSCOPE_ID = 262400;
-constexpr uint32_t SENSOR_GYROSCOPE_UNCALIBRATED_ID = 327936;
-constexpr uint32_t SENSOR_PEDOMETER_DETECTION_ID = 524544;
-constexpr uint32_t SENSOR_PEDOMETER_ID = 590080;
-constexpr uint32_t SENSOR_HEART_RATE_ID = 83886336;
-constexpr int32_t GET_SERVICE_MAX_COUNT = 30;
-constexpr uint32_t WAIT_MS = 200;
 const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
 const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
 const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
@@ -43,81 +33,30 @@ const std::string READ_HEALTH_DATA_PERMISSION = "ohos.permission.READ_HEALTH_DAT
 }  // namespace
 
 std::unordered_map<uint32_t, std::string> PermissionUtil::sensorPermissions_ = {
-    { SENSOR_ACCELEROMETER_ID, ACCELEROMETER_PERMISSION },
-    { SENSOR_ACCELEROMETER_UNCALIBRATED_ID, ACCELEROMETER_PERMISSION },
-    { SENSOR_LINEAR_ACCELERATION_ID, ACCELEROMETER_PERMISSION },
-    { SENSOR_GYROSCOPE_ID, GYROSCOPE_PERMISSION },
-    { SENSOR_GYROSCOPE_UNCALIBRATED_ID, GYROSCOPE_PERMISSION },
-    { SENSOR_PEDOMETER_DETECTION_ID, ACTIVITY_MOTION_PERMISSION },
-    { SENSOR_PEDOMETER_ID, ACTIVITY_MOTION_PERMISSION },
-    { SENSOR_HEART_RATE_ID, READ_HEALTH_DATA_PERMISSION }
+    { SENSOR_TYPE_ID_ACCELEROMETER, ACCELEROMETER_PERMISSION },
+    { SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, ACCELEROMETER_PERMISSION },
+    { SENSOR_TYPE_ID_LINEAR_ACCELERATION, ACCELEROMETER_PERMISSION },
+    { SENSOR_TYPE_ID_GYROSCOPE, GYROSCOPE_PERMISSION },
+    { SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, GYROSCOPE_PERMISSION },
+    { SENSOR_TYPE_ID_PEDOMETER_DETECTION, ACTIVITY_MOTION_PERMISSION },
+    { SENSOR_TYPE_ID_PEDOMETER, ACTIVITY_MOTION_PERMISSION },
+    { SENSOR_TYPE_ID_HEART_RATE, READ_HEALTH_DATA_PERMISSION }
 };
 
-PermissionUtil::~PermissionUtil()
+bool PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId)
 {
-    appPermissionStatus_.clear();
-}
-
-bool PermissionUtil::IsPermissionRegisted(int32_t uid)
-{
-    HiLog::Debug(LABEL, "%{public}s appPermissionStatus_.size : %{public}d", __func__,
-        int32_t { appPermissionStatus_.size() });
-    std::lock_guard<std::mutex> permissionLock(permissionStatusMutex_);
-    auto permissionIt = appPermissionStatus_.find(uid);
-    if (permissionIt != appPermissionStatus_.end()) {
-        HiLog::Debug(LABEL, "%{public}s uid : %{public}d permission has registered", __func__, uid);
+    if (sensorPermissions_.find(sensorTypeId) == sensorPermissions_.end()) {
         return true;
     }
-    return false;
-}
-
-bool PermissionUtil::RegistPermissionChanged(const AppThreadInfo &appThreadInfo)
-{
-    HiLog::Debug(LABEL, "%{public}s begin, uid : %{public}d, pid : %{public}d", __func__, appThreadInfo.uid,
-                 appThreadInfo.pid);
-    // Avoid registering callback functions repeatedly
-    if (IsPermissionRegisted(appThreadInfo.uid)) {
-        HiLog::Debug(LABEL, "%{public}s uid : %{public}d permission has registered", __func__, appThreadInfo.uid);
-        return true;
+    std::string permissionName = sensorPermissions_[sensorTypeId];
+    int32_t result = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    if (result == PERMISSION_GRANTED) {
+        HiLog::Error(LABEL, "%{public}s sensorId: %{public}d grant failed, result: %{public}d",
+            __func__, sensorTypeId, result);
+        return false;
     }
-    int32_t retry = 0;
-    while (retry < GET_SERVICE_MAX_COUNT) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
-        HiLog::Error(LABEL, "%{public}s registered failed, retry : %{public}d", __func__, retry);
-        retry++;
-    }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
+    HiLog::Debug(LABEL, "%{public}s sensorId: %{public}d grant success", __func__, sensorTypeId);
     return true;
-}
-
-void PermissionUtil::UnregistPermissionChanged(const AppThreadInfo &appThreadInfo)
-{
-    HiLog::Debug(LABEL, "%{public}s begin, uid : %{public}d, pid : %{public}d", __func__, appThreadInfo.uid,
-                 appThreadInfo.pid);
-    std::lock_guard<std::mutex> permissionLock(permissionStatusMutex_);
-    auto permissionIt = appPermissionStatus_.find(appThreadInfo.uid);
-    if (permissionIt != appPermissionStatus_.end()) {
-        HiLog::Debug(LABEL, "%{public}s erase uid : %{public}d permission", __func__, appThreadInfo.uid);
-        appPermissionStatus_.erase(permissionIt);
-        return;
-    }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
-}
-
-void PermissionUtil::UpdatePermissionStatus(int32_t uid, const std::string &permissionName, bool permissionStatus)
-{
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> permissionLock(permissionStatusMutex_);
-    auto permissionIt = appPermissionStatus_.find(uid);
-    if (permissionIt == appPermissionStatus_.end()) {
-        std::unordered_map<std::string, bool> permissionMap;
-        permissionMap.insert(std::make_pair(permissionName, permissionStatus));
-        appPermissionStatus_.insert(std::make_pair(uid, permissionMap));
-        HiLog::Debug(LABEL, "%{public}s end", __func__);
-        return;
-    }
-    permissionIt->second[permissionName] = permissionStatus;
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 }  // namespace Sensors
 }  // namespace OHOS

@@ -24,6 +24,7 @@
 #include "refbase.h"
 #include "singleton.h"
 
+#include "accesstoken_kit.h"
 #include "app_thread_info.h"
 #include "iremote_object.h"
 #include "nocopyable.h"
@@ -34,6 +35,7 @@
 
 namespace OHOS {
 namespace Sensors {
+using Security::AccessToken::AccessTokenID;
 class ClientInfo : public Singleton<ClientInfo> {
 public:
     ClientInfo() = default;
@@ -48,11 +50,11 @@ public:
     bool UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo);
     void RemoveSubscriber(uint32_t sensorId, uint32_t pid);
     bool UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel);
-    bool UpdateUid(int32_t pid, int32_t uid);
+    bool UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken);
     bool ClearSensorInfo(uint32_t sensorId);
     void ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid);
     bool DestroySensorChannel(int32_t pid);
-    bool DestroyUid(int32_t pid);
+    void DestroyAppThreadInfo(int32_t pid);
     SensorBasicInfo GetCurPidSensorInfo(uint32_t sensorId, int32_t pid);
     uint64_t ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel);
     uint64_t ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel);
@@ -85,7 +87,7 @@ private:
     std::unordered_map<uint32_t, std::unordered_map<int32_t, SensorBasicInfo>> clientMap_;
     std::unordered_map<int32_t, sptr<SensorBasicDataChannel>> channelMap_;
     std::unordered_map<int32_t, struct SensorEvent> storedEvent_;
-    std::unordered_map<int32_t, int32_t> uidMap_;
+    std::unordered_map<int32_t, AppThreadInfo> appThreadInfoMap_;
     std::map<sptr<IRemoteObject>, int32_t> clientPidMap_;
     std::unordered_map<uint32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
     std::unordered_map<uint32_t, std::queue<struct SensorEvent>> dataQueue_;

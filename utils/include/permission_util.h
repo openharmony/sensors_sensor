@@ -17,39 +17,22 @@
 #define PERMISSION_UTIL_H
 
 #include <mutex>
-#include <set>
 #include <string>
 #include <unordered_map>
-
-#include "app_thread_info.h"
+#include "accesstoken_kit.h"
 #include "refbase.h"
 #include "singleton.h"
 
 namespace OHOS {
 namespace Sensors {
-// using namespace OHOS::AppExecFwk;
-
-// Callback registered with BMS to listen APP permission changes.
-// class PermissionChangedCallback : public OnPermissionChangedHost {
-// public:
-
-// private:
-
+using namespace Security::AccessToken;
 class PermissionUtil : public Singleton<PermissionUtil> {
 public:
     PermissionUtil() = default;
-    virtual ~PermissionUtil();
-    /* check local caller's permission by permission name */
-    bool CheckCallingPermission(const std::string &permissionName);
-    bool RegistPermissionChanged(const AppThreadInfo &appThreadInfo);
-    void UnregistPermissionChanged(const AppThreadInfo &appThreadInfo);
-    void UpdatePermissionStatus(int32_t uid, const std::string &permissionName, bool permissionStatus);
+    virtual ~PermissionUtil() {};
+    bool CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
 
 private:
-    bool IsPermissionRegisted(int32_t uid);
-    std::mutex permissionStatusMutex_;
-    std::unordered_map<int, std::unordered_map<std::string, bool>> appPermissionStatus_;
-
     static std::unordered_map<uint32_t, std::string> sensorPermissions_;
 };
 }  // namespace Sensors

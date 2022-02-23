@@ -15,14 +15,17 @@
 
 #ifndef APP_THREAD_INFO_H
 #define APP_THREAD_INFO_H
-
+#include "accesstoken_kit.h"
 namespace OHOS {
 namespace Sensors {
+using Security::AccessToken::AccessTokenID;
 struct AppThreadInfo {
     int32_t pid;
     int32_t uid;
+    AccessTokenID callerToken;
     AppThreadInfo() : pid(0), uid(0) {};
-    AppThreadInfo(int32_t pid, int32_t uid) : pid(pid), uid(uid) {};
+    AppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
+        : pid(pid), uid(uid), callerToken(callerToken) {};
 };
 }  // namespace Sensors
 }  // namespace OHOS

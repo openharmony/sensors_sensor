@@ -42,10 +42,7 @@ private:
     ErrCode GetAllSensorsInner(MessageParcel &data, MessageParcel &reply);
     ErrCode CreateDataChannelInner(MessageParcel &data, MessageParcel &reply);
     ErrCode DestroyDataChannelInner(MessageParcel &data, MessageParcel &reply);
-
-    bool CheckSensorPermission(uint32_t sensorId);
     std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
-    static std::unordered_map<uint32_t, std::string> sensorIdPermissions_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

@@ -33,30 +33,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorServiceStub" };
-constexpr uint32_t SENSOR_ACCELEROMETER_ID = 256;
-constexpr uint32_t SENSOR_ACCELEROMETER_UNCALIBRATED_ID = 65792;
-constexpr uint32_t SENSOR_LINEAR_ACCELERATION_ID = 131328;
-constexpr uint32_t SENSOR_GYROSCOPE_ID = 262400;
-constexpr uint32_t SENSOR_GYROSCOPE_UNCALIBRATED_ID = 327936;
-constexpr uint32_t SENSOR_PEDOMETER_DETECTION_ID = 524544;
-constexpr uint32_t SENSOR_PEDOMETER_ID = 590080;
-constexpr uint32_t SENSOR_HEART_RATE_ID = 83886336;
-const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
-const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
-const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
-const std::string READ_HEALTH_DATA_PERMISSION = "ohos.permission.READ_HEALTH_DATA";
 }  // namespace
-
-std::unordered_map<uint32_t, std::string> SensorServiceStub::sensorIdPermissions_ = {
-    { SENSOR_ACCELEROMETER_ID, ACCELEROMETER_PERMISSION },
-    { SENSOR_ACCELEROMETER_UNCALIBRATED_ID, ACCELEROMETER_PERMISSION },
-    { SENSOR_LINEAR_ACCELERATION_ID, ACCELEROMETER_PERMISSION },
-    { SENSOR_GYROSCOPE_ID, GYROSCOPE_PERMISSION },
-    { SENSOR_GYROSCOPE_UNCALIBRATED_ID, GYROSCOPE_PERMISSION },
-    { SENSOR_PEDOMETER_DETECTION_ID, ACTIVITY_MOTION_PERMISSION },
-    { SENSOR_PEDOMETER_ID, ACTIVITY_MOTION_PERMISSION },
-    { SENSOR_HEART_RATE_ID, READ_HEALTH_DATA_PERMISSION }
-};
 
 SensorServiceStub::SensorServiceStub()
 {
@@ -97,20 +74,12 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 
-bool SensorServiceStub::CheckSensorPermission(uint32_t sensorId)
-{
-    auto permissionIt = sensorIdPermissions_.find(sensorId);
-    if (permissionIt == sensorIdPermissions_.end()) {
-        return true;
-    }
-    return true;
-}
-
 ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
-    if (!CheckSensorPermission(sensorId)) {
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }
@@ -121,7 +90,8 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
 {
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
-    if (!CheckSensorPermission(sensorId)) {
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }
@@ -132,7 +102,8 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
 {
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
-    if (!CheckSensorPermission(sensorId)) {
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }
@@ -143,7 +114,8 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
 {
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
-    if (!CheckSensorPermission(sensorId)) {
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
         HiLog::Error(LABEL, "%{public}s permission denied", __func__);
         return ERR_PERMISSION_DENIED;
     }

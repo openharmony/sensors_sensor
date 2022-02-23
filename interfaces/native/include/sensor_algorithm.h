@@ -23,10 +23,6 @@ class SensorAlgorithm {
 public:
     SensorAlgorithm() = default;
     ~SensorAlgorithm() = default;
-    static constexpr int32_t QUATERNION_LENGTH = 4;
-    static constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
-    static constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
-    static constexpr int32_t FOUR_DIMENSIONAL_MATRIX_LENGTH = 16;
 
     int32_t createQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion);
 
@@ -49,6 +45,10 @@ public:
 private:
     int32_t transformCoordinateSystemImpl(std::vector<float> inRotationMatrix, int32_t axisX,
                                                            int32_t axisY, std::vector<float> &outRotationMatrix);
+    static constexpr int32_t QUATERNION_LENGTH = 4;
+    static constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
+    static constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
+    static constexpr int32_t FOUR_DIMENSIONAL_MATRIX_LENGTH = 16;
     static constexpr float GRAVITATIONAL_ACCELERATION = 9.81f;
     static constexpr float RECIPROCAL_COEFFICIENT = 5.255f;
     static constexpr float ZERO_PRESSURE_ALTITUDE = 44330.0f;

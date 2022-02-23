@@ -122,7 +122,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
     return ret;
 }
 
-bool ClientInfo::UpdateUid(int32_t pid, int32_t uid)
+bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
 {
     HiLog::Debug(LABEL, "%{public}s begin, pid : %{public}d, uid : %{public}d", __func__, pid, uid);
     if ((uid == INVALID_UID) || (pid <= INVALID_PID)) {
@@ -130,48 +130,35 @@ bool ClientInfo::UpdateUid(int32_t pid, int32_t uid)
         return false;
     }
     std::lock_guard<std::mutex> uidLock(uidMutex_);
-    auto uidIt = uidMap_.find(pid);
-    if (uidIt == uidMap_.end()) {
-        if (uidMap_.size() == MAX_SUPPORT_CHANNEL) {
+    AppThreadInfo appThreadInfo(pid, uid, callerToken);
+    auto appThreadInfoItr = appThreadInfoMap_.find(pid);
+    if (appThreadInfoItr == appThreadInfoMap_.end()) {
+        if (appThreadInfoMap_.size() == MAX_SUPPORT_CHANNEL) {
             HiLog::Error(LABEL, "%{public}s max support channel size is %{public}u", __func__, MAX_SUPPORT_CHANNEL);
             return false;
         }
-        auto ret = uidMap_.insert(std::make_pair(pid, uid));
-        HiLog::Debug(LABEL, "%{public}s insert uid ret.second : %{public}d", __func__, ret.second);
+        auto ret = appThreadInfoMap_.insert(std::make_pair(pid, appThreadInfo));
         return ret.second;
     }
-    uidMap_[pid] = uid;
+    appThreadInfoMap_[pid] = appThreadInfo;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
-bool ClientInfo::DestroyUid(int32_t pid)
+void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 {
     HiLog::Debug(LABEL, "%{public}s begin, pid : %{public}d", __func__, pid);
     if (pid == INVALID_PID) {
         HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
-        return false;
+        return;
     }
     std::lock_guard<std::mutex> uidLock(uidMutex_);
-    auto uidIt = uidMap_.find(pid);
-    if (uidIt == uidMap_.end()) {
+    auto appThreadInfoItr = appThreadInfoMap_.find(pid);
+    if (appThreadInfoItr == appThreadInfoMap_.end()) {
         HiLog::Debug(LABEL, "%{public}s uid not exist, no need to destroy it", __func__);
-        return true;
+        return;
     }
-    int32_t uid = uidIt->second;
-    uidMap_.erase(uidIt);
-    for (const auto &it : uidMap_) {
-        if (it.second == uid) {
-            return true;
-        }
-    }
-    AppThreadInfo appThreadInfo;
-    appThreadInfo.uid = uid;
-    appThreadInfo.pid = 0;
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    permissionUtil.UnregistPermissionChanged(appThreadInfo);
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
-    return true;
+    appThreadInfoMap_.erase(appThreadInfoItr);
 }
 
 std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int32_t uid)
@@ -183,12 +170,12 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int3
     }
     std::vector<sptr<SensorBasicDataChannel>> sensorChannel;
     std::lock_guard<std::mutex> uidLock(uidMutex_);
-    for (const auto &uidIt : uidMap_) {
-        if (uid != uidIt.second) {
+    for (const auto &appThreadInfoIt : appThreadInfoMap_) {
+        if (uid != appThreadInfoIt.second.uid) {
             continue;
         }
         std::lock_guard<std::mutex> channelLock(channelMutex_);
-        auto channelIt = channelMap_.find(uidIt.first);
+        auto channelIt = channelMap_.find(appThreadInfoIt.first);
         if (channelIt == channelMap_.end()) {
             continue;
         }
@@ -363,7 +350,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
         }
         it = clientMap_.erase(it);
     }
-    DestroyUid(pid);
+    DestroyAppThreadInfo(pid);
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
@@ -593,9 +580,10 @@ AppThreadInfo ClientInfo::GetAppInfoByChannel(const sptr<SensorBasicDataChannel>
     }
     {
         std::lock_guard<std::mutex> uidLock(uidMutex_);
-        auto it = uidMap_.find(appThreadInfo.pid);
-        if (it != uidMap_.end()) {
-            appThreadInfo.uid = it->second;
+        auto it = appThreadInfoMap_.find(appThreadInfo.pid);
+        if (it != appThreadInfoMap_.end()) {
+            appThreadInfo.uid = it->second.uid;
+            appThreadInfo.callerToken = it->second.callerToken;
         }
     }
     return appThreadInfo;
@@ -630,11 +618,11 @@ void ClientInfo::GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInf
 int32_t ClientInfo::GetUidByPid(int32_t pid)
 {
     std::lock_guard<std::mutex> uidLock(uidMutex_);
-    auto uidIt = uidMap_.find(pid);
-    if (uidIt == uidMap_.end()) {
+    auto appThreadInfoIt = appThreadInfoMap_.find(pid);
+    if (appThreadInfoIt == appThreadInfoMap_.end()) {
         return INVALID_UID;
     }
-    return uidIt->second;
+    return appThreadInfoIt->second.uid;
 }
 
 void ClientInfo::UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType)

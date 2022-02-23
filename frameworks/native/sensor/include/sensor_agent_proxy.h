@@ -34,12 +34,6 @@ public:
     SensorAgentProxy();
     ~SensorAgentProxy();
     static const SensorAgentProxy *GetSensorsObj();
-    int32_t CreateSensorDataChannel() const;
-    int32_t DestroySensorDataChannel() const;
-    int32_t GetSensorId(struct SensorIdList *sensorId, uint32_t sensorGroup, uint32_t sensorType) const;
-    int32_t GetDefaultSensorId(uint32_t sensorGroup, uint32_t sensorType) const;
-    int64_t GetSensorMinSamplePeriod(uint32_t sensorId) const;
-    int32_t ChanageSensorInterval(uint32_t sensorId, int64_t sampingPeriodNs, int64_t maxReportDelay) const;
     int32_t ActivateSensor(int32_t sensorId, const SensorUser *user) const;
     int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user) const;
     int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval, int64_t reportInterval) const;
@@ -50,8 +44,9 @@ public:
     int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const;
 
 private:
+    int32_t CreateSensorDataChannel() const;
+    int32_t DestroySensorDataChannel() const;
     static void HandleSensorData(SensorEvent *events, int32_t num, void *data);
-    static void FillSensorAccuracy(struct SensorNativeData &data, SensorEvent &event);
     static OHOS::sptr<SensorAgentProxy> sensorObj_;
     static std::mutex subscribeMutex_;
     static std::mutex chanelMutex_;
