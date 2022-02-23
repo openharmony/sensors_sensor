@@ -341,7 +341,7 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
         .deferred = nullptr,
         .type = TRANSFORM_COORDINATE_SYSTEM,
     };
-    int32_t inRotationVectorLength = inRotationVector.size();
+    int32_t inRotationVectorLength = static_cast<int32_t>(inRotationVector.size());
     std::vector<float> outRotationVector(inRotationVectorLength);
     std::unique_ptr<SensorAlgorithm> sensorAlgorithm = std::make_unique<SensorAlgorithm>();
     int32_t ret = sensorAlgorithm->transformCoordinateSystem(inRotationVector, axisX, axisY, outRotationVector);

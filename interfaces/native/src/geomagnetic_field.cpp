@@ -195,7 +195,7 @@ void GeomagneticField::getRelativeRadiusPower()
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     relativeRadiusPower[0] = 1.0f;
     relativeRadiusPower[1] = EARTH_REFERENCE_RADIUS / geocentricRadius;
-    for (int32_t index = 2; index < relativeRadiusPower.size(); ++index) {
+    for (int32_t index = 2; index < static_cast<int32_t>(relativeRadiusPower.size()); ++index) {
         relativeRadiusPower[index] = relativeRadiusPower[index - 1] * relativeRadiusPower[1];
     }
 }

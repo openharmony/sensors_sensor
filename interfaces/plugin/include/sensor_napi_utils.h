@@ -45,7 +45,7 @@ struct RationMatrixData {
 
 struct SensorData {
     int32_t sensorTypeId;
-    int32_t dataLength;
+    uint32_t dataLength;
     float data[16];
     int64_t timestamp;
 };

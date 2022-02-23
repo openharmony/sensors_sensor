@@ -349,8 +349,8 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
             HiLog::Error(LABEL, "%{public}s strcpy hardwareVersion failed", __func__);
             return OHOS::Sensors::ERROR;
         }
-        (*sensorInfo + index)->sensorId = sensorList_[index].GetSensorId();
-        (*sensorInfo + index)->sensorTypeId = sensorList_[index].GetSensorId();
+        (*sensorInfo + index)->sensorId = static_cast<int32_t>(sensorList_[index].GetSensorId());
+        (*sensorInfo + index)->sensorTypeId = static_cast<int32_t>(sensorList_[index].GetSensorId());
         (*sensorInfo + index)->maxRange = sensorList_[index].GetMaxRange();
         (*sensorInfo + index)->precision = sensorList_[index].GetResolution();
         (*sensorInfo + index)->power = 0.0f;
