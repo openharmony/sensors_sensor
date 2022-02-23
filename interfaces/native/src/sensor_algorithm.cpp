@@ -26,15 +26,16 @@ static constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::SensorsLogDomain::SENSORS_I
 
 int32_t SensorAlgorithm::createQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion)
 {
-    if (rotationVector.size() < ROTATION_VECTOR_LENGTH || rotationVector.size() > QUATERNION_LENGTH) {
+    if (static_cast<int32_t>(rotationVector.size()) < ROTATION_VECTOR_LENGTH
+        || static_cast<int32_t>(rotationVector.size()) > QUATERNION_LENGTH) {
         HiLog::Error(LABEL, "%{public}s Invalid input rotationVector parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
-    if (quaternion.size() < 4) {
+    if (static_cast<int32_t>(quaternion.size()) < QUATERNION_LENGTH) {
         HiLog::Error(LABEL, "%{public}s Invalid input quaternion parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
-    if (rotationVector.size() == ROTATION_VECTOR_LENGTH) {
+    if (static_cast<int32_t>(rotationVector.size()) == ROTATION_VECTOR_LENGTH) {
         quaternion[0] = 1 - static_cast<float>((pow(rotationVector[0], 2) + pow(rotationVector[1], 2)
             + pow(rotationVector[2], 2)));
         quaternion[0]  = (quaternion[0] > 0) ? static_cast<float>(std::sqrt(quaternion[0])) : 0;
@@ -66,7 +67,7 @@ int32_t SensorAlgorithm::transformCoordinateSystemImpl(std::vector<float> inRota
     if (((x ^ ((z + 1) % 3)) | ( y ^ ((z + 2) % 3))) != 0) {
         axisZ ^= 0x80;
     }
-    int32_t inRotationMatrixLength = inRotationMatrix.size();
+    int32_t inRotationMatrixLength = static_cast<int32_t>(inRotationMatrix.size());
     int32_t matrixDimension = ((inRotationMatrixLength == FOUR_DIMENSIONAL_MATRIX_LENGTH)
         ? QUATERNION_LENGTH : ROTATION_VECTOR_LENGTH);
     for (int32_t j = 0; j < ROTATION_VECTOR_LENGTH; j++) {
@@ -96,9 +97,9 @@ int32_t SensorAlgorithm::transformCoordinateSystem(std::vector<float> inRotation
     std::vector<float> &outRotationMatrix)
 {
     HiLog::Info(LABEL, "%{public}s inRotationMatrix start", __func__);
-    int32_t inRotationMatrixLength = inRotationMatrix.size();
+    int32_t inRotationMatrixLength = static_cast<int32_t>(inRotationMatrix.size());
     if (((inRotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH) && (inRotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH))
-        || (inRotationMatrixLength != outRotationMatrix.size())) {
+        || (inRotationMatrixLength != static_cast<int32_t>(outRotationMatrix.size()))) {
         HiLog::Error(LABEL, "%{public}s Invalid input parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
@@ -135,7 +136,7 @@ int32_t SensorAlgorithm::getGeomagneticDip(std::vector<float> inclinationMatrix,
         HiLog::Error(LABEL, "%{public}s invalid parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
-    int32_t matrixLength = inclinationMatrix.size();
+    int32_t matrixLength = static_cast<int32_t>(inclinationMatrix.size());
     if (matrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH && matrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH) {
         HiLog::Error(LABEL, "%{public}s Invalid input parameter", __func__);
         return OHOS::Sensors::ERROR;
@@ -151,12 +152,12 @@ int32_t SensorAlgorithm::getGeomagneticDip(std::vector<float> inclinationMatrix,
 int32_t SensorAlgorithm::getAngleModify(std::vector<float> curRotationMatrix, std::vector<float> preRotationMatrix,
     std::vector<float> &angleChange)
 {
-    if (angleChange.size() < ROTATION_VECTOR_LENGTH) {
+    if (static_cast<int32_t>(angleChange.size()) < ROTATION_VECTOR_LENGTH) {
         HiLog::Error(LABEL, "%{public}s invalid parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
-    int32_t curRotationMatrixLength = curRotationMatrix.size();
-    int32_t preRotationMatrixLength = preRotationMatrix.size();
+    int32_t curRotationMatrixLength = static_cast<int32_t>(curRotationMatrix.size());
+    int32_t preRotationMatrixLength = static_cast<int32_t>(preRotationMatrix.size());
     if ((curRotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)
         && (curRotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH)) {
         HiLog::Error(LABEL, "%{public}s Invalid input curRotationMatrix parameter", __func__);
@@ -195,11 +196,11 @@ int32_t SensorAlgorithm::getAngleModify(std::vector<float> curRotationMatrix, st
 
 int32_t SensorAlgorithm::getDirection(std::vector<float> rotationMatrix, std::vector<float> &rotationAngle)
 {
-    if (rotationAngle.size() < ROTATION_VECTOR_LENGTH) {
+    if (static_cast<int32_t>(rotationAngle.size()) < ROTATION_VECTOR_LENGTH) {
         HiLog::Error(LABEL, "%{public}s invalid parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
-    int32_t rotationMatrixLength = rotationMatrix.size();
+    int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
     if ((rotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)
         && (rotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH)) {
         HiLog::Error(LABEL, "%{public}s Invalid input rotationMatrix parameter", __func__);
@@ -218,8 +219,9 @@ int32_t SensorAlgorithm::getDirection(std::vector<float> rotationMatrix, std::ve
 
 int32_t SensorAlgorithm::createRotationMatrix(std::vector<float> rotationVector, std::vector<float> &rotationMatrix)
 {
-    int32_t rotationMatrixLength = rotationMatrix.size();
-    if ((rotationVector.size() < ROTATION_VECTOR_LENGTH) || ((rotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)
+    int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
+    if ((static_cast<int32_t>(rotationVector.size()) < ROTATION_VECTOR_LENGTH)
+        || ((rotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)
         && (rotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH))) {
         HiLog::Error(LABEL, "%{public}s Invalid input rotationMatrix parameter", __func__);
         return OHOS::Sensors::ERROR;
@@ -267,7 +269,8 @@ int32_t SensorAlgorithm::createRotationMatrix(std::vector<float> rotationVector,
 int32_t SensorAlgorithm::createRotationAndInclination(std::vector<float> gravity, std::vector<float> geomagnetic,
     std::vector<float> &rotationMatrix, std::vector<float> &inclinationMatrix)
 {
-    if (gravity.size() < ROTATION_VECTOR_LENGTH || geomagnetic.size() < ROTATION_VECTOR_LENGTH) {
+    if (static_cast<int32_t>(gravity.size()) < ROTATION_VECTOR_LENGTH
+        || static_cast<int32_t>(geomagnetic.size()) < ROTATION_VECTOR_LENGTH) {
         HiLog::Error(LABEL, "%{public}s Invalid input parameter", __func__);
         return OHOS::Sensors::ERROR;
     }
@@ -302,8 +305,8 @@ int32_t SensorAlgorithm::createRotationAndInclination(std::vector<float> gravity
     measuredValue[1] = gravity[2] * componentH[0] - gravity[0] * componentH[2];
     measuredValue[2] = gravity[0] * componentH[1] - gravity[1] * componentH[0];
 
-    int32_t rotationMatrixLength = rotationMatrix.size();
-    int32_t inclinationMatrixLength = inclinationMatrix.size();
+    int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
+    int32_t inclinationMatrixLength = static_cast<int32_t>(inclinationMatrix.size());
     if ((rotationMatrixLength != 9 && rotationMatrixLength != 16) || (inclinationMatrixLength != 9
         && inclinationMatrixLength != 16)) {
         HiLog::Error(LABEL, "%{public}s Invalid input parameter", __func__);

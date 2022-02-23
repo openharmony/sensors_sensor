@@ -66,9 +66,9 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, str
     std::vector<struct SensorEvent> sendEvents;
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     sendEvents.push_back(event);
-    uint32_t sensorId = event.sensorTypeId;
+    uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
     if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = event.sensorTypeId;
+        sensorId = static_cast<uint32_t>(event.sensorTypeId);
     }
     auto dataCountIt = dataCountMap_.find(sensorId);
     if (dataCountIt == dataCountMap_.end()) {
@@ -116,9 +116,9 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
                                             sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event,
                                             uint64_t periodCount, uint64_t fifoCount)
 {
-    uint32_t sensorId = event.sensorTypeId;
+    uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
     if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = event.sensorTypeId;
+        sensorId = static_cast<uint32_t>(event.sensorTypeId);
     }
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     auto dataCountIt = dataCountMap_.find(sensorId);
@@ -177,9 +177,9 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, stru
         HiLog::Error(LABEL, "%{public}s channel cannot be null", __func__);
         return;
     }
-    uint32_t sensorId = event.sensorTypeId;
+    uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
     if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = event.sensorTypeId;
+        sensorId = static_cast<uint32_t>(event.sensorTypeId);
     }
     auto &cacheBuf = const_cast<std::unordered_map<uint32_t, struct SensorEvent> &>(channel->GetDataCacheBuf());
     if (ReportNotContinuousData(cacheBuf, channel, event)) {
@@ -200,9 +200,9 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, stru
 bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<uint32_t, struct SensorEvent> &cacheBuf,
                                                   sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event)
 {
-    uint32_t sensorId = event.sensorTypeId;
+    uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
     if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = event.sensorTypeId;
+        sensorId = static_cast<uint32_t>(event.sensorTypeId);
     }
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     auto sensor = sensorMap_.find(sensorId);
@@ -240,9 +240,9 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
         return;
     }
 
-    size_t eventSize = event.size();
+    int32_t eventSize = static_cast<int32_t>(event.size());
     std::vector<struct TransferSensorEvents> transferEvents;
-    for (int32_t i = 0; i < (int32_t)eventSize; i++) {
+    for (int32_t i = 0; i < eventSize; i++) {
         struct TransferSensorEvents  transferEvent = {
             .sensorTypeId = event[i].sensorTypeId,
             .version = event[i].version,
@@ -260,9 +260,9 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
     auto ret = channel->SendData(transferEvents.data(), eventSize * sizeof(struct TransferSensorEvents));
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s send data failed, ret : %{public}d", __func__, ret);
-        uint32_t sensorId = event[eventSize - 1].sensorTypeId;
+        uint32_t sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
         if (sensorId == FLUSH_COMPLETE_ID) {
-            sensorId = event[eventSize - 1].sensorTypeId;
+            sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
         }
         cacheBuf[sensorId] = event[eventSize - 1];
     }
@@ -274,11 +274,11 @@ int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, s
         HiLog::Error(LABEL, "%{public}s channel cannot be null", __func__);
         return INVALID_POINTER;
     }
-    uint32_t ret = ERR_OK;
+    int32_t ret = ERR_OK;
     auto &cacheBuf = const_cast<std::unordered_map<uint32_t, struct SensorEvent> &>(channel->GetDataCacheBuf());
-    uint32_t sensorId = event.sensorTypeId;
+    uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
     if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = event.sensorTypeId;
+        sensorId = static_cast<uint32_t>(event.sensorTypeId);
     }
     auto cacheEvent = cacheBuf.find(sensorId);
     if (cacheEvent != cacheBuf.end()) {
@@ -308,10 +308,10 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
 {
     HiLog::Debug(LABEL, "%{public}s begin", __func__);
     uint32_t realSensorId = 0;
-    uint32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId;
+    uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId);
     std::vector<sptr<SensorBasicDataChannel>> channelList;
     if (sensorId == FLUSH_COMPLETE_ID) {
-        realSensorId = eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId;
+        realSensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId);
         channelList = clientInfo_.GetSensorChannel(realSensorId);
     } else {
         channelList = clientInfo_.GetSensorChannel(sensorId);
