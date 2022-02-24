@@ -343,8 +343,8 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
             HiLog::Error(LABEL, "%{public}s strcpy vendorName failed", __func__);
             return OHOS::Sensors::ERROR;
         }
-        const char *version = std::to_string(sensorList_[index].GetVersion()).c_str();
-        ret = strcpy_s((*sensorInfo + index)->hardwareVersion, VERSION_MAX_LEN, version);
+        std::string version = std::to_string(sensorList_[index].GetVersion());
+        ret = strcpy_s((*sensorInfo + index)->hardwareVersion, VERSION_MAX_LEN, version.c_str());
         if (ret != EOK) {
             HiLog::Error(LABEL, "%{public}s strcpy hardwareVersion failed", __func__);
             return OHOS::Sensors::ERROR;
