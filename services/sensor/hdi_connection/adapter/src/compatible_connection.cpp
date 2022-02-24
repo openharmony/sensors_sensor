@@ -136,7 +136,8 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         .dataLen = event->dataLen
     };
     sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
-    if (memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen) != EOK) {
+    errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
+    if (ret != EOK) {
         HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
         return COPY_ERR;
     }

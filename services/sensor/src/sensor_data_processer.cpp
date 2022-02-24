@@ -251,7 +251,8 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
             .mode = event[i].mode,
             .dataLen = event[i].dataLen
         };
-        if (memcpy_s(transferEvent.data, SENSOR_MAX_LENGTH, event[i].data, event[i].dataLen) != EOK) {
+        errno_t ret = memcpy_s(transferEvent.data, SENSOR_MAX_LENGTH, event[i].data, event[i].dataLen);
+        if (ret != EOK) {
             HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
             return;
         }
