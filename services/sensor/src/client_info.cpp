@@ -474,8 +474,8 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
         HiLog::Error(LABEL, "%{public}s GetSensorList failed", __func__);
         return;
     }
-
-    if (memcpy_s(&storedEvent, sizeof(storedEvent), &event, sizeof(event)) != EOK) {
+    errno_t retVal = memcpy_s(&storedEvent, sizeof(storedEvent), &event, sizeof(event));
+    if (retVal != EOK) {
         HiLog::Error(LABEL, "%{public}s memcpy_s failed", __func__);
         return;
     }

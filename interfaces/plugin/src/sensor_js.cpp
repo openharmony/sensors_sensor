@@ -55,7 +55,8 @@ static void DataCallbackImpl(SensorEvent *event)
         onCallbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
         onCallbackInfo->data.sensorData.dataLength = event->dataLen;
         onCallbackInfo->data.sensorData.timestamp = event->timestamp;
-        if (memcpy_s(onCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
+        errno_t ret = memcpy_s(onCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen);
+        if (ret != EOK) {
             HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
             return;
         }
@@ -71,7 +72,8 @@ static void DataCallbackImpl(SensorEvent *event)
     onceCallbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
     onceCallbackInfo->data.sensorData.dataLength = event->dataLen;
     onceCallbackInfo->data.sensorData.timestamp = event->timestamp;
-    if (memcpy_s(onceCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
+    errno_t ret = memcpy_s(onceCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen);
+    if (ret != EOK) {
         HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
         return;
     }
