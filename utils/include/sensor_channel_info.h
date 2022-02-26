@@ -35,7 +35,7 @@ public:
     int64_t GetSamplingPeriodNs() const;
     void SetSamplingPeriodNs(int64_t samplingPeriodNs);
     int32_t GetFifoCount() const;
-    void SetFifoCount(int32_t fifoCount);
+    void SetFifoCount(uint32_t fifoCount);
     std::vector<int32_t> GetCmdType() const;
     void SetCmdType(const std::vector<int32_t> &cmdType);
 

@@ -65,7 +65,7 @@ int32_t SensorChannelInfo::GetFifoCount() const
     return fifoCount_;
 }
 
-void SensorChannelInfo::SetFifoCount(int32_t fifoCount)
+void SensorChannelInfo::SetFifoCount(uint32_t fifoCount)
 {
     fifoCount_ = fifoCount;
 }
