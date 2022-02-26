@@ -274,7 +274,7 @@ void ConvertToSensorData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, nap
     int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
     if ((g_sensorAttributeList.count(sensorTypeId)) == 0
         || g_sensorAttributeList[sensorTypeId].size()
-        > (asyncCallbackInfo->data.sensorData.dataLength / sizeof(float)))) {
+        > (asyncCallbackInfo->data.sensorData.dataLength / sizeof(float))) {
         HiLog::Error(LABEL, "%{public}s count of sensorTypeId is zero", __func__);
         return;
     }
