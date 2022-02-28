@@ -806,6 +806,58 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
+static napi_value EnumClassConstructor(napi_env env, napi_callback_info info)
+{
+    size_t argc = 0;
+    napi_value args[1] = {0};
+    napi_value res = nullptr;
+    void *data = nullptr;
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &res, &data);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    return res;
+}
+
+static napi_value CreateEnumSensorType(napi_env env, napi_value exports)
+{
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ACCELEROMETER", GetNapiInt32(SENSOR_TYPE_ID_ACCELEROMETER, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_GYROSCOPE", GetNapiInt32(SENSOR_TYPE_ID_GYROSCOPE, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_AMBIENT_LIGHT", GetNapiInt32(SENSOR_TYPE_ID_AMBIENT_LIGHT, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_MAGNETIC_FIELD", GetNapiInt32(SENSOR_TYPE_ID_MAGNETIC_FIELD, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_BAROMETER", GetNapiInt32(SENSOR_TYPE_ID_BAROMETER, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_HALL", GetNapiInt32(SENSOR_TYPE_ID_HALL, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_PROXIMITY", GetNapiInt32(SENSOR_TYPE_ID_PROXIMITY, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_HUMIDITY", GetNapiInt32(SENSOR_TYPE_ID_HUMIDITY, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ORIENTATION", GetNapiInt32(SENSOR_TYPE_ID_ORIENTATION, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_GRAVITY", GetNapiInt32(SENSOR_TYPE_ID_GRAVITY, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_LINEAR_ACCELERATION",
+            GetNapiInt32(SENSOR_TYPE_ID_LINEAR_ACCELERATION, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ROTATION_VECTOR",
+            GetNapiInt32(SENSOR_TYPE_ID_ROTATION_VECTOR, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_AMBIENT_TEMPERATURE",
+            GetNapiInt32(SENSOR_TYPE_ID_AMBIENT_TEMPERATURE, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED",
+            GetNapiInt32(SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED",
+            GetNapiInt32(SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_SIGNIFICANT_MOTION",
+            GetNapiInt32(SENSOR_TYPE_ID_SIGNIFICANT_MOTION, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_PEDOMETER_DETECTION",
+            GetNapiInt32(SENSOR_TYPE_ID_PEDOMETER_DETECTION, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_PEDOMETER", GetNapiInt32(SENSOR_TYPE_ID_PEDOMETER, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_HEART_RATE", GetNapiInt32(SENSOR_TYPE_ID_HEART_RATE, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_WEAR_DETECTION", GetNapiInt32(SENSOR_TYPE_ID_WEAR_DETECTION, env)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED",
+            GetNapiInt32(SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, env)),
+    };
+    napi_value result = nullptr;
+    napi_define_class(env, "SensorType", NAPI_AUTO_LENGTH, EnumClassConstructor, nullptr,
+        sizeof(desc) / sizeof(*desc), desc, &result);
+    napi_set_named_property(env, exports, "SensorType", result);
+    return exports;
+}
 EXTERN_C_START
 
 static napi_value Init(napi_env env, napi_value exports)
@@ -826,6 +878,7 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getSingleSensor", GetSingleSensor),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc));
+    CreateEnumSensorType(env, exports);
     return exports;
 }
 EXTERN_C_END
