@@ -34,6 +34,7 @@
 #include "sensor_agent.h"
 #include "sensor_algorithm.h"
 #include "sensor_napi_utils.h"
+#include "sensor_system_js.h"
 
 using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
@@ -858,6 +859,7 @@ static napi_value CreateEnumSensorType(napi_env env, napi_value exports)
     napi_set_named_property(env, exports, "SensorType", result);
     return exports;
 }
+
 EXTERN_C_START
 
 static napi_value Init(napi_env env, napi_value exports)
@@ -876,6 +878,33 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("createRotationMatrix", CreateRotationMatrix),
         DECLARE_NAPI_FUNCTION("getSensorList", GetSensorList),
         DECLARE_NAPI_FUNCTION("getSingleSensor", GetSingleSensor),
+        DECLARE_NAPI_FUNCTION("subscribeAccelerometer", SubscribeAccelerometer),
+        DECLARE_NAPI_FUNCTION("unsubscribeAccelerometer", UnsubscribeAccelerometer),
+        DECLARE_NAPI_FUNCTION("subscribeCompass", SubscribeCompass),
+        DECLARE_NAPI_FUNCTION("unsubscribeCompass", UnsubscribeCompass),
+        DECLARE_NAPI_FUNCTION("subscribeProximity", SubscribeProximity),
+        DECLARE_NAPI_FUNCTION("unsubscribeProximity", UnsubscribeProximity),
+        DECLARE_NAPI_FUNCTION("subscribeLight", SubscribeLight),
+        DECLARE_NAPI_FUNCTION("unsubscribeLight", UnsubscribeLight),
+        DECLARE_NAPI_FUNCTION("subscribeStepCounter", SubscribeStepCounter),
+        DECLARE_NAPI_FUNCTION("unsubscribeStepCounter", UnsubscribeStepCounter),
+        DECLARE_NAPI_FUNCTION("subscribeBarometer", SubscribeBarometer),
+        DECLARE_NAPI_FUNCTION("unsubscribeBarometer", UnsubscribeBarometer),
+        DECLARE_NAPI_FUNCTION("subscribeHeartRate", SubscribeHeartRate),
+        DECLARE_NAPI_FUNCTION("unsubscribeHeartRate", UnsubscribeHeartRate),
+        DECLARE_NAPI_FUNCTION("subscribeOnBodyState", SubscribeOnBodyState),
+        DECLARE_NAPI_FUNCTION("unsubscribeOnBodyState", UnsubscribeOnBodyState),
+        DECLARE_NAPI_FUNCTION("getOnBodyState", GetOnBodyState),
+        DECLARE_NAPI_FUNCTION("subscribeDeviceOrientation", SubscribeDeviceOrientation),
+        DECLARE_NAPI_FUNCTION("unsubscribeDeviceOrientation", UnsubscribeDeviceOrientation),
+        DECLARE_NAPI_FUNCTION("subscribeGyroscope", SubscribeGyroscope),
+        DECLARE_NAPI_FUNCTION("unsubscribeGyroscope", UnsubscribeGyroscope),
+        DECLARE_NAPI_FUNCTION("subscribeGravity", SubscribeGravity),
+        DECLARE_NAPI_FUNCTION("unsubscribeGravity", UnsubscribeGravity),
+        DECLARE_NAPI_FUNCTION("subscribeMagnetic", SubscribeMagnetic),
+        DECLARE_NAPI_FUNCTION("unsubscribeMagnetic", UnsubscribeMagnetic),
+        DECLARE_NAPI_FUNCTION("subscribeHall", SubscribeHall),
+        DECLARE_NAPI_FUNCTION("unsubscribeHall", UnsubscribeHall),
     };
     NAPI_CALL(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc));
     CreateEnumSensorType(env, exports);
