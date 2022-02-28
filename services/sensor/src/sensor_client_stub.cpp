@@ -30,6 +30,12 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Sens
 int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                           MessageOption &option)
 {
+    std::u16string descriptor = SensorClientStub::GetDescriptor();
+    std::u16string remoteDescriptor = data.ReadInterfaceToken();
+    if (descriptor != remoteDescriptor) {
+        HiLog::Error(LABEL, "%{public}s client and service descriptors are inconsistent", __func__);
+        return OBJECT_NULL;
+    }
     HiLog::Debug(LABEL, "%{public}s begin, cmd : %{public}u", __func__, code);
     return NO_ERROR;
 }
