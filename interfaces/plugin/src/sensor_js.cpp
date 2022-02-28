@@ -806,7 +806,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
-napi_value EnumClassConstructor(const napi_env env, const napi_callback_info info)
+static napi_value EnumClassConstructor(napi_env env, napi_callback_info info)
 {
     size_t argc = 0;
     napi_value args[1] = {0};
@@ -819,7 +819,7 @@ napi_value EnumClassConstructor(const napi_env env, const napi_callback_info inf
     return res;
 }
 
-napi_value CreateEnumSensorType(const napi_env env, napi_value exports)
+static napi_value CreateEnumSensorType(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ACCELEROMETER", GetNapiInt32(SENSOR_TYPE_ID_ACCELEROMETER, env)),
