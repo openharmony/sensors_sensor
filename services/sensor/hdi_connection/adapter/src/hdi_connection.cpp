@@ -19,9 +19,9 @@
 #include <thread>
 
 #include "sensor_event_callback.h"
-#include "sensor_interface_proxy.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
+#include "v1_0/sensor_interface_proxy.h"
 
 namespace OHOS {
 namespace Sensors {
