@@ -62,7 +62,7 @@ static void DataCallbackImpl(SensorEvent *event)
             return;
         }
         onCallbackInfo->type = ON_CALLBACK;
-        EmitUvEventLoop((struct AsyncCallbackInfo *)(onCallbackInfo));
+        EmitUvEventLoop(&g_onCallbackInfos[sensorTypeId]);
     }
 
     if (g_onceCallbackInfos.find(sensorTypeId) == g_onceCallbackInfos.end()) {
@@ -79,7 +79,7 @@ static void DataCallbackImpl(SensorEvent *event)
         return;
     }
     onceCallbackInfo->type = ONCE_CALLBACK;
-    EmitUvEventLoop((struct AsyncCallbackInfo *)(onceCallbackInfo));
+    EmitUvEventLoop(&g_onceCallbackInfos[sensorTypeId]);
     if (g_onCallbackInfos.find(sensorTypeId) == g_onCallbackInfos.end()) {
         HiLog::Debug(LABEL, "%{public}s no subscription to change sensor data, need to cancel registration", __func__);
         UnsubscribeSensor(sensorTypeId);
