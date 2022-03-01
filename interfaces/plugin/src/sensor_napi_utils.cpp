@@ -405,11 +405,15 @@ void EmitAsyncCallbackWork(AsyncCallbackInfo *asyncCallbackInfo)
     HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
-void EmitUvEventLoop(AsyncCallbackInfo *asyncCallbackInfo)
+void EmitUvEventLoop(AsyncCallbackInfo **asyncCallbackInfo)
 {
     uv_loop_s *loop(nullptr);
-    HiLog::Error(LABEL, "%{public}s env: %{public}p", __func__, asyncCallbackInfo->env);
-    napi_get_uv_event_loop(asyncCallbackInfo->env, &loop);
+    if (asyncCallbackInfo == nullptr || *asyncCallbackInfo == nullptr
+        || (*asyncCallbackInfo)->env == nullptr) {
+        HiLog::Error(LABEL, "%{public}s asyncCallbackInfo is null", __func__);
+        return;
+    }
+    napi_get_uv_event_loop((*asyncCallbackInfo)->env, &loop);
     if (loop == nullptr) {
         HiLog::Error(LABEL, "%{public}s loop is null", __func__);
         return;
@@ -421,19 +425,16 @@ void EmitUvEventLoop(AsyncCallbackInfo *asyncCallbackInfo)
     }
     work->data = reinterpret_cast<void *>(asyncCallbackInfo);
     uv_queue_work(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
-        AsyncCallbackInfo *asyncCallbackInfo = reinterpret_cast<AsyncCallbackInfo *>(work->data);
-        if (asyncCallbackInfo == nullptr) {
+        AsyncCallbackInfo *asyncCallbackInfo = *reinterpret_cast<AsyncCallbackInfo **>(work->data);
+        if (asyncCallbackInfo == nullptr || asyncCallbackInfo->env == nullptr
+            || asyncCallbackInfo->callback[0] == nullptr) {
             HiLog::Error(LABEL, "%{public}s asyncCallbackInfo is null", __func__);
             return;
         }
         napi_env env = asyncCallbackInfo->env;
-        napi_value undefined;
+        napi_value undefined = nullptr;
         napi_get_undefined(env, &undefined);
-        if (asyncCallbackInfo->callback[0] == nullptr) {
-            HiLog::Error(LABEL, "%{public}s callback is null", __func__);
-            return;
-        }
-        napi_value callback;
+        napi_value callback = nullptr;
         napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback);
         napi_value callResult = nullptr;
         napi_value result[2] = {0};

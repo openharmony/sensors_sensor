@@ -110,7 +110,7 @@ bool GetCppBool(napi_value value, napi_env env);
 
 void EmitAsyncCallbackWork(AsyncCallbackInfo *async_callback_info);
 
-void EmitUvEventLoop(AsyncCallbackInfo *async_callback_info);
+void EmitUvEventLoop(AsyncCallbackInfo **async_callback_info);
 
 int64_t GetCppInt64(napi_value value, napi_env env);
 
