@@ -27,9 +27,14 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_UTILS, "Sensor
 
 Sensor::Sensor()
     : sensorId_(0),
-      version_(0),
+      sensorTypeId_(0),
+      sensorName_(""),
+      vendorName_(""),
+      firmwareVersion_(""),
+      hardwareVersion_(""),
       maxRange_(0.0),
       resolution_(0.0),
+      power_(0.0),
       flags_(0),
       fifoMaxEventCount_(0),
       minSamplePeriodNs_(0),
@@ -46,34 +51,54 @@ void Sensor::SetSensorId(uint32_t sensorId)
     sensorId_ = sensorId;
 }
 
-std::string Sensor::GetName() const
+uint32_t Sensor::GetSensorTypeId() const
 {
-    return name_;
+    return sensorTypeId_;
 }
 
-void Sensor::SetName(const std::string &name)
+void Sensor::SetSensorTypeId(uint32_t sensorTypeId)
 {
-    name_ = name;
+    sensorTypeId_ = sensorTypeId;
 }
 
-std::string Sensor::GetVendor() const
+std::string Sensor::GetSensorName() const
 {
-    return vendor_;
+    return sensorName_;
 }
 
-void Sensor::SetVendor(const std::string &vendor)
+void Sensor::SetSensorName(const std::string &sensorName)
 {
-    vendor_ = vendor;
+    sensorName_ = sensorName;
 }
 
-uint32_t Sensor::GetVersion() const
+std::string Sensor::GetVendorName() const
 {
-    return version_;
+    return vendorName_;
 }
 
-void Sensor::SetVersion(uint32_t version)
+void Sensor::SetVendorName(const std::string &vendorName)
 {
-    version_ = version;
+    vendorName_ = vendorName;
+}
+
+std::string Sensor::GetHardwareVersion() const
+{
+    return hardwareVersion_;
+}
+
+void Sensor::SetHardwareVersion(const std::string &hardwareVersion)
+{
+    hardwareVersion_ = hardwareVersion;
+}
+
+std::string Sensor::GetFirmwareVersion() const
+{
+    return firmwareVersion_;
+}
+
+void Sensor::SetFirmwareVersion(const std::string &firmwareVersion)
+{
+    firmwareVersion_ = firmwareVersion;
 }
 
 float Sensor::GetMaxRange() const
@@ -96,7 +121,17 @@ void Sensor::SetResolution(float resolution)
     resolution_ = resolution;
 }
 
-uint32_t Sensor::GetFlags() const
+float Sensor::GetPower() const
+{
+    return power_;
+}
+
+void Sensor::SetPower(float power)
+{
+    power_ = power;
+}
+
+uint32_t Sensor::Sensor::GetFlags() const
 {
     return flags_;
 }
@@ -136,66 +171,60 @@ void Sensor::SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs)
     maxSamplePeriodNs_ = maxSamplePeriodNs;
 }
 
-std::vector<uint32_t> Sensor::GetReserved() const
-{
-    return reserved_;
-}
-
-void Sensor::SetReserved(const std::vector<uint32_t> &reserved)
-{
-    auto reservedCount = reserved.size();
-    for (size_t i = 0; i < reservedCount; i++) {
-        reserved_[i] = reserved[i];
-    }
-}
-
 bool Sensor::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteUint32(sensorId_)) {
         HiLog::Error(LABEL, "%{public}s failed, write sensorId failed", __func__);
         return false;
     }
-    if (!parcel.WriteString(name_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write name_ failed", __func__);
+    if (!parcel.WriteUint32(sensorTypeId_)) {
+        HiLog::Error(LABEL, "%{public}s failed, write sensorTypeId failed", __func__);
         return false;
     }
-    if (!parcel.WriteString(vendor_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write vendor_ failed", __func__);
+    if (!parcel.WriteString(sensorName_)) {
+        HiLog::Error(LABEL, "%{public}s failed, write sensorName failed", __func__);
         return false;
     }
-    if (!parcel.WriteUint32(version_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write version_ failed", __func__);
+    if (!parcel.WriteString(vendorName_)) {
+        HiLog::Error(LABEL, "%{public}s failed, write vendorName failed", __func__);
+        return false;
+    }
+    if (!parcel.WriteString(firmwareVersion_)) {
+        HiLog::Error(LABEL, "%{public}s failed, write firmwareVersion failed", __func__);
+        return false;
+    }
+    if (!parcel.WriteString(hardwareVersion_)) {
+        HiLog::Error(LABEL, "%{public}s failed, write hardwareVersion failed", __func__);
         return false;
     }
     if (!parcel.WriteFloat(maxRange_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write maxRange_ failed", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, write maxRange failed", __func__);
         return false;
     }
     if (!parcel.WriteFloat(resolution_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write resolution_ failed", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, write resolution failed", __func__);
+        return false;
+    }
+    if (!parcel.WriteFloat(power_)) {
+        HiLog::Error(LABEL, "%{public}s failed, write power failed", __func__);
         return false;
     }
     if (!parcel.WriteUint32(flags_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write flags_ failed", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, write flags failed", __func__);
         return false;
     }
     if (!parcel.WriteInt32(fifoMaxEventCount_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write fifoMaxEventCount_ failed", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, write fifoMaxEventCount failed", __func__);
         return false;
     }
     if (!parcel.WriteInt64(minSamplePeriodNs_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write minSamplePeriodNs_ failed", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, write minSamplePeriodNs failed", __func__);
         return false;
     }
     if (!parcel.WriteInt64(maxSamplePeriodNs_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write maxSamplePeriodNs_ failed", __func__);
+        HiLog::Error(LABEL, "%{public}s failed, write maxSamplePeriodNs failed", __func__);
         return false;
     }
-    if (!parcel.WriteUInt32Vector(reserved_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write reserved_ failed", __func__);
-        return false;
-    }
-
     return true;
 }
 
@@ -217,16 +246,19 @@ std::unique_ptr<Sensor> Sensor::Unmarshalling(Parcel &parcel)
 bool Sensor::ReadFromParcel(Parcel &parcel)
 {
     sensorId_ = parcel.ReadUint32();
-    name_ = parcel.ReadString();
-    vendor_ = parcel.ReadString();
-    version_ = parcel.ReadUint32();
+    sensorTypeId_ = parcel.ReadUint32();
+    sensorName_ = parcel.ReadString();
+    vendorName_ = parcel.ReadString();
+    firmwareVersion_ = parcel.ReadString();
+    hardwareVersion_ = parcel.ReadString();
+    power_ = parcel.ReadFloat();
     maxRange_ = parcel.ReadFloat();
     resolution_ = parcel.ReadFloat();
     flags_ = parcel.ReadUint32();
     fifoMaxEventCount_ = parcel.ReadInt32();
     minSamplePeriodNs_ = parcel.ReadInt64();
     maxSamplePeriodNs_ = parcel.ReadInt64();
-    return parcel.ReadUInt32Vector(&reserved_);
+    return true;
 }
 }  // namespace Sensors
 }  // namespace OHOS
