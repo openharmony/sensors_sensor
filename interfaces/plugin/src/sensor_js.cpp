@@ -172,7 +172,7 @@ static napi_value Once(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
-bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
+static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     if (g_onCallbackInfos.find(sensorTypeId) == g_onCallbackInfos.end()) {
         return false;
@@ -188,7 +188,7 @@ bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
     return false;
 }
 
-void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value callback)
+static void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     if (IsSubscribed(env, sensorTypeId, callback)) {
         HiLog::Debug(LABEL, "%{public}s the callback has been subscribed", __func__);
@@ -241,7 +241,7 @@ static napi_value On(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
-void RemoveAllCallback(napi_env env, int32_t sensorTypeId)
+static void RemoveAllCallback(napi_env env, int32_t sensorTypeId)
 {
     std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto callbackInfo : callbackInfos) {
@@ -253,7 +253,7 @@ void RemoveAllCallback(napi_env env, int32_t sensorTypeId)
     g_onCallbackInfos.erase(sensorTypeId);
 }
 
-void RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
+static void RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
     std::vector<struct AsyncCallbackInfo*>::iterator iter;
