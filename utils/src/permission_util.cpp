@@ -48,8 +48,16 @@ bool PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t se
     if (sensorPermissions_.find(sensorTypeId) == sensorPermissions_.end()) {
         return true;
     }
+    int32_t result = -1;
     std::string permissionName = sensorPermissions_[sensorTypeId];
-    int32_t result = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    if (AccessTokenKit::GetTokenTypeFlag(callerToken) == TOKEN_NATIVE) {
+        result = AccessTokenKit::VerifyNativeToken(callerToken, permissionName);
+    } else if (AccessTokenKit::GetTokenTypeFlag(callerToken) == TOKEN_HAP) {
+        result = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    } else {
+        HiLog::Error(LABEL, "%{public}s tokenId invalid", __func__);
+        return false;
+    }
     if (result != PERMISSION_GRANTED) {
         HiLog::Error(LABEL, "%{public}s sensorId: %{public}d grant failed, result: %{public}d",
             __func__, sensorTypeId, result);

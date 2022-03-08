@@ -25,6 +25,13 @@
 using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
 
+bool IsNapiValueSame(napi_env env, napi_value lhs, napi_value rhs)
+{
+    bool result = false;
+    napi_strict_equals(env, lhs, rhs, &result);
+    return result;
+}
+
 bool IsMatchType(napi_env env, napi_value value, napi_valuetype type)
 {
     napi_valuetype paramType = napi_undefined;
@@ -443,7 +450,7 @@ void EmitUvEventLoop(AsyncCallbackInfo **asyncCallbackInfo)
             return;
         }
         g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
-        napi_call_function(env, undefined, callback, 2, result, &callResult);
+        napi_call_function(env, undefined, callback, 1, &result[1], &callResult);
         if (asyncCallbackInfo->type != ON_CALLBACK) {
             napi_delete_reference(env, asyncCallbackInfo->callback[0]);
             delete asyncCallbackInfo;
