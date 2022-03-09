@@ -19,10 +19,11 @@
 #include <vector>
 
 #include "errors.h"
-#include "i_sensor_client.h"
 #include "iremote_broker.h"
-#include "sensor.h"
+
+#include "i_sensor_client.h"
 #include "sensor_basic_data_channel.h"
+#include "sensor.h"
 
 namespace OHOS {
 namespace Sensors {

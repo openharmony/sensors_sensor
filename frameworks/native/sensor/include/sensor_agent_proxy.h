@@ -20,6 +20,7 @@
 #include <thread>
 
 #include "refbase.h"
+
 #include "sensor_agent_type.h"
 #include "sensor_data_channel.h"
 
