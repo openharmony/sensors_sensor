@@ -86,13 +86,11 @@ void SensorService::OnStart()
         HiLog::Error(LABEL, "%{public}s Init sensor policy error", __func__);
     }
 
-    bool isPublished = SystemAbility::Publish(this);
-    if (!isPublished) {
+    if (!SystemAbility::Publish(this)) {
         HiLog::Error(LABEL, "%{public}s publish SensorService error", __func__);
         return;
     }
     sensorManager_.InitSensorMap(sensorMap_, sensorDataProcesser_, reportDataCallback_);
-
     state_ = SensorServiceState::STATE_RUNNING;
 }
 
