@@ -17,12 +17,14 @@
 #define GEOMAGNETIC_FIELD_H
 
 #include <stdint.h>
-#include <ctime>
 #include <time.h>
 #include <stdio.h>
+
 #include <cmath>
+#include <ctime>
 #include <cstring>
 #include <vector>
+
 #include "iostream"
 
 class GeomagneticField {
