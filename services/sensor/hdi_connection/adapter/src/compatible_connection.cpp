@@ -127,7 +127,7 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         HiLog::Error(LABEL, "%{public}s event is NULL", __func__);
         return ERR_INVALID_VALUE;
     }
-    if (reportDataCb_ == nullptr || reportDataCallback_) {
+    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
         return ERR_NO_INIT;
     }

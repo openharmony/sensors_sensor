@@ -294,15 +294,16 @@ static napi_value Off(napi_env env, napi_callback_info info)
         HiLog::Error(LABEL, "%{public}s should subscribe first", __func__);
         return nullptr;
     }
-    int32_t ret = UnsubscribeSensor(sensorTypeId);
-    if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s UnsubscribeSensor failed", __func__);
+    if (argc == 2 && RemoveCallback(env, sensorTypeId, args[1]) != 0) {
+        HiLog::Debug(LABEL, "%{public}s there are other client registrations as well", __func__);
         return nullptr;
     }
     if (argc == 1) {
         RemoveAllCallback(env, sensorTypeId);
-    } else {
-        RemoveCallback(env, sensorTypeId, args[1]);
+    }
+    int32_t ret = UnsubscribeSensor(sensorTypeId);
+    if (ret < 0) {
+        HiLog::Error(LABEL, "%{public}s UnsubscribeSensor failed", __func__);
     }
     return nullptr;
 }
