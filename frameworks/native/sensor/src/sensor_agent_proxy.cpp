@@ -79,14 +79,6 @@ SensorAgentProxy::SensorAgentProxy()
     : dataChannel_(new (std::nothrow) SensorDataChannel())
 {}
 
-SensorAgentProxy::~SensorAgentProxy()
-{
-    if (sensorObj_ != nullptr) {
-        delete sensorObj_;
-        sensorObj_ = nullptr;
-    }
-}
-
 const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 {
     HiLog::Debug(LABEL, "%{public}s", __func__);

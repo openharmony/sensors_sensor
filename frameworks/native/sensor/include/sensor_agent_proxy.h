@@ -32,7 +32,7 @@ typedef int32_t (*SensorDataCallback)(struct SensorNativeData *events, uint32_t 
 struct SensorAgentProxy : public OHOS::RefBase {
 public:
     SensorAgentProxy();
-    ~SensorAgentProxy();
+    ~SensorAgentProxy() = default;
     static const SensorAgentProxy *GetSensorsObj();
     int32_t ActivateSensor(int32_t sensorId, const SensorUser *user) const;
     int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user) const;
