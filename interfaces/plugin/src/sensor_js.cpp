@@ -198,6 +198,7 @@ static void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value c
         .env = env,
         .asyncWork = nullptr,
         .deferred = nullptr,
+        .type = ON_CALLBACK,
     };
     napi_create_reference(env, callback, 1, &asyncCallbackInfo->callback[0]);
     std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
@@ -253,7 +254,7 @@ static void RemoveAllCallback(napi_env env, int32_t sensorTypeId)
     g_onCallbackInfos.erase(sensorTypeId);
 }
 
-static void RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
+static uint32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
     std::vector<struct AsyncCallbackInfo*>::iterator iter;
@@ -268,11 +269,12 @@ static void RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callba
             callbackInfos.erase(iter);
             if (callbackInfos.empty()) {
                 g_onCallbackInfos.erase(sensorTypeId);
-                return;
+                return 0;
             }
-            g_onCallbackInfos[sensorTypeId] = callbackInfos;
         }
     }
+    g_onCallbackInfos[sensorTypeId] = callbackInfos;
+    return callbackInfos.size();
 }
 
 static napi_value Off(napi_env env, napi_callback_info info)
