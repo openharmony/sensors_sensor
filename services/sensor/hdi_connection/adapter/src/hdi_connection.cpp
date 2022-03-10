@@ -248,6 +248,7 @@ void HdiConnection::setSensorBasicInfoState(int32_t sensorId, SensorState state)
     auto it = sensorBasicInfoMap_.find(sensorId);
     if (it == sensorBasicInfoMap_.end()) {
         HiLog::Warn(LABEL, "%{public}s should set batch first", __func__);
+        return;
     }
     sensorBasicInfoMap_[sensorId].SetSensorState(state);
 }

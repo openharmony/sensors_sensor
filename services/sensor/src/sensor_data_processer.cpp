@@ -373,8 +373,7 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
     int32_t eventNum = eventsBuf.eventNum;
     for (int32_t i = 0; i < eventNum; i++) {
         EventFilter(eventsBuf);
-        delete eventsBuf.circularBuf[eventsBuf.readPosition].data;
-        eventsBuf.circularBuf[eventsBuf.readPosition].data = nullptr;
+        delete[] eventsBuf.circularBuf[eventsBuf.readPosition].data;
         eventsBuf.readPosition++;
         if (eventsBuf.readPosition == CIRCULAR_BUF_LEN) {
             eventsBuf.readPosition = 0;

@@ -123,13 +123,11 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 
 int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *event)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if ((event == nullptr) || (event->dataLen == 0)) {
         HiLog::Error(LABEL, "%{public}s event is NULL", __func__);
         return ERR_INVALID_VALUE;
     }
-
-    if (reportDataCb_ == nullptr) {
+    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
         return ERR_NO_INIT;
     }
@@ -146,9 +144,9 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
     errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
     if (ret != EOK) {
         HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
+        delete[] sensorEvent.data;
         return COPY_ERR;
     }
-
     (void)(reportDataCallback_->*reportDataCb_)(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;

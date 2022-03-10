@@ -40,7 +40,7 @@ using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
 
 static std::map<int32_t, struct AsyncCallbackInfo*> g_onceCallbackInfos;
-static std::map<int32_t, struct AsyncCallbackInfo*> g_onCallbackInfos;
+static std::map<int32_t, std::vector<struct AsyncCallbackInfo*>> g_onCallbackInfos;
 
 static void DataCallbackImpl(SensorEvent *event)
 {
@@ -52,17 +52,19 @@ static void DataCallbackImpl(SensorEvent *event)
     int32_t sensorTypeId = event->sensorTypeId;
     float *data = (float *)(event->data);
     if (g_onCallbackInfos.find(sensorTypeId) != g_onCallbackInfos.end()) {
-        struct AsyncCallbackInfo *onCallbackInfo = g_onCallbackInfos[sensorTypeId];
-        onCallbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
-        onCallbackInfo->data.sensorData.dataLength = event->dataLen;
-        onCallbackInfo->data.sensorData.timestamp = event->timestamp;
-        errno_t ret = memcpy_s(onCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen);
-        if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
-            return;
+        for (uint32_t i = 0; i < g_onCallbackInfos[sensorTypeId].size(); ++i) {
+            g_onCallbackInfos[sensorTypeId][i]->data.sensorData.sensorTypeId = sensorTypeId;
+            g_onCallbackInfos[sensorTypeId][i]->data.sensorData.dataLength = event->dataLen;
+            g_onCallbackInfos[sensorTypeId][i]->data.sensorData.timestamp = event->timestamp;
+            errno_t ret = memcpy_s(g_onCallbackInfos[sensorTypeId][i]->data.sensorData.data,
+                event->dataLen, data, event->dataLen);
+            if (ret != EOK) {
+                HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
+                return;
+            }
+            g_onCallbackInfos[sensorTypeId][i]->type = ON_CALLBACK;
+            EmitUvEventLoop(&g_onCallbackInfos[sensorTypeId][i]);
         }
-        onCallbackInfo->type = ON_CALLBACK;
-        EmitUvEventLoop(&g_onCallbackInfos[sensorTypeId]);
     }
 
     if (g_onceCallbackInfos.find(sensorTypeId) == g_onceCallbackInfos.end()) {
@@ -170,9 +172,43 @@ static napi_value Once(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
+static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
+{
+    if (g_onCallbackInfos.find(sensorTypeId) == g_onCallbackInfos.end()) {
+        return false;
+    }
+    std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
+    for (auto callbackInfo : callbackInfos) {
+        napi_value sensorCallback = nullptr;
+        napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback);
+        if (IsNapiValueSame(env, callback, sensorCallback)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value callback)
+{
+    if (IsSubscribed(env, sensorTypeId, callback)) {
+        HiLog::Debug(LABEL, "%{public}s the callback has been subscribed", __func__);
+        return;
+    }
+    AsyncCallbackInfo *asyncCallbackInfo = new AsyncCallbackInfo {
+        .env = env,
+        .asyncWork = nullptr,
+        .deferred = nullptr,
+        .type = ON_CALLBACK,
+    };
+    napi_create_reference(env, callback, 1, &asyncCallbackInfo->callback[0]);
+    std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
+    callbackInfos.push_back(asyncCallbackInfo);
+    g_onCallbackInfos[sensorTypeId] = callbackInfos;
+}
+
 static napi_value On(napi_env env, napi_callback_info info)
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
+    HiLog::Debug(LABEL, "%{public}s in", __func__);
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
@@ -188,31 +224,57 @@ static napi_value On(napi_env env, napi_callback_info info)
     int32_t sensorTypeId = GetCppInt32(args[0], env);
     int64_t interval = 200000000;
     if (argc == 3) {
-        HiLog::Info(LABEL, "%{public}s argc = 3!", __func__);
         napi_value value = NapiGetNamedProperty(args[2], "interval", env);
         if (!IsMatchType(env, value, napi_number)) {
             HiLog::Error(LABEL, "%{public}s argument should be napi_number type!", __func__);
             return nullptr;
         }
         interval = GetCppInt64(value, env);
+        HiLog::Debug(LABEL, "%{public}s interval is %{public}lld", __func__, interval);
     }
-    AsyncCallbackInfo *asyncCallbackInfo = new AsyncCallbackInfo {
-        .env = env,
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-    };
-    napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
-    g_onCallbackInfos[sensorTypeId] = asyncCallbackInfo;
     int32_t ret = SubscribeSensor(sensorTypeId, interval, DataCallbackImpl);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s subscribeSensor  failed", __func__);
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        g_onCallbackInfos.erase(sensorTypeId);
+        HiLog::Error(LABEL, "%{public}s subscribeSensor failed", __func__);
+        return nullptr;
     }
-    HiLog::Info(LABEL, "%{public}s out", __func__);
+    UpdateCallbackInfos(env, sensorTypeId, args[1]);
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return nullptr;
+}
+
+static void RemoveAllCallback(napi_env env, int32_t sensorTypeId)
+{
+    std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
+    for (auto callbackInfo : callbackInfos) {
+        napi_delete_reference(env, callbackInfo->callback[0]);
+        callbackInfo->callback[0] = nullptr;
+        delete callbackInfo;
+        callbackInfo = nullptr;
+    }
+    g_onCallbackInfos.erase(sensorTypeId);
+}
+
+static uint32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
+{
+    std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
+    std::vector<struct AsyncCallbackInfo*>::iterator iter;
+    for (iter = callbackInfos.begin(); iter != callbackInfos.end(); iter++) {
+        napi_value sensorCallback = nullptr;
+        napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback);
+        if (IsNapiValueSame(env, callback, sensorCallback)) {
+            napi_delete_reference(env, (*iter)->callback[0]);
+            (*iter)->callback[0] = nullptr;
+            delete *iter;
+            *iter = nullptr;
+            callbackInfos.erase(iter);
+            if (callbackInfos.empty()) {
+                g_onCallbackInfos.erase(sensorTypeId);
+                return 0;
+            }
+        }
+    }
+    g_onCallbackInfos[sensorTypeId] = callbackInfos;
+    return callbackInfos.size();
 }
 
 static napi_value Off(napi_env env, napi_callback_info info)
@@ -222,38 +284,27 @@ static napi_value Off(napi_env env, napi_callback_info info)
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
-
-    if (argc < 1) {
+    if (argc < 1 || argc > 2 || !IsMatchType(env, args[0], napi_number)) {
         HiLog::Error(LABEL, "%{public}s Invalid input.", __func__);
         return nullptr;
     }
-    if (!IsMatchType(env, args[0], napi_number) || !IsMatchType(env, args[1], napi_function)) {
-        HiLog::Error(LABEL, "%{public}s argument is invalid", __func__);
+    int32_t sensorTypeId = GetCppInt32(args[0], env);
+    if (g_onCallbackInfos.find(sensorTypeId) == g_onCallbackInfos.end()
+        || (argc == 2 && !IsSubscribed(env, sensorTypeId, args[1]))) {
+        HiLog::Error(LABEL, "%{public}s should subscribe first", __func__);
         return nullptr;
     }
-    int32_t sensorTypeId = GetCppInt32(args[0], env);
-    AsyncCallbackInfo *asyncCallbackInfo = new AsyncCallbackInfo {
-        .env = env,
-        .asyncWork = nullptr,
-        .deferred = nullptr,
-    };
-    napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    if (argc == 2 && RemoveCallback(env, sensorTypeId, args[1]) != 0) {
+        HiLog::Debug(LABEL, "%{public}s there are other client registrations as well", __func__);
+        return nullptr;
+    }
+    if (argc == 1) {
+        RemoveAllCallback(env, sensorTypeId);
+    }
     int32_t ret = UnsubscribeSensor(sensorTypeId);
     if (ret < 0) {
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
         HiLog::Error(LABEL, "%{public}s UnsubscribeSensor failed", __func__);
-    } else {
-        HiLog::Error(LABEL, "%{public}s UnsubscribeSensor success", __func__);
-        asyncCallbackInfo->type = OFF_CALLBACK;
-        if (g_onCallbackInfos.find(sensorTypeId) != g_onCallbackInfos.end()) {
-            napi_delete_reference(env, g_onCallbackInfos[sensorTypeId]->callback[0]);
-            delete g_onCallbackInfos[sensorTypeId];
-            g_onCallbackInfos[sensorTypeId] = nullptr;
-            g_onCallbackInfos.erase(sensorTypeId);
-        }
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
 

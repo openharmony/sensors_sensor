@@ -53,8 +53,13 @@ ReportDataCallback::~ReportDataCallback()
 
 int32_t ReportDataCallback::ZReportDataCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
 {
-    if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr || event == nullptr) {
+    if (event == nullptr) {
+        HiLog::Error(LABEL, "%{public}s sensor data is null", __func__);
+        return ERROR;
+    }
+    if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
         HiLog::Error(LABEL, "%{public}s callback or circularBuf or event cannot be null", __func__);
+        delete[] event->data;
         return ERROR;
     }
     int32_t leftSize = CIRCULAR_BUF_LEN - cb->eventsBuf_.eventNum;

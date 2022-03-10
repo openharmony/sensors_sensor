@@ -138,7 +138,7 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
 {
     int32_t ret = iSensorHdiConnection_->DestroyHdiConnection();
     if (ret != 0) {
-        HiLog::Info(LABEL, "%{public}s destroy hdi connectionr failed", __func__);
+        HiLog::Info(LABEL, "%{public}s destroy hdi connection failed", __func__);
         return DEVICE_ERR;
     }
     return ret;
