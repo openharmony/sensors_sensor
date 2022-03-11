@@ -15,8 +15,8 @@
 #ifndef SENSOR_NAPI_UTILS_H
 #define SENSOR_NAPI_UTILS_H
 
-#include <uv.h>
 #include <iostream>
+#include <uv.h>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"

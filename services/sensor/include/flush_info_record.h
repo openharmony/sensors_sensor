@@ -20,10 +20,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "refbase.h"
-
-#include "singleton.h"
 #include "nocopyable.h"
+#include "refbase.h"
+#include "singleton.h"
 
 #include "client_info.h"
 #include "sensor_agent_type.h"
