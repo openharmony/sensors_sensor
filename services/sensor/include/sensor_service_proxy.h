@@ -17,9 +17,10 @@
 #define SENSOR_SERVICE_PROXY_H
 
 #include "errors.h"
-#include "i_sensor_service.h"
 #include "iremote_proxy.h"
 #include "nocopyable.h"
+
+#include "i_sensor_service.h"
 #include "sensor_agent_type.h"
 
 namespace OHOS {

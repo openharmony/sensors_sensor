@@ -19,10 +19,10 @@
 #include <vector>
 
 #include "refbase.h"
+#include "nocopyable.h"
+
 #include "sensor_agent_type.h"
 #include "sensor_basic_data_channel.h"
-
-#include "nocopyable.h"
 
 namespace OHOS {
 namespace Sensors {

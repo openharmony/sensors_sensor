@@ -15,11 +15,13 @@
 #ifndef SENSOR_NAPI_UTILS_H
 #define SENSOR_NAPI_UTILS_H
 
+#include <iostream>
+#include <uv.h>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include <uv.h>
+
 #include "sensor_agent.h"
-#include <iostream>
 
 using std::vector;
 using std::string;

@@ -16,7 +16,7 @@
 #ifndef SENSOR_ALGORITHM_H
 #define SENSOR_ALGORITHM_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <vector>
 
 class SensorAlgorithm {
