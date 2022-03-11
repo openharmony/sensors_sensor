@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "refbase.h"
+
 #include "sensor_agent_type.h"
 
 namespace OHOS {
