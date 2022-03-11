@@ -15,7 +15,9 @@
 
 #ifndef APP_THREAD_INFO_H
 #define APP_THREAD_INFO_H
+
 #include "accesstoken_kit.h"
+
 namespace OHOS {
 namespace Sensors {
 using Security::AccessToken::AccessTokenID;

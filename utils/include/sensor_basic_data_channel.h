@@ -21,6 +21,7 @@
 
 #include "message_parcel.h"
 #include "refbase.h"
+
 #include "sensor_agent_type.h"
 
 namespace OHOS {
