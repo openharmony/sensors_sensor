@@ -161,9 +161,6 @@ static napi_value Once(napi_env env, napi_callback_info info)
         int32_t ret = SubscribeSensor(sensorTypeId, 200000000, DataCallbackImpl);
         if (ret < 0) {
             HiLog::Error(LABEL, "%{public}s subscribe Sensor failed", __func__);
-            asyncCallbackInfo->type = FAIL;
-            asyncCallbackInfo->error.code = ret;
-            EmitAsyncCallbackWork(asyncCallbackInfo);
             g_onceCallbackInfos.erase(sensorTypeId);
             return nullptr;
         }
