@@ -29,9 +29,10 @@ constexpr int32_t RECEIVE_DATA_SIZE = 100;
 MyFileDescriptorListener::MyFileDescriptorListener()
 {
     channel_ = nullptr;
-    receiveDataBuff_ = new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE]);
+    receiveDataBuff_ =
+        new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE]);
     if (receiveDataBuff_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s receiveDataBuff_ memory request failed", __func__, fileDescriptor);
+        HiLog::Error(LABEL, "%{public}s receiveDataBuff_ memory request failed", __func__);
     }
 }
 
