@@ -143,9 +143,9 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, 
     for (const auto &sensor : sensors) {
         auto sensorId = sensor.GetSensorId();
         dprintf(fd,
-                "sensorId:%8u | sensorType:%s | name:%s | vendor:%s | maxRange:%f | fifoMaxEventCount:%d "
-                "| minSamplePeriodNs:%lld | maxSamplePeriodNs:%lld\n",
-                sensorId, sensorMap_[sensorId].c_str(), sensor.GetName().c_str(), sensor.GetVendor().c_str(),
+                "sensorId:%8u | sensorType:%s | sensorName:%s | vendorName:%s | maxRange:%f"
+                "| fifoMaxEventCount:%d | minSamplePeriodNs:%lld | maxSamplePeriodNs:%lld\n",
+                sensorId, sensorMap_[sensorId].c_str(), sensor.GetSensorName().c_str(), sensor.GetVendorName().c_str(),
                 sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(), (long long) { sensor.GetMinSamplePeriodNs() },
                 (long long) { sensor.GetMaxSamplePeriodNs() });
     }

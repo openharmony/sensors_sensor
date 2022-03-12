@@ -82,13 +82,20 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
     for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
         const std::string sensorName(sensorInfos[i].sensorName);
         const std::string vendorName(sensorInfos[i].vendorName);
+        const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
+        const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
         const int32_t sensorId = sensorInfos[i].sensorId;
         const float maxRange = sensorInfos[i].maxRange;
         Sensor sensor;
         sensor.SetSensorId(sensorId);
+        sensor.SetSensorTypeId(sensorId);
+        sensor.SetFirmwareVersion(firmwareVersion.c_str());
+        sensor.SetHardwareVersion(hardwareVersion.c_str());
         sensor.SetMaxRange(maxRange);
-        sensor.SetName(sensorName.c_str());
-        sensor.SetVendor(vendorName.c_str());
+        sensor.SetSensorName(sensorName.c_str());
+        sensor.SetVendorName(vendorName.c_str());
+        sensor.SetResolution(sensorInfos[i].accuracy);
+        sensor.SetPower(sensorInfos[i].power);
         sensorList.push_back(sensor);
     }
     return ERR_OK;
@@ -241,6 +248,7 @@ void HdiConnection::setSensorBasicInfoState(int32_t sensorId, SensorState state)
     auto it = sensorBasicInfoMap_.find(sensorId);
     if (it == sensorBasicInfoMap_.end()) {
         HiLog::Warn(LABEL, "%{public}s should set batch first", __func__);
+        return;
     }
     sensorBasicInfoMap_[sensorId].SetSensorState(state);
 }

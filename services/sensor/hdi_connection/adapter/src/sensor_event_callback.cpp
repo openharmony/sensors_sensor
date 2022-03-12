@@ -27,7 +27,17 @@ std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>(
 }
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    ZReportDataCb reportDataCb_ = HdiConnection_->getReportDataCb();
+    sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->getReportDataCallback();
+    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
+        HiLog::Error(LABEL, "%{public}s reportDataCb_ or reportDataCallback_ cannot be null", __func__);
+        return ERR_NO_INIT;
+    }
+    int32_t dataSize = static_cast<int32_t>(event.data.size());
+    if (dataSize == 0) {
+        HiLog::Error(LABEL, "%{public}s data is empty", __func__);
+        return ERR_INVALID_VALUE;
+    }
     struct SensorEvent sensorEvent = {
         .sensorTypeId = event.sensorId,
         .version = event.version,
@@ -37,14 +47,8 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
         .dataLen = event.dataLen
     };
     sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
-    for (int32_t i = 0; i < static_cast<int32_t>(event.data.size()); i++) {
+    for (int32_t i = 0; i < static_cast<int32_t>(dataSize); i++) {
         sensorEvent.data[i] = event.data[i];
-    }
-    ZReportDataCb reportDataCb_ = HdiConnection_->getReportDataCb();
-    sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->getReportDataCallback();
-    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
-        return ERR_NO_INIT;
     }
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();

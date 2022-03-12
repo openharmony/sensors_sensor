@@ -21,6 +21,7 @@
 
 #include "message_parcel.h"
 #include "refbase.h"
+
 #include "sensor_agent_type.h"
 
 namespace OHOS {
@@ -28,12 +29,12 @@ namespace Sensors {
 constexpr int32_t INVALID_FD = -1;
 constexpr int32_t SENSOR_MAX_LENGTH = 64;
 struct TransferSensorEvents {
-    uint32_t sensorTypeId; /**< Sensor type ID */
-    int32_t version; /**< Sensor algorithm version */
-    int64_t timestamp; /**< Time when sensor data was reported */
-    int32_t option; /**< Sensor data options, including the measurement range and accuracy */
-    int32_t mode; /**< Sensor data reporting mode (described in {@link SensorMode}) */
-    uint32_t dataLen; /**< Sensor data length */
+    uint32_t sensorTypeId;
+    int32_t version;
+    int64_t timestamp;
+    int32_t option;
+    int32_t mode;
+    uint32_t dataLen;
     uint8_t data[SENSOR_MAX_LENGTH];
 };
 class SensorBasicDataChannel : public RefBase {

@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <thread>
+
 #include "sensor_basic_data_channel.h"
 #include "sensor_agent_type.h"
 #include "my_event_handler.h"

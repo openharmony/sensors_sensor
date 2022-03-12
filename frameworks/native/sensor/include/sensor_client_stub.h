@@ -16,9 +16,10 @@
 #ifndef SENSOR_CLIENT_STUB_H
 #define SENSOR_CLIENT_STUB_H
 
-#include "i_sensor_client.h"
 #include "iremote_stub.h"
 #include "message_parcel.h"
+
+#include "i_sensor_client.h"
 
 namespace OHOS {
 namespace Sensors {

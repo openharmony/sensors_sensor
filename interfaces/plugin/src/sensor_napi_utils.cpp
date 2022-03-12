@@ -25,6 +25,13 @@
 using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
 
+bool IsNapiValueSame(napi_env env, napi_value lhs, napi_value rhs)
+{
+    bool result = false;
+    napi_strict_equals(env, lhs, rhs, &result);
+    return result;
+}
+
 bool IsMatchType(napi_env env, napi_value value, napi_valuetype type)
 {
     napi_valuetype paramType = napi_undefined;
@@ -143,7 +150,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_HALL, { "status" } },
     { SENSOR_TYPE_ID_PROXIMITY, { "distance" } },
     { SENSOR_TYPE_ID_HUMIDITY, { "humidity" } },
-    { SENSOR_TYPE_ID_ORIENTATION, { "x", "y", "z" } },
+    { SENSOR_TYPE_ID_ORIENTATION, { "alpha", "beta", "gamma" } },
     { SENSOR_TYPE_ID_GRAVITY, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_LINEAR_ACCELERATION, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_ROTATION_VECTOR, { "x", "y", "z", "w" } },
@@ -152,7 +159,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, { "x", "y", "z", "biasX", "biasY", "biasZ" } },
     { SENSOR_TYPE_ID_SIGNIFICANT_MOTION, { "scalar" } },
     { SENSOR_TYPE_ID_PEDOMETER_DETECTION, { "scalar" } },
-    { SENSOR_TYPE_ID_PEDOMETER, { "step" } },
+    { SENSOR_TYPE_ID_PEDOMETER, { "steps" } },
     { SENSOR_TYPE_ID_HEART_RATE, { "heartRate" } },
     { SENSOR_TYPE_ID_WEAR_DETECTION, { "value" } },
     { SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, { "x", "y", "z", "biasX", "biasY", "biasZ" } }
@@ -405,11 +412,15 @@ void EmitAsyncCallbackWork(AsyncCallbackInfo *asyncCallbackInfo)
     HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
-void EmitUvEventLoop(AsyncCallbackInfo *asyncCallbackInfo)
+void EmitUvEventLoop(AsyncCallbackInfo **asyncCallbackInfo)
 {
     uv_loop_s *loop(nullptr);
-    HiLog::Error(LABEL, "%{public}s env: %{public}p", __func__, asyncCallbackInfo->env);
-    napi_get_uv_event_loop(asyncCallbackInfo->env, &loop);
+    if (asyncCallbackInfo == nullptr || *asyncCallbackInfo == nullptr
+        || (*asyncCallbackInfo)->env == nullptr) {
+        HiLog::Error(LABEL, "%{public}s asyncCallbackInfo is null", __func__);
+        return;
+    }
+    napi_get_uv_event_loop((*asyncCallbackInfo)->env, &loop);
     if (loop == nullptr) {
         HiLog::Error(LABEL, "%{public}s loop is null", __func__);
         return;
@@ -421,19 +432,16 @@ void EmitUvEventLoop(AsyncCallbackInfo *asyncCallbackInfo)
     }
     work->data = reinterpret_cast<void *>(asyncCallbackInfo);
     uv_queue_work(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
-        AsyncCallbackInfo *asyncCallbackInfo = reinterpret_cast<AsyncCallbackInfo *>(work->data);
-        if (asyncCallbackInfo == nullptr) {
+        AsyncCallbackInfo *asyncCallbackInfo = *reinterpret_cast<AsyncCallbackInfo **>(work->data);
+        if (asyncCallbackInfo == nullptr || asyncCallbackInfo->env == nullptr
+            || asyncCallbackInfo->callback[0] == nullptr) {
             HiLog::Error(LABEL, "%{public}s asyncCallbackInfo is null", __func__);
             return;
         }
         napi_env env = asyncCallbackInfo->env;
-        napi_value undefined;
+        napi_value undefined = nullptr;
         napi_get_undefined(env, &undefined);
-        if (asyncCallbackInfo->callback[0] == nullptr) {
-            HiLog::Error(LABEL, "%{public}s callback is null", __func__);
-            return;
-        }
-        napi_value callback;
+        napi_value callback = nullptr;
         napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback);
         napi_value callResult = nullptr;
         napi_value result[2] = {0};
@@ -442,7 +450,7 @@ void EmitUvEventLoop(AsyncCallbackInfo *asyncCallbackInfo)
             return;
         }
         g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
-        napi_call_function(env, undefined, callback, 2, result, &callResult);
+        napi_call_function(env, undefined, callback, 1, &result[1], &callResult);
         if (asyncCallbackInfo->type != ON_CALLBACK) {
             napi_delete_reference(env, asyncCallbackInfo->callback[0]);
             delete asyncCallbackInfo;

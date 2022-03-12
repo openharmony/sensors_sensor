@@ -46,9 +46,9 @@ extern "C" {
 #endif
 
 /** Maximum length of the sensor name */
-#ifndef SENSOR_NAME_MAX_LEN2
-#define SENSOR_NAME_MAX_LEN2 48
-#endif /* SENSOR_NAME_MAX_LEN */
+#ifndef NAME_MAX_LEN
+#define NAME_MAX_LEN 48
+#endif /* NAME_MAX_LEN */
 /** Size of sensor data */
 #ifndef SENSOR_USER_DATA_SIZE
 #define SENSOR_USER_DATA_SIZE 104
@@ -102,8 +102,8 @@ typedef enum SensorTypeId {
  * @since 5
  */
 typedef struct SensorInfo {
-    char sensorName[SENSOR_NAME_MAX_LEN2];   /**< Sensor name */
-    char vendorName[SENSOR_NAME_MAX_LEN2];   /**< Sensor vendor */
+    char sensorName[NAME_MAX_LEN];   /**< Sensor name */
+    char vendorName[NAME_MAX_LEN];   /**< Sensor vendor */
     char firmwareVersion[VERSION_MAX_LEN];  /**< Sensor firmware version */
     char hardwareVersion[VERSION_MAX_LEN];  /**< Sensor hardware version */
     int32_t sensorTypeId;  /**< Sensor type ID */
@@ -150,7 +150,7 @@ typedef struct UserData {
  * @since 5
  */
 typedef struct SensorUser {
-    char name[SENSOR_NAME_MAX_LEN2];  /**< Name of the sensor data subscriber */
+    char name[NAME_MAX_LEN];  /**< Name of the sensor data subscriber */
     RecordSensorCallback callback;   /**< Callback for reporting sensor data */
     UserData *userData;              /**< Reserved field for the sensor data subscriber */
 } SensorUser;

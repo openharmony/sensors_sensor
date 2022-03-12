@@ -20,14 +20,15 @@
 #include <unordered_map>
 #include <vector>
 
-#include "client_info.h"
-#include "refbase.h"
-#include "sensor_basic_data_channel.h"
-#include "sensor_hdi_connection.h"
-#include "sensors_errors.h"
-#include "singleton.h"
 #include "nocopyable.h"
+#include "refbase.h"
+#include "singleton.h"
+
+#include "client_info.h"
 #include "sensor_agent_type.h"
+#include "sensor_basic_data_channel.h"
+#include "sensors_errors.h"
+#include "sensor_hdi_connection.h"
 
 namespace OHOS {
 namespace Sensors {

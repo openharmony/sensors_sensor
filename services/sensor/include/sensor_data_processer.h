@@ -21,10 +21,11 @@
 
 #include "refbase.h"
 
+#include "nocopyable.h"
+
 #include "client_info.h"
 #include "fifo_cache_data.h"
 #include "flush_info_record.h"
-#include "nocopyable.h"
 #include "report_data_callback.h"
 #include "sensor.h"
 #include "sensors_log_domain.h"

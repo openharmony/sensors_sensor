@@ -29,42 +29,61 @@ public:
     virtual ~Sensor() = default;
     uint32_t GetSensorId() const;
     void SetSensorId(uint32_t sensorId);
-    std::string GetName() const;
-    void SetName(const std::string &name);
-    std::string GetVendor() const;
-    void SetVendor(const std::string &vendor);
-    uint32_t GetVersion() const;
-    void SetVersion(uint32_t version);
+
+    uint32_t GetSensorTypeId() const;
+    void SetSensorTypeId(uint32_t sensorTypeId);
+
+    std::string GetSensorName() const;
+    void SetSensorName(const std::string &sensorName);
+
+    std::string GetVendorName() const;
+    void SetVendorName(const std::string &vendorName);
+
+    std::string GetHardwareVersion() const;
+    void SetHardwareVersion(const std::string &hardwareVersion);
+
+    std::string GetFirmwareVersion() const;
+    void SetFirmwareVersion(const std::string &firmwareVersion);
+
     float GetMaxRange() const;
     void SetMaxRange(float maxRange);
+
     float GetResolution() const;
     void SetResolution(float resolution);
+
+    float GetPower() const;
+    void SetPower(float power);
+
     uint32_t GetFlags() const;
     void SetFlags(uint32_t flags);
+
     int32_t GetFifoMaxEventCount() const;
     void SetFifoMaxEventCount(int32_t fifoMaxEventCount);
+
     int64_t GetMinSamplePeriodNs() const;
     void SetMinSamplePeriodNs(int64_t minSamplePeriodNs);
+
     int64_t GetMaxSamplePeriodNs() const;
     void SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs);
-    std::vector<uint32_t> GetReserved() const;
-    void SetReserved(const std::vector<uint32_t> &reserved);
+
     bool ReadFromParcel(Parcel &parcel);
     static std::unique_ptr<Sensor> Unmarshalling(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
 
 private:
     uint32_t sensorId_;
-    std::string name_;
-    std::string vendor_;
-    uint32_t version_;
+    uint32_t sensorTypeId_;
+    std::string sensorName_;
+    std::string vendorName_;
+    std::string firmwareVersion_;
+    std::string hardwareVersion_;
     float maxRange_;
     float resolution_;
+    float power_;
     uint32_t flags_;
     int32_t fifoMaxEventCount_;
     int64_t minSamplePeriodNs_;
     int64_t maxSamplePeriodNs_;
-    std::vector<uint32_t> reserved_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

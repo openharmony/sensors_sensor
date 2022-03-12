@@ -47,13 +47,20 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
     for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
         const std::string sensorName(sensorInfos[i].sensorName);
         const std::string vendorName(sensorInfos[i].vendorName);
+        const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
+        const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
         const int32_t sensorId = sensorInfos[i].sensorId;
         const float maxRange = sensorInfos[i].maxRange;
         Sensor sensor;
         sensor.SetSensorId(sensorId);
+        sensor.SetSensorTypeId(sensorId);
+        sensor.SetFirmwareVersion(firmwareVersion.c_str());
+        sensor.SetHardwareVersion(hardwareVersion.c_str());
         sensor.SetMaxRange(maxRange);
-        sensor.SetName(sensorName.c_str());
-        sensor.SetVendor(vendorName.c_str());
+        sensor.SetSensorName(sensorName.c_str());
+        sensor.SetVendorName(vendorName.c_str());
+        sensor.SetResolution(sensorInfos[i].accuracy);
+        sensor.SetPower(sensorInfos[i].power);
         sensorList.push_back(sensor);
     }
     return ERR_OK;
@@ -116,13 +123,11 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 
 int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *event)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if ((event == nullptr) || (event->dataLen == 0)) {
         HiLog::Error(LABEL, "%{public}s event is NULL", __func__);
         return ERR_INVALID_VALUE;
     }
-
-    if (reportDataCb_ == nullptr) {
+    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
         return ERR_NO_INIT;
     }
@@ -139,9 +144,9 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
     errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
     if (ret != EOK) {
         HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
+        delete[] sensorEvent.data;
         return COPY_ERR;
     }
-
     (void)(reportDataCallback_->*reportDataCb_)(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
