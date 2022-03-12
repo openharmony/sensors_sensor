@@ -18,15 +18,17 @@
 
 #include <map>
 #include <vector>
+
 #include "iservice_registry.h"
-#include "sensor.h"
+#include "singleton.h"
+
+#include "sensor_agent_type.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor_basic_info.h"
 #include "sensor_client_stub.h"
 #include "sensor_data_channel.h"
+#include "sensor.h"
 #include "sensor_service_proxy.h"
-#include "singleton.h"
-#include "sensor_agent_type.h"
 
 namespace OHOS {
 namespace Sensors {

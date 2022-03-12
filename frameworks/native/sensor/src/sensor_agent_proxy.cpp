@@ -323,29 +323,36 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
         HiLog::Error(LABEL, "%{public}s malloc sensorInfo failed", __func__);
         return OHOS::Sensors::ERROR;
     }
-    for (int32_t index = 0; index < *count; index++) {
-        errno_t ret = strcpy_s((*sensorInfo + index)->sensorName, SENSOR_NAME_MAX_LEN2,
-            sensorList_[index].GetName().c_str());
+    for (int32_t index = 0; index < *count; ++index) {
+        errno_t ret = strcpy_s((*sensorInfo + index)->sensorName, NAME_MAX_LEN,
+            sensorList_[index].GetSensorName().c_str());
         if (ret != EOK) {
             HiLog::Error(LABEL, "%{public}s strcpy sensorName failed", __func__);
             return OHOS::Sensors::ERROR;
         }
-        ret = strcpy_s((*sensorInfo + index)->vendorName, SENSOR_NAME_MAX_LEN2, sensorList_[index].GetVendor().c_str());
+        ret = strcpy_s((*sensorInfo + index)->vendorName, NAME_MAX_LEN,
+            sensorList_[index].GetVendorName().c_str());
         if (ret != EOK) {
             HiLog::Error(LABEL, "%{public}s strcpy vendorName failed", __func__);
             return OHOS::Sensors::ERROR;
         }
-        std::string version = std::to_string(sensorList_[index].GetVersion());
-        ret = strcpy_s((*sensorInfo + index)->hardwareVersion, VERSION_MAX_LEN, version.c_str());
+        ret = strcpy_s((*sensorInfo + index)->hardwareVersion, VERSION_MAX_LEN,
+            sensorList_[index].GetHardwareVersion().c_str());
+        if (ret != EOK) {
+            HiLog::Error(LABEL, "%{public}s strcpy hardwareVersion failed", __func__);
+            return OHOS::Sensors::ERROR;
+        }
+        ret = strcpy_s((*sensorInfo + index)->firmwareVersion, VERSION_MAX_LEN,
+            sensorList_[index].GetFirmwareVersion().c_str());
         if (ret != EOK) {
             HiLog::Error(LABEL, "%{public}s strcpy hardwareVersion failed", __func__);
             return OHOS::Sensors::ERROR;
         }
         (*sensorInfo + index)->sensorId = static_cast<int32_t>(sensorList_[index].GetSensorId());
-        (*sensorInfo + index)->sensorTypeId = static_cast<int32_t>(sensorList_[index].GetSensorId());
+        (*sensorInfo + index)->sensorTypeId = static_cast<int32_t>(sensorList_[index].GetSensorTypeId());
         (*sensorInfo + index)->maxRange = sensorList_[index].GetMaxRange();
         (*sensorInfo + index)->precision = sensorList_[index].GetResolution();
-        (*sensorInfo + index)->power = 0.0f;
+        (*sensorInfo + index)->power = sensorList_[index].GetPower();
     }
     return OHOS::Sensors::SUCCESS;
 }

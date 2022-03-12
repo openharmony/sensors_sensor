@@ -41,7 +41,7 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_NATIVE, "SensorDataChannel" };
 // max 100 data in cache buffer
 constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(struct SensorEvent) * 100;
-const uint32_t STOP_EVENT_ID = 0;
+constexpr uint32_t STOP_EVENT_ID = 0;
 }  // namespace
 
 SensorDataChannel::SensorDataChannel()

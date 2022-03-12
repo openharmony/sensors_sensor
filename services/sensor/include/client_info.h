@@ -25,9 +25,10 @@
 #include "singleton.h"
 
 #include "accesstoken_kit.h"
-#include "app_thread_info.h"
 #include "iremote_object.h"
 #include "nocopyable.h"
+
+#include "app_thread_info.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor_basic_info.h"
 #include "sensor_channel_info.h"

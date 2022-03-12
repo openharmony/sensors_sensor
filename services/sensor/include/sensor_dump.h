@@ -20,9 +20,10 @@
 
 #include "singleton.h"
 
+#include "nocopyable.h"
+
 #include "client_info.h"
 #include "sensor.h"
-#include "nocopyable.h"
 #include "sensor_agent_type.h"
 
 namespace OHOS {

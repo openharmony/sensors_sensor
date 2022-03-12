@@ -16,10 +16,11 @@
 #ifndef SENSOR_CLIENT_PROXY_H
 #define SENSOR_CLIENT_PROXY_H
 
-#include "i_sensor_client.h"
 #include "iremote_proxy.h"
-#include "sensor_agent_type.h"
 #include "nocopyable.h"
+
+#include "i_sensor_client.h"
+#include "sensor_agent_type.h"
 
 namespace OHOS {
 namespace Sensors {

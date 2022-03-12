@@ -15,11 +15,13 @@
 #ifndef SENSOR_NAPI_UTILS_H
 #define SENSOR_NAPI_UTILS_H
 
+#include <iostream>
+#include <uv.h>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include <uv.h>
+
 #include "sensor_agent.h"
-#include <iostream>
 
 using std::vector;
 using std::string;
@@ -100,6 +102,8 @@ struct AsyncCallbackInfo {
 
 using ConvertDataFunc = void(*)(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
 
+bool IsNapiValueSame(napi_env env, napi_value lhs, napi_value rhs);
+
 bool IsMatchType(napi_env env, napi_value value, napi_valuetype type);
 
 napi_value GetNapiInt32(int32_t number, napi_env env);
@@ -110,7 +114,7 @@ bool GetCppBool(napi_value value, napi_env env);
 
 void EmitAsyncCallbackWork(AsyncCallbackInfo *async_callback_info);
 
-void EmitUvEventLoop(AsyncCallbackInfo *async_callback_info);
+void EmitUvEventLoop(AsyncCallbackInfo **async_callback_info);
 
 int64_t GetCppInt64(napi_value value, napi_env env);
 
