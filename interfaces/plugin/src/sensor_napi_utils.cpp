@@ -150,7 +150,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_HALL, { "status" } },
     { SENSOR_TYPE_ID_PROXIMITY, { "distance" } },
     { SENSOR_TYPE_ID_HUMIDITY, { "humidity" } },
-    { SENSOR_TYPE_ID_ORIENTATION, { "x", "y", "z" } },
+    { SENSOR_TYPE_ID_ORIENTATION, { "alpha", "beta", "gamma" } },
     { SENSOR_TYPE_ID_GRAVITY, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_LINEAR_ACCELERATION, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_ROTATION_VECTOR, { "x", "y", "z", "w" } },
@@ -159,7 +159,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, { "x", "y", "z", "biasX", "biasY", "biasZ" } },
     { SENSOR_TYPE_ID_SIGNIFICANT_MOTION, { "scalar" } },
     { SENSOR_TYPE_ID_PEDOMETER_DETECTION, { "scalar" } },
-    { SENSOR_TYPE_ID_PEDOMETER, { "step" } },
+    { SENSOR_TYPE_ID_PEDOMETER, { "steps" } },
     { SENSOR_TYPE_ID_HEART_RATE, { "heartRate" } },
     { SENSOR_TYPE_ID_WEAR_DETECTION, { "value" } },
     { SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, { "x", "y", "z", "biasX", "biasY", "biasZ" } }

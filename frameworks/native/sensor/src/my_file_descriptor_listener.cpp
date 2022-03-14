@@ -27,10 +27,14 @@ constexpr int32_t RECEIVE_DATA_SIZE = 100;
 }  // namespace
 
 MyFileDescriptorListener::MyFileDescriptorListener()
-    :channel_(nullptr),
-     receiveDataBuff_(
-        new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE])
-{}
+{
+    channel_ = nullptr;
+    receiveDataBuff_ =
+        new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE];
+    if (receiveDataBuff_ == nullptr) {
+        HiLog::Error(LABEL, "%{public}s receiveDataBuff_ memory request failed", __func__);
+    }
+}
 
 MyFileDescriptorListener::~MyFileDescriptorListener()
 {
@@ -51,12 +55,11 @@ void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 
     FileDescriptorListener::OnReadable(fileDescriptor);
     if (receiveDataBuff_ == nullptr) {
-        receiveDataBuff_ =
-            new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE];
+        return;
     }
     int32_t len =
         recv(fileDescriptor, receiveDataBuff_, sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE, 0);
-    int32_t eventSize = sizeof(struct TransferSensorEvents);
+    int32_t eventSize = static_cast<int32_t>(sizeof(struct TransferSensorEvents));
     while (len > 0) {
         int32_t num = len / eventSize;
         for (int i = 0; i < num; i++) {
