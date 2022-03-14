@@ -179,7 +179,6 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
     }
     std::vector<AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto callbackInfo : callbackInfos) {
-
         napi_value sensorCallback = nullptr;
         napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback);
         if (IsNapiValueSame(env, callback, sensorCallback)) {
@@ -783,7 +782,6 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
             asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
         }
     }
-
     if (argc == 0) {
         napi_deferred deferred = nullptr;
         napi_value promise = nullptr;
