@@ -16,6 +16,7 @@
 #define SENSOR_JS_H
 
 #include "sensor_agent.h"
+#include "errors.h"
 
 static int32_t UnsubscribeSensor(int32_t sensorTypeId);
 static void DataCallbackImpl(SensorEvent *event);
