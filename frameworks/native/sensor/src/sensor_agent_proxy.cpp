@@ -99,10 +99,6 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
     struct SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        if (eventStream.data == nullptr || g_subscribeMap[eventStream.sensorTypeId] == nullptr) {
-            HiLog::Error(LABEL, "%{public}s data or sensorUser is nullptr", __func__);
-            return;
-        }
         if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {
             HiLog::Error(LABEL, "%{public}s sensorTypeId not in g_subscribeMap", __func__);
             return;
