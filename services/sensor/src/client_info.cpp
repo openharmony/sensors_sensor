@@ -671,6 +671,7 @@ std::vector<int32_t> ClientInfo::GetCmdList(uint32_t sensorId, int32_t uid)
 
 void ClientInfo::UpdateDataQueue(int32_t sensorId, struct SensorEvent &event)
 {
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (sensorId == HEART_RATE_SENSOR_ID) {
         return;
     }

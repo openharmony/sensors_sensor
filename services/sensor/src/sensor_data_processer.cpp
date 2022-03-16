@@ -337,9 +337,6 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
             }
         }
     } else {
-        if (channelList.empty() || channelList.size() == 0) {
-            HiLog::Error(LABEL, "%{public}s channelList is empty", __func__);
-        }
         for (auto &channel : channelList) {
             int32_t index = flushInfo_.GetFlushChannelIndex(flushVec, channel);
             if (index >= 0) {
