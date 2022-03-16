@@ -158,11 +158,11 @@ void SensorService::OnStop()
 
 void SensorService::ReportSensorUsedInfo(uint32_t sensorId, bool enable)
 {
-    char uidChar[REPORT_STATUS_LEN];
+    char uidChar[REPORT_STATUS_LEN] = {0};
     int32_t uid = this->GetCallingUid();
     std::string packageName("");
     sensorManager_.GetPackageNameFromUid(uid, packageName);
-    int32_t ret = sprintf_s(uidChar, sizeof(uidChar), "%d", uid);
+    int32_t ret = sprintf_s(uidChar, sizeof(uidChar) - 1, "%d", uid);
     if (ret < 0) {
         HiLog::Error(LABEL, "%{public}s sprintf uidChar failed", __func__);
         return;

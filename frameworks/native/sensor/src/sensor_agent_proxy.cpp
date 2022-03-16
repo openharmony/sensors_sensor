@@ -178,7 +178,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
-    if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
+    if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
         HiLog::Error(LABEL, "%{public}s subscribe sensorId first", __func__);
         return OHOS::Sensors::ERROR;
     }
@@ -189,6 +189,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     if (ret != 0) {
         HiLog::Error(LABEL, "%{public}s enable sensor failed, ret: %{public}d", __func__, ret);
         g_subscribeMap.erase(sensorId);
+
         return OHOS::Sensors::ERROR;
     }
     return OHOS::Sensors::SUCCESS;
