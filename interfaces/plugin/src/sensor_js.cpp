@@ -270,7 +270,7 @@ static uint32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value ca
             (*iter)->callback[0] = nullptr;
             delete *iter;
             *iter = nullptr;
-            callbackInfos.erase(++iter);
+            iter = callbackInfos.erase(iter);
             if (callbackInfos.empty()) {
                 g_onCallbackInfos.erase(sensorTypeId);
                 return 0;
