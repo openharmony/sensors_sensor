@@ -64,7 +64,6 @@ int32_t HdiConnection::ConnectHdi()
     }
     HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
     return ERR_NO_INIT;
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
@@ -99,8 +98,8 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensorList.push_back(sensor);
     }
-    return ERR_OK;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return ERR_OK;
 }
 
 int32_t HdiConnection::EnableSensor(int32_t sensorId)
@@ -160,8 +159,8 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
         HiLog::Error(LABEL, "%{public}s is failed", __func__);
         return ret;
     }
-    return ERR_OK;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return ERR_OK;
 }
 
 int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
@@ -176,8 +175,8 @@ int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
         HiLog::Error(LABEL, "%{public}s is failed", __func__);
         return ret;
     }
-    return ERR_OK;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return ERR_OK;
 }
 
 int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
@@ -194,8 +193,8 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
     }
     reportDataCb_ = cb;
     reportDataCallback_ = reportDataCallback;
-    return ERR_OK;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return ERR_OK;
 }
 
 int32_t HdiConnection::DestroyHdiConnection()
@@ -212,8 +211,8 @@ int32_t HdiConnection::DestroyHdiConnection()
     }
     eventCallback_ = nullptr;
     UnregisterHdiDeathRecipient();
-    return ERR_OK;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return ERR_OK;
 }
 
 int32_t HdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
@@ -227,8 +226,8 @@ ZReportDataCb HdiConnection::getReportDataCb()
     if (reportDataCb_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
     }
-    return reportDataCb_;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return reportDataCb_;
 }
 
 sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
@@ -237,8 +236,8 @@ sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
     if (reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCallback_ cannot be null", __func__);
     }
-    return reportDataCallback_;
     HiLog::Debug(LABEL, "%{public}s end", __func__);
+    return reportDataCallback_;
 }
 
 void HdiConnection::updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
