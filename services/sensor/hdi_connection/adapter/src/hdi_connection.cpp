@@ -345,8 +345,8 @@ void HdiConnection::reconnect()
         if (ret < 0) {
             HiLog::Error(LABEL, "%{public}s enable sensor fail, sensorTypeId: %{public}d", __func__, sensorTypeId);
         }
-        HiLog::Debug(LABEL, "%{public}s end", __func__);
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 }  // namespace Sensors
 }  // namespace OHOS
