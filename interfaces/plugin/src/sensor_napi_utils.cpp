@@ -37,7 +37,7 @@ bool IsMatchType(napi_env env, napi_value value, napi_valuetype type)
     napi_valuetype paramType = napi_undefined;
     napi_typeof(env, value, &paramType);
     if (paramType != type) {
-        HiLog::Error(LABEL, "%{public}s  failed!", __func__);
+        HiLog::Error(LABEL, "%{public}s  failed", __func__);
         return false;
     }
     return true;
@@ -55,7 +55,7 @@ vector<float> GetCppArrayFloat(napi_env env, napi_value value)
     uint32_t arrayLength = 0;
     napi_get_array_length(env, value, &arrayLength);
     if (arrayLength <= 0) {
-        HiLog::Error(LABEL, "%{public}s The array is empty.", __func__);
+        HiLog::Error(LABEL, "%{public}s The array is empty", __func__);
         return vector<float>();
     }
     vector<float> paramArrays;
@@ -66,7 +66,7 @@ vector<float> GetCppArrayFloat(napi_env env, napi_value value)
         napi_valuetype valuetype0 = napi_undefined;
         napi_typeof(env, napiElement, &valuetype0);
         if (valuetype0 != napi_number) {
-            HiLog::Error(LABEL, "%{public}s Wrong argument type. Numbers expected.", __func__);
+            HiLog::Error(LABEL, "%{public}s Wrong argument type. Numbers expected", __func__);
             return vector<float>();
         }
         double value0 = 0;
@@ -85,7 +85,7 @@ bool IsMatchArrayType(napi_env env, napi_value value, napi_typedarray_type type)
     size_t byteOffset;
     napi_get_typedarray_info(env, value, &paramType, &length, &data, &arraybuffer, &byteOffset);
     if (paramType != type) {
-        HiLog::Error(LABEL, "%{public}s paramType:%{public}d type:%{public}d failed!", __func__, paramType, type);
+        HiLog::Error(LABEL, "%{public}s paramType:%{public}d type:%{public}d failed", __func__, paramType, type);
         return false;
     }
     return true;
@@ -372,7 +372,7 @@ void EmitAsyncCallbackWork(AsyncCallbackInfo *asyncCallbackInfo)
 {
     HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (asyncCallbackInfo == nullptr) {
-        HiLog::Error(LABEL, "%{public}s asyncCallbackInfo is null!", __func__);
+        HiLog::Error(LABEL, "%{public}s asyncCallbackInfo is null", __func__);
         return;
     }
     napi_value resourceName = nullptr;
@@ -464,7 +464,7 @@ void EmitUvEventLoop(AsyncCallbackInfo **asyncCallbackInfo)
 void EmitPromiseWork(AsyncCallbackInfo *asyncCallbackInfo)
 {
     if (asyncCallbackInfo == nullptr) {
-        HiLog::Error(LABEL, "%s asyncCallbackInfo is nullptr!", __func__);
+        HiLog::Error(LABEL, "%s asyncCallbackInfo is nullptr", __func__);
         return;
     }
     napi_value resourceName = nullptr;
