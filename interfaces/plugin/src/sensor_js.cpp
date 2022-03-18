@@ -69,7 +69,6 @@ static void DataCallbackImpl(SensorEvent *event)
     }
 
     if (g_onceCallbackInfos.find(sensorTypeId) == g_onceCallbackInfos.end()) {
-        HiLog::Debug(LABEL, "%{public}s no subscribe to the sensor data once", __func__);
         return;
     }
     struct AsyncCallbackInfo *onceCallbackInfo = g_onceCallbackInfos[sensorTypeId];

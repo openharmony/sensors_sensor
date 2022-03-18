@@ -308,7 +308,6 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     eventCallback_ = nullptr;
     reconnect();
     HiLog::Debug(LABEL, "%{public}s end", __func__);
-
 }
 
 void HdiConnection::reconnect()
