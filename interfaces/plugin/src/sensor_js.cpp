@@ -258,7 +258,7 @@ static uint32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value ca
 {
     std::vector<struct AsyncCallbackInfo*> callbackInfos = g_onCallbackInfos[sensorTypeId];
     std::vector<struct AsyncCallbackInfo*>::iterator iter;
-    for (iter = callbackInfos.begin(); iter != callbackInfos.end();) {
+    for (iter = callbackInfos.begin(); iter != callbackInfos.end(); iter++) {
         if (*iter == nullptr || (*iter)->callback[0] == nullptr) {
             continue;
         }
