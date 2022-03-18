@@ -33,6 +33,7 @@ std::mutex ISensorHdiConnection::dataMutex_;
 std::condition_variable ISensorHdiConnection::dataCondition_;
 int32_t CompatibleConnection::ConnectHdi()
 {
+    HiLog::Info(LABEL, "%{public}s connect hdi success", __func__);
     return ERR_OK;
 }
 

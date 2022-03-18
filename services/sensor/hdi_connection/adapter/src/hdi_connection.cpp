@@ -98,6 +98,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensorList.push_back(sensor);
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -158,6 +159,7 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
         HiLog::Error(LABEL, "%{public}s is failed", __func__);
         return ret;
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -173,6 +175,7 @@ int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
         HiLog::Error(LABEL, "%{public}s is failed", __func__);
         return ret;
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -190,6 +193,7 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
     }
     reportDataCb_ = cb;
     reportDataCallback_ = reportDataCallback;
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -207,6 +211,7 @@ int32_t HdiConnection::DestroyHdiConnection()
     }
     eventCallback_ = nullptr;
     UnregisterHdiDeathRecipient();
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -221,6 +226,7 @@ ZReportDataCb HdiConnection::getReportDataCb()
     if (reportDataCb_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return reportDataCb_;
 }
 
@@ -230,6 +236,7 @@ sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
     if (reportDataCallback_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s reportDataCallback_ cannot be null", __func__);
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return reportDataCallback_;
 }
 
@@ -286,6 +293,7 @@ void HdiConnection::UnregisterHdiDeathRecipient()
         return;
     }
     sensorInterface_->AsObject()->RemoveDeathRecipient(hdiDeathObserver_);
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
@@ -299,6 +307,7 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     hdiService->RemoveDeathRecipient(hdiDeathObserver_);
     eventCallback_ = nullptr;
     reconnect();
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 void HdiConnection::reconnect()
@@ -335,6 +344,7 @@ void HdiConnection::reconnect()
             HiLog::Error(LABEL, "%{public}s enable sensor fail, sensorTypeId: %{public}d", __func__, sensorTypeId);
         }
     }
+    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 }  // namespace Sensors
 }  // namespace OHOS
