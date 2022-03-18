@@ -33,19 +33,19 @@ public:
 
     ~GeomagneticField() = default;
 
-    float obtainX();
+    float ObtainX();
 
-    float obtainY();
+    float ObtainY();
 
-    float obtainZ();
+    float ObtainZ();
 
-    float obtainGeomagneticDip();
+    float ObtainGeomagneticDip();
 
-    float obtainDeflectionAngle();
+    float ObtainDeflectionAngle();
 
-    float obtainLevelIntensity();
+    float ObtainLevelIntensity();
 
-    float obtainTotalIntensity();
+    float ObtainTotalIntensity();
 
 private:
     float northComponent;
@@ -77,13 +77,13 @@ private:
     static std::vector<float> sinMLongitude;
     static std::vector<float> cosMLongitude;
 
-    static std::vector<std::vector<float>> getSchmidtQuasiNormalFactors(int32_t expansionDegree);
-    void calculateGeomagneticComponent(double latDiffRad, int64_t timeMillis);
-    static void getLongitudeTrigonometric();
-    static void getRelativeRadiusPower();
-    static void calibrateGeocentricCoordinates(float latitude, float longitude, float altitude);
-    void initLegendreTable(int32_t expansionDegree, float thetaRad);
-    double toDegrees(double angrad);
-    static double toRadians(double angdeg);
+    static std::vector<std::vector<float>> GetSchmidtQuasiNormalFactors(int32_t expansionDegree);
+    void CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis);
+    static void GetLongitudeTrigonometric();
+    static void GetRelativeRadiusPower();
+    static void CalibrateGeocentricCoordinates(float latitude, float longitude, float altitude);
+    void InitLegendreTable(int32_t expansionDegree, float thetaRad);
+    double ToDegrees(double angrad);
+    static double ToRadians(double angdeg);
 };
 #endif // GEOMAGNETIC_FIELD_H

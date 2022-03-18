@@ -112,61 +112,61 @@ float GeomagneticField::geocentricRadius;
 
 GeomagneticField::GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis)
 {
-    schmidtQuasiNormalFactors = getSchmidtQuasiNormalFactors(GAUSSIAN_COEFFICIENT_DIMENSION);
+    schmidtQuasiNormalFactors = GetSchmidtQuasiNormalFactors(GAUSSIAN_COEFFICIENT_DIMENSION);
     float gcLatitude = fmax(LATITUDE_MIN + PRECISION, fmin(LATITUDE_MAX - PRECISION, latitude));
-    calibrateGeocentricCoordinates(gcLatitude, longitude, altitude);
-    initLegendreTable(GAUSSIAN_COEFFICIENT_DIMENSION - 1, static_cast<float>(M_PI / 2.0 - geocentricLatitude));
-    getRelativeRadiusPower();
-    double latDiffRad = toRadians(gcLatitude) - geocentricLatitude;
-    calculateGeomagneticComponent(latDiffRad, timeMillis);
+    CalibrateGeocentricCoordinates(gcLatitude, longitude, altitude);
+    InitLegendreTable(GAUSSIAN_COEFFICIENT_DIMENSION - 1, static_cast<float>(M_PI / 2.0 - geocentricLatitude));
+    GetRelativeRadiusPower();
+    double latDiffRad = ToRadians(gcLatitude) - geocentricLatitude;
+    CalculateGeomagneticComponent(latDiffRad, timeMillis);
 }
 
-std::vector<std::vector<float>> GeomagneticField::getSchmidtQuasiNormalFactors(int32_t expansionDegree)
+std::vector<std::vector<float>> GeomagneticField::GetSchmidtQuasiNormalFactors(int32_t expansionDegree)
 {
     std::vector<std::vector<float>> schmidtQuasiNormFactors(expansionDegree + 1);
     schmidtQuasiNormFactors[0].resize(1);
     schmidtQuasiNormFactors[0][0] = 1.0f;
-    for (int32_t rowIndex = 1; rowIndex <= expansionDegree; rowIndex++) {
-        schmidtQuasiNormFactors[rowIndex].resize(rowIndex + 1);
-        schmidtQuasiNormFactors[rowIndex][0] =
-            schmidtQuasiNormFactors[rowIndex - 1][0] * (2 * rowIndex - 1) / static_cast<float>(rowIndex);
-        for (int32_t columnIndex = 1; columnIndex <= rowIndex; columnIndex++) {
-            schmidtQuasiNormFactors[rowIndex][columnIndex] = schmidtQuasiNormFactors[rowIndex][columnIndex - 1]
-                * static_cast<float>(sqrt((rowIndex - columnIndex + 1) * ((columnIndex == 1) ? 2 : 1)
-                / static_cast<float>(rowIndex + columnIndex)));
+    for (int32_t row = 1; row <= expansionDegree; row++) {
+        schmidtQuasiNormFactors[row].resize(row + 1);
+        schmidtQuasiNormFactors[row][0] =
+            schmidtQuasiNormFactors[row - 1][0] * (2 * row - 1) / static_cast<float>(row);
+        for (int32_t column = 1; column <= row; column++) {
+            schmidtQuasiNormFactors[row][column] = schmidtQuasiNormFactors[row][column - 1]
+                * static_cast<float>(sqrt((row - column + 1) * ((column == 1) ? 2 : 1)
+                / static_cast<float>(row + column)));
         }
     }
     return schmidtQuasiNormFactors;
 }
 
-void GeomagneticField::calculateGeomagneticComponent(double latDiffRad, int64_t timeMillis)
+void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis)
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     float yearsSinceBase = (timeMillis - WMM_BASE_TIME) / (365.0f * 24.0f * 60.0f * 60.0f * 1000.0f);
     float inverseCosLatitude = DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
-    getLongitudeTrigonometric();
+    GetLongitudeTrigonometric();
     float gcX = 0.0f;
     float gcY = 0.0f;
     float gcZ = 0.0f;
-    for (int32_t rowIndex = 1; rowIndex < GAUSSIAN_COEFFICIENT_DIMENSION; rowIndex++) {
-        for (int32_t columnIndex = 0; columnIndex <= rowIndex; columnIndex++) {
-            float g = GAUSS_COEFFICIENT_G[rowIndex][columnIndex] + yearsSinceBase
-                * DELTA_GAUSS_COEFFICIENT_G[rowIndex][columnIndex];
-            float h = GAUSS_COEFFICIENT_H[rowIndex][columnIndex] + yearsSinceBase
-                * DELTA_GAUSS_COEFFICIENT_H[rowIndex][columnIndex];
-            gcX += relativeRadiusPower[rowIndex + 2]
-                * (g * cosMLongitude[columnIndex] + h * sinMLongitude[columnIndex])
-                * polynomialsDerivative[rowIndex][columnIndex]
-                * schmidtQuasiNormalFactors[rowIndex][columnIndex];
-            gcY += relativeRadiusPower[rowIndex + 2] * columnIndex
-                * (g * sinMLongitude[columnIndex] - h * cosMLongitude[columnIndex])
-                * polynomials[rowIndex][columnIndex]
-                * schmidtQuasiNormalFactors[rowIndex][columnIndex]
+    for (int32_t row = 1; row < GAUSSIAN_COEFFICIENT_DIMENSION; row++) {
+        for (int32_t column = 0; column <= row; column++) {
+            float g = GAUSS_COEFFICIENT_G[row][column] + yearsSinceBase
+                * DELTA_GAUSS_COEFFICIENT_G[row][column];
+            float h = GAUSS_COEFFICIENT_H[row][column] + yearsSinceBase
+                * DELTA_GAUSS_COEFFICIENT_H[row][column];
+            gcX += relativeRadiusPower[row + 2]
+                * (g * cosMLongitude[column] + h * sinMLongitude[column])
+                * polynomialsDerivative[row][column]
+                * schmidtQuasiNormalFactors[row][column];
+            gcY += relativeRadiusPower[row + 2] * column
+                * (g * sinMLongitude[column] - h * cosMLongitude[column])
+                * polynomials[row][column]
+                * schmidtQuasiNormalFactors[row][column]
                 * inverseCosLatitude;
-            gcZ -= (rowIndex + 1) * relativeRadiusPower[rowIndex + 2]
-                * (g * cosMLongitude[columnIndex] + h * sinMLongitude[columnIndex])
-                * polynomials[rowIndex][columnIndex]
-                * schmidtQuasiNormalFactors[rowIndex][columnIndex];
+            gcZ -= (row + 1) * relativeRadiusPower[row + 2]
+                * (g * cosMLongitude[column] + h * sinMLongitude[column])
+                * polynomials[row][column]
+                * schmidtQuasiNormalFactors[row][column];
         }
         northComponent = static_cast<float>(gcX * cos(latDiffRad) + gcZ * sin(latDiffRad));
         eastComponent = gcY;
@@ -174,7 +174,7 @@ void GeomagneticField::calculateGeomagneticComponent(double latDiffRad, int64_t 
     }
 }
 
-void GeomagneticField::getLongitudeTrigonometric()
+void GeomagneticField::GetLongitudeTrigonometric()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     sinMLongitude[0] = 0.0f;
@@ -190,7 +190,7 @@ void GeomagneticField::getLongitudeTrigonometric()
     }
 }
 
-void GeomagneticField::getRelativeRadiusPower()
+void GeomagneticField::GetRelativeRadiusPower()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     relativeRadiusPower[0] = 1.0f;
@@ -200,20 +200,20 @@ void GeomagneticField::getRelativeRadiusPower()
     }
 }
 
-void GeomagneticField::calibrateGeocentricCoordinates(float latitude, float longitude, float altitude)
+void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float longitude, float altitude)
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     float altitudeKm = altitude / CONVERSION_FACTOR;
     float a2 = EARTH_MAJOR_AXIS_RADIUS * EARTH_MAJOR_AXIS_RADIUS;
     float b2 = EARTH_MINOR_AXIS_RADIUS * EARTH_MINOR_AXIS_RADIUS;
-    double gdLatRad = toRadians(latitude);
+    double gdLatRad = ToRadians(latitude);
     float clat = static_cast<float>(cos(gdLatRad));
     float slat = static_cast<float>(sin(gdLatRad));
     float tlat = slat / clat;
     float latRad = static_cast<float>(sqrt(a2 * clat * clat + b2 * slat * slat));
     geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
         / (latRad * altitudeKm + a2)));
-    geocentricLongitude = static_cast<float>(toRadians(longitude));
+    geocentricLongitude = static_cast<float>(ToRadians(longitude));
 
     float radSq = altitudeKm * altitudeKm + 2 * altitudeKm
         * latRad + (a2 * a2 * clat * clat + b2 * b2 * slat * slat)
@@ -221,7 +221,7 @@ void GeomagneticField::calibrateGeocentricCoordinates(float latitude, float long
     geocentricRadius = static_cast<float>(sqrt(radSq));
 }
 
-void GeomagneticField::initLegendreTable(int32_t expansionDegree, float thetaRad)
+void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad)
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     polynomials[0].resize(1);
@@ -230,78 +230,78 @@ void GeomagneticField::initLegendreTable(int32_t expansionDegree, float thetaRad
     polynomialsDerivative[0][0] = 0.0f;
     float cosValue = static_cast<float>(cos(thetaRad));
     float sinValue = static_cast<float>(sin(thetaRad));
-    for (int32_t rowIndex = 1; rowIndex <= expansionDegree; rowIndex++) {
-        polynomials[rowIndex].resize(rowIndex + 1);
-        polynomialsDerivative[rowIndex].resize(rowIndex + 1);
-        for (int32_t columnIndex = 0; columnIndex <= rowIndex; columnIndex++) {
-            if (rowIndex == columnIndex) {
-                polynomials[rowIndex][columnIndex] = sinValue * polynomials[rowIndex - 1][columnIndex - 1];
-                polynomialsDerivative[rowIndex][columnIndex] = cosValue * polynomials[rowIndex - 1][columnIndex - 1]
-                    + sinValue * polynomialsDerivative[rowIndex - 1][columnIndex - 1];
-            } else if (rowIndex == 1 || columnIndex == rowIndex - 1) {
-                polynomials[rowIndex][columnIndex] = cosValue * polynomials[rowIndex - 1][columnIndex];
-                polynomialsDerivative[rowIndex][columnIndex] = -sinValue * polynomials[rowIndex - 1][columnIndex]
-                    + cosValue * polynomialsDerivative[rowIndex - 1][columnIndex];
+    for (int32_t row = 1; row <= expansionDegree; row++) {
+        polynomials[row].resize(row + 1);
+        polynomialsDerivative[row].resize(row + 1);
+        for (int32_t column = 0; column <= row; column++) {
+            if (row == column) {
+                polynomials[row][column] = sinValue * polynomials[row - 1][column - 1];
+                polynomialsDerivative[row][column] = cosValue * polynomials[row - 1][column - 1]
+                    + sinValue * polynomialsDerivative[row - 1][column - 1];
+            } else if (row == 1 || column == row - 1) {
+                polynomials[row][column] = cosValue * polynomials[row - 1][column];
+                polynomialsDerivative[row][column] = -sinValue * polynomials[row - 1][column]
+                    + cosValue * polynomialsDerivative[row - 1][column];
             } else {
-                float k = ((rowIndex - 1) * (rowIndex - 1) - columnIndex * columnIndex)
-                    / static_cast<float>((2 * rowIndex - 1) * (2 * rowIndex - 3));
-                polynomials[rowIndex][columnIndex] = cosValue * polynomials[rowIndex - 1][columnIndex]
-                    - k * polynomials[rowIndex - 2][columnIndex];
-                polynomialsDerivative[rowIndex][columnIndex] = -sinValue * polynomials[rowIndex - 1][columnIndex]
-                    + cosValue * polynomialsDerivative[rowIndex - 1][columnIndex]
-                    - k * polynomialsDerivative[rowIndex - 2][columnIndex];
+                float k = ((row - 1) * (row - 1) - column * column)
+                    / static_cast<float>((2 * row - 1) * (2 * row - 3));
+                polynomials[row][column] = cosValue * polynomials[row - 1][column]
+                    - k * polynomials[row - 2][column];
+                polynomialsDerivative[row][column] = -sinValue * polynomials[row - 1][column]
+                    + cosValue * polynomialsDerivative[row - 1][column]
+                    - k * polynomialsDerivative[row - 2][column];
             }
         }
     }
 }
 
-float GeomagneticField::obtainX()
+float GeomagneticField::ObtainX()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     return northComponent;
 }
 
-float GeomagneticField::obtainY()
+float GeomagneticField::ObtainY()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     return eastComponent;
 }
 
-float GeomagneticField::obtainZ()
+float GeomagneticField::ObtainZ()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     return downComponent;
 }
 
-float GeomagneticField::obtainGeomagneticDip()
+float GeomagneticField::ObtainGeomagneticDip()
 {
-    return static_cast<float>(toDegrees(atan2(downComponent, obtainLevelIntensity())));
+    return static_cast<float>(ToDegrees(atan2(downComponent, ObtainLevelIntensity())));
 }
 
-double GeomagneticField::toDegrees(double angrad)
+double GeomagneticField::ToDegrees(double angrad)
 {
     return angrad * 180.0 / M_PI;
 }
 
-double GeomagneticField::toRadians(double angdeg)
+double GeomagneticField::ToRadians(double angdeg)
 {
     return angdeg / 180.0 * M_PI;
 }
 
-float GeomagneticField::obtainDeflectionAngle()
+float GeomagneticField::ObtainDeflectionAngle()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    return static_cast<float>(toDegrees(atan2(eastComponent, northComponent)));
+    return static_cast<float>(ToDegrees(atan2(eastComponent, northComponent)));
 }
 
-float GeomagneticField::obtainLevelIntensity()
+float GeomagneticField::ObtainLevelIntensity()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     float horizontalIntensity = hypot(northComponent, eastComponent);
     return horizontalIntensity;
 }
 
-float GeomagneticField::obtainTotalIntensity()
+float GeomagneticField::ObtainTotalIntensity()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
     float sumOfSquares = northComponent * northComponent + eastComponent * eastComponent

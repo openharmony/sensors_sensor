@@ -46,7 +46,6 @@ static std::map<int32_t, std::vector<struct AsyncCallbackInfo*>> g_onCallbackInf
 
 static void DataCallbackImpl(SensorEvent *event)
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
     if (event == nullptr) {
         HiLog::Error(LABEL, "%{public}s event is null", __func__);
         return;
@@ -89,7 +88,6 @@ static void DataCallbackImpl(SensorEvent *event)
         UnsubscribeSensor(sensorTypeId);
     }
     g_onceCallbackInfos.erase(sensorTypeId);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 static const SensorUser user = {
@@ -349,13 +347,13 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
         .type = GET_GEOMAGNETIC_FIELD,
     };
     asyncCallbackInfo->data.geomagneticData = {
-        .x = geomagneticField.obtainX(),
-        .y = geomagneticField.obtainY(),
-        .z = geomagneticField.obtainZ(),
-        .geomagneticDip = geomagneticField.obtainGeomagneticDip(),
-        .deflectionAngle = geomagneticField.obtainDeflectionAngle(),
-        .levelIntensity = geomagneticField.obtainLevelIntensity(),
-        .totalIntensity = geomagneticField.obtainTotalIntensity(),
+        .x = geomagneticField.ObtainX(),
+        .y = geomagneticField.ObtainY(),
+        .z = geomagneticField.ObtainZ(),
+        .geomagneticDip = geomagneticField.ObtainGeomagneticDip(),
+        .deflectionAngle = geomagneticField.ObtainDeflectionAngle(),
+        .levelIntensity = geomagneticField.ObtainLevelIntensity(),
+        .totalIntensity = geomagneticField.ObtainTotalIntensity(),
     };
     if (argc == 2) {
         napi_deferred deferred = nullptr;
