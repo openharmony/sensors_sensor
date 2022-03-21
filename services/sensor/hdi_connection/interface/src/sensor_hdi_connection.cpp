@@ -32,7 +32,7 @@ int32_t SensorHdiConnection::ConnectHdi()
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
     if (iSensorHdiConnection_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s failed, iSensorHdiConnection_ cannot be null", __func__);
-        return;
+        return OHOS::Sensors::ERROR;
     }
     int32_t ret = connectHdiService();
     if (ret != ERR_OK) {
