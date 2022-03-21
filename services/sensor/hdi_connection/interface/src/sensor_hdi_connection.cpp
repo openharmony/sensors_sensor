@@ -30,6 +30,10 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Sens
 int32_t SensorHdiConnection::ConnectHdi()
 {
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
+    if (iSensorHdiConnection_ == nullptr) {
+        HiLog::Error(LABEL, "%{public}s failed, iSensorHdiConnection_ cannot be null", __func__);
+        return;
+    }
     int32_t ret = connectHdiService();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s connect hdi service failed, try to connect compatible connection",
