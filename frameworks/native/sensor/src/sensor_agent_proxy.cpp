@@ -75,7 +75,7 @@ std::mutex SensorAgentProxy::chanelMutex_;
 std::map<int32_t, const SensorUser *> SensorAgentProxy::g_subscribeMap;
 std::map<int32_t, const SensorUser *> SensorAgentProxy::g_unsubscribeMap;
 
-SensorAgentProxy::SensorAgentProxy() 
+SensorAgentProxy::SensorAgentProxy()
     : dataChannel_(new (std::nothrow) SensorDataChannel())
 {}
 

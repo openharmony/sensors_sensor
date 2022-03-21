@@ -227,7 +227,7 @@ static napi_value On(napi_env env, napi_callback_info info)
             return nullptr;
         }
         interval = GetCppInt64(value, env);
-        HiLog::Debug(LABEL, "%{public}s interval is %{public}lld", __func__, interval);
+        HiLog::Debug(LABEL, "%{public}s interval is %{public}" PRId64, __func__, interval);
     }
     int32_t ret = SubscribeSensor(sensorTypeId, interval, DataCallbackImpl);
     if (ret != OHOS::ERR_OK) {

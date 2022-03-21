@@ -42,6 +42,7 @@ public:
 
     int32_t createRotationAndInclination(std::vector<float> gravity, std::vector<float> geomagnetic,
                                         std::vector<float> &rotationMatrix, std::vector<float> &inclinationMatrix);
+
 private:
     int32_t transformCoordinateSystemImpl(std::vector<float> inRotationMatrix, int32_t axisX,
                                                            int32_t axisY, std::vector<float> &outRotationMatrix);
