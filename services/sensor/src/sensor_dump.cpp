@@ -146,8 +146,8 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, 
                 "sensorId:%8u | sensorType:%s | sensorName:%s | vendorName:%s | maxRange:%f"
                 "| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 " | maxSamplePeriodNs:%" PRId64 "\n",
                 sensorId, sensorMap_[sensorId].c_str(), sensor.GetSensorName().c_str(), sensor.GetVendorName().c_str(),
-                sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(), (long long) { sensor.GetMinSamplePeriodNs() },
-                (long long) { sensor.GetMaxSamplePeriodNs() });
+                sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(), sensor.GetMinSamplePeriodNs(),
+                sensor.GetMaxSamplePeriodNs());
     }
     return true;
 }
