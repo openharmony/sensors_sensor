@@ -105,7 +105,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
     if (it == sensorMap_.end()) {
         sensorInfo.SetSamplingPeriodNs(samplingPeriodNs);
         sensorInfo.SetMaxReportDelayNs(maxReportDelayNs);
-        sensorInfo.SetSensorState(SENSOR_ENABLED);
+        sensorInfo.SetSensorState(true);
         HiLog::Error(LABEL, "%{public}s sensorId invalid", __func__);
         return sensorInfo;
     }
@@ -124,7 +124,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
     int64_t curReportDelayNs = (maxReportDelayNs > supportDelay) ? supportDelay : maxReportDelayNs;
     sensorInfo.SetSamplingPeriodNs(curSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(curReportDelayNs);
-    sensorInfo.SetSensorState(SENSOR_ENABLED);
+    sensorInfo.SetSensorState(true);
     HiLog::Debug(LABEL, "%{public}s end", __func__);
     return sensorInfo;
 }
@@ -170,10 +170,7 @@ bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPi
 ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 {
     HiLog::Debug(LABEL, "%{public}s begin", __func__);
-    if (!clientInfo_.ClearSensorInfo(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s ClearSensorInfo failed", __func__);
-        return CLEAR_SENSOR_INFO_ERR;
-    }
+    clientInfo_.ClearSensorInfo(sensorId);
     if (sensorId == PROXIMITY_SENSOR_ID) {
         struct SensorEvent event;
         auto ret = clientInfo_.GetStoreEvent(sensorId, event);

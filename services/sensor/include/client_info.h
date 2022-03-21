@@ -52,7 +52,7 @@ public:
     void RemoveSubscriber(uint32_t sensorId, uint32_t pid);
     bool UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel);
     bool UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken);
-    bool ClearSensorInfo(uint32_t sensorId);
+    void ClearSensorInfo(uint32_t sensorId);
     void ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid);
     bool DestroySensorChannel(int32_t pid);
     void DestroyAppThreadInfo(int32_t pid);
@@ -71,7 +71,7 @@ public:
     void UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType);
     void DestroyCmd(int32_t uid);
     void UpdateDataQueue(int32_t sensorId, struct SensorEvent &event);
-    std::unordered_map<uint32_t, std::queue<struct SensorEvent>> GetDataQueue();
+    std::unordered_map<uint32_t, std::queue<struct SensorEvent>> GetDumpQueue();
     void ClearDataQueue(int32_t sensorId);
 
 private:
@@ -91,7 +91,7 @@ private:
     std::unordered_map<int32_t, AppThreadInfo> appThreadInfoMap_;
     std::map<sptr<IRemoteObject>, int32_t> clientPidMap_;
     std::unordered_map<uint32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
-    std::unordered_map<uint32_t, std::queue<struct SensorEvent>> dataQueue_;
+    std::unordered_map<uint32_t, std::queue<struct SensorEvent>> dumpQueue_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

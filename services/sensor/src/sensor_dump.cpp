@@ -189,7 +189,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     dprintf(fd, "Opening sensors:\n");
     for (const auto &sensor : sensors) {
         uint32_t sensorId = sensor.GetSensorId();
-        if (clientInfo.GetSensorState(sensorId) == SENSOR_ENABLED) {
+        if (clientInfo.GetSensorState(sensorId) == true) {
             dprintf(fd, "sensorId: %8u | sensorType: %s\n", sensorId, sensorMap_[sensorId].c_str());
         }
     }
@@ -203,7 +203,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::v
         return false;
     }
     dprintf(fd, "Last 10 packages sensor data:\n");
-    auto dataMap = clientInfo.GetDataQueue();
+    auto dataMap = clientInfo.GetDumpQueue();
     int32_t j = 0;
     for (auto &sensorData : dataMap) {
         uint32_t sensorId = sensorData.first;
