@@ -93,7 +93,7 @@ const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num, void *data)
 {
     if (events == nullptr || num <= 0) {
-        HiLog::Error(LABEL, "%{public}s events is null or num is invalid", __func__);
+        SENSOR_LOGE("events is null or num is invalid");
         return;
     }
     struct SensorEvent eventStream;
@@ -101,7 +101,7 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
         eventStream = events[i];
         CHKPV(eventStream.data);
         if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {
-            HiLog::Error(LABEL, "%{public}s sensorTypeId not in g_subscribeMap", __func__);
+            SENSOR_LOGE("sensorTypeId not in g_subscribeMap");
             return;
         }
         g_subscribeMap[eventStream.sensorTypeId]->callback(&eventStream);
@@ -119,7 +119,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
     CHKPR(dataChannel_, INVALID_POINTER);
     auto ret = dataChannel_->CreateSensorDataChannel(HandleSensorData, nullptr);
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s create data channel failed, ret : %{public}d", __func__, ret);
+        SENSOR_LOGE("create data channel failed, ret: %{public}d", ret);
         return ret;
     }
     auto &client = SensorServiceClient::GetInstance();
