@@ -400,7 +400,6 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
     }
     clientInfo_.DestroyCmd(this->GetCallingUid());
     UnregisterClientDeathRecipient(sensorClient);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -421,7 +420,6 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
     clientInfo_.DestroyCmd(this->GetCallingUid());
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
@@ -435,7 +433,6 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
     }
     client->AsObject()->AddDeathRecipient(clientDeathObserver_);
     clientInfo_.SaveClientPid(sensorClient, pid);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient)
@@ -449,7 +446,6 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
     }
     client->AsObject()->RemoveDeathRecipient(clientDeathObserver_);
     clientInfo_.DestroyClientPid(sensorClient);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
@@ -473,7 +469,6 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
         sensorDump.DumpHelp(fd);
         return DUMP_PARAM_ERR;
     }
-    HiLog::Info(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 }  // namespace Sensors
