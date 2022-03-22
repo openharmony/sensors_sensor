@@ -307,7 +307,6 @@ int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, s
 
 void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
 {
-    CALL_LOG_ENTER;
     uint32_t realSensorId = 0;
     uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId);
     std::vector<sptr<SensorBasicDataChannel>> channelList;

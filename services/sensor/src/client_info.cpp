@@ -508,7 +508,6 @@ bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t 
         return true;
     }
     clientPidMap_.insert(std::make_pair(sensorClient, pid));
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
