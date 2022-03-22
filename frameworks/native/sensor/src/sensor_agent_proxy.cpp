@@ -99,10 +99,7 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
     struct SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        if (eventStream.data == nullptr) {
-            HiLog::Error(LABEL, "%{public}s data is nullptr", __func__);
-            return;
-        }
+        CHKPV(eventStream.data);
         if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {
             HiLog::Error(LABEL, "%{public}s sensorTypeId not in g_subscribeMap", __func__);
             return;
@@ -119,10 +116,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
         HiLog::Info(LABEL, "%{public}s the channel has already been created", __func__);
         return ERR_OK;
     }
-    if (dataChannel_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s data channel cannot be null", __func__);
-        return INVALID_POINTER;
-    }
+    CHKPR(dataChannel_, INVALID_POINTER);
     auto ret = dataChannel_->CreateSensorDataChannel(HandleSensorData, nullptr);
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s create data channel failed, ret : %{public}d", __func__, ret);
@@ -148,10 +142,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
         HiLog::Info(LABEL, "%{public}s channel has been destroyed", __func__);
         return ERR_OK;
     }
-    if (dataChannel_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s data channel cannot be null", __func__);
-        return INVALID_POINTER;
-    }
+    CHKPR(dataChannel_, INVALID_POINTER);
     int32_t ret = dataChannel_->DestroySensorDataChannel();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s destory data channel failed, ret : %{public}d", __func__, ret);
@@ -320,10 +311,7 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     }
     *count = sensorList_.size();
     *sensorInfo = (SensorInfo *)malloc(sizeof(SensorInfo) * (*count));
-    if (*sensorInfo == nullptr) {
-        HiLog::Error(LABEL, "%{public}s malloc sensorInfo failed", __func__);
-        return OHOS::Sensors::ERROR;
-    }
+    CHKPR(*sensorInfo, ERROR);
     for (int32_t index = 0; index < *count; ++index) {
         errno_t ret = strcpy_s((*sensorInfo + index)->sensorName, NAME_MAX_LEN,
             sensorList_[index].GetSensorName().c_str());
