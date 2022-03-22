@@ -35,8 +35,8 @@ sptr<ISensorInterface> sensorInterface_ = nullptr;
 sptr<ISensorCallback> eventCallback_ = nullptr;
 std::map<int32_t, SensorBasicInfo> sensorBasicInfoMap_;
 std::mutex sensorBasicInfoMutex_;
-constexpr int32_t GET_HDI_SERVICE_COUNT = 10;
-constexpr uint32_t WAIT_MS = 100;
+constexpr int32_t GET_HDI_SERVICE_COUNT = 30;
+constexpr uint32_t WAIT_MS = 200;
 }
 
 ZReportDataCb HdiConnection::reportDataCb_ = nullptr;

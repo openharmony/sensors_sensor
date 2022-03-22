@@ -53,6 +53,7 @@ public:
     sptr<ReportDataCallback> getReportDataCallback();
 
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
+
 private:
     DISALLOW_COPY_AND_MOVE(HdiConnection);
     static ZReportDataCb reportDataCb_;

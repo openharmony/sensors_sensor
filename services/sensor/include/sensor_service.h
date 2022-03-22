@@ -20,7 +20,6 @@
 #include <thread>
 #include <unordered_map>
 
-
 #include "nocopyable.h"
 #include "system_ability.h"
 
@@ -40,6 +39,7 @@ enum class SensorServiceState {
 
 class SensorService : public SystemAbility, public SensorServiceStub {
     DECLARE_SYSTEM_ABILITY(SensorService)
+
 public:
     explicit SensorService(int32_t systemAbilityId, bool runOnCreate = false);
 

@@ -181,8 +181,8 @@ void GeomagneticField::GetLongitudeTrigonometric()
     cosMLongitude[0] = 1.0f;
     sinMLongitude[1] = static_cast<float>(sin(geocentricLongitude));
     cosMLongitude[1] = static_cast<float>(cos(geocentricLongitude));
-    for (int32_t index = 2; index < GAUSSIAN_COEFFICIENT_DIMENSION; ++index) {
-        int32_t x = index >> 1;
+    for (uint32_t index = 2; index < GAUSSIAN_COEFFICIENT_DIMENSION; ++index) {
+        uint32_t x = index >> 1;
         sinMLongitude[index] = (sinMLongitude[index - x] * cosMLongitude[x]
             + cosMLongitude[index - x] * sinMLongitude[x]);
         cosMLongitude[index] = (cosMLongitude[index - x] * cosMLongitude[x]

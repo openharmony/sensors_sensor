@@ -52,7 +52,7 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(HdiServiceImpl);
     static void DataReportThread();
-    std::vector<int32_t> g_enableSensos;
+    std::vector<int32_t> g_enableSensors;
     std::thread dataReportThread_;
     static RecordDataCallback g_callback;
     static int64_t g_samplingInterval;

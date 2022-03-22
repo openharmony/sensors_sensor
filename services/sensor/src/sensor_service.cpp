@@ -236,7 +236,7 @@ ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodN
 
 ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, samplingPeriodNs : %{public}" 
+    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, samplingPeriodNs : %{public}"
         PRId64, __func__, sensorId, samplingPeriodNs);
     if ((sensorId == INVALID_SENSOR_ID) ||
         ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
