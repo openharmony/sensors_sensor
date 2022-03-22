@@ -14,6 +14,7 @@
  */
 
 #include "my_file_descriptor_listener.h"
+#include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
 namespace OHOS {
