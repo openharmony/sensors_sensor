@@ -762,7 +762,7 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
     napi_value args[1] = { 0 };
     napi_value thisVar = nullptr;
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
-    if (argc < 0 || argc > 1) {
+    if (argc != 1) {
         HiLog::Error(LABEL, "%{public}s the number of input parameters does not match", __func__);
         return nullptr;
     }
