@@ -236,8 +236,7 @@ ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodN
 
 ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, samplingPeriodNs : %{public}"
-        PRId64, __func__, sensorId, samplingPeriodNs);
+    CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) ||
         ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
         HiLog::Error(LABEL, "%{public}s sensorId is 0 or maxReportDelayNs exceeded the maximum value", __func__);
@@ -386,7 +385,7 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
 
 ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     const int32_t clientPid = this->GetCallingPid();
     if (clientPid < 0) {
         HiLog::Error(LABEL, "%{public}s clientPid is invalid, clientPid : %{public}d", __func__, clientPid);
@@ -405,7 +404,7 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
 
 void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<IRemoteObject> client = object.promote();
     if (client == nullptr) {
         HiLog::Error(LABEL, "%{public}s client cannot be null", __func__);
@@ -424,7 +423,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
     if (clientDeathObserver_ == nullptr) {
@@ -437,7 +436,7 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
 
 void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
     if (clientDeathObserver_ == nullptr) {
@@ -450,7 +449,7 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
 
 int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     SensorDump &sensorDump = SensorDump::GetInstance();
     if ((args.empty()) || (args[0].size() != MAX_DMUP_PARAM)) {
         HiLog::Error(LABEL, "%{public}s param cannot be empty or the length is not 2", __func__);

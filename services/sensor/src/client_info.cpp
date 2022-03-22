@@ -42,7 +42,7 @@ constexpr uint32_t HEART_RATE_SENSOR_ID = 83886336;
 
 SensorState ClientInfo::GetSensorState(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return SENSOR_DISABLED;
@@ -65,7 +65,7 @@ SensorState ClientInfo::GetSensorState(uint32_t sensorId)
 
 SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
+    CALL_LOG_ENTER;
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
     SensorBasicInfo sensorInfo;
@@ -96,7 +96,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
 
 bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, pid : %{public}d", __func__, sensorId, pid);
+    CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
         HiLog::Error(LABEL, "%{public}s sensorId or pid is invalid", __func__);
         return false;
@@ -118,13 +118,12 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
         }
         ret = true;
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ret;
 }
 
 bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, pid : %{public}d, uid : %{public}d", __func__, pid, uid);
+    CALL_LOG_ENTER;
     if ((uid == INVALID_UID) || (pid <= INVALID_PID)) {
         HiLog::Error(LABEL, "%{public}s uid or pid is invalid", __func__);
         return false;
@@ -141,13 +140,12 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
         return ret.second;
     }
     appThreadInfoMap_[pid] = appThreadInfo;
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
 void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, pid : %{public}d", __func__, pid);
+    CALL_LOG_ENTER;
     if (pid == INVALID_PID) {
         HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
         return;
@@ -163,7 +161,7 @@ void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 
 std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int32_t uid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, uid : %{public}d", __func__, uid);
+    CALL_LOG_ENTER;
     if (uid == INVALID_UID) {
         HiLog::Error(LABEL, "%{public}s uid is invalid", __func__);
         return {};
@@ -181,13 +179,12 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int3
         }
         sensorChannel.push_back(channelIt->second);
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return sensorChannel;
 }
 
 sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, pid : %{public}d", __func__, pid);
+    CALL_LOG_ENTER;
     if (pid == INVALID_PID) {
         HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
         return nullptr;
@@ -198,7 +195,6 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
         HiLog::Error(LABEL, "%{public}s there is no channel belong to the pid", __func__);
         return nullptr;
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return channelIt->second;
 }
 
@@ -229,7 +225,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
 
 bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, pid : %{public}d", __func__, sensorId, pid);
+    CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (sensorInfo.GetSensorState() != SENSOR_ENABLED)) {
         HiLog::Error(LABEL, "%{public}s params are invalid", __func__);
         return false;
@@ -267,7 +263,7 @@ void ClientInfo::RemoveSubscriber(uint32_t sensorId, uint32_t pid)
 
 bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, pid : %{public}d", __func__, pid);
+    CALL_LOG_ENTER;
     if (pid <= INVALID_PID || channel == nullptr) {
         HiLog::Error(LABEL, "%{public}s pid or channel is invalid or channel cannot be null", __func__);
         return false;
@@ -284,13 +280,12 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
         return ret.second;
     }
     channelMap_[pid] = channel;
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
 bool ClientInfo::ClearSensorInfo(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}d", __func__, sensorId);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return false;
@@ -307,7 +302,7 @@ bool ClientInfo::ClearSensorInfo(uint32_t sensorId)
 
 void ClientInfo::ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}d", __func__, sensorId);
+    CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
         HiLog::Error(LABEL, "%{public}s sensorId or pid is invalid", __func__);
         return;
@@ -331,7 +326,7 @@ void ClientInfo::ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 
 bool ClientInfo::DestroySensorChannel(int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s start, pid : %{public}d", __func__, pid);
+    CALL_LOG_ENTER;
     if (pid <= INVALID_PID) {
         HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
         return false;
@@ -358,7 +353,6 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
         return true;
     }
     it = channelMap_.erase(it);
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
@@ -387,7 +381,6 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
     }
     sensorInfo.SetSamplingPeriodNs(pidIt->second.GetSamplingPeriodNs());
     sensorInfo.SetMaxReportDelayNs(pidIt->second.GetMaxReportDelayNs());
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return sensorInfo;
 }
 
@@ -504,7 +497,6 @@ bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t 
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
         clientPidMap_.insert(std::make_pair(sensorClient, pid));
-        HiLog::Debug(LABEL, "%{public}s end", __func__);
         return true;
     }
     clientPidMap_.insert(std::make_pair(sensorClient, pid));
@@ -524,7 +516,6 @@ int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
         HiLog::Error(LABEL, "%{public}s cannot find client pid", __func__);
         return INVALID_PID;
     }
-    HiLog::Debug(LABEL, "%{public}s end, pid : %{public}d", __func__, it->second);
     return it->second;
 }
 
@@ -541,7 +532,6 @@ void ClientInfo::DestroyClientPid(const sptr<IRemoteObject> &sensorClient)
         HiLog::Error(LABEL, "%{public}s cannot find client pid", __func__);
         return;
     }
-    HiLog::Debug(LABEL, "%{public}s end, pid : %{public}d", __func__, it->second);
     clientPidMap_.erase(it);
 }
 

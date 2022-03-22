@@ -102,8 +102,7 @@ ErrCode SensorSuspendPolicy::SaveSubscriber(uint32_t sensorId, int64_t samplingP
 ErrCode SensorSuspendPolicy::EnableSensor(uint32_t sensorId, int32_t pid, int64_t samplingPeriodNs,
                                           int64_t maxReportDelayNs)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, samplingPeriodNs : %{public}d", __func__, sensorId,
-                 int32_t { samplingPeriodNs });
+    CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (samplingPeriodNs == 0) ||
         ((samplingPeriodNs != 0L) && (maxReportDelayNs / samplingPeriodNs > MAX_EVENT_COUNT))) {
         HiLog::Error(LABEL, "%{public}s sensorId is 0 or maxReportDelayNs exceed the maximum value", __func__);

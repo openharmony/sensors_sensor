@@ -48,6 +48,7 @@ MyFileDescriptorListener::~MyFileDescriptorListener()
 
 void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
+    CALL_LOG_ENTER;
     if (fileDescriptor < 0) {
         HiLog::Error(LABEL, "%{public}s fileDescriptor: %{public}d", __func__, fileDescriptor);
         return;
