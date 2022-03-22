@@ -185,7 +185,7 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, stru
     if (ReportNotContinuousData(cacheBuf, channel, event)) {
         return;
     }
-    uint64_t periodCount = clientInfo_.ComputeBestPeriodCount(sensorId, channel);
+    int32_t periodCount = clientInfo_.ComputeBestPeriodCount(sensorId, channel);
     if (periodCount == 0UL) {
         return;
     }

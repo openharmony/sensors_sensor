@@ -288,21 +288,20 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     return true;
 }
 
-bool ClientInfo::ClearSensorInfo(uint32_t sensorId)
+void ClientInfo::ClearSensorInfo(uint32_t sensorId)
 {
     HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}d", __func__, sensorId);
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
-        return false;
+        return;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
         HiLog::Debug(LABEL, "%{public}s sensorId not exist, no need to clear it", __func__);
-        return true;
+        return;
     }
     clientMap_.erase(it);
-    return true;
 }
 
 void ClientInfo::ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid)
@@ -676,11 +675,11 @@ void ClientInfo::UpdateDataQueue(int32_t sensorId, struct SensorEvent &event)
         return;
     }
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
-    auto it = dataQueue_.find(sensorId);
-    if (it == dataQueue_.end()) {
+    auto it = dumpQueue_.find(sensorId);
+    if (it == dumpQueue_.end()) {
         std::queue<struct SensorEvent> q;
         q.push(event);
-        dataQueue_.insert(std::make_pair(sensorId, q));
+        dumpQueue_.insert(std::make_pair(sensorId, q));
         return;
     }
     it->second.push(event);
@@ -689,17 +688,17 @@ void ClientInfo::UpdateDataQueue(int32_t sensorId, struct SensorEvent &event)
     }
 }
 
-std::unordered_map<uint32_t, std::queue<struct SensorEvent>> ClientInfo::GetDataQueue()
+std::unordered_map<uint32_t, std::queue<struct SensorEvent>> ClientInfo::GetDumpQueue()
 {
-    return dataQueue_;
+    return dumpQueue_;
 }
 
 void ClientInfo::ClearDataQueue(int32_t sensorId)
 {
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
-    auto it = dataQueue_.find(sensorId);
-    if (it != dataQueue_.end()) {
-        dataQueue_.erase(it);
+    auto it = dumpQueue_.find(sensorId);
+    if (it != dumpQueue_.end()) {
+        dumpQueue_.erase(it);
     }
 }
 }  // namespace Sensors

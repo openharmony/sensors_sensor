@@ -179,7 +179,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
     for (auto callbackInfo : callbackInfos) {
         napi_value sensorCallback = nullptr;
         napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback);
-        if (IsNapiValueSame(env, callback, sensorCallback)) {
+        if (IsSameValue(env, callback, sensorCallback)) {
             return true;
         }
     }
@@ -262,7 +262,7 @@ static uint32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value ca
         }
         napi_value sensorCallback = nullptr;
         napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback);
-        if (IsNapiValueSame(env, callback, sensorCallback)) {
+        if (IsSameValue(env, callback, sensorCallback)) {
             napi_delete_reference(env, (*iter)->callback[0]);
             (*iter)->callback[0] = nullptr;
             delete *iter;

@@ -203,7 +203,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::v
         return false;
     }
     dprintf(fd, "Last 10 packages sensor data:\n");
-    auto dataMap = clientInfo.GetDataQueue();
+    auto dataMap = clientInfo.GetDumpQueue();
     int32_t j = 0;
     for (auto &sensorData : dataMap) {
         uint32_t sensorId = sensorData.first;

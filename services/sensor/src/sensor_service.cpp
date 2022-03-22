@@ -156,7 +156,7 @@ void SensorService::OnStop()
     }
 }
 
-void SensorService::ReportSensorUsedInfo(uint32_t sensorId, bool enable)
+void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable)
 {
     char uidChar[REPORT_STATUS_LEN] = {0};
     int32_t uid = this->GetCallingUid();
@@ -243,7 +243,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         HiLog::Error(LABEL, "%{public}s sensorId is 0 or maxReportDelayNs exceeded the maximum value", __func__);
         return ERR_NO_INIT;
     }
-    ReportSensorUsedInfo(sensorId, SENSOR_ENABLED);
+    ReportSensorSysEvent(sensorId, SENSOR_ENABLED);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (clientInfo_.GetSensorState(sensorId) == SENSOR_ENABLED) {
         HiLog::Warn(LABEL, "%{public}s sensor has been enabled already", __func__);
@@ -285,7 +285,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return ERR_NO_INIT;
     }
-    ReportSensorUsedInfo(sensorId, SENSOR_DISABLED);
+    ReportSensorSysEvent(sensorId, SENSOR_DISABLED);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     const int32_t clientPid = this->GetCallingPid();
     if (clientPid < 0) {
