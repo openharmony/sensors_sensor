@@ -22,7 +22,6 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorHdiConnection" };
 }
