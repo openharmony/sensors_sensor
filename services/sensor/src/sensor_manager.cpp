@@ -143,7 +143,7 @@ ErrCode SensorManager::SaveSubscriber(uint32_t sensorId, uint32_t pid, int64_t s
 
 void SensorManager::StartDataReportThread()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (!dataThread_.joinable()) {
         HiLog::Warn(LABEL, "%{public}s dataThread_ started", __func__);
         std::thread senocdDataThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
@@ -169,7 +169,7 @@ bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPi
 
 ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (!clientInfo_.ClearSensorInfo(sensorId)) {
         HiLog::Error(LABEL, "%{public}s ClearSensorInfo failed", __func__);
         return CLEAR_SENSOR_INFO_ERR;
@@ -189,7 +189,7 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 
 void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
 }
 }  // namespace Sensors
 }  // namespace OHOS

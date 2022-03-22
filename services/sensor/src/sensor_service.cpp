@@ -60,7 +60,7 @@ void SensorService::OnDump()
 
 void SensorService::OnStart()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (state_ == SensorServiceState::STATE_RUNNING) {
         HiLog::Warn(LABEL, "%{public}s SensorService has already started", __func__);
         return;
@@ -144,7 +144,7 @@ bool SensorService::InitSensorPolicy()
 
 void SensorService::OnStop()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (state_ == SensorServiceState::STATE_STOPPED) {
         HiLog::Warn(LABEL, "%{public}s already stopped", __func__);
         return;
@@ -280,7 +280,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
 
 ErrCode SensorService::DisableSensor(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return ERR_NO_INIT;
@@ -321,7 +321,7 @@ int32_t SensorService::GetSensorState(uint32_t sensorId)
 
 ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID || ((cmdType != FLUSH) && (cmdType != SET_MODE))) {
         HiLog::Error(LABEL, "%{public}s sensorId or cmd is invalid", __func__);
         return ERR_NO_INIT;

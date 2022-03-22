@@ -87,7 +87,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(size_t sendSize, size_t
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if ((sendFd_ != INVALID_FD) || (receiveFd_ != INVALID_FD)) {
         HiLog::Debug(LABEL, "%{public}s already create socketpair", __func__);
         return ERR_OK;

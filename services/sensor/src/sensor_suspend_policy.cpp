@@ -44,7 +44,7 @@ bool SensorSuspendPolicy::CheckFreezingSensor(uint32_t sensorId)
 
 ErrCode SensorSuspendPolicy::DisableSensor(uint32_t sensorId, int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return ERR_NO_INIT;
@@ -62,7 +62,7 @@ ErrCode SensorSuspendPolicy::DisableSensor(uint32_t sensorId, int32_t pid)
 
 void SensorSuspendPolicy::DoSuspend(const std::shared_ptr<ResourceSchedule::SuspendAppInfo> &info)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> suspendLock(suspendMutex_);
     auto &list = info->GetAppIPCInfoList();
     for (const auto &appInfo : list) {
@@ -80,7 +80,6 @@ void SensorSuspendPolicy::DoSuspend(const std::shared_ptr<ResourceSchedule::Susp
             DisableSensor(sensorId, appInfo.pid);
         }
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 ErrCode SensorSuspendPolicy::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodNs,
@@ -152,7 +151,7 @@ std::vector<uint32_t> SensorSuspendPolicy::GetSensorIdByPid(int32_t pid)
 
 void SensorSuspendPolicy::DoActive(const std::shared_ptr<ResourceSchedule::SuspendAppInfo> &info)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     int64_t samplePeriod = DEFAULT_SAMPLEING_RATE;
     int64_t maxReportDelay = DEFAULT_REPORT_DELAY;
     std::vector<uint32_t> sensorIdList;
@@ -178,7 +177,6 @@ void SensorSuspendPolicy::DoActive(const std::shared_ptr<ResourceSchedule::Suspe
     }
     pidSensorIdMap_.clear();
     sensorIdInfoMap_.clear();
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 }  // namespace Sensors
 }  // namespace OHOS

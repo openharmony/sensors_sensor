@@ -38,7 +38,7 @@ MyFileDescriptorListener::MyFileDescriptorListener()
 
 MyFileDescriptorListener::~MyFileDescriptorListener()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (receiveDataBuff_ != nullptr) {
         delete[] receiveDataBuff_;
         receiveDataBuff_ = nullptr;
@@ -47,7 +47,7 @@ MyFileDescriptorListener::~MyFileDescriptorListener()
 
 void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (fileDescriptor < 0) {
         HiLog::Error(LABEL, "%{public}s fileDescriptor: %{public}d", __func__, fileDescriptor);
         return;

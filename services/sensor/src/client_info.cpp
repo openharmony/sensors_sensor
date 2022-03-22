@@ -495,7 +495,7 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
 
 bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorClient == nullptr) {
         HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
         return false;
@@ -514,7 +514,7 @@ bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t 
 
 int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorClient == nullptr) {
         HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
         return INVALID_PID;
@@ -531,7 +531,7 @@ int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
 
 void ClientInfo::DestroyClientPid(const sptr<IRemoteObject> &sensorClient)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorClient == nullptr) {
         HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
         return;
@@ -554,7 +554,7 @@ void ClientInfo::ClearEvent()
 
 std::vector<uint32_t> ClientInfo::GetSensorIdByPid(int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     std::vector<uint32_t> sensorIdVec;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto &itClientMap : clientMap_) {
@@ -568,7 +568,7 @@ std::vector<uint32_t> ClientInfo::GetSensorIdByPid(int32_t pid)
 
 AppThreadInfo ClientInfo::GetAppInfoByChannel(const sptr<SensorBasicDataChannel> &channel)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     AppThreadInfo appThreadInfo;
     {
         std::lock_guard<std::mutex> channelLock(channelMutex_);
@@ -591,7 +591,7 @@ AppThreadInfo ClientInfo::GetAppInfoByChannel(const sptr<SensorBasicDataChannel>
 
 void ClientInfo::GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInfo)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto &sensorIt : clientMap_) {
         for (const auto &pidIt : sensorIt.second) {
@@ -671,7 +671,7 @@ std::vector<int32_t> ClientInfo::GetCmdList(uint32_t sensorId, int32_t uid)
 
 void ClientInfo::UpdateDataQueue(int32_t sensorId, struct SensorEvent &event)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorId == HEART_RATE_SENSOR_ID) {
         return;
     }
