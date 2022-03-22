@@ -17,6 +17,7 @@
 #define SENSORS_ERRORS_H
 
 #include <errors.h>
+#include "hilog/log.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -105,6 +106,23 @@ enum {
     SENSOR_NATIVE_GET_SERVICE_ERR = SENSOR_NATIVE_SAM_ERR + 1,
     SENSOR_NATIVE_REGSITER_CB_ERR = SENSOR_NATIVE_GET_SERVICE_ERR + 1,
 };
+
+class InnerFunctionTracer {
+public:
+    InnerFunctionTracer(const OHOS::HiviewDFX::HiLogLabel& label, const char *func)
+        : label_ { label }, func_ { func }
+    {
+        OHOS::HiviewDFX::HiLog::Debug(label_, "in %{public}s, enter", func_);
+    }
+    ~InnerFunctionTracer()
+    {
+        OHOS::HiviewDFX::HiLog::Debug(label_, "in %{public}s, leave", func_);
+    }
+private:
+    const OHOS::HiviewDFX::HiLogLabel& label_;
+    const char* func_ { nullptr };
+};
 }  // namespace Sensors
 }  // namespace OHOS
+#define CALL_LOG_ENTER   InnerFunctionTracer ___innerFuncTracer___ { LABEL, __FUNCTION__ }
 #endif  // SENSORS_ERRORS_H
