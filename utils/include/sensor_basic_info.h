@@ -21,9 +21,9 @@
 namespace OHOS {
 namespace Sensors {
  enum SensorState {
-     SENSOR_DISABLED = 0,
-     SENSOR_ENABLED = 1,
-     SENSOR_UNKNOWN_STATE = 2,
+    SENSOR_DISABLED = 0,
+    SENSOR_ENABLED = 1,
+    SENSOR_UNKNOWN_STATE = 2,
  };
 
 class SensorBasicInfo {
