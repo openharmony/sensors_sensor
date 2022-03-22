@@ -40,7 +40,7 @@ constexpr uint32_t WAIT_MS = 200;
 
 int32_t SensorServiceClient::InitServiceClient()
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorServer_ != nullptr) {
         HiLog::Debug(LABEL, "%{public}s already init", __func__);
@@ -91,7 +91,7 @@ bool SensorServiceClient::IsValidSensorId(uint32_t sensorId)
 
 int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (!IsValidSensorId(sensorId)) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return SENSOR_NATIVE_SAM_ERR;
@@ -110,7 +110,7 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
 
 int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (!IsValidSensorId(sensorId)) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return SENSOR_NATIVE_SAM_ERR;
@@ -129,7 +129,7 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
 
 int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int32_t params)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     if (!IsValidSensorId(sensorId)) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return SENSOR_NATIVE_SAM_ERR;
@@ -149,7 +149,7 @@ int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int3
 
 std::vector<Sensor> SensorServiceClient::GetSensorList()
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
@@ -163,7 +163,7 @@ std::vector<Sensor> SensorServiceClient::GetSensorList()
 
 int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     dataChannel_ = sensorDataChannel;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -175,7 +175,7 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
 
 int32_t SensorServiceClient::DestroyDataChannel()
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
@@ -186,7 +186,7 @@ int32_t SensorServiceClient::DestroyDataChannel()
 
 void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     (void)object;
     if (dataChannel_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s dataChannel_ cannot be null", __func__);
@@ -222,7 +222,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
 
 void SensorServiceClient::UpdateSensorInfoMap(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     SensorBasicInfo sensorInfo;
     sensorInfo.SetSamplingPeriodNs(samplingPeriod);
@@ -234,7 +234,7 @@ void SensorServiceClient::UpdateSensorInfoMap(uint32_t sensorId, int64_t samplin
 
 void SensorServiceClient::DeleteSensorInfoItem(uint32_t sensorId)
 {
-    CALL_LOG_ENTER;
+    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     auto it = sensorInfoMap_.find(sensorId);
     if (it != sensorInfoMap_.end()) {

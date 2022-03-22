@@ -70,15 +70,15 @@ int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
         HiLog::Error(LABEL, "%{public}s enable sensor failed", __func__);
         return -1;
     }
-    if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
+    if (std::count(supportSensors.begin(), supportSensors.end(), sensorId) == 0) {
         HiLog::Error(LABEL, "%{public}s not support enable sensorId: %{public}d", __func__, sensorId);
-        return ERR_NO_INIT;
+        return -1;
     }
-    if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) != g_enableSensors.end()) {
+    if (std::count(g_enableSensos.begin(), g_enableSensos.end(), sensorId) != 0) {
         HiLog::Info(LABEL, "%{public}s sensorId: %{public}d has been enabled", __func__, sensorId);
         return ERR_OK;
     }
-    g_enableSensors.push_back(sensorId);
+    g_enableSensos.push_back(sensorId);
     if (!dataReportThread_.joinable() || g_isStop) {
         if (dataReportThread_.joinable()) {
             dataReportThread_.join();
@@ -93,22 +93,17 @@ int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
 int32_t HdiServiceImpl::DisableSensor(uint32_t sensorId)
 {
     HiLog::Info(LABEL, "%{public}s in", __func__);
-    if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
+    if (std::count(supportSensors.begin(), supportSensors.end(), sensorId) == 0) {
         HiLog::Error(LABEL, "%{public}s not support disable sensorId: %{public}d", __func__, sensorId);
-        return ERR_NO_INIT;
+        return -1;
     }
-    if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) == g_enableSensors.end()) {
+    if (std::count(g_enableSensos.begin(), g_enableSensos.end(), sensorId) == 0) {
         HiLog::Error(LABEL, "%{public}s sensorId: %{public}d should be enable first", __func__, sensorId);
-        return ERR_NO_INIT;
+        return -1;
     }
-    std::vector<int32_t>::iterator iter;
-    for (iter = g_enableSensors.begin(); iter != g_enableSensors.end(); ++iter) {
-        if (*iter == sensorId) {
-            g_enableSensors.erase(iter++);
-            break;
-        }
-    }
-    if (g_enableSensors.empty()) {
+    auto iter = std::remove(g_enableSensos.begin(), g_enableSensos.end(), sensorId);
+    g_enableSensos.erase(iter, g_enableSensos.end());
+    if (g_enableSensos.empty()) {
         g_isStop = true;
     }
     return ERR_OK;
