@@ -227,7 +227,7 @@ void SensorServiceClient::UpdateSensorInfoMap(uint32_t sensorId, int64_t samplin
     SensorBasicInfo sensorInfo;
     sensorInfo.SetSamplingPeriodNs(samplingPeriod);
     sensorInfo.SetMaxReportDelayNs(maxReportDelay);
-    sensorInfo.SetSensorState(true);
+    sensorInfo.SetSensorState(SensorState::SENSOR_ENABLED);
     sensorInfoMap_[sensorId] = sensorInfo;
     return;
 }

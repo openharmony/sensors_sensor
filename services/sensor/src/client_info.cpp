@@ -40,27 +40,27 @@ constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t HEART_RATE_SENSOR_ID = 83886336;
 }  // namespace
 
-bool ClientInfo::GetSensorState(uint32_t sensorId)
+SensorState ClientInfo::GetSensorState(uint32_t sensorId)
 {
     HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
-        return false;
+        return SENSOR_DISABLED;
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
         HiLog::Error(LABEL, "%{public}s cannot find sensorId : %{public}u", __func__, sensorId);
-        return false;
+        return SENSOR_DISABLED;
     }
     for (const auto &pidIt : it->second) {
-        if (pidIt.second.GetSensorState() == true) {
-            return false;
+        if (pidIt.second.GetSensorState() == SENSOR_ENABLED) {
+            return SENSOR_ENABLED;
         }
     }
     HiLog::Error(LABEL, "%{public}s cannot find sensorinfo, sensorId : %{public}u", __func__, sensorId);
-    return false;
+    return SENSOR_DISABLED;
 }
 
 SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
@@ -110,7 +110,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
     }
     bool ret = false;
     for (const auto &pidIt : it->second) {
-        if (pidIt.second.GetSensorState() != true) {
+        if (pidIt.second.GetSensorState() != SENSOR_ENABLED) {
             continue;
         }
         if (pidIt.first != pid) {
@@ -230,7 +230,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
 bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
     HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, pid : %{public}d", __func__, sensorId, pid);
-    if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (sensorInfo.GetSensorState() != true)) {
+    if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (sensorInfo.GetSensorState() != SENSOR_ENABLED)) {
         HiLog::Error(LABEL, "%{public}s params are invalid", __func__);
         return false;
     }

@@ -17,7 +17,7 @@
 
 namespace OHOS {
 namespace Sensors {
-SensorBasicInfo::SensorBasicInfo() : samplingPeriodNs_(0L), maxReportDelayNs_(0L), sensorState_(false)
+SensorBasicInfo::SensorBasicInfo() : samplingPeriodNs_(0L), maxReportDelayNs_(0L), sensorState_(SENSOR_DISABLED)
 {}
 
 int64_t SensorBasicInfo::GetSamplingPeriodNs() const
@@ -40,12 +40,12 @@ void SensorBasicInfo::SetMaxReportDelayNs(int64_t maxReportDelayNs)
     maxReportDelayNs_ = maxReportDelayNs;
 }
 
-bool SensorBasicInfo::GetSensorState() const
+SensorState SensorBasicInfo::GetSensorState() const
 {
     return sensorState_;
 }
 
-void SensorBasicInfo::SetSensorState(bool sensorState)
+void SensorBasicInfo::SetSensorState(SensorState sensorState)
 {
     sensorState_ = sensorState;
 }
