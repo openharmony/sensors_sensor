@@ -18,7 +18,7 @@
 #include "hilog/log.h"
 
 namespace OHOS {
-namespace MMI {
+namespace Sensors {
 namespace {
 constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002800;
 } // namespace
@@ -45,6 +45,6 @@ constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002800;
 #define SENSOR_LOGF(fmt, ...) do { \
     OHOS::HiviewDFX::HiLog::Fatal(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
-} // namespace MMI
+} // namespace Sensors
 } // namespace OHOS
 #endif // SENSOR_LOG_H
