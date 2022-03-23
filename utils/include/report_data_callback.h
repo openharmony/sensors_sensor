@@ -29,7 +29,7 @@ constexpr int32_t SENSOR_DATA_LENGHT = 64;
 
 struct CircularEventBuf {
     struct  SensorEvent *circularBuf;
-    int32_t readPosition;
+    int32_t readPos;
     int32_t writePosition;
     int32_t eventNum;
 };
@@ -38,12 +38,12 @@ class ReportDataCallback : public RefBase {
 public:
     ReportDataCallback();
     ~ReportDataCallback();
-    int32_t ZReportDataCallback(const struct SensorEvent *event, sptr<ReportDataCallback> cb);
+    int32_t ReportDataCallback(const struct SensorEvent *event, sptr<ReportDataCallback> cb);
     struct CircularEventBuf &GetEventData();
     struct CircularEventBuf eventsBuf_;
 };
 
-using ZReportDataCb = int32_t (ReportDataCallback::*)(const struct SensorEvent *event, sptr<ReportDataCallback> cb);
+using ReportDataCb = int32_t (ReportDataCallback::*)(const struct SensorEvent *event, sptr<ReportDataCallback> cb);
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // REPORT_DATA_CALLBACK_H
