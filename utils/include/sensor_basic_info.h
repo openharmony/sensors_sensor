@@ -34,7 +34,7 @@ public:
 private:
     int64_t samplingPeriodNs_;
     int64_t maxReportDelayNs_;
-    bool sensorState_;
+    bool sensorState_ = false;
 };
 }  // namespace Sensors
 }  // namespace OHOS
