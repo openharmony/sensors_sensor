@@ -63,7 +63,7 @@ private:
     void UnregisterHdiDeathRecipient();
     void reconnect();
     void updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    void setSensorBasicInfoState(int32_t sensorId, SensorState state);
+    void setSensorBasicInfoState(int32_t sensorId, bool state);
     void deleteSensorBasicInfoState(int32_t sensorId);
 };
 }  // namespace Sensors

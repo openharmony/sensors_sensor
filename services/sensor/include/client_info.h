@@ -42,7 +42,7 @@ public:
     ClientInfo() = default;
     virtual ~ClientInfo() = default;
 
-    SensorState GetSensorState(uint32_t sensorId);
+    bool GetSensorState(uint32_t sensorId);
     SensorBasicInfo GetBestSensorInfo(uint32_t sensorId);
     bool OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid);
     std::vector<sptr<SensorBasicDataChannel>> GetSensorChannel(uint32_t sensorId);

@@ -41,7 +41,7 @@ class SensorBasicDataChannel : public RefBase {
 public:
     SensorBasicDataChannel();
     virtual ~SensorBasicDataChannel();
-    int32_t CreateSensorBasicChannel(size_t sendSize, size_t receiveSize);
+    int32_t CreateSensorBasicChannel();
     int32_t CreateSensorBasicChannel(MessageParcel &data);
     int32_t DestroySensorBasicChannel();
     int32_t GetSendDataFd() const;
