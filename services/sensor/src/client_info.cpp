@@ -110,7 +110,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
     }
     bool ret = false;
     for (const auto &pidIt : it->second) {
-        if (pidIt.second.GetSensorState() != true) {
+        if (!pidIt.second.GetSensorState()) {
             continue;
         }
         if (pidIt.first != pid) {
@@ -230,7 +230,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
 bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
     HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, pid : %{public}d", __func__, sensorId, pid);
-    if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (sensorInfo.GetSensorState() != true)) {
+    if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
         HiLog::Error(LABEL, "%{public}s params are invalid", __func__);
         return false;
     }

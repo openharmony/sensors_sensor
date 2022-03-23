@@ -245,7 +245,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
     }
     ReportSensorSysEvent(sensorId, true);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
-    if (clientInfo_.GetSensorState(sensorId) == true) {
+    if (clientInfo_.GetSensorState(sensorId)) {
         HiLog::Warn(LABEL, "%{public}s sensor has been enabled already", __func__);
         auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
         if (ret != ERR_OK) {
@@ -292,7 +292,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
         HiLog::Error(LABEL, "%{public}s clientPid is invalid, clientPid : %{public}d", __func__, clientPid);
         return CLIENT_PID_INVALID_ERR;
     }
-    if (clientInfo_.GetSensorState(sensorId) != true) {
+    if (!clientInfo_.GetSensorState(sensorId)) {
         HiLog::Error(LABEL, "%{public}s sensor should be enabled first", __func__);
         return DISABLE_SENSOR_ERR;
     }
