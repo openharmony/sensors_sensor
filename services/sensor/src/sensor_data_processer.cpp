@@ -307,7 +307,6 @@ int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, s
 
 void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
     uint32_t realSensorId = 0;
     uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId);
     std::vector<sptr<SensorBasicDataChannel>> channelList;
@@ -399,7 +398,7 @@ int32_t SensorDataProcesser::SendEvents(sptr<SensorBasicDataChannel> &channel, s
 
 int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     do {
         if (dataProcesser->ProcessEvents(dataCallback) == INVALID_POINTER) {
             HiLog::Error(LABEL, "%{public}s callback cannot be null", __func__);

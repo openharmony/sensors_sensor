@@ -75,7 +75,7 @@ static std::string GetEventName(int32_t eventId)
 
 void DmdReport::ReportException(int32_t eventId, const std::string &interfaceName, int32_t error)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> eventLock(eventMutex_);
     auto eventIt = eventMap_.find(eventId);
     if (eventIt == eventMap_.end()) {
@@ -87,7 +87,6 @@ void DmdReport::ReportException(int32_t eventId, const std::string &interfaceNam
         HiviewDFX::HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSORS, GetEventName(eventId),
             HiviewDFX::HiSysEvent::EventType::FAULT, interfaceName, error);
         eventMap_[eventId] = curTime;
-        HiLog::Debug(LABEL, "%{public}s end", __func__);
         return;
     }
     HiLog::Warn(LABEL, "%{public}s eventId is reported every half an hour", __func__);

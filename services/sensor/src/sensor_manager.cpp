@@ -53,8 +53,7 @@ uint32_t SensorManager::GetSensorFlag(uint32_t sensorId)
 
 bool SensorManager::SetBestSensorParams(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, samplingPeriodNs : %{public}d", __func__, sensorId,
-                 int32_t { samplingPeriodNs });
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return false;
@@ -74,13 +73,12 @@ bool SensorManager::SetBestSensorParams(uint32_t sensorId, int64_t samplingPerio
         HiLog::Error(LABEL, "%{public}s SetBatch failed", __func__);
         return false;
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
 bool SensorManager::ResetBestSensorParams(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return false;
@@ -92,13 +90,12 @@ bool SensorManager::ResetBestSensorParams(uint32_t sensorId)
         HiLog::Error(LABEL, "%{public}s SetBatch failed", __func__);
         return false;
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return true;
 }
 
 SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
+    CALL_LOG_ENTER;
     SensorBasicInfo sensorInfo;
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
     auto it = sensorMap_.find(sensorId);
@@ -125,7 +122,6 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
     sensorInfo.SetSamplingPeriodNs(curSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(curReportDelayNs);
     sensorInfo.SetSensorState(SENSOR_ENABLED);
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return sensorInfo;
 }
 
@@ -143,18 +139,17 @@ ErrCode SensorManager::SaveSubscriber(uint32_t sensorId, uint32_t pid, int64_t s
 
 void SensorManager::StartDataReportThread()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (!dataThread_.joinable()) {
         HiLog::Warn(LABEL, "%{public}s dataThread_ started", __func__);
         std::thread senocdDataThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
         dataThread_ = std::move(senocdDataThread);
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
+    CALL_LOG_ENTER;
     if (clientInfo_.OnlyCurPidSensorEnabled(sensorId, clientPid)) {
         HiLog::Warn(LABEL, "%{public}s Only current client using this sensor", __func__);
         return false;
@@ -169,7 +164,7 @@ bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPi
 
 ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     clientInfo_.ClearSensorInfo(sensorId);
     if (sensorId == PROXIMITY_SENSOR_ID) {
         struct SensorEvent event;
@@ -180,13 +175,12 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
             clientInfo_.StoreEvent(event);
         }
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
 void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
 }
 }  // namespace Sensors
 }  // namespace OHOS
