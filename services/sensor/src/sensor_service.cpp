@@ -60,7 +60,7 @@ void SensorService::OnDump()
 
 void SensorService::OnStart()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (state_ == SensorServiceState::STATE_RUNNING) {
         HiLog::Warn(LABEL, "%{public}s SensorService has already started", __func__);
         return;
@@ -144,7 +144,7 @@ bool SensorService::InitSensorPolicy()
 
 void SensorService::OnStop()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (state_ == SensorServiceState::STATE_STOPPED) {
         HiLog::Warn(LABEL, "%{public}s already stopped", __func__);
         return;
@@ -236,8 +236,7 @@ ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodN
 
 ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u, samplingPeriodNs : %{public}"
-        PRId64, __func__, sensorId, samplingPeriodNs);
+    CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) ||
         ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
         HiLog::Error(LABEL, "%{public}s sensorId is 0 or maxReportDelayNs exceeded the maximum value", __func__);
@@ -280,7 +279,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
 
 ErrCode SensorService::DisableSensor(uint32_t sensorId)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
         return ERR_NO_INIT;
@@ -321,7 +320,7 @@ int32_t SensorService::GetSensorState(uint32_t sensorId)
 
 ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID || ((cmdType != FLUSH) && (cmdType != SET_MODE))) {
         HiLog::Error(LABEL, "%{public}s sensorId or cmd is invalid", __func__);
         return ERR_NO_INIT;
@@ -386,7 +385,7 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
 
 ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     const int32_t clientPid = this->GetCallingPid();
     if (clientPid < 0) {
         HiLog::Error(LABEL, "%{public}s clientPid is invalid, clientPid : %{public}d", __func__, clientPid);
@@ -400,13 +399,12 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
     }
     clientInfo_.DestroyCmd(this->GetCallingUid());
     UnregisterClientDeathRecipient(sensorClient);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
 void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<IRemoteObject> client = object.promote();
     if (client == nullptr) {
         HiLog::Error(LABEL, "%{public}s client cannot be null", __func__);
@@ -421,12 +419,11 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
     clientInfo_.DestroyCmd(this->GetCallingUid());
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
     if (clientDeathObserver_ == nullptr) {
@@ -435,12 +432,11 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
     }
     client->AsObject()->AddDeathRecipient(clientDeathObserver_);
     clientInfo_.SaveClientPid(sensorClient, pid);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
     if (clientDeathObserver_ == nullptr) {
@@ -449,12 +445,11 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
     }
     client->AsObject()->RemoveDeathRecipient(clientDeathObserver_);
     clientInfo_.DestroyClientPid(sensorClient);
-    HiLog::Info(LABEL, "%{public}s end", __func__);
 }
 
 int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     SensorDump &sensorDump = SensorDump::GetInstance();
     if ((args.empty()) || (args[0].size() != MAX_DMUP_PARAM)) {
         HiLog::Error(LABEL, "%{public}s param cannot be empty or the length is not 2", __func__);
@@ -473,7 +468,6 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
         sensorDump.DumpHelp(fd);
         return DUMP_PARAM_ERR;
     }
-    HiLog::Info(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 }  // namespace Sensors
