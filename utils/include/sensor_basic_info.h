@@ -20,8 +20,6 @@
 
 namespace OHOS {
 namespace Sensors {
-
-
 class SensorBasicInfo {
 public:
     SensorBasicInfo();
