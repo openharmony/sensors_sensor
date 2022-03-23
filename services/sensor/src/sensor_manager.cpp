@@ -165,10 +165,7 @@ bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPi
 ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
-    if (!clientInfo_.ClearSensorInfo(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s ClearSensorInfo failed", __func__);
-        return CLEAR_SENSOR_INFO_ERR;
-    }
+    clientInfo_.ClearSensorInfo(sensorId);
     if (sensorId == PROXIMITY_SENSOR_ID) {
         struct SensorEvent event;
         auto ret = clientInfo_.GetStoreEvent(sensorId, event);

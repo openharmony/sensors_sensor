@@ -17,6 +17,8 @@
 #define SENSORS_ERRORS_H
 
 #include <errors.h>
+#include <sensor_log.h>
+
 #include "hilog/log.h"
 
 namespace OHOS {
@@ -122,7 +124,144 @@ private:
     const OHOS::HiviewDFX::HiLogLabel& label_;
     const char* func_ { nullptr };
 };
+
+#define CALL_LOG_ENTER   InnerFunctionTracer ___innerFuncTracer___ { LABEL, __FUNCTION__ }
+
+#ifdef DEBUG_CODE_TEST
+#define CHKPL(cond, ...) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPL(%{public}s) is null, do nothing", \
+                __FILE__, __LINE__, #cond); \
+        } \
+    } while (0)
+
+#define CHKPV(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPV(%{public}s) is null", \
+                __FILE__, __LINE__, #cond); \
+            return; \
+        } \
+    } while (0)
+
+#define CHKPF(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPF(%{public}s) is null", \
+                __FILE__, __LINE__, #cond); \
+            return false; \
+        } \
+    } while (0)
+
+#define CHKPC(cond) \
+    { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPC(%{public}s) is null, skip then continue", \
+                __FILE__, __LINE__, #cond); \
+            continue; \
+        } \
+    }
+
+#define CHKPB(cond) \
+    { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPC(%{public}s) is null, skip then break", \
+                __FILE__, __LINE__, #cond); \
+            break; \
+        } \
+    }
+
+#define CHKPR(cond, r) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPR(%{public}s) is null, return value is %{public}d", \
+                __FILE__, __LINE__, #cond, r); \
+            return r; \
+        } \
+    } while (0)
+
+#define CHKPP(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CHKPP(%{public}s) is null, return value is null", \
+                __FILE__, __LINE__, #cond); \
+            return nullptr; \
+        } \
+    } while (0)
+
+#define CK(cond, ec) \
+    do { \
+        if (!(cond)) { \
+            SENSOR_LOGE("%{public}s, (%{public}d), CK(%{public}s), errCode:%{public}d", \
+                __FILE__, __LINE__, #cond, ec); \
+        } \
+    } while (0)
+
+#else // DEBUG_CODE_TEST
+#define CHKPL(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPL(%{public}s) is null, do nothing", #cond); \
+        } \
+    } while (0)
+
+#define CHKPV(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPV(%{public}s) is null", #cond); \
+            return; \
+        } \
+    } while (0)
+
+#define CHKPF(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPF(%{public}s) is null", #cond); \
+            return false; \
+        } \
+    } while (0)
+
+#define CHKPC(cond) \
+    { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPC(%{public}s) is null, skip then continue", #cond); \
+            continue; \
+        } \
+    }
+
+#define CHKPB(cond) \
+    { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPC(%{public}s) is null, skip then break", #cond); \
+            break; \
+        } \
+    }
+
+#define CHKPR(cond, r) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPR(%{public}s) is null, return value is %{public}d", #cond, r); \
+            return r; \
+        } \
+    } while (0)
+
+#define CHKPP(cond) \
+    do { \
+        if ((cond) == nullptr) { \
+            SENSOR_LOGE("CHKPP(%{public}s) is null, return value is null", #cond); \
+            return nullptr; \
+        } \
+    } while (0)
+
+#define CK(cond, ec) \
+    do { \
+        if (!(cond)) { \
+            SENSOR_LOGE("CK(%{public}s), errCode:%{public}d", #cond, ec); \
+        } \
+    } while (0)
+
+#endif
 }  // namespace Sensors
 }  // namespace OHOS
-#define CALL_LOG_ENTER   InnerFunctionTracer ___innerFuncTracer___ { LABEL, __FUNCTION__ }
 #endif  // SENSORS_ERRORS_H

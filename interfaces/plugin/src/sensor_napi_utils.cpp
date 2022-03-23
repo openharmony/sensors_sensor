@@ -25,7 +25,7 @@
 using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
 
-bool IsNapiValueSame(napi_env env, napi_value lhs, napi_value rhs)
+bool IsSameValue(napi_env env, napi_value lhs, napi_value rhs)
 {
     bool result = false;
     napi_strict_equals(env, lhs, rhs, &result);

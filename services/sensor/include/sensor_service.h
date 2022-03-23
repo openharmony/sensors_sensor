@@ -79,7 +79,7 @@ private:
     bool InitSensorList();
     bool InitSensorPolicy();
     void ReportOnChangeData(uint32_t sensorId);
-    void ReportSensorUsedInfo(uint32_t sensorId, bool enable);
+    void ReportSensorSysEvent(uint32_t sensorId, bool enable);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

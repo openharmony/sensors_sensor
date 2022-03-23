@@ -102,7 +102,7 @@ struct AsyncCallbackInfo {
 
 using ConvertDataFunc = void(*)(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
 
-bool IsNapiValueSame(napi_env env, napi_value lhs, napi_value rhs);
+bool IsSameValue(napi_env env, napi_value lhs, napi_value rhs);
 
 bool IsMatchType(napi_env env, napi_value value, napi_valuetype type);
 
