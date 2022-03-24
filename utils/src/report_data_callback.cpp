@@ -51,7 +51,7 @@ ReportDataCallback::~ReportDataCallback()
     eventsBuf_.eventNum = 0;
 }
 
-int32_t ReportDataCallback::ZReportDataCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
+int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
 {
     if (event == nullptr) {
         HiLog::Error(LABEL, "%{public}s sensor data is null", __func__);
