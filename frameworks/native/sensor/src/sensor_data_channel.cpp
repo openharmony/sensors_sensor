@@ -43,11 +43,6 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_NATIVE, "Senso
 constexpr uint32_t STOP_EVENT_ID = 0;
 }  // namespace
 
-SensorDataChannel::SensorDataChannel()
-    : dataCB_(nullptr),
-      privateData_(nullptr)
-{}
-
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
 {
     if (callBack == nullptr) {
