@@ -113,7 +113,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
         HiLog::Error(LABEL, "%{public}s is failed", __func__);
         return ret;
     }
-    setSensorBasicInfoState(sensorId, SENSOR_ENABLED);
+    setSensorBasicInfoState(sensorId, true);
     return ERR_OK;
 }
 
@@ -249,7 +249,7 @@ void HdiConnection::updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
     sensorBasicInfoMap_[sensorId] = sensorBasicInfo;
 }
 
-void HdiConnection::setSensorBasicInfoState(int32_t sensorId, SensorState state)
+void HdiConnection::setSensorBasicInfoState(int32_t sensorId, bool state)
 {
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     auto it = sensorBasicInfoMap_.find(sensorId);
@@ -334,7 +334,7 @@ void HdiConnection::reconnect()
         int32_t sensorTypeId = sensorInfo.first;
         ret = SetBatch(sensorTypeId, sensorInfo.second.GetSamplingPeriodNs(),
             sensorInfo.second.GetMaxReportDelayNs());
-        if (ret < 0 || sensorInfo.second.GetSensorState() != SENSOR_ENABLED) {
+        if (ret < 0 || sensorInfo.second.GetSensorState() != true) {
             HiLog::Error(LABEL, "%{public}s sensorTypeId: %{public}d set batch fail or not need enable sensor",
                 __func__, sensorTypeId);
             continue;

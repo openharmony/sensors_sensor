@@ -102,7 +102,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
     if (it == sensorMap_.end()) {
         sensorInfo.SetSamplingPeriodNs(samplingPeriodNs);
         sensorInfo.SetMaxReportDelayNs(maxReportDelayNs);
-        sensorInfo.SetSensorState(SENSOR_ENABLED);
+        sensorInfo.SetSensorState(true);
         HiLog::Error(LABEL, "%{public}s sensorId invalid", __func__);
         return sensorInfo;
     }
@@ -121,7 +121,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
     int64_t curReportDelayNs = (maxReportDelayNs > supportDelay) ? supportDelay : maxReportDelayNs;
     sensorInfo.SetSamplingPeriodNs(curSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(curReportDelayNs);
-    sensorInfo.SetSensorState(SENSOR_ENABLED);
+    sensorInfo.SetSensorState(true);
     return sensorInfo;
 }
 

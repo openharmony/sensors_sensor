@@ -29,6 +29,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_UTILS, "SensorBasicChannel" };
+constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(struct SensorEvent) * 100;
 constexpr int32_t DEFAULT_CHANNEL_SIZE = 2 * 1024;
 constexpr int32_t SOCKET_PAIR_SIZE = 2;
 }  // namespace
@@ -38,7 +39,7 @@ SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(INVALID_FD), receiveF
     HiLog::Debug(LABEL, "%{public}s isActive_ : %{public}d, sendFd: %{public}d", __func__, isActive_, sendFd_);
 }
 
-int32_t SensorBasicDataChannel::CreateSensorBasicChannel(size_t sendSize, size_t receiveSize)
+int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 {
     if ((sendFd_ != INVALID_FD) || (receiveFd_ != INVALID_FD)) {
         HiLog::Debug(LABEL, "%{public}s already create socketpair", __func__);
@@ -55,8 +56,8 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(size_t sendSize, size_t
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
     }
     // set socket attr
-    setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &sendSize, sizeof(sendSize));
-    setsockopt(socketPair[1], SOL_SOCKET, SO_RCVBUF, &receiveSize, sizeof(receiveSize));
+    setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE));
+    setsockopt(socketPair[1], SOL_SOCKET, SO_RCVBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE));
     int32_t bufferSize = DEFAULT_CHANNEL_SIZE;
     int32_t ret = setsockopt(socketPair[0], SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize));
     if (ret != 0) {

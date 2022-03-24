@@ -40,27 +40,27 @@ constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t HEART_RATE_SENSOR_ID = 83886336;
 }  // namespace
 
-SensorState ClientInfo::GetSensorState(uint32_t sensorId)
+bool ClientInfo::GetSensorState(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
-        return SENSOR_DISABLED;
+        return false;
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
         HiLog::Error(LABEL, "%{public}s cannot find sensorId : %{public}u", __func__, sensorId);
-        return SENSOR_DISABLED;
+        return false;
     }
     for (const auto &pidIt : it->second) {
-        if (pidIt.second.GetSensorState() == SENSOR_ENABLED) {
-            return SENSOR_ENABLED;
+        if (pidIt.second.GetSensorState() == true) {
+            return true;
         }
     }
     HiLog::Error(LABEL, "%{public}s cannot find sensorinfo, sensorId : %{public}u", __func__, sensorId);
-    return SENSOR_DISABLED;
+    return false;
 }
 
 SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
@@ -110,7 +110,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
     }
     bool ret = false;
     for (const auto &pidIt : it->second) {
-        if (pidIt.second.GetSensorState() != SENSOR_ENABLED) {
+        if (!pidIt.second.GetSensorState()) {
             continue;
         }
         if (pidIt.first != pid) {
@@ -226,7 +226,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
 bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
     CALL_LOG_ENTER;
-    if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (sensorInfo.GetSensorState() != SENSOR_ENABLED)) {
+    if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
         HiLog::Error(LABEL, "%{public}s params are invalid", __func__);
         return false;
     }

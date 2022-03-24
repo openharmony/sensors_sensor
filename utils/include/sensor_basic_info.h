@@ -20,12 +20,6 @@
 
 namespace OHOS {
 namespace Sensors {
-enum SensorState {
-    SENSOR_DISABLED = 0,
-    SENSOR_ENABLED = 1,
-    SENSOR_UNKNOWN_STATE = 2,
-};
-
 class SensorBasicInfo {
 public:
     SensorBasicInfo();
@@ -34,13 +28,13 @@ public:
     void SetSamplingPeriodNs(int64_t samplingPeriodNs);
     int64_t GetMaxReportDelayNs() const;
     void SetMaxReportDelayNs(int64_t maxReportDelayNs);
-    SensorState GetSensorState() const;
-    void SetSensorState(SensorState sensorState);
+    bool GetSensorState() const;
+    void SetSensorState(bool sensorState);
 
 private:
     int64_t samplingPeriodNs_;
     int64_t maxReportDelayNs_;
-    SensorState sensorState_;
+    bool sensorState_ = false;
 };
 }  // namespace Sensors
 }  // namespace OHOS

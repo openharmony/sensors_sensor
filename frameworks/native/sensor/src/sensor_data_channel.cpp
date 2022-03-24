@@ -40,7 +40,6 @@ std::shared_ptr<AppExecFwk::EventRunner> SensorDataChannel::eventRunner_;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_NATIVE, "SensorDataChannel" };
 // max 100 data in cache buffer
-constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(struct SensorEvent) * 100;
 constexpr uint32_t STOP_EVENT_ID = 0;
 }  // namespace
 
@@ -77,7 +76,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     // create basic data channel
-    int32_t ret = CreateSensorBasicChannel(SENSOR_READ_DATA_SIZE, SENSOR_READ_DATA_SIZE);
+    int32_t ret = CreateSensorBasicChannel();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s create basic channel failed, ret : %{public}d", __func__, ret);
         return ret;
