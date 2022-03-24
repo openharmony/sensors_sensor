@@ -308,10 +308,10 @@ int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, s
 void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
 {
     uint32_t realSensorId = 0;
-    uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId);
+    uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId);
     std::vector<sptr<SensorBasicDataChannel>> channelList;
     if (sensorId == FLUSH_COMPLETE_ID) {
-        realSensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPosition].sensorTypeId);
+        realSensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId);
         channelList = clientInfo_.GetSensorChannel(realSensorId);
     } else {
         channelList = clientInfo_.GetSensorChannel(sensorId);
@@ -325,7 +325,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
             flushVec = it->second;
             for (auto &channel : flushVec) {
                 if (flushInfo_.IsFlushChannelValid(channelList, channel.flushChannel)) {
-                    SendEvents(channel.flushChannel, eventsBuf.circularBuf[eventsBuf.readPosition]);
+                    SendEvents(channel.flushChannel, eventsBuf.circularBuf[eventsBuf.readPos]);
                     flushInfo_.ClearFlushInfoItem(realSensorId);
                     break;
                 } else {
@@ -347,7 +347,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
             /* if has some suspend flush, but this flush come from the flush function rather than enable,
                so we need to calling GetSensorStatus to decided whether send this event. */
             if (channel->GetSensorStatus()) {
-                SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPosition]);
+                SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
             }
         }
     }
@@ -369,10 +369,10 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
     int32_t eventNum = eventsBuf.eventNum;
     for (int32_t i = 0; i < eventNum; i++) {
         EventFilter(eventsBuf);
-        delete[] eventsBuf.circularBuf[eventsBuf.readPosition].data;
-        eventsBuf.readPosition++;
-        if (eventsBuf.readPosition == CIRCULAR_BUF_LEN) {
-            eventsBuf.readPosition = 0;
+        delete[] eventsBuf.circularBuf[eventsBuf.readPos].data;
+        eventsBuf.readPos++;
+        if (eventsBuf.readPos == CIRCULAR_BUF_LEN) {
+            eventsBuf.readPos = 0;
         }
         eventsBuf.eventNum--;
     }

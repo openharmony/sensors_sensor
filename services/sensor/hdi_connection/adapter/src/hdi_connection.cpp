@@ -79,21 +79,15 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
         return ret;
     }
-    for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
-        const std::string sensorName(sensorInfos[i].sensorName);
-        const std::string vendorName(sensorInfos[i].vendorName);
-        const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
-        const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
-        const int32_t sensorId = sensorInfos[i].sensorId;
-        const float maxRange = sensorInfos[i].maxRange;
+    for (size_t i = 0; i < sensorInfos.size(); i++) {
         Sensor sensor;
-        sensor.SetSensorId(sensorId);
-        sensor.SetSensorTypeId(sensorId);
-        sensor.SetFirmwareVersion(firmwareVersion.c_str());
-        sensor.SetHardwareVersion(hardwareVersion.c_str());
-        sensor.SetMaxRange(maxRange);
-        sensor.SetSensorName(sensorName.c_str());
-        sensor.SetVendorName(vendorName.c_str());
+        sensor.SetSensorId(sensorInfos[i].sensorId);
+        sensor.SetSensorTypeId(sensorInfos[i].sensorId);
+        sensor.SetFirmwareVersion(sensorInfos[i].firmwareVersion.c_str());
+        sensor.SetHardwareVersion(sensorInfos[i].hardwareVersion.c_str());
+        sensor.SetMaxRange(sensorInfos[i].maxRange);
+        sensor.SetSensorName(sensorInfos[i].sensorName.c_str());
+        sensor.SetVendorName(sensorInfos[i].vendorName.c_str());
         sensor.SetResolution(sensorInfos[i].accuracy);
         sensor.SetPower(sensorInfos[i].power);
         sensorList.push_back(sensor);

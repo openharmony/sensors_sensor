@@ -111,7 +111,7 @@ bool SensorService::InitDataCallback()
         HiLog::Error(LABEL, "%{public}s failed, reportDataCallback_ cannot be null", __func__);
         return false;
     }
-    ZReportDataCb cb = &ReportDataCallback::ZReportDataCallback;
+    ZReportDataCb cb = &ReportDataCallback::ReportEventCallback;
     auto ret = sensorHdiConnection_.RegisteDataReport(cb, reportDataCallback_);
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s RegisterDataReport failed", __func__);
