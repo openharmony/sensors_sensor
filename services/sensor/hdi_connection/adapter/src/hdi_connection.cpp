@@ -79,7 +79,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
         return ret;
     }
-    for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
+    for (size_t i = 0; i < sensorInfos.size(); i++) {
         Sensor sensor;
         sensor.SetSensorId(sensorInfos[i].sensorId);
         sensor.SetSensorTypeId(sensorInfos[i].sensorId);
