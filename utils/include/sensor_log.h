@@ -30,16 +30,16 @@ constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002800;
 #define SENSOR_FUNC_INFO __FUNCTION__, __LINE__
 #endif
 
-#define SENSOR_LOGD(fmt, ...) do { \
+#define SEN_HILOGD(fmt, ...) do { \
     OHOS::HiviewDFX::HiLog::Debug(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
-#define SENSOR_LOGI(fmt, ...) do { \
+#define SEN_HILOGI(fmt, ...) do { \
     OHOS::HiviewDFX::HiLog::Info(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
-#define SENSOR_LOGW(fmt, ...) do { \
+#define SEN_HILOGW(fmt, ...) do { \
     OHOS::HiviewDFX::HiLog::Warn(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
-#define SENSOR_LOGE(fmt, ...) do { \
+#define SEN_HILOGE(fmt, ...) do { \
     OHOS::HiviewDFX::HiLog::Error(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
 #define SENSOR_LOGF(fmt, ...) do { \
