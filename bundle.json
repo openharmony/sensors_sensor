@@ -49,9 +49,6 @@
             "header_base": "//base/sensors/sensor/interfaces/native/include"
           }
         }
-      ],
-      "test": [
-          "//base/sensors/sensor/interfaces/plugin/test/unittest:unittest"
       ]
     }
   }
