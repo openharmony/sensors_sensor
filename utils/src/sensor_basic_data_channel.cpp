@@ -34,14 +34,14 @@ constexpr int32_t DEFAULT_CHANNEL_SIZE = 2 * 1024;
 constexpr int32_t SOCKET_PAIR_SIZE = 2;
 }  // namespace
 
-SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(INVALID_FD), receiveFd_(INVALID_FD), isActive_(false)
+SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), isActive_(false)
 {
     HiLog::Debug(LABEL, "%{public}s isActive_ : %{public}d, sendFd: %{public}d", __func__, isActive_, sendFd_);
 }
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 {
-    if ((sendFd_ != INVALID_FD) || (receiveFd_ != INVALID_FD)) {
+    if ((sendFd_ != -1) || (receiveFd_ != -1)) {
         HiLog::Debug(LABEL, "%{public}s already create socketpair", __func__);
         return ERR_OK;
     }
@@ -51,8 +51,8 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
         DmdReport::ReportException(SENSOR_DATA_CHANNEL_EXCEPTION, "CreateSensorBasicChannel",
                                    SENSOR_CHANNEL_SOCKET_CREATE_ERR);
         HiLog::Error(LABEL, "%{public}s create socketpair failed", __func__);
-        sendFd_ = INVALID_FD;
-        receiveFd_ = INVALID_FD;
+        sendFd_ = -1;
+        receiveFd_ = -1;
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
     }
     // set socket attr
@@ -89,20 +89,20 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
 {
     CALL_LOG_ENTER;
-    if ((sendFd_ != INVALID_FD) || (receiveFd_ != INVALID_FD)) {
+    if ((sendFd_ != -1) || (receiveFd_ != -1)) {
         HiLog::Debug(LABEL, "%{public}s already create socketpair", __func__);
         return ERR_OK;
     }
     int32_t tmpFd = data.ReadFileDescriptor();
     if (tmpFd < 0) {
         HiLog::Error(LABEL, "%{public}s ReadFileDescriptor failed", __func__);
-        sendFd_ = INVALID_FD;
+        sendFd_ = -1;
         return SENSOR_CHANNEL_DUP_ERR;
     }
     sendFd_ = dup(tmpFd);
     if (sendFd_ < 0) {
         HiLog::Error(LABEL, "%{public}s dup FileDescriptor failed", __func__);
-        sendFd_ = INVALID_FD;
+        sendFd_ = -1;
         return SENSOR_CHANNEL_DUP_ERR;
     }
     return ERR_OK;
@@ -131,9 +131,9 @@ int32_t SensorBasicDataChannel::SendToBinder(MessageParcel &data)
 
 void SensorBasicDataChannel::CloseSendFd()
 {
-    if (sendFd_ != INVALID_FD) {
+    if (sendFd_ != -1) {
         close(sendFd_);
-        sendFd_ = INVALID_FD;
+        sendFd_ = -1;
         HiLog::Debug(LABEL, "%{public}s close sendFd_", __func__);
     }
 }
@@ -157,7 +157,7 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 
 int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
 {
-    if (vaddr == nullptr || (receiveFd_ == INVALID_FD)) {
+    if (vaddr == nullptr || (receiveFd_ == -1)) {
         HiLog::Error(LABEL, "%{public}s failed, vaddr is null or receiveFd_ invalid", __func__);
         return SENSOR_CHANNEL_RECEIVE_ADDR_ERR;
     }
@@ -185,12 +185,12 @@ int32_t SensorBasicDataChannel::DestroySensorBasicChannel()
 {
     if (sendFd_ >= 0) {
         close(sendFd_);
-        sendFd_ = INVALID_FD;
+        sendFd_ = -1;
         HiLog::Debug(LABEL, "%{public}s close sendFd_ success", __func__);
     }
     if (receiveFd_ >= 0) {
         close(receiveFd_);
-        receiveFd_ = INVALID_FD;
+        receiveFd_ = -1;
         HiLog::Debug(LABEL, "%{public}s close receiveFd_ success", __func__);
     }
     return ERR_OK;

@@ -65,7 +65,7 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
         HiLog::Error(LABEL, "%{public}s dataCB_ cannot be null", __func__);
         return SENSOR_CHANNEL_RESTORE_CB_ERR;
     }
-    if (GetReceiveDataFd() != INVALID_FD) {
+    if (GetReceiveDataFd() != -1) {
         HiLog::Error(LABEL, "%{public}s fd not close", __func__);
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
     }
