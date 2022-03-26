@@ -89,8 +89,8 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
         return ERROR;
     }
     int32_t receiveFd = GetReceiveDataFd();
-    ret = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
-    if (ret != 0) {
+    auto inResult = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+    if (inResult != 0) {
         HiLog::Error(LABEL, "%{public}s AddFileDescriptorListener fail", __func__);
         return ERROR;
     }
