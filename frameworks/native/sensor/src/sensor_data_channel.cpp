@@ -60,7 +60,7 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
         HiLog::Error(LABEL, "%{public}s dataCB_ cannot be null", __func__);
         return SENSOR_CHANNEL_RESTORE_CB_ERR;
     }
-    if (GetReceiveDataFd() != -1) {
+    if (GetReceiveDataFd() != INVALID_FD) {
         HiLog::Error(LABEL, "%{public}s fd not close", __func__);
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
     }
@@ -71,7 +71,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     // create basic data channel
-    int32_t ret = CreateSensorBasicChannel();
+    auto ret = CreateSensorBasicChannel();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s create basic channel failed, ret : %{public}d", __func__, ret);
         return ret;
@@ -88,9 +88,8 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
         HiLog::Error(LABEL, "%{public}s handler is null", __func__);
         return ERROR;
     }
-
     int32_t receiveFd = GetReceiveDataFd();
-    auto ret = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+    ret = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
     if (ret != 0) {
         HiLog::Error(LABEL, "%{public}s AddFileDescriptorListener fail", __func__);
         return ERROR;
