@@ -71,7 +71,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     // create basic data channel
-    auto ret = CreateSensorBasicChannel();
+    int32_t ret = CreateSensorBasicChannel();
     if (ret != ERR_OK) {
         HiLog::Error(LABEL, "%{public}s create basic channel failed, ret : %{public}d", __func__, ret);
         return ret;
