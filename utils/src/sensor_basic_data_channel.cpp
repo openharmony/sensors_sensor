@@ -56,7 +56,8 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
     }
     // set socket attr
-    int32_t ret = setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE));
+    int32_t ret = setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE,
+                             sizeof(SENSOR_READ_DATA_SIZE));
     if (ret != 0) {
         HiLog::Error(LABEL, "%{public}s setsockopt socketpair 0 failed", __func__);
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
