@@ -131,7 +131,7 @@ private:
 #define CHKPL(cond, ...) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPL(%{public}s) is null, do nothing", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPL(%{public}s) is null, do nothing", \
                 __FILE__, __LINE__, #cond); \
         } \
     } while (0)
@@ -139,7 +139,7 @@ private:
 #define CHKPV(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPV(%{public}s) is null", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPV(%{public}s) is null", \
                 __FILE__, __LINE__, #cond); \
             return; \
         } \
@@ -148,7 +148,7 @@ private:
 #define CHKPF(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPF(%{public}s) is null", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPF(%{public}s) is null", \
                 __FILE__, __LINE__, #cond); \
             return false; \
         } \
@@ -157,7 +157,7 @@ private:
 #define CHKPC(cond) \
     { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPC(%{public}s) is null, skip then continue", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPC(%{public}s) is null, skip then continue", \
                 __FILE__, __LINE__, #cond); \
             continue; \
         } \
@@ -166,7 +166,7 @@ private:
 #define CHKPB(cond) \
     { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPC(%{public}s) is null, skip then break", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPC(%{public}s) is null, skip then break", \
                 __FILE__, __LINE__, #cond); \
             break; \
         } \
@@ -175,7 +175,7 @@ private:
 #define CHKPR(cond, r) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPR(%{public}s) is null, return value is %{public}d", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPR(%{public}s) is null, return value is %{public}d", \
                 __FILE__, __LINE__, #cond, r); \
             return r; \
         } \
@@ -184,7 +184,7 @@ private:
 #define CHKPP(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CHKPP(%{public}s) is null, return value is null", \
+            SEN_HILOGE("%{public}s, (%{public}d), CHKPP(%{public}s) is null, return value is null", \
                 __FILE__, __LINE__, #cond); \
             return nullptr; \
         } \
@@ -193,7 +193,7 @@ private:
 #define CK(cond, ec) \
     do { \
         if (!(cond)) { \
-            SENSOR_LOGE("%{public}s, (%{public}d), CK(%{public}s), errCode:%{public}d", \
+            SEN_HILOGE("%{public}s, (%{public}d), CK(%{public}s), errCode:%{public}d", \
                 __FILE__, __LINE__, #cond, ec); \
         } \
     } while (0)
@@ -202,14 +202,14 @@ private:
 #define CHKPL(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPL(%{public}s) is null, do nothing", #cond); \
+            SEN_HILOGE("CHKPL(%{public}s) is null, do nothing", #cond); \
         } \
     } while (0)
 
 #define CHKPV(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPV(%{public}s) is null", #cond); \
+            SEN_HILOGE("CHKPV(%{public}s) is null", #cond); \
             return; \
         } \
     } while (0)
@@ -217,7 +217,7 @@ private:
 #define CHKPF(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPF(%{public}s) is null", #cond); \
+            SEN_HILOGE("CHKPF(%{public}s) is null", #cond); \
             return false; \
         } \
     } while (0)
@@ -225,7 +225,7 @@ private:
 #define CHKPC(cond) \
     { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPC(%{public}s) is null, skip then continue", #cond); \
+            SEN_HILOGE("CHKPC(%{public}s) is null, skip then continue", #cond); \
             continue; \
         } \
     }
@@ -233,7 +233,7 @@ private:
 #define CHKPB(cond) \
     { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPC(%{public}s) is null, skip then break", #cond); \
+            SEN_HILOGE("CHKPC(%{public}s) is null, skip then break", #cond); \
             break; \
         } \
     }
@@ -241,7 +241,7 @@ private:
 #define CHKPR(cond, r) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPR(%{public}s) is null, return value is %{public}d", #cond, r); \
+            SEN_HILOGE("CHKPR(%{public}s) is null, return value is %{public}d", #cond, r); \
             return r; \
         } \
     } while (0)
@@ -249,7 +249,7 @@ private:
 #define CHKPP(cond) \
     do { \
         if ((cond) == nullptr) { \
-            SENSOR_LOGE("CHKPP(%{public}s) is null, return value is null", #cond); \
+            SEN_HILOGE("CHKPP(%{public}s) is null, return value is null", #cond); \
             return nullptr; \
         } \
     } while (0)
@@ -257,7 +257,7 @@ private:
 #define CK(cond, ec) \
     do { \
         if (!(cond)) { \
-            SENSOR_LOGE("CK(%{public}s), errCode:%{public}d", #cond, ec); \
+            SEN_HILOGE("CK(%{public}s), errCode:%{public}d", #cond, ec); \
         } \
     } while (0)
 

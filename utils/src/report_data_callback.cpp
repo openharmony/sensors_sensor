@@ -35,7 +35,7 @@ constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {
 ReportDataCallback::ReportDataCallback()
 {
     eventsBuf_.circularBuf = new struct SensorEvent[CIRCULAR_BUF_LEN];
-    eventsBuf_.readPosition = 0;
+    eventsBuf_.readPos = 0;
     eventsBuf_.writePosition = 0;
     eventsBuf_.eventNum = 0;
 }
@@ -46,12 +46,12 @@ ReportDataCallback::~ReportDataCallback()
         delete[] eventsBuf_.circularBuf;
     }
     eventsBuf_.circularBuf = nullptr;
-    eventsBuf_.readPosition = 0;
+    eventsBuf_.readPos = 0;
     eventsBuf_.writePosition = 0;
     eventsBuf_.eventNum = 0;
 }
 
-int32_t ReportDataCallback::ZReportDataCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
+int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
 {
     if (event == nullptr) {
         HiLog::Error(LABEL, "%{public}s sensor data is null", __func__);
@@ -74,7 +74,7 @@ int32_t ReportDataCallback::ZReportDataCallback(const struct SensorEvent* event,
             cb->eventsBuf_.writePosition += 1;
     }
     if (leftSize < 1) {
-        cb->eventsBuf_.readPosition = cb->eventsBuf_.writePosition;
+        cb->eventsBuf_.readPos = cb->eventsBuf_.writePosition;
     }
     cb->eventsBuf_.eventNum += 1;
     if (cb->eventsBuf_.eventNum >= CIRCULAR_BUF_LEN) {

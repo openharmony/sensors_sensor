@@ -60,7 +60,7 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
         HiLog::Error(LABEL, "%{public}s dataCB_ cannot be null", __func__);
         return SENSOR_CHANNEL_RESTORE_CB_ERR;
     }
-    if (GetReceiveDataFd() != INVALID_FD) {
+    if (GetReceiveDataFd() != -1) {
         HiLog::Error(LABEL, "%{public}s fd not close", __func__);
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
     }
@@ -81,19 +81,19 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     auto myRunner = AppExecFwk::EventRunner::Create(true);
     if (myRunner == nullptr) {
         HiLog::Error(LABEL, "%{public}s myRunner is null", __func__);
-        return -1;
+        return ERROR;
     }
     auto handler = std::make_shared<MyEventHandler>(myRunner);
     if (handler == nullptr) {
         HiLog::Error(LABEL, "%{public}s handler is null", __func__);
-        return -1;
+        return ERROR;
     }
 
     int32_t receiveFd = GetReceiveDataFd();
-    auto inResult = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
-    if (inResult != 0) {
+    auto ret = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+    if (ret != 0) {
         HiLog::Error(LABEL, "%{public}s AddFileDescriptorListener fail", __func__);
-        return -1;
+        return ERROR;
     }
     eventHandler_ = handler;
     eventRunner_ = myRunner;
@@ -102,12 +102,12 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     bool sendEventResult = eventHandler_->SendEvent(STOP_EVENT_ID, param, delayTime);
     if (!sendEventResult) {
         HiLog::Error(LABEL, "%{public}s EventHandler SendEvent fail", __func__);
-        return -1;
+        return ERROR;
     }
     int32_t runResult = eventRunner_->Run();
     if (!runResult) {
         HiLog::Error(LABEL, "%{public}s EventRunner run fail", __func__);
-        return -1;
+        return ERROR;
     }
     return ERR_OK;
 }
@@ -117,7 +117,7 @@ int32_t SensorDataChannel::DestroySensorDataChannel()
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     if (eventHandler_ == nullptr || eventRunner_ == nullptr) {
         HiLog::Error(LABEL, "%{public}s handler or eventRunner is null", __func__);
-        return -1;
+        return ERROR;
     }
     int32_t receiveFd = GetReceiveDataFd();
     eventHandler_->RemoveFileDescriptorListener(receiveFd);

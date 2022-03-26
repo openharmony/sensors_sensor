@@ -26,7 +26,6 @@
 
 namespace OHOS {
 namespace Sensors {
-constexpr int32_t INVALID_FD = -1;
 constexpr int32_t SENSOR_MAX_LENGTH = 64;
 struct TransferSensorEvents {
     uint32_t sensorTypeId;
