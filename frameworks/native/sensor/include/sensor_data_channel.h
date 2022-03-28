@@ -28,6 +28,7 @@ namespace Sensors {
 typedef void (*DataChannelCB)(struct SensorEvent *events, int32_t num, void *data);
 class SensorDataChannel : public SensorBasicDataChannel {
 public:
+    SensorDataChannel() = default;
     ~SensorDataChannel();
     static int32_t HandleEvent(int32_t fd, int32_t events, void *data);
     int32_t CreateSensorDataChannel(DataChannelCB callBack, void *data);
