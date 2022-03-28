@@ -93,7 +93,7 @@ const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num, void *data)
 {
     if (events == nullptr || num <= 0) {
-        SEN_HILOGE("events is nullptr or num is invalid");
+        SEN_HILOGE("events is null or num is invalid");
         return;
     }
     struct SensorEvent eventStream;
@@ -161,7 +161,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
 int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is nullptr or sensorId is invalid", __func__);
+        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
         return OHOS::Sensors::ERROR;
     }
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
@@ -189,7 +189,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
 int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is nullptr or sensorId is invalid", __func__);
+        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
@@ -212,7 +212,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
                                    int64_t reportInterval) const
 {
     if (user == nullptr || sensorId < 0) {
-        HiLog::Error(LABEL, "%{public}s user is nullptr or sensorId is invalid", __func__);
+        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
         return OHOS::Sensors::ERROR;
     }
     if (samplingInterval < 0 || reportInterval < 0) {
@@ -250,7 +250,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
 {
     HiLog::Info(LABEL, "%{public}s in, sensorId: %{public}d", __func__, sensorId);
     if (user == nullptr || sensorId < 0  || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is nullptr or sensorId is invalid", __func__);
+        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
@@ -272,7 +272,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
 int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int32_t mode) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is nullptr or sensorId is invalid", __func__);
+        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
@@ -286,7 +286,7 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
 int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, int32_t option) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is nullptr or sensorId is invalid", __func__);
+        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
@@ -300,7 +300,7 @@ int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, in
 int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const
 {
     if (sensorInfo == nullptr || count == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorInfo or count is nullptr", __func__);
+        HiLog::Error(LABEL, "%{public}s sensorInfo or count is null", __func__);
         return OHOS::Sensors::ERROR;
     }
     SensorServiceClient &client = SensorServiceClient::GetInstance();
