@@ -105,7 +105,7 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
             return;
         }
         if (g_subscribeMap[eventStream.sensorTypeId] == nullptr) {
-            SEN_HILOGE("sensorTypeId in g_subscribeMap is nullptr");
+            SEN_HILOGE("sensor user is null");            
             return;
         }
         g_subscribeMap[eventStream.sensorTypeId]->callback(&eventStream);
