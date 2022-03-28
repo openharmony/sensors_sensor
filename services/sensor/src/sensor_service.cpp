@@ -132,9 +132,9 @@ bool SensorService::InitSensorList()
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         for (const auto &it : sensors_) {
             sensorMap_.insert(std::make_pair(it.GetSensorId(), it));
-            if (state_ == SensorServiceState::STATE_STOPPED) {
-                HiLog::Warn(LABEL, "%{public}s already stopped", __func__);
-                return(0);
+            if (sensorMap_.insert(std::make_pair(it.GetSensorId(), it)).second){
+                HiLog::Warn(LABEL, "%{public}s sensorMap_ Insert failed", __func__);
+                return false;
             }
         }
     }
