@@ -56,10 +56,19 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
     }
     // set socket attr
-    setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE));
-    setsockopt(socketPair[1], SOL_SOCKET, SO_RCVBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE));
+    int32_t ret = setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE,
+                             sizeof(SENSOR_READ_DATA_SIZE));
+    if (ret != 0) {
+        HiLog::Error(LABEL, "%{public}s setsockopt socketpair 0 failed", __func__);
+        return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
+    }
+    ret = setsockopt(socketPair[1], SOL_SOCKET, SO_RCVBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE));
+    if (ret != 0) {
+        HiLog::Error(LABEL, "%{public}s setsockopt socketpair 1 failed", __func__);
+        return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
+    }
     int32_t bufferSize = DEFAULT_CHANNEL_SIZE;
-    int32_t ret = setsockopt(socketPair[0], SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize));
+    ret = setsockopt(socketPair[0], SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize));
     if (ret != 0) {
         HiLog::Error(LABEL, "%{public}s setsockopt socketpair 0 failed", __func__);
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;

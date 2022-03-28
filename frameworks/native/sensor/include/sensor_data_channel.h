@@ -28,7 +28,7 @@ namespace Sensors {
 typedef void (*DataChannelCB)(struct SensorEvent *events, int32_t num, void *data);
 class SensorDataChannel : public SensorBasicDataChannel {
 public:
-    SensorDataChannel();
+    SensorDataChannel() = default;
     ~SensorDataChannel();
     static int32_t HandleEvent(int32_t fd, int32_t events, void *data);
     int32_t CreateSensorDataChannel(DataChannelCB callBack, void *data);
@@ -37,7 +37,7 @@ public:
     bool IsThreadStart();
     int32_t RestoreSensorDataChannel();
     int32_t test = 10;
-    DataChannelCB dataCB_;
+    DataChannelCB dataCB_ = nullptr;
     void *privateData_ = nullptr;
 
 private:
