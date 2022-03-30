@@ -162,7 +162,7 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
     }
 
     int32_t sensorCount = reply.ReadInt32();
-    SEN_HILOGE("sensorCount : %{public}d", sensorCount);
+    SEN_HILOGD("sensorCount : %{public}d", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;
     }

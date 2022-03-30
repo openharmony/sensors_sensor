@@ -43,7 +43,7 @@ int32_t SensorServiceClient::InitServiceClient()
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorServer_ != nullptr) {
-        SEN_HILOGE("already init");
+        SEN_HILOGD("already init");
         return ERR_OK;
     }
     if (sensorClientStub_ == nullptr) {
@@ -58,7 +58,7 @@ int32_t SensorServiceClient::InitServiceClient()
     while (retry < GET_SERVICE_MAX_COUNT) {
         sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
         if (sensorServer_ != nullptr) {
-            SEN_HILOGE("get service success, retry : %{public}d", retry);
+            SEN_HILOGED"get service success, retry : %{public}d", retry);
             serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
             if (serviceDeathObserver_ != nullptr) {
                 sensorServer_->AsObject()->AddDeathRecipient(serviceDeathObserver_);
@@ -66,7 +66,7 @@ int32_t SensorServiceClient::InitServiceClient()
             sensorList_ = sensorServer_->GetSensorList();
             return ERR_OK;
         }
-        SEN_HILOGE("get service failed, retry : %{public}d", retry);
+        SEN_HILOGW("get service failed, retry : %{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }

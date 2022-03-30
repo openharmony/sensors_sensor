@@ -81,7 +81,7 @@ SensorAgentProxy::SensorAgentProxy()
 
 const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 {
-    SEN_HILOGE("CALL_LOG_ENTER");
+    SEN_HILOGD("CALL_LOG_ENTER");
 
     if (sensorObj_ == nullptr) {
         SEN_HILOGE("sensorObj_ new object");
@@ -114,10 +114,10 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
 
 int32_t SensorAgentProxy::CreateSensorDataChannel() const
 {
-    SEN_HILOGE("CALL_LOG_ENTER");
+    SEN_HILOGD("CALL_LOG_ENTER");
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (g_isChannelCreated) {
-        SEN_HILOGE("the channel has already been created");
+        SEN_HILOGI("the channel has already been created");
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
@@ -139,10 +139,10 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
 
 int32_t SensorAgentProxy::DestroySensorDataChannel() const
 {
-    SEN_HILOGE("CALL_LOG_ENTER");
+    SEN_HILOGD("CALL_LOG_ENTER");
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (!g_isChannelCreated) {
-        SEN_HILOGE("channel has been destroyed");
+        SEN_HILOGI("channel has been destroyed");
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
@@ -234,7 +234,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
 
 int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
-    SEN_HILOGE("in, sensorId: %{public}d", sensorId);
+    SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
         SEN_HILOGE("user or sensorId is invalid");
         return OHOS::Sensors::ERROR;
@@ -251,7 +251,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
 
 int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
-    SEN_HILOGE("in, sensorId: %{public}d", sensorId);
+    SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     if (user == nullptr || sensorId < 0  || user->callback == nullptr) {
         SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
