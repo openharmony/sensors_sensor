@@ -89,7 +89,7 @@ void MyFileDescriptorListener::SetChannel(SensorDataChannel* channel)
 void MyFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("param is error: %{public}d",fileDescriptor);
+        SEN_HILOGE("param is error: %{public}d", fileDescriptor);
     }
 
     FileDescriptorListener::OnShutdown(fileDescriptor);
