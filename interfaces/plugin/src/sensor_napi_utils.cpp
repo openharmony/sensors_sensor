@@ -279,7 +279,7 @@ void ConvertToSensorData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, nap
 {
     napi_get_undefined(env, &result[0]);
     int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
-    if ((g_sensorAttributeList.count(sensorTypeId)) == 0
+    if (g_sensorAttributeList.find(sensorTypeId) == g_sensorAttributeList.end()
         || g_sensorAttributeList[sensorTypeId].size()
         > (asyncCallbackInfo->data.sensorData.dataLength / sizeof(float))) {
         HiLog::Error(LABEL, "%{public}s count of sensorTypeId is zero", __func__);
@@ -394,7 +394,7 @@ void EmitAsyncCallbackWork(AsyncCallbackInfo *asyncCallbackInfo)
             napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback);
             napi_value callResult = nullptr;
             napi_value result[2] = {0};
-            if (g_convertfuncList.count(asyncCallbackInfo->type) == 0) {
+            if (g_convertfuncList.find(asyncCallbackInfo->type) == g_convertfuncList.end()) {
                 HiLog::Error(LABEL, "%{public}s type invalid", __func__);
                 return;
             }
@@ -445,7 +445,7 @@ void EmitUvEventLoop(AsyncCallbackInfo **asyncCallbackInfo)
         napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback);
         napi_value callResult = nullptr;
         napi_value result[2] = {0};
-        if (g_convertfuncList.count(asyncCallbackInfo->type) == 0) {
+        if (g_convertfuncList.find(asyncCallbackInfo->type) == g_convertfuncList.end()) {
             HiLog::Error(LABEL, "%{public}s type invalid", __func__);
             return;
         }
@@ -478,7 +478,7 @@ void EmitPromiseWork(AsyncCallbackInfo *asyncCallbackInfo)
                 return;
             }
             napi_value result[2] = {0};
-            if (g_convertfuncList.count(asyncCallbackInfo->type) == 0) {
+            if (g_convertfuncList.find(asyncCallbackInfo->type) == g_convertfuncList.end()) {
                 HiLog::Error(LABEL, "%{public}s type invalid", __func__);
                 return;
             }

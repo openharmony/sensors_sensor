@@ -133,7 +133,6 @@ bool SensorService::InitSensorList()
         for (const auto &it : sensors_) {
             if (!(sensorMap_.insert(std::make_pair(it.GetSensorId(), it)).second)) {
                 HiLog::Warn(LABEL, "%{public}s sensorMap_ Insert failed", __func__);
-                return false;
             }
         }
     }
