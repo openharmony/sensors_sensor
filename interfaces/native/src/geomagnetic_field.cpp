@@ -18,6 +18,7 @@
 
 using namespace OHOS::HiviewDFX;
 using namespace std;
+namespace {
 static constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::SensorsLogDomain::SENSORS_INTERFACE, "GeomagneticField"};
 static constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
 static constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
@@ -106,6 +107,7 @@ std::vector<std::vector<float>> polynomialsDerivative(GAUSSIAN_COEFFICIENT_DIMEN
 std::vector<float> relativeRadiusPower(GAUSSIAN_COEFFICIENT_DIMENSION + 2);
 std::vector<float> sinMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
 std::vector<float> cosMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
+}
 
 GeomagneticField::GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis)
 {
