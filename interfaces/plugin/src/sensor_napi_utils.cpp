@@ -394,7 +394,7 @@ void EmitAsyncCallbackWork(AsyncCallbackInfo *asyncCallbackInfo)
             napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback);
             napi_value callResult = nullptr;
             napi_value result[2] = {0};
-            if ((g_sensorAttributeList.find(asyncCallbackInfo->type) == g_sensorAttributeList.end()) {
+            if ((g_convertfuncList.find(asyncCallbackInfo->type) == g_convertfuncList.end()) {
                 HiLog::Error(LABEL, "%{public}s type invalid", __func__);
                 return;
             }
