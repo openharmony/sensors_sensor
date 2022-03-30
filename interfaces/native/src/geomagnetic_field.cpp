@@ -19,19 +19,19 @@
 using namespace OHOS::HiviewDFX;
 using namespace std;
 namespace {
-static constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::SensorsLogDomain::SENSORS_INTERFACE, "GeomagneticField"};
-static constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
-static constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
-static constexpr float EARTH_REFERENCE_RADIUS = 6371.2f;
-static constexpr float PRECISION = 1e-5f;
-static constexpr float LATITUDE_MAX = 90.0f;
-static constexpr float LATITUDE_MIN = -90.0f;
-static constexpr float CONVERSION_FACTOR = 1000.0f;
-static constexpr float DERIVATIVE_FACTOR = 1.0f;
+constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::SensorsLogDomain::SENSORS_INTERFACE, "GeomagneticField"};
+constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
+constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
+constexpr float EARTH_REFERENCE_RADIUS = 6371.2f;
+constexpr float PRECISION = 1e-5f;
+constexpr float LATITUDE_MAX = 90.0f;
+constexpr float LATITUDE_MIN = -90.0f;
+constexpr float CONVERSION_FACTOR = 1000.0f;
+constexpr float DERIVATIVE_FACTOR = 1.0f;
 // the time from 1970-01-01 to 2020-01-01 as UTC milliseconds from the epoch
-static constexpr int64_t WMM_BASE_TIME = 1580486400000;
+constexpr int64_t WMM_BASE_TIME = 1580486400000;
 // The following Gaussian coefficients are derived from the US/ United Kingdom World Magnetic Model 2020-2025.
-static constexpr float GAUSS_COEFFICIENT_G[13][13] = {
+constexpr float GAUSS_COEFFICIENT_G[13][13] = {
     {0.0f},
     {-29404.5f, -1450.7f},
     {-2500.0f, 2982.0f, 1676.8f},
@@ -46,7 +46,7 @@ static constexpr float GAUSS_COEFFICIENT_G[13][13] = {
     {3.0f, -1.4f, -2.5f, 2.4f, -0.9f, 0.3f, -0.7f, -0.1f, 1.4f, -0.6f, 0.2f, 3.1f},
     {-2.0f, -0.1f, 0.5f, 1.3f, -1.2f, 0.7f, 0.3f, 0.5f, -0.2f, -0.5f, 0.1f, -1.1f, -0.3f}
 };
-static constexpr float GAUSS_COEFFICIENT_H[13][13] = {
+constexpr float GAUSS_COEFFICIENT_H[13][13] = {
     {0.0f},
     {0.0f, 4652.9f},
     {0.0f, -2991.6f, -734.8f},
@@ -61,7 +61,7 @@ static constexpr float GAUSS_COEFFICIENT_H[13][13] = {
     {0.0f, 0.0f, 2.6f, -0.5f, -0.4f, 0.6f, -0.2f, -1.7f, -1.6f, -3.0f, -2.0f, -2.6f},
     {0.0f, -1.2f, 0.5f, 1.3f, -1.8f, 0.1f, 0.7f, -0.1f, 0.6f, 0.2f, -0.9f, 0.0f, 0.5f}
 };
-static constexpr float DELTA_GAUSS_COEFFICIENT_G[13][13] = {
+constexpr float DELTA_GAUSS_COEFFICIENT_G[13][13] = {
     {0.0f},
     {6.7f, 7.7f},
     {-11.5f, -7.1f, -2.2f},
@@ -76,7 +76,7 @@ static constexpr float DELTA_GAUSS_COEFFICIENT_G[13][13] = {
     {0.0f, -0.1f, 0.0f, 0.0f, 0.0f, -0.1f, 0.0f, 0.0f, -0.1f, -0.1f, -0.1f, -0.1f},
     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -0.1f}
 };
-static constexpr float DELTA_GAUSS_COEFFICIENT_H[13][13] = {
+constexpr float DELTA_GAUSS_COEFFICIENT_H[13][13] = {
     {0.0f},
     {0.0f, -25.1f},
     {0.0f, -30.2f, -23.9f},
@@ -91,8 +91,8 @@ static constexpr float DELTA_GAUSS_COEFFICIENT_H[13][13] = {
     {0.0f, 0.0f, 0.1f, 0.0f, 0.2f, 0.0f, 0.0f, 0.1f, 0.0f, -0.1f, 0.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, -0.1f, 0.1f, 0.0f, 0.0f, 0.0f, 0.1f, 0.0f, 0.0f, 0.0f, -0.1f}
 };
-static constexpr int32_t GAUSSIAN_COEFFICIENT_DIMENSION = 13;
-static std::mutex geomagneticMutex_;
+constexpr int32_t GAUSSIAN_COEFFICIENT_DIMENSION = 13;
+std::mutex mutex_;
 
 float northComponent;
 float eastComponent;
@@ -111,7 +111,7 @@ std::vector<float> cosMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
 
 GeomagneticField::GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis)
 {
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     schmidtQuasiNormalFactors = GetSchmidtQuasiNormalFactors(GAUSSIAN_COEFFICIENT_DIMENSION);
     float gcLatitude = fmax(LATITUDE_MIN + PRECISION, fmin(LATITUDE_MAX - PRECISION, latitude));
     CalibrateGeocentricCoordinates(gcLatitude, longitude, altitude);
@@ -258,54 +258,54 @@ void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad
 float GeomagneticField::ObtainX()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return northComponent;
 }
 
 float GeomagneticField::ObtainY()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return eastComponent;
 }
 
 float GeomagneticField::ObtainZ()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return downComponent;
 }
 
 float GeomagneticField::ObtainGeomagneticDip()
 {
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     float horizontalIntensity = hypot(northComponent, eastComponent);
     return static_cast<float>(ToDegrees(atan2(downComponent, horizontalIntensity)));
 }
 
 double GeomagneticField::ToDegrees(double angrad)
 {
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return angrad * 180.0 / M_PI;
 }
 
 double GeomagneticField::ToRadians(double angdeg)
 {
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return angdeg / 180.0 * M_PI;
 }
 
 float GeomagneticField::ObtainDeflectionAngle()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return static_cast<float>(ToDegrees(atan2(eastComponent, northComponent)));
 }
 
 float GeomagneticField::ObtainLevelIntensity()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     float horizontalIntensity = hypot(northComponent, eastComponent);
     return horizontalIntensity;
 }
@@ -313,7 +313,7 @@ float GeomagneticField::ObtainLevelIntensity()
 float GeomagneticField::ObtainTotalIntensity()
 {
     HiLog::Info(LABEL, "%{public}s begin", __func__);
-    std::lock_guard<std::mutex> geomagneticLock(geomagneticMutex_);
+    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     float sumOfSquares = northComponent * northComponent + eastComponent * eastComponent
         + downComponent * downComponent;
     float totalIntensity = static_cast<float>(sqrt(sumOfSquares));
