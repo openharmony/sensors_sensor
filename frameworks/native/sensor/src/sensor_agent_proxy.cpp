@@ -84,7 +84,7 @@ const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
     SEN_HILOGD("CALL_LOG_ENTER");
 
     if (sensorObj_ == nullptr) {
-        SEN_HILOGE("sensorObj_ new object");
+        SEN_HILOGD("sensorObj_ new object");
         sensorObj_ = new (std::nothrow) SensorAgentProxy();
     }
     return sensorObj_;
