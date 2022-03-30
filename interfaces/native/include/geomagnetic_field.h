@@ -28,62 +28,24 @@
 
 class GeomagneticField {
 public:
-
     GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis);
-
     ~GeomagneticField() = default;
-
     float ObtainX();
-
     float ObtainY();
-
     float ObtainZ();
-
     float ObtainGeomagneticDip();
-
     float ObtainDeflectionAngle();
-
     float ObtainLevelIntensity();
-
     float ObtainTotalIntensity();
 
 private:
-    float northComponent;
-    float eastComponent;
-    float downComponent;
-    static float geocentricLatitude;
-    static float geocentricLongitude;
-    static float geocentricRadius;
-    const static float EARTH_MAJOR_AXIS_RADIUS;
-    const static float EARTH_MINOR_AXIS_RADIUS;
-    const static float EARTH_REFERENCE_RADIUS;
-    const static float PRECISION;
-    const static float LATITUDE_MAX;
-    const static float LATITUDE_MIN;
-    const static float CONVERSION_FACTOR;
-    const static float DERIVATIVE_FACTOR;
-    const static int64_t WMM_BASE_TIME;
-
-    const static float GAUSS_COEFFICIENT_G[13][13];
-    const static float GAUSS_COEFFICIENT_H[13][13];
-    const static float DELTA_GAUSS_COEFFICIENT_G[13][13];
-    const static float DELTA_GAUSS_COEFFICIENT_H[13][13];
-    const static int32_t GAUSSIAN_COEFFICIENT_DIMENSION;
-    static std::vector<std::vector<float>> schmidtQuasiNormalFactors;
-
-    static std::vector<std::vector<float>> polynomials;
-    static std::vector<std::vector<float>> polynomialsDerivative;
-    static std::vector<float> relativeRadiusPower;
-    static std::vector<float> sinMLongitude;
-    static std::vector<float> cosMLongitude;
-
-    static std::vector<std::vector<float>> GetSchmidtQuasiNormalFactors(int32_t expansionDegree);
+    std::vector<std::vector<float>> GetSchmidtQuasiNormalFactors(int32_t expansionDegree);
     void CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis);
-    static void GetLongitudeTrigonometric();
-    static void GetRelativeRadiusPower();
-    static void CalibrateGeocentricCoordinates(float latitude, float longitude, float altitude);
+    void GetLongitudeTrigonometric();
+    void GetRelativeRadiusPower();
+    void CalibrateGeocentricCoordinates(float latitude, float longitude, float altitude);
     void InitLegendreTable(int32_t expansionDegree, float thetaRad);
     double ToDegrees(double angrad);
-    static double ToRadians(double angdeg);
+    double ToRadians(double angdeg);
 };
 #endif // GEOMAGNETIC_FIELD_H
