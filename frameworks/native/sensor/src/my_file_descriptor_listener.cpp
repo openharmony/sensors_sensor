@@ -50,7 +50,7 @@ void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
     CALL_LOG_ENTER;
     if (fileDescriptor < 0) {
-        SEN_HILOGE("fileDescriptor: %{public}d",fileDescriptor);
+        SEN_HILOGE("fileDescriptor: %{public}d", fileDescriptor);
         return;
     }
 
@@ -102,7 +102,7 @@ void MyFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 void MyFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("param is error: %{public}d",fileDescriptor);
+        SEN_HILOGE("param is error: %{public}d", fileDescriptor);
         return;
     }
 
