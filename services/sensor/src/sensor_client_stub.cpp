@@ -33,10 +33,10 @@ int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
     std::u16string descriptor = SensorClientStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        HiLog::Error(LABEL, "%{public}s client and service descriptors are inconsistent", __func__);
+        SEN_HILOGE("client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
-    HiLog::Debug(LABEL, "%{public}s begin, cmd : %{public}u", __func__, code);
+    SEN_HILOGD("begin, cmd : %{public}u", code);
     return NO_ERROR;
 }
 }  // namespace Sensors
