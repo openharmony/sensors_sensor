@@ -81,7 +81,7 @@ SensorAgentProxy::SensorAgentProxy()
 
 const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 {
-    SEN_HILOGD("CALL_LOG_ENTER");
+    CALL_LOG_ENTER;
 
     if (sensorObj_ == nullptr) {
         SEN_HILOGD("sensorObj_ new object");
@@ -114,7 +114,7 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
 
 int32_t SensorAgentProxy::CreateSensorDataChannel() const
 {
-    SEN_HILOGD("CALL_LOG_ENTER");
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (g_isChannelCreated) {
         SEN_HILOGI("the channel has already been created");
@@ -139,7 +139,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
 
 int32_t SensorAgentProxy::DestroySensorDataChannel() const
 {
-    SEN_HILOGD("CALL_LOG_ENTER");
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (!g_isChannelCreated) {
         SEN_HILOGI("channel has been destroyed");
