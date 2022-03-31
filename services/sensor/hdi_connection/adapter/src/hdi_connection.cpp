@@ -62,7 +62,7 @@ int32_t HdiConnection::ConnectHdi()
         SEN_HILOGW("connect hdi service failed, retry : %{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
     }
-    SEN_HILOGE("get sensor list failed");
+    SEN_HILOGE("connect v1_0 hdi failed");
     return ERR_NO_INIT;
 }
 
@@ -70,7 +70,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("get sensor list failed");
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     std::vector<HdfSensorInformation> sensorInfos;

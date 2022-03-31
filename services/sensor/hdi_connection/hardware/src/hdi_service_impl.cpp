@@ -44,14 +44,14 @@ std::atomic_bool HdiServiceImpl::g_isStop = false;
 
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInformation>& sensorList)
 {
-    SEN_HILOGI("in");
+    CALL_LOG_ENTER;
     sensorList.assign(g_sensorInfos.begin(), g_sensorInfos.end());
     return ERR_OK;
 }
 
 void HdiServiceImpl::DataReportThread()
 {
-    SEN_HILOGI("in");
+    CALL_LOG_ENTER;
     while (true) {
         usleep(g_samplingInterval / CONVERT_MULTIPLES);
         g_callback(&testEvent);
@@ -65,7 +65,7 @@ void HdiServiceImpl::DataReportThread()
 
 int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
 {
-    SEN_HILOGI("in");
+    CALL_LOG_ENTER;
     if (g_callback == nullptr) {
         SEN_HILOGE("enable sensor failed");
         return -1;
@@ -92,7 +92,7 @@ int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
 
 int32_t HdiServiceImpl::DisableSensor(uint32_t sensorId)
 {
-    SEN_HILOGI("in");
+    CALL_LOG_ENTER;
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
         SEN_HILOGE("not support disable sensorId: %{public}d", sensorId);
         return ERR_NO_INIT;
@@ -116,7 +116,7 @@ int32_t HdiServiceImpl::DisableSensor(uint32_t sensorId)
 
 int32_t HdiServiceImpl::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
-    SEN_HILOGI("in);
+    CALL_LOG_ENTER;
     if (samplingInterval < 0 || reportInterval < 0) {
         samplingInterval = SAMPLING_INTERVAL_NS;
         reportInterval = 0;
