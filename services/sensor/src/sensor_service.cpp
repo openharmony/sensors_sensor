@@ -290,7 +290,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     const int32_t clientPid = this->GetCallingPid();
     if (clientPid < 0) {
-        SEN_HILOGE("clientPid is invalid, clientPid : %{public}d");
+        SEN_HILOGE("clientPid is invalid, clientPid : %{public}d", clientPid);
         return CLIENT_PID_INVALID_ERR;
     }
     if (!clientInfo_.GetSensorState(sensorId)) {

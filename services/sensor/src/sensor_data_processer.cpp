@@ -174,7 +174,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
 void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event)
 {
     if (channel == nullptr) {
-        SEN_HILOGE("channel cannot be null", code);
+        SEN_HILOGE("channel cannot be null");
         return;
     }
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
