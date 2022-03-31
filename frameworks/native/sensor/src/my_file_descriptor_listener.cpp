@@ -33,7 +33,7 @@ MyFileDescriptorListener::MyFileDescriptorListener()
     receiveDataBuff_ =
         new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE];
     if (receiveDataBuff_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s receiveDataBuff_ memory request failed", __func__);
+        SEN_HILOGE("receiveDataBuff_ memory request failed");
     }
 }
 
@@ -50,7 +50,7 @@ void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
     CALL_LOG_ENTER;
     if (fileDescriptor < 0) {
-        HiLog::Error(LABEL, "%{public}s fileDescriptor: %{public}d", __func__, fileDescriptor);
+        SEN_HILOGE("fileDescriptor: %{public}d", fileDescriptor);
         return;
     }
 
@@ -89,8 +89,7 @@ void MyFileDescriptorListener::SetChannel(SensorDataChannel* channel)
 void MyFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        HiLog::Error(LABEL, "%{public}s param is error: %{public}d", __func__, fileDescriptor);
-        return;
+        SEN_HILOGE("param is error: %{public}d", fileDescriptor);
     }
 
     FileDescriptorListener::OnShutdown(fileDescriptor);
@@ -103,7 +102,7 @@ void MyFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 void MyFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        HiLog::Error(LABEL, "%{public}s param is error: %{public}d", __func__, fileDescriptor);
+        SEN_HILOGE("param is error: %{public}d", fileDescriptor);
         return;
     }
 

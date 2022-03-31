@@ -43,7 +43,7 @@ int32_t SensorServiceClient::InitServiceClient()
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorServer_ != nullptr) {
-        HiLog::Debug(LABEL, "%{public}s already init", __func__);
+        SEN_HILOGD("already init");
         return ERR_OK;
     }
     if (sensorClientStub_ == nullptr) {
@@ -51,14 +51,14 @@ int32_t SensorServiceClient::InitServiceClient()
     }
     auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemAbilityManager == nullptr) {
-        HiLog::Error(LABEL, "%{public}s systemAbilityManager cannot be null", __func__);
+        SEN_HILOGE("systemAbilityManager cannot be null");
         return SENSOR_NATIVE_SAM_ERR;
     }
     int32_t retry = 0;
     while (retry < GET_SERVICE_MAX_COUNT) {
         sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
         if (sensorServer_ != nullptr) {
-            HiLog::Debug(LABEL, "%{public}s get service success, retry : %{public}d", __func__, retry);
+            SEN_HILOGD("get service success, retry : %{public}d", retry);
             serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
             if (serviceDeathObserver_ != nullptr) {
                 sensorServer_->AsObject()->AddDeathRecipient(serviceDeathObserver_);
@@ -66,19 +66,19 @@ int32_t SensorServiceClient::InitServiceClient()
             sensorList_ = sensorServer_->GetSensorList();
             return ERR_OK;
         }
-        HiLog::Warn(LABEL, "%{public}s get service failed, retry : %{public}d", __func__, retry);
+        SEN_HILOGW("get service failed, retry : %{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }
     DmdReport::ReportException(SENSOR_SERVICE_EXCEPTION, "InitServiceClient", SENSOR_NATIVE_GET_SERVICE_ERR);
-    HiLog::Error(LABEL, "%{public}s get service failed", __func__);
+    SEN_HILOGE("get service failed");
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }
 
 bool SensorServiceClient::IsValidSensorId(uint32_t sensorId)
 {
     if (sensorList_.empty()) {
-        HiLog::Error(LABEL, "%{public}s sensorList_ cannot be empty", __func__);
+        SEN_HILOGE("sensorList_ cannot be empty");
         return false;
     }
     for (auto &sensor : sensorList_) {
@@ -93,12 +93,12 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
 {
     CALL_LOG_ENTER;
     if (!IsValidSensorId(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return SENSOR_NATIVE_SAM_ERR;
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
@@ -112,12 +112,12 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (!IsValidSensorId(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return SENSOR_NATIVE_SAM_ERR;
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
     ret = sensorServer_->DisableSensor(sensorId);
@@ -131,17 +131,17 @@ int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int3
 {
     CALL_LOG_ENTER;
     if (!IsValidSensorId(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return SENSOR_NATIVE_SAM_ERR;
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
     ret = sensorServer_->RunCommand(sensorId, cmdType, params);
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s RunCommand failed", __func__);
+        SEN_HILOGE("RunCommand failed");
         return ret;
     }
     return ret;
@@ -152,11 +152,11 @@ std::vector<Sensor> SensorServiceClient::GetSensorList()
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return {};
     }
     if (sensorList_.empty()) {
-        HiLog::Error(LABEL, "%{public}s sensorList_ cannot be empty", __func__);
+        SEN_HILOGE("sensorList_ cannot be empty");
     }
     return sensorList_;
 }
@@ -167,7 +167,7 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
     dataChannel_ = sensorDataChannel;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
     return sensorServer_->TransferDataChannel(sensorDataChannel, sensorClientStub_);
@@ -178,7 +178,7 @@ int32_t SensorServiceClient::DestroyDataChannel()
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
     return sensorServer_->DestroySensorChannel(sensorClientStub_);
@@ -189,7 +189,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     CALL_LOG_ENTER;
     (void)object;
     if (dataChannel_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s dataChannel_ cannot be null", __func__);
+        SEN_HILOGE("dataChannel_ cannot be null");
         return;
     }
     // STEP1 : Destroy revious data channel
@@ -205,7 +205,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     // STEP4 : ReGet sensors  3601 service
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s InitServiceClient failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         dataChannel_->DestroySensorDataChannel();
         return;
     }

@@ -46,7 +46,7 @@ constexpr uint32_t STOP_EVENT_ID = 0;
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
 {
     if (callBack == nullptr) {
-        HiLog::Error(LABEL, "%{public}s callBack cannot be null", __func__);
+        SEN_HILOGE("callBack cannot be null");
         return SENSOR_NATIVE_REGSITER_CB_ERR;
     }
     dataCB_ = callBack;
@@ -57,11 +57,11 @@ int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void 
 int32_t SensorDataChannel::RestoreSensorDataChannel()
 {
     if (dataCB_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s dataCB_ cannot be null", __func__);
+        SEN_HILOGE("dataCB_ cannot be null");
         return SENSOR_CHANNEL_RESTORE_CB_ERR;
     }
     if (GetReceiveDataFd() != -1) {
-        HiLog::Error(LABEL, "%{public}s fd not close", __func__);
+        SEN_HILOGE("fd not close");
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
     }
     return InnerSensorDataChannel();
@@ -73,25 +73,25 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     // create basic data channel
     int32_t ret = CreateSensorBasicChannel();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s create basic channel failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("create basic channel failed, ret : %{public}d", ret);
         return ret;
     }
     auto listener = std::make_shared<MyFileDescriptorListener>();
     listener->SetChannel(this);
     auto myRunner = AppExecFwk::EventRunner::Create(true);
     if (myRunner == nullptr) {
-        HiLog::Error(LABEL, "%{public}s myRunner is null", __func__);
+        SEN_HILOGE("myRunner is null");
         return ERROR;
     }
     auto handler = std::make_shared<MyEventHandler>(myRunner);
     if (handler == nullptr) {
-        HiLog::Error(LABEL, "%{public}s handler is null", __func__);
+        SEN_HILOGE("handler is null");
         return ERROR;
     }
     int32_t receiveFd = GetReceiveDataFd();
     auto inResult = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
     if (inResult != 0) {
-        HiLog::Error(LABEL, "%{public}s AddFileDescriptorListener fail", __func__);
+        SEN_HILOGE("AddFileDescriptorListener fail");
         return ERROR;
     }
     eventHandler_ = handler;
@@ -100,12 +100,12 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     int64_t param = 0;
     bool sendEventResult = eventHandler_->SendEvent(STOP_EVENT_ID, param, delayTime);
     if (!sendEventResult) {
-        HiLog::Error(LABEL, "%{public}s EventHandler SendEvent fail", __func__);
+        SEN_HILOGE("EventHandler SendEvent fail");
         return ERROR;
     }
     int32_t runResult = eventRunner_->Run();
     if (!runResult) {
-        HiLog::Error(LABEL, "%{public}s EventRunner run fail", __func__);
+        SEN_HILOGE("EventRunner run fail");
         return ERROR;
     }
     return ERR_OK;
@@ -115,7 +115,7 @@ int32_t SensorDataChannel::DestroySensorDataChannel()
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     if (eventHandler_ == nullptr || eventRunner_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s handler or eventRunner is null", __func__);
+        SEN_HILOGE("handler or eventRunner is null");
         return ERROR;
     }
     int32_t receiveFd = GetReceiveDataFd();

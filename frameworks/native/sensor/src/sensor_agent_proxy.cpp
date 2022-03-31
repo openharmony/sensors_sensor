@@ -81,10 +81,10 @@ SensorAgentProxy::SensorAgentProxy()
 
 const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 {
-    HiLog::Debug(LABEL, "%{public}s", __func__);
+    CALL_LOG_ENTER;
 
     if (sensorObj_ == nullptr) {
-        HiLog::Debug(LABEL, "%{public}s sensorObj_ new object", __func__);
+        SEN_HILOGD("sensorObj_ new object");
         sensorObj_ = new (std::nothrow) SensorAgentProxy();
     }
     return sensorObj_;
@@ -114,10 +114,10 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
 
 int32_t SensorAgentProxy::CreateSensorDataChannel() const
 {
-    HiLog::Debug(LABEL, "%{public}s", __func__);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (g_isChannelCreated) {
-        HiLog::Info(LABEL, "%{public}s the channel has already been created", __func__);
+        SEN_HILOGI("the channel has already been created");
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
@@ -130,8 +130,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
     ret = client.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
         auto destoryRet = dataChannel_->DestroySensorDataChannel();
-        HiLog::Error(LABEL, "%{public}s transfer data channel failed, ret : %{public}d, destoryRet : %{public}d",
-                     __func__, ret, destoryRet);
+        SEN_HILOGE("transfer data channel failed, ret : %{public}d, destoryRet : %{public}d", ret, destoryRet);
         return ret;
     }
     g_isChannelCreated = true;
@@ -140,22 +139,22 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
 
 int32_t SensorAgentProxy::DestroySensorDataChannel() const
 {
-    HiLog::Debug(LABEL, "%{public}s", __func__);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (!g_isChannelCreated) {
-        HiLog::Info(LABEL, "%{public}s channel has been destroyed", __func__);
+        SEN_HILOGI("channel has been destroyed");
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
     int32_t ret = dataChannel_->DestroySensorDataChannel();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s destory data channel failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("destory data channel failed, ret : %{public}d", ret);
         return ret;
     }
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     ret = client.DestroyDataChannel();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s destory service data channel fail, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("destory service data channel fail, ret : %{public}d", ret);
         return ret;
     }
     g_isChannelCreated = false;
@@ -165,16 +164,16 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
 int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
+        SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
-        HiLog::Error(LABEL, "%{public}s samplingPeroid or g_reportInterval is invalid", __func__);
+        SEN_HILOGE("samplingPeroid or g_reportInterval is invalid");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
-        HiLog::Error(LABEL, "%{public}s subscribe sensorId first", __func__);
+        SEN_HILOGE("subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     SensorServiceClient &client = SensorServiceClient::GetInstance();
@@ -182,7 +181,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     g_samplingInterval = -1;
     g_reportInterval = -1;
     if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s enable sensor failed, ret: %{public}d", __func__, ret);
+        SEN_HILOGE("enable sensor failed, ret: %{public}d", ret);
         g_subscribeMap.erase(sensorId);
 
         return OHOS::Sensors::ERROR;
@@ -193,12 +192,12 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
 int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
+        SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
-        HiLog::Error(LABEL, "%{public}s subscribe sensorId first", __func__);
+        SEN_HILOGE("subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     g_subscribeMap.erase(sensorId);
@@ -206,7 +205,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     int32_t ret = client.DisableSensor(sensorId);
     if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s disable sensor failed, ret: %{public}d", __func__, ret);
+        SEN_HILOGE("disable sensor failed, ret: %{public}d", ret);
         return OHOS::Sensors::ERROR;
     }
     return OHOS::Sensors::SUCCESS;
@@ -216,16 +215,16 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
                                    int64_t reportInterval) const
 {
     if (user == nullptr || sensorId < 0) {
-        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
+        SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     if (samplingInterval < 0 || reportInterval < 0) {
-        HiLog::Error(LABEL, "%{public}s samplingInterval or reportInterval is invalid", __func__);
+        SEN_HILOGE("samplingInterval or reportInterval is invalid");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
-        HiLog::Error(LABEL, "%{public}s subscribe sensorId first", __func__);
+        SEN_HILOGE("subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     g_samplingInterval = samplingInterval;
@@ -235,14 +234,14 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
 
 int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
-    HiLog::Info(LABEL, "%{public}s in, sensorId: %{public}d", __func__, sensorId);
+    SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user or sensorId is invalid", __func__);
+        SEN_HILOGE("user or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     int32_t ret = CreateSensorDataChannel();
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s create sensor data chanel failed", __func__);
+        SEN_HILOGE("create sensor data chanel failed");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
@@ -252,20 +251,20 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
 
 int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
-    HiLog::Info(LABEL, "%{public}s in, sensorId: %{public}d", __func__, sensorId);
+    SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     if (user == nullptr || sensorId < 0  || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
+        SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if (g_unsubscribeMap.find(sensorId) == g_unsubscribeMap.end() || g_unsubscribeMap[sensorId] != user) {
-        HiLog::Error(LABEL, "%{public}s deactivate sensorId first", __func__);
+        SEN_HILOGE("deactivate sensorId first");
         return OHOS::Sensors::ERROR;
     }
     if (g_subscribeMap.empty()) {
         int32_t ret = DestroySensorDataChannel();
         if (ret != ERR_OK) {
-            HiLog::Error(LABEL, "%{public}s destory data channel fail, ret : %{public}d", __func__, ret);
+            SEN_HILOGE("destory data channel fail, ret : %{public}d", ret);
             return ret;
         }
     }
@@ -276,12 +275,12 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
 int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int32_t mode) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
+        SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
-        HiLog::Error(LABEL, "%{public}s subscribe sensorId first", __func__);
+        SEN_HILOGE("subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     return OHOS::Sensors::SUCCESS;
@@ -290,12 +289,12 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
 int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, int32_t option) const
 {
     if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s user is null or sensorId is invalid", __func__);
+        SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
-        HiLog::Error(LABEL, "%{public}s subscribe sensorId first", __func__);
+        SEN_HILOGE("subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     return OHOS::Sensors::SUCCESS;
@@ -304,13 +303,13 @@ int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, in
 int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const
 {
     if (sensorInfo == nullptr || count == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorInfo or count is null", __func__);
+        SEN_HILOGE("sensorInfo or count is null");
         return OHOS::Sensors::ERROR;
     }
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     std::vector<OHOS::Sensors::Sensor> sensorList_ = client.GetSensorList();
     if (sensorList_.empty()) {
-        HiLog::Error(LABEL, "%{public}s get sensor lists failed", __func__);
+        SEN_HILOGE("get sensor lists failed");
         return OHOS::Sensors::ERROR;
     }
     *count = sensorList_.size();
@@ -320,25 +319,25 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
         errno_t ret = strcpy_s((*sensorInfo + index)->sensorName, NAME_MAX_LEN,
             sensorList_[index].GetSensorName().c_str());
         if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s strcpy sensorName failed", __func__);
+            SEN_HILOGE("strcpy sensorName failed");
             return OHOS::Sensors::ERROR;
         }
         ret = strcpy_s((*sensorInfo + index)->vendorName, NAME_MAX_LEN,
             sensorList_[index].GetVendorName().c_str());
         if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s strcpy vendorName failed", __func__);
+            SEN_HILOGE("strcpy vendorName failed");
             return OHOS::Sensors::ERROR;
         }
         ret = strcpy_s((*sensorInfo + index)->hardwareVersion, VERSION_MAX_LEN,
             sensorList_[index].GetHardwareVersion().c_str());
         if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s strcpy hardwareVersion failed", __func__);
+            SEN_HILOGE("strcpy hardwareVersion failed");
             return OHOS::Sensors::ERROR;
         }
         ret = strcpy_s((*sensorInfo + index)->firmwareVersion, VERSION_MAX_LEN,
             sensorList_[index].GetFirmwareVersion().c_str());
         if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s strcpy hardwareVersion failed", __func__);
+            SEN_HILOGE("strcpy hardwareVersion failed");
             return OHOS::Sensors::ERROR;
         }
         (*sensorInfo + index)->sensorId = static_cast<int32_t>(sensorList_[index].GetSensorId());

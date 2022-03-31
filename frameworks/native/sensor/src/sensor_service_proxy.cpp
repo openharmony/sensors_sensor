@@ -46,25 +46,25 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteUint32(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s write sensorId failed", __func__);
+        SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteInt64(samplingPeriodNs)) {
-        HiLog::Error(LABEL, "%{public}s write samplingPeriodNs failed", __func__);
+        SEN_HILOGE("write samplingPeriodNs failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteInt64(maxReportDelayNs)) {
-        HiLog::Error(LABEL, "%{public}s write maxReportDelayNs failed", __func__);
+        SEN_HILOGE("write maxReportDelayNs failed");
         return WRITE_MSG_ERR;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "EnableSensor", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -75,17 +75,17 @@ ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteUint32(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s write sensorId failed", __func__);
+        SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::DISABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "DisableSensor", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -96,17 +96,17 @@ int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteUint32(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s write sensorId failed", __func__);
+        SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::GET_SENSOR_STATE, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "GetSensorState", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -114,32 +114,32 @@ int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
 ErrCode SensorServiceProxy::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params)
 {
     if (cmdType > RESERVED) {
-        HiLog::Error(LABEL, "%{public}s failed, cmdType : %{public}u", __func__, cmdType);
+        SEN_HILOGE("failed, cmdType : %{public}u", cmdType);
         return CMD_TYPE_ERR;
     }
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteUint32(sensorId)) {
-        HiLog::Error(LABEL, "%{public}s write sensorId failed", __func__);
+        SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteUint32(cmdType)) {
-        HiLog::Error(LABEL, "%{public}s write cmdType failed", __func__);
+        SEN_HILOGE("write cmdType failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteUint32(params)) {
-        HiLog::Error(LABEL, "%{public}s write params failed", __func__);
+        SEN_HILOGE("write params failed");
         return WRITE_MSG_ERR;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::RUN_COMMAND, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "RunCommand", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -151,18 +151,18 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
     MessageOption option;
     std::vector<Sensor> sensors;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return sensors;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::GET_SENSOR_LIST, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "GetSensorList", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
         return sensors;
     }
 
     int32_t sensorCount = reply.ReadInt32();
-    HiLog::Debug(LABEL, "%{public}s  sensorCount : %{public}d", __func__, sensorCount);
+    SEN_HILOGD("sensorCount : %{public}d", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;
     }
@@ -181,25 +181,25 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
                                                 const sptr<IRemoteObject> &sensorClient)
 {
     if (sensorBasicDataChannel == nullptr || sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorBasicDataChannel or sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorBasicDataChannel or sensorClient cannot be null");
         return OBJECT_NULL;
     }
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
     sensorBasicDataChannel->SendToBinder(data);
     if (!data.WriteRemoteObject(sensorClient)) {
-        HiLog::Error(LABEL, "%{public}s write sensorClient failed", __func__);
+        SEN_HILOGE("sensorClient failed");
         return WRITE_MSG_ERR;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::TRANSFER_DATA_CHANNEL, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "TransferDataChannel", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
     }
     sensorBasicDataChannel->CloseSendFd();
     return static_cast<ErrCode>(ret);
@@ -208,24 +208,24 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
 ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
 {
     if (sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorClient cannot be null");
         return OBJECT_NULL;
     }
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        HiLog::Error(LABEL, "%{public}s write descriptor failed", __func__);
+        SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
     if (!data.WriteRemoteObject(sensorClient)) {
-        HiLog::Error(LABEL, "%{public}s write sensorClient failed", __func__);
+        SEN_HILOGE("write sensorClient failed");
         return WRITE_MSG_ERR;
     }
     int32_t ret = Remote()->SendRequest(ISensorService::DESTROY_SENSOR_CHANNEL, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "DestroySensorChannel", ret);
-        HiLog::Error(LABEL, "%{public}s failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("failed, ret : %{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
