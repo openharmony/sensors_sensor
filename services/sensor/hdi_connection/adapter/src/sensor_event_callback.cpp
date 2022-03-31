@@ -30,7 +30,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
     ZReportDataCb reportDataCb_ = HdiConnection_->getReportDataCb();
     sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->getReportDataCallback();
     if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
-        SEN_HILOGI("reportDataCb_ or reportDataCallback_ cannot be null");
+        SEN_HILOGE("reportDataCb_ or reportDataCallback_ cannot be null");
         return ERR_NO_INIT;
     }
     int32_t dataSize = static_cast<int32_t>(event.data.size());

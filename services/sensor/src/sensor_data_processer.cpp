@@ -340,7 +340,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
             int32_t index = flushInfo_.GetFlushChannelIndex(flushVec, channel);
             if (index >= 0) {
                 if (flushVec[index].flushFromEnable) {
-                    SEN_HILOGE("flushFromEnable");
+                    SEN_HILOGI("flushFromEnable");
                     continue;
                 }
             }

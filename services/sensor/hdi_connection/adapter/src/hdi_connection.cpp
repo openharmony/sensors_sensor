@@ -59,7 +59,7 @@ int32_t HdiConnection::ConnectHdi()
             return ERR_OK;
         }
         retry++;
-        SEN_HILOGE("connect hdi service failed, retry : %{public}d", retry);
+        SEN_HILOGW("connect hdi service failed, retry : %{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
     }
     SEN_HILOGE("get sensor list failed");
