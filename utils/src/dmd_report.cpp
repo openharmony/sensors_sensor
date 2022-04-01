@@ -79,7 +79,7 @@ void DmdReport::ReportException(int32_t eventId, const std::string &interfaceNam
     std::lock_guard<std::mutex> eventLock(eventMutex_);
     auto eventIt = eventMap_.find(eventId);
     if (eventIt == eventMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s eventId : %{public}d is not supported", __func__, eventId);
+        SEN_HILOGE("eventId : %{public}d is not supported", eventId);
         return;
     }
     int64_t curTime = GetSecondsSince1970ToNow();
@@ -89,7 +89,7 @@ void DmdReport::ReportException(int32_t eventId, const std::string &interfaceNam
         eventMap_[eventId] = curTime;
         return;
     }
-    HiLog::Warn(LABEL, "%{public}s eventId is reported every half an hour", __func__);
+    SEN_HILOGW("eventId is reported every half an hour");
 }
 }  // namespace Sensors
 }  // namespace OHOS

@@ -174,55 +174,55 @@ void Sensor::SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs)
 bool Sensor::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteUint32(sensorId_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write sensorId failed", __func__);
+        SEN_HILOGE("failed, write sensorId failed");
         return false;
     }
     if (!parcel.WriteUint32(sensorTypeId_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write sensorTypeId failed", __func__);
+        SEN_HILOGE("failed, write sensorTypeId failed");
         return false;
     }
     if (!parcel.WriteString(sensorName_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write sensorName failed", __func__);
+        SEN_HILOGE("failed, write sensorName failed");
         return false;
     }
     if (!parcel.WriteString(vendorName_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write vendorName failed", __func__);
+        SEN_HILOGE("failed, write vendorName failed");
         return false;
     }
     if (!parcel.WriteString(firmwareVersion_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write firmwareVersion failed", __func__);
+        SEN_HILOGE("failed, write firmwareVersion failed");
         return false;
     }
     if (!parcel.WriteString(hardwareVersion_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write hardwareVersion failed", __func__);
+        SEN_HILOGE("failed, write hardwareVersion failed");
         return false;
     }
     if (!parcel.WriteFloat(maxRange_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write maxRange failed", __func__);
+        SEN_HILOGE("failed, write maxRange failed");
         return false;
     }
     if (!parcel.WriteFloat(resolution_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write resolution failed", __func__);
+        SEN_HILOGE("failed, write resolution failed");
         return false;
     }
     if (!parcel.WriteFloat(power_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write power failed", __func__);
+        SEN_HILOGE("failed, write power failed");
         return false;
     }
     if (!parcel.WriteUint32(flags_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write flags failed", __func__);
+        SEN_HILOGE("failed, write flags failed");
         return false;
     }
     if (!parcel.WriteInt32(fifoMaxEventCount_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write fifoMaxEventCount failed", __func__);
+        SEN_HILOGE("failed, write fifoMaxEventCount failed");
         return false;
     }
     if (!parcel.WriteInt64(minSamplePeriodNs_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write minSamplePeriodNs failed", __func__);
+        SEN_HILOGE("failed, write minSamplePeriodNs failed");
         return false;
     }
     if (!parcel.WriteInt64(maxSamplePeriodNs_)) {
-        HiLog::Error(LABEL, "%{public}s failed, write maxSamplePeriodNs failed", __func__);
+        SEN_HILOGE("failed, write maxSamplePeriodNs failed");
         return false;
     }
     return true;
@@ -232,12 +232,12 @@ std::unique_ptr<Sensor> Sensor::Unmarshalling(Parcel &parcel)
 {
     auto sensor = std::make_unique<Sensor>();
     if (sensor == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensor cannot be null", __func__);
+        SEN_HILOGE("sensor cannot be null");
         return nullptr;
     }
 
     if (!sensor->ReadFromParcel(parcel)) {
-        HiLog::Error(LABEL, "%{public}s ReadFromParcel failed", __func__);
+        SEN_HILOGE("ReadFromParcel is failed");
         return nullptr;
     }
     return sensor;
