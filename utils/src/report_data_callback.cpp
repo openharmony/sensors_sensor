@@ -54,11 +54,11 @@ ReportDataCallback::~ReportDataCallback()
 int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
 {
     if (event == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensor data is null", __func__);
+        SEN_HILOGE("sensor data is null");
         return ERROR;
     }
     if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
-        HiLog::Error(LABEL, "%{public}s callback or circularBuf or event cannot be null", __func__);
+        SEN_HILOGE("callback or circularBuf or event cannot be null");
         if (event->data != nullptr) {
             delete[] event->data;
         }

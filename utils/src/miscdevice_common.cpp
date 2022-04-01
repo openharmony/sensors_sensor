@@ -14,6 +14,7 @@
  */
 
 #include "miscdevice_common.h"
+#include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
 namespace OHOS {
@@ -33,11 +34,11 @@ bool MiscdeviceCommon::CheckCustomVibratorEffect(const std::vector<int32_t> &tim
                                                  const std::vector<int32_t> &intensity, int32_t periodCount)
 {
     if ((periodCount < MIN_VIBRATOR_COUNT) || (periodCount > MAX_VIBRATOR_COUNT)) {
-        HiLog::Error(LABEL, "%{public}s failed, input param invalid", __func__);
+        SEN_HILOGE("failed, input param invalid");
         return false;
     }
     if (timing.size() != intensity.size()) {
-        HiLog::Error(LABEL, "%{public}s failed, timing size invalid", __func__);
+        SEN_HILOGE("failed, timing size invalid");
         return false;
     }
     int32_t totalTime = 0;
@@ -45,7 +46,7 @@ bool MiscdeviceCommon::CheckCustomVibratorEffect(const std::vector<int32_t> &tim
         totalTime += timing[i];
     }
     if (totalTime > HALF_AN_HOUR) {
-        HiLog::Error(LABEL, "%{public}s failed, totalTime invalid", __func__);
+        SEN_HILOGE("failed, totalTime invalid");
         return false;
     }
     for (uint32_t i = 0; i < intensity.size(); i++) {
