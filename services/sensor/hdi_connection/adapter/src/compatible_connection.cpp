@@ -161,7 +161,7 @@ int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDat
     }
     int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);
     if (ret < 0) {
-        SEN_HILOGE("failed");
+        SEN_HILOGE("Register is failed");
         return ret;
     }
     reportDataCb_ = cb;
@@ -173,7 +173,7 @@ int32_t CompatibleConnection::DestroyHdiConnection()
 {
     int32_t ret = hdiServiceImpl_.Unregister();
     if (ret < 0) {
-        SEN_HILOGE("failed");
+        SEN_HILOGE("Unregister is failed");
         return ret;
     }
     return ERR_OK;

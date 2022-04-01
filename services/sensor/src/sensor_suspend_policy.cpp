@@ -54,7 +54,7 @@ ErrCode SensorSuspendPolicy::DisableSensor(uint32_t sensorId, int32_t pid)
         return ERR_OK;
     }
     if (interface_.DisableSensor(sensorId) != ERR_OK) {
-        SEN_HILOGE("DisableSensor failed");
+        SEN_HILOGE("DisableSensor is failed");
         return DISABLE_SENSOR_ERR;
     }
     return sensorManager_.AfterDisableSensor(sensorId);
@@ -87,12 +87,12 @@ ErrCode SensorSuspendPolicy::SaveSubscriber(uint32_t sensorId, int64_t samplingP
 {
     auto ret = sensorManager_.SaveSubscriber(sensorId, pid, samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
-        SEN_HILOGE("SaveSubscriber failed");
+        SEN_HILOGE("SaveSubscriber is failed");
         return ret;
     }
     sensorManager_.StartDataReportThread();
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
-        SEN_HILOGE("SetBestSensorParams failed");
+        SEN_HILOGE("SetBestSensorParams is failed");
         clientInfo_.RemoveSubscriber(sensorId, pid);
         return ENABLE_SENSOR_ERR;
     }
@@ -112,7 +112,7 @@ ErrCode SensorSuspendPolicy::EnableSensor(uint32_t sensorId, int32_t pid, int64_
         SEN_HILOGW("sensor has been enabled already");
         auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs, pid);
         if (ret != ERR_OK) {
-            SEN_HILOGE("SaveSubscriber failed");
+            SEN_HILOGE("SaveSubscriber is failed");
             return ret;
         }
         uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
@@ -124,12 +124,12 @@ ErrCode SensorSuspendPolicy::EnableSensor(uint32_t sensorId, int32_t pid, int64_
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs, pid);
     if (ret != ERR_OK) {
-        SEN_HILOGE("SaveSubscriber failed");
+        SEN_HILOGE("SaveSubscriber is failed");
         return ret;
     }
     ret = interface_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
-        SEN_HILOGE("EnableSensor failed");
+        SEN_HILOGE("EnableSensor is failed");
         clientInfo_.RemoveSubscriber(sensorId, pid);
         return ENABLE_SENSOR_ERR;
     }

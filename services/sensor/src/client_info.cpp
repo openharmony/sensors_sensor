@@ -463,12 +463,12 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
     std::vector<Sensor> sensors;
     int32_t ret = sensorHdiConnection->GetSensorList(sensors);
     if (ret < 0) {
-        SEN_HILOGE("GetSensorList failed");
+        SEN_HILOGE("GetSensorList is failed");
         return;
     }
     errno_t retVal = memcpy_s(&storedEvent, sizeof(storedEvent), &event, sizeof(event));
     if (retVal != EOK) {
-        SEN_HILOGE("memcpy_s failed");
+        SEN_HILOGE("memcpy_s is failed");
         return;
     }
     for (size_t i = 0; i < sensors.size(); i++) {

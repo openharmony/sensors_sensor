@@ -70,7 +70,7 @@ bool SensorManager::SetBestSensorParams(uint32_t sensorId, int64_t samplingPerio
     SEN_HILOGD("bestSamplingPeriodNs : %{public}d", int32_t { bestSamplingPeriodNs });
     auto ret = sensorHdiConnection_.SetBatch(sensorId, bestSamplingPeriodNs, bestReportDelayNs);
     if (ret != ERR_OK) {
-        SEN_HILOGE("SetBatch failed");
+        SEN_HILOGE("SetBatch is failed");
         return false;
     }
     return true;
@@ -87,7 +87,7 @@ bool SensorManager::ResetBestSensorParams(uint32_t sensorId)
     auto ret = sensorHdiConnection_.SetBatch(sensorId,
         sensorInfo.GetSamplingPeriodNs(), sensorInfo.GetMaxReportDelayNs());
     if (ret != ERR_OK) {
-        SEN_HILOGE("SetBatch failed");
+        SEN_HILOGE("SetBatch is failed");
         return false;
     }
     return true;
@@ -103,7 +103,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
         sensorInfo.SetSamplingPeriodNs(samplingPeriodNs);
         sensorInfo.SetMaxReportDelayNs(maxReportDelayNs);
         sensorInfo.SetSensorState(true);
-        SEN_HILOGE("sensorId invalid");
+        SEN_HILOGE("sensorId is invalid");
         return sensorInfo;
     }
     int64_t curSamplingPeriodNs =
@@ -131,7 +131,7 @@ ErrCode SensorManager::SaveSubscriber(uint32_t sensorId, uint32_t pid, int64_t s
     SensorBasicInfo sensorInfo = GetSensorInfo(sensorId, samplingPeriodNs, maxReportDelayNs);
     auto updateRet = clientInfo_.UpdateSensorInfo(sensorId, pid, sensorInfo);
     if (!updateRet) {
-        SEN_HILOGE("UpdateSensorInfo failed");
+        SEN_HILOGE("UpdateSensorInfo is failed");
         return UPDATE_SENSOR_INFO_ERR;
     }
     return ERR_OK;
@@ -156,7 +156,7 @@ bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPi
     }
     clientInfo_.ClearCurPidSensorInfo(sensorId, clientPid);
     if (!ResetBestSensorParams(sensorId)) {
-        SEN_HILOGW("ResetBestSensorParams failed");
+        SEN_HILOGW("ResetBestSensorParams is failed");
     }
     SEN_HILOGD("other client is using this sensor");
     return true;

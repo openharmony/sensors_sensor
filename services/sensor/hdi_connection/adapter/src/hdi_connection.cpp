@@ -118,7 +118,7 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
     }
     int32_t ret = sensorInterface_->Disable(sensorId);
     if (ret < 0) {
-        SEN_HILOGE("is failed");
+        SEN_HILOGE("Disable is failed");
         return ret;
     }
     deleteSensorBasicInfoState(sensorId);
@@ -133,7 +133,7 @@ int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int6
     }
     int32_t ret = sensorInterface_->SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret < 0) {
-        SEN_HILOGE("failed");
+        SEN_HILOGE("SetBatch is failed");
         return ret;
     }
     updateSensorBasicInfo(sensorId, samplingInterval, reportInterval);
@@ -149,7 +149,7 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
     }
     int32_t ret = sensorInterface_->SetMode(sensorId, mode);
     if (ret < 0) {
-        SEN_HILOGE("is failed");
+        SEN_HILOGE("SetMode is failed");
         return ret;
     }
     return ERR_OK;
@@ -164,7 +164,7 @@ int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
     }
     int32_t ret = sensorInterface_->SetOption(sensorId, option);
     if (ret < 0) {
-        SEN_HILOGE("is failed");
+        SEN_HILOGE("SetOption is failed");
         return ret;
     }
     return ERR_OK;
@@ -179,7 +179,7 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
     }
     int32_t ret = sensorInterface_->Register(0, eventCallback_);
     if (ret < 0) {
-        SEN_HILOGE("failed");
+        SEN_HILOGE("Register is failed");
         return ret;
     }
     reportDataCb_ = cb;
@@ -196,7 +196,7 @@ int32_t HdiConnection::DestroyHdiConnection()
     }
     int32_t ret = sensorInterface_->Unregister(0, eventCallback_);
     if (ret < 0) {
-        SEN_HILOGE("failed");
+        SEN_HILOGE("Unregister is failed");
         return ret;
     }
     eventCallback_ = nullptr;

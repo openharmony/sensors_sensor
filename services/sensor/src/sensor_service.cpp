@@ -125,7 +125,7 @@ bool SensorService::InitSensorList()
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
     if (ret < 0) {
-        SEN_HILOGE("GetSensorList failed");
+        SEN_HILOGE("GetSensorList is failed");
         return false;
     }
     {
@@ -302,7 +302,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
         return ERR_OK;
     }
     if (sensorHdiConnection_.DisableSensor(sensorId) != ERR_OK) {
-        SEN_HILOGE("DisableSensor failed");
+        SEN_HILOGE("DisableSensor is failed");
         return DISABLE_SENSOR_ERR;
     }
     clientInfo_.DestroyCmd(this->GetCallingUid());
@@ -339,7 +339,7 @@ ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t 
         return retFlush;
     }
     if (sensorHdiConnection_.RunCommand(sensorId, cmdType, params) != ERR_OK) {
-        SEN_HILOGE("RunCommand failed");
+        SEN_HILOGE("RunCommand is failed");
         return RUN_COMMAND_ERR;
     }
     auto uid = this->GetCallingUid();
@@ -352,7 +352,7 @@ std::vector<Sensor> SensorService::GetSensorList()
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
     if (ret < 0) {
-        SEN_HILOGE("GetSensorList failed");
+        SEN_HILOGE("GetSensorList is failed");
         return sensors_;
     }
     for (const auto &it : sensors_) {
@@ -373,11 +373,11 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
     auto uid = this->GetCallingUid();
     auto callerToken = this->GetCallingTokenID();
     if (!clientInfo_.UpdateAppThreadInfo(pid, uid, callerToken)) {
-        SEN_HILOGE("UpdateUid failed");
+        SEN_HILOGE("UpdateUid is failed");
         return UPDATE_UID_ERR;
     }
     if (!clientInfo_.UpdateSensorChannel(pid, sensorBasicDataChannel)) {
-        SEN_HILOGE("UpdateSensorChannel failed");
+        SEN_HILOGE("UpdateSensorChannel is failed");
         return UPDATE_SENSOR_CHANNEL_ERR;
     }
     sensorBasicDataChannel->SetSensorStatus(true);
@@ -397,7 +397,7 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     bool destoryRet = clientInfo_.DestroySensorChannel(clientPid);
     if (!destoryRet) {
-        SEN_HILOGE("DestroySensorChannel failed");
+        SEN_HILOGE("DestroySensorChannel is failed");
         return DESTROY_SENSOR_CHANNEL_ERR;
     }
     clientInfo_.DestroyCmd(this->GetCallingUid());
