@@ -37,7 +37,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Sens
 
 SensorServiceStub::SensorServiceStub()
 {
-    HiLog::Info(LABEL, "%{public}s begin,  %{public}p", __func__, this);
+    SEN_HILOGI("begin,  %{public}p", this);
     baseFuncs_[ENABLE_SENSOR] = &SensorServiceStub::SensorEnableInner;
     baseFuncs_[DISABLE_SENSOR] = &SensorServiceStub::SensorDisableInner;
     baseFuncs_[GET_SENSOR_STATE] = &SensorServiceStub::GetSensorStateInner;
@@ -49,18 +49,18 @@ SensorServiceStub::SensorServiceStub()
 
 SensorServiceStub::~SensorServiceStub()
 {
-    HiLog::Info(LABEL, "%{public}s begin, yigou %{public}p", __func__, this);
+    SEN_HILOGI("begin, yigou %{public}p", this);
     baseFuncs_.clear();
 }
 
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                            MessageOption &option)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, cmd : %{public}u", __func__, code);
+    SEN_HILOGD("begin, cmd : %{public}u", code);
     std::u16string descriptor = SensorServiceStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        HiLog::Error(LABEL, "%{public}s client and service descriptors are inconsistent", __func__);
+        SEN_HILOGE("client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
     auto itFunc = baseFuncs_.find(code);
@@ -70,7 +70,7 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
             return (this->*memberFunc)(data, reply);
         }
     }
-    HiLog::Debug(LABEL, "%{public}s no member func supporting, applying default process", __func__);
+    SEN_HILOGD("no member func supporting, applying default process");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 
@@ -80,7 +80,7 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        HiLog::Error(LABEL, "%{public}s permission denied", __func__);
+        SEN_HILOGE("permission denied");
         return ERR_PERMISSION_DENIED;
     }
     return EnableSensor(sensorId, data.ReadInt64(), data.ReadInt64());
@@ -92,7 +92,7 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        HiLog::Error(LABEL, "%{public}s permission denied", __func__);
+        SEN_HILOGE("permission denied");
         return ERR_PERMISSION_DENIED;
     }
     return DisableSensor(sensorId);
@@ -104,7 +104,7 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        HiLog::Error(LABEL, "%{public}s permission denied", __func__);
+        SEN_HILOGE("permission denied");
         return ERR_PERMISSION_DENIED;
     }
     return GetSensorState(sensorId);
@@ -116,7 +116,7 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        HiLog::Error(LABEL, "%{public}s permission denied", __func__);
+        SEN_HILOGE("permission denied");
         return ERR_PERMISSION_DENIED;
     }
     return RunCommand(sensorId, data.ReadUint32(), data.ReadUint32());
@@ -131,7 +131,7 @@ ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel
     for (int32_t i = 0; i < sensorCount; i++) {
         bool flag = sensors[i].Marshalling(reply);
         if (!flag) {
-            HiLog::Error(LABEL, "Marshalling sensor %{public}d failed", i);
+            SEN_HILOGE("sensor %{public}d failed", i);
             return GET_SENSOR_LIST_ERR;
         }
     }
@@ -143,17 +143,17 @@ ErrCode SensorServiceStub::CreateDataChannelInner(MessageParcel &data, MessagePa
     (void)reply;
     sptr<SensorBasicDataChannel> sensorChannel = new (std::nothrow) SensorBasicDataChannel();
     if (sensorChannel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorChannel cannot be null", __func__);
+        SEN_HILOGE("sensorChannel cannot be null");
         return OBJECT_NULL;
     }
     auto ret = sensorChannel->CreateSensorBasicChannel(data);
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s CreateSensorBasicChannel ret : %{public}d", __func__, ret);
+        SEN_HILOGE("CreateSensorBasicChannel ret : %{public}d", ret);
         return OBJECT_NULL;
     }
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     if (sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorClient cannot be null");
         return OBJECT_NULL;
     }
     return TransferDataChannel(sensorChannel, sensorClient);
@@ -163,7 +163,7 @@ ErrCode SensorServiceStub::DestroyDataChannelInner(MessageParcel &data, MessageP
 {
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     if (sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorClient cannot be null");
         return OBJECT_NULL;
     }
     return DestroySensorChannel(sensorClient);

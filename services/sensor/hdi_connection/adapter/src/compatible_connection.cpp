@@ -33,7 +33,7 @@ std::mutex ISensorHdiConnection::dataMutex_;
 std::condition_variable ISensorHdiConnection::dataCondition_;
 int32_t CompatibleConnection::ConnectHdi()
 {
-    HiLog::Info(LABEL, "%{public}s connect hdi success", __func__);
+    SEN_HILOGI("connect hdi success");
     return ERR_OK;
 }
 
@@ -42,7 +42,7 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
     std::vector<SensorInformation> sensorInfos;
     int32_t ret = hdiServiceImpl_.GetSensorList(sensorInfos);
     if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
+        SEN_HILOGE("get sensor list failed");
         return ret;
     }
     for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
@@ -71,7 +71,7 @@ int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorId);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s enable sensor failed, sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGE("enable sensor failed, sensorId: %{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -81,7 +81,7 @@ int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorId);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s disable sensor failed, sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGE("disable sensor failed, sensorId: %{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -91,7 +91,7 @@ int32_t CompatibleConnection::SetBatch(int32_t sensorId, int64_t samplingInterva
 {
     int32_t ret = hdiServiceImpl_.SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s set batch failed, sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGE("set batch failed, sensorId: %{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -101,7 +101,7 @@ int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     int32_t ret = hdiServiceImpl_.SetMode(sensorId, mode);
     if (ret != 0) {
-        HiLog::Info(LABEL, "%{public}s set mode failed, sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGI("set mode failed, sensorId: %{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -116,7 +116,7 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 {
     int32_t ret = hdiServiceImpl_.SetOption(sensorId, option);
     if (ret != 0) {
-        HiLog::Info(LABEL, "%{public}s set option failed, sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGI("set option failed, sensorId: %{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -125,11 +125,11 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *event)
 {
     if ((event == nullptr) || (event->dataLen == 0)) {
-        HiLog::Error(LABEL, "%{public}s event is NULL", __func__);
+        SEN_HILOGE("event is NULL");
         return ERR_INVALID_VALUE;
     }
     if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
+        SEN_HILOGE("reportDataCb_ cannot be null");
         return ERR_NO_INIT;
     }
 
@@ -144,7 +144,7 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
     sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
     errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
     if (ret != EOK) {
-        HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
+        SEN_HILOGE("copy data failed");
         delete[] sensorEvent.data;
         return COPY_ERR;
     }
@@ -156,12 +156,12 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
 int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     if (reportDataCallback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s failed, reportDataCallback cannot be null", __func__);
+        SEN_HILOGE("failed, reportDataCallback cannot be null");
         return ERR_INVALID_VALUE;
     }
     int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s failed", __func__);
+        SEN_HILOGE("Register is failed");
         return ret;
     }
     reportDataCb_ = cb;
@@ -173,7 +173,7 @@ int32_t CompatibleConnection::DestroyHdiConnection()
 {
     int32_t ret = hdiServiceImpl_.Unregister();
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s failed", __func__);
+        SEN_HILOGE("Unregister is failed");
         return ret;
     }
     return ERR_OK;

@@ -50,7 +50,7 @@ constexpr uint32_t FLUSH_COMPLETE_ID = ((uint32_t)OTHER << SENSOR_CATAGORY_SHIFT
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<uint32_t, Sensor> &sensorMap)
 {
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
-    HiLog::Debug(LABEL, "%{public}s sensorMap_.size : %{public}d", __func__, int32_t { sensorMap_.size() });
+    SEN_HILOGD("sensorMap_.size : %{public}d", int32_t { sensorMap_.size() });
 }
 
 SensorDataProcesser::~SensorDataProcesser()
@@ -75,7 +75,7 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, str
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         if (fifoCacheData == nullptr) {
-            HiLog::Error(LABEL, "%{public}s fifoCacheData cannot be null", __func__);
+            SEN_HILOGE("fifoCacheData cannot be null");
             return;
         }
         fifoCacheData->SetChannel(channel);
@@ -103,7 +103,7 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, str
     if (!channelExist) {
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         if (fifoCacheData == nullptr) {
-            HiLog::Error(LABEL, "%{public}s failed, fifoCacheData cannot be null", __func__);
+            SEN_HILOGE("failed, fifoCacheData cannot be null");
             return;
         }
         fifoCacheData->SetChannel(channel);
@@ -127,7 +127,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         if (fifoCacheData == nullptr) {
-            HiLog::Error(LABEL, "%{public}s fifoCacheData cannot be null", __func__);
+            SEN_HILOGE("fifoCacheData cannot be null");
             return;
         }
         fifoCacheData->SetChannel(channel);
@@ -163,7 +163,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
     if (!channelExist) {
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         if (fifoCacheData == nullptr) {
-            HiLog::Error(LABEL, "%{public}s failed, fifoCacheData cannot be null", __func__);
+            SEN_HILOGE("failed, fifoCacheData cannot be null");
             return;
         }
         fifoCacheData->SetChannel(channel);
@@ -174,7 +174,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
 void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event)
 {
     if (channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s channel cannot be null", __func__);
+        SEN_HILOGE("channel cannot be null");
         return;
     }
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
@@ -208,7 +208,7 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<uint32_t, s
     auto sensor = sensorMap_.find(sensorId);
     sensor->second.SetFlags(event.mode);
     if (sensor == sensorMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s data's sensorId is not supported", __func__);
+        SEN_HILOGE("data's sensorId is not supported");
         return false;
     }
     if (((SENSOR_ON_CHANGE & sensor->second.GetFlags()) == SENSOR_ON_CHANGE) ||
@@ -232,11 +232,11 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
                                       sptr<SensorBasicDataChannel> channel, std::vector<struct SensorEvent> event)
 {
     if (channel == nullptr || event.empty()) {
-        HiLog::Error(LABEL, "%{public}s channel cannot be null or event cannot be empty", __func__);
+        SEN_HILOGE("channel cannot be null or event cannot be empty");
         return;
     }
     if (!CheckSendDataPermission(channel, event[0].sensorTypeId)) {
-        HiLog::Error(LABEL, "%{public}s permission denied", __func__);
+        SEN_HILOGE("permission denied");
         return;
     }
 
@@ -253,14 +253,14 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
         };
         errno_t ret = memcpy_s(transferEvent.data, SENSOR_MAX_LENGTH, event[i].data, event[i].dataLen);
         if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s copy data failed", __func__);
+            SEN_HILOGE("copy data failed");
             return;
         }
         transferEvents.push_back(transferEvent);
     }
     auto ret = channel->SendData(transferEvents.data(), eventSize * sizeof(struct TransferSensorEvents));
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s send data failed, ret : %{public}d", __func__, ret);
+        SEN_HILOGE("send data failed, ret : %{public}d", ret);
         uint32_t sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
         if (sensorId == FLUSH_COMPLETE_ID) {
             sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
@@ -272,7 +272,7 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
 int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, sptr<SensorBasicDataChannel> &channel)
 {
     if (channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s channel cannot be null", __func__);
+        SEN_HILOGE("channel cannot be null");
         return INVALID_POINTER;
     }
     int32_t ret = ERR_OK;
@@ -286,11 +286,11 @@ int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, s
         // Try to send the last failed value, if it still fails, replace the previous cache directly
         ret = channel->SendData(&cacheEvent->second, sizeof(struct SensorEvent));
         if (ret != ERR_OK) {
-            HiLog::Error(LABEL, "%{public}s ret : %{public}d", __func__, ret);
+            SEN_HILOGE("ret : %{public}d", ret);
         }
         ret = channel->SendData(&event, sizeof(struct SensorEvent));
         if (ret != ERR_OK) {
-            HiLog::Error(LABEL, "%{public}s ret : %{public}d", __func__, ret);
+            SEN_HILOGE("ret : %{public}d", ret);
             cacheBuf[sensorId] = event;
         } else {
             cacheBuf.erase(cacheEvent);
@@ -298,7 +298,7 @@ int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, s
     } else {
         ret = channel->SendData(&event, sizeof(struct SensorEvent));
         if (ret != ERR_OK) {
-            HiLog::Error(LABEL, "%{public}s ret : %{public}d", __func__, ret);
+            SEN_HILOGE("ret : %{public}d", ret);
             cacheBuf[sensorId] = event;
         }
     }
@@ -319,7 +319,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
     auto flushInfo = flushInfo_.GetFlushInfo();
     std::vector<struct FlushInfo> flushVec;
     if (sensorId == FLUSH_COMPLETE_ID) {
-        HiLog::Debug(LABEL, "%{public}s sensorId : %{public}u", __func__, sensorId);
+        SEN_HILOGD("sensorId : %{public}u", sensorId);
         auto it = flushInfo.find(realSensorId);
         if (it != flushInfo.end()) {
             flushVec = it->second;
@@ -330,7 +330,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
                     break;
                 } else {
                     // The channel that store in the flushVec has invalid, so erase this channel directly
-                    HiLog::Debug(LABEL, "%{public}s clear flush info", __func__);
+                    SEN_HILOGD("clear flush info");
                     flushInfo_.ClearFlushInfoItem(realSensorId);
                 }
             }
@@ -340,7 +340,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
             int32_t index = flushInfo_.GetFlushChannelIndex(flushVec, channel);
             if (index >= 0) {
                 if (flushVec[index].flushFromEnable) {
-                    HiLog::Info(LABEL, "%{public}s flushFromEnable", __func__);
+                    SEN_HILOGI("flushFromEnable");
                     continue;
                 }
             }
@@ -356,14 +356,14 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
 int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback)
 {
     if (dataCallback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s dataCallback cannot be null", __func__);
+        SEN_HILOGE("dataCallback cannot be null");
         return INVALID_POINTER;
     }
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     ISensorHdiConnection::dataCondition_.wait(lk);
     auto &eventsBuf = dataCallback->GetEventData();
     if (eventsBuf.eventNum <= 0) {
-        HiLog::Error(LABEL, "%{public}s data cannot be empty", __func__);
+        SEN_HILOGE("data cannot be empty");
         return NO_EVENT;
     }
     int32_t eventNum = eventsBuf.eventNum;
@@ -382,7 +382,7 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
 int32_t SensorDataProcesser::SendEvents(sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event)
 {
     if (channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s channel cannot be null", __func__);
+        SEN_HILOGE("channel cannot be null");
         return INVALID_POINTER;
     }
     clientInfo_.UpdateDataQueue(event.sensorTypeId, event);
@@ -401,7 +401,7 @@ int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser,
     CALL_LOG_ENTER;
     do {
         if (dataProcesser->ProcessEvents(dataCallback) == INVALID_POINTER) {
-            HiLog::Error(LABEL, "%{public}s callback cannot be null", __func__);
+            SEN_HILOGE("callback cannot be null");
             return INVALID_POINTER;
         }
     } while (1);

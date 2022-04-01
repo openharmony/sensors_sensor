@@ -19,6 +19,7 @@
 #include <ctime>
 #include <queue>
 
+#include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
 namespace OHOS {
@@ -115,7 +116,7 @@ std::unordered_map<uint32_t, std::string> SensorDump::sensorMap_ = {
 bool SensorDump::DumpSensorHelp(int32_t fd, const std::vector<std::u16string> &args)
 {
     if ((args.empty()) || (args[0].compare(u"-h") != 0)) {
-        HiLog::Error(LABEL, "%{public}s args cannot be empty or invalid", __func__);
+        SEN_HILOGE("args cannot be empty or invalid");
         return false;
     }
     DumpHelp(fd);
@@ -135,7 +136,7 @@ void SensorDump::DumpHelp(int32_t fd)
 bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, const std::vector<std::u16string> &args)
 {
     if ((args.empty()) || (args[0].compare(u"-l") != 0)) {
-        HiLog::Error(LABEL, "%{public}s args cannot be empty or invalid", __func__);
+        SEN_HILOGE("args cannot be empty or invalid");
         return false;
     }
     DumpCurrentTime(fd);
@@ -155,7 +156,7 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, 
 bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo, const std::vector<std::u16string> &args)
 {
     if ((args.empty()) || (args[0].compare(u"-c") != 0)) {
-        HiLog::Error(LABEL, "%{public}s args cannot be empty or invalid", __func__);
+        SEN_HILOGE("args cannot be empty or invalid");
         return false;
     }
     DumpCurrentTime(fd);
@@ -182,7 +183,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
                                    const std::vector<std::u16string> &args)
 {
     if ((args.empty()) || (args[0].compare(u"-o") != 0)) {
-        HiLog::Error(LABEL, "%{public}s args cannot be empty or invalid", __func__);
+        SEN_HILOGE("args cannot be empty or invalid");
         return false;
     }
     DumpCurrentTime(fd);
@@ -199,7 +200,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
 bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::vector<std::u16string> &args)
 {
     if ((args.empty()) || (args[0].compare(u"-d") != 0)) {
-        HiLog::Error(LABEL, "%{public}s args cannot be empty or invalid", __func__);
+        SEN_HILOGE("args cannot be empty or invalid");
         return false;
     }
     dprintf(fd, "Last 10 packages sensor data:\n");
@@ -214,7 +215,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::v
             timespec time = { 0, 0 };
             struct tm *timeinfo = localtime(&(time.tv_sec));
             if (timeinfo == nullptr) {
-                HiLog::Error(LABEL, "%{public}s timeinfo cannot be null", __func__);
+                SEN_HILOGE("timeinfo cannot be null");
                 return false;
             }
             dprintf(fd, "      %2d (ts=%.9f, time=%02d:%02d:%02d.%03d) | data:%s", ++j, data.timestamp / 1e9,
@@ -231,7 +232,7 @@ void SensorDump::DumpCurrentTime(int32_t fd)
     clock_gettime(CLOCK_REALTIME, &curTime);
     struct tm *timeinfo = localtime(&(curTime.tv_sec));
     if (timeinfo == nullptr) {
-        HiLog::Error(LABEL, "%{public}s timeinfo cannot be null", __func__);
+        SEN_HILOGE("timeinfo cannot be null");
         return;
     }
     dprintf(fd, "Current time: %02d:%02d:%02d.%03d\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
@@ -267,7 +268,7 @@ int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
 
 std::string SensorDump::GetDataBySensorId(uint32_t sensorId, struct SensorEvent &sensorData)
 {
-    HiLog::Debug(LABEL, "%{public}s sensorId: %{public}u", __func__, sensorId);
+    SEN_HILOGD("sensorId: %{public}u", sensorId);
     std::string buffer;
     int32_t dataLen = DataSizeBySensorId(sensorId);
     for (int32_t i = 0; i < dataLen; ++i) {

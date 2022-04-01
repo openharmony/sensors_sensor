@@ -44,39 +44,39 @@ sptr<ReportDataCallback> HdiConnection::reportDataCallback_ = nullptr;
 
 int32_t HdiConnection::ConnectHdi()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     int32_t retry = 0;
     while (retry < GET_HDI_SERVICE_COUNT) {
         sensorInterface_ = ISensorInterface::Get();
         if (sensorInterface_ != nullptr) {
-            HiLog::Info(LABEL, "%{public}s connect v1_0 hdi success", __func__);
+            SEN_HILOGI("connect v1_0 hdi success");
             eventCallback_ = new (std::nothrow) SensorEventCallback();
             if (eventCallback_ == nullptr) {
-                HiLog::Error(LABEL, "%{public}s failed to initialize eventCallback", __func__);
+                SEN_HILOGE("failed to initialize eventCallback");
                 return ERR_NO_INIT;
             }
             RegisterHdiDeathRecipient();
             return ERR_OK;
         }
         retry++;
-        HiLog::Warn(LABEL, "%{public}s connect hdi service failed, retry : %{public}d", __func__, retry);
+        SEN_HILOGW("connect hdi service failed, retry : %{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
     }
-    HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+    SEN_HILOGE("connect v1_0 hdi failed");
     return ERR_NO_INIT;
 }
 
 int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     std::vector<HdfSensorInformation> sensorInfos;
     int32_t ret = sensorInterface_->GetAllSensorInfo(sensorInfos);
     if (ret != 0) {
-        HiLog::Error(LABEL, "%{public}s get sensor list failed", __func__);
+        SEN_HILOGE("get sensor list failed");
         return ret;
     }
     for (size_t i = 0; i < sensorInfos.size(); i++) {
@@ -92,19 +92,18 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensorList.push_back(sensor);
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
 int32_t HdiConnection::EnableSensor(int32_t sensorId)
 {
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->Enable(sensorId);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s is failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ret;
     }
     setSensorBasicInfoState(sensorId, true);
@@ -114,12 +113,12 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
 int32_t HdiConnection::DisableSensor(int32_t sensorId)
 {
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->Disable(sensorId);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s is failed", __func__);
+        SEN_HILOGE("Disable is failed");
         return ret;
     }
     deleteSensorBasicInfoState(sensorId);
@@ -129,12 +128,12 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
 int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s failed", __func__);
+        SEN_HILOGE("SetBatch is failed");
         return ret;
     }
     updateSensorBasicInfo(sensorId, samplingInterval, reportInterval);
@@ -143,69 +142,65 @@ int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int6
 
 int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->SetMode(sensorId, mode);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s is failed", __func__);
+        SEN_HILOGE("SetMode is failed");
         return ret;
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
 int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->SetOption(sensorId, option);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s is failed", __func__);
+        SEN_HILOGE("SetOption is failed");
         return ret;
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
 int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (reportDataCallback == nullptr || sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s failed, reportDataCallback or sensorInterface_ cannot be null", __func__);
+        SEN_HILOGE("failed, reportDataCallback or sensorInterface_ cannot be null");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->Register(0, eventCallback_);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s failed", __func__);
+        SEN_HILOGE("Register is failed");
         return ret;
     }
     reportDataCb_ = cb;
     reportDataCallback_ = reportDataCallback;
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
 int32_t HdiConnection::DestroyHdiConnection()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return ERR_NO_INIT;
     }
     int32_t ret = sensorInterface_->Unregister(0, eventCallback_);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s failed", __func__);
+        SEN_HILOGE("Unregister is failed");
         return ret;
     }
     eventCallback_ = nullptr;
     UnregisterHdiDeathRecipient();
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return ERR_OK;
 }
 
@@ -216,21 +211,19 @@ int32_t HdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
 
 ZReportDataCb HdiConnection::getReportDataCb()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (reportDataCb_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s reportDataCb_ cannot be null", __func__);
+        SEN_HILOGE("reportDataCb_ cannot be null");
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return reportDataCb_;
 }
 
 sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (reportDataCallback_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s reportDataCallback_ cannot be null", __func__);
+        SEN_HILOGE("reportDataCallback_ cannot be null");
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
     return reportDataCallback_;
 }
 
@@ -248,7 +241,7 @@ void HdiConnection::setSensorBasicInfoState(int32_t sensorId, bool state)
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     auto it = sensorBasicInfoMap_.find(sensorId);
     if (it == sensorBasicInfoMap_.end()) {
-        HiLog::Warn(LABEL, "%{public}s should set batch first", __func__);
+        SEN_HILOGW("should set batch first");
         return;
     }
     sensorBasicInfoMap_[sensorId].SetSensorState(state);
@@ -265,62 +258,59 @@ void HdiConnection::deleteSensorBasicInfoState(int32_t sensorId)
 
 void HdiConnection::RegisterHdiDeathRecipient()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s connect v1_0 hdi failed", __func__);
+        SEN_HILOGE("connect v1_0 hdi failed");
         return;
     }
     hdiDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<HdiConnection *>(this));
     if (hdiDeathObserver_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s hdiDeathObserver_ cannot be null", __func__);
+        SEN_HILOGE("hdiDeathObserver_ cannot be null");
         return;
     }
     sensorInterface_->AsObject()->AddDeathRecipient(hdiDeathObserver_);
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 void HdiConnection::UnregisterHdiDeathRecipient()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     if (sensorInterface_ == nullptr || hdiDeathObserver_ == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorInterface_ or hdiDeathObserver_ is null", __func__);
+        SEN_HILOGE("sensorInterface_ or hdiDeathObserver_ is null");
         return;
     }
     sensorInterface_->AsObject()->RemoveDeathRecipient(hdiDeathObserver_);
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     sptr<IRemoteObject> hdiService = object.promote();
     if (hdiService == nullptr) {
-        HiLog::Error(LABEL, "%{public}s invalid remote object", __func__);
+        SEN_HILOGE("invalid remote object");
         return;
     }
     hdiService->RemoveDeathRecipient(hdiDeathObserver_);
     eventCallback_ = nullptr;
     reconnect();
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 
 void HdiConnection::reconnect()
 {
-    HiLog::Debug(LABEL, "%{public}s begin", __func__);
+    CALL_LOG_ENTER;
     int32_t ret = ConnectHdi();
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s failed to get an instance of hdi service", __func__);
+        SEN_HILOGE("failed to get an instance of hdi service");
         return;
     }
     ret = sensorInterface_->Register(0, eventCallback_);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s register callback fail", __func__);
+        SEN_HILOGE("register callback fail");
         return;
     }
     std::vector<Sensor> sensorList;
     ret = GetSensorList(sensorList);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s get sensor list fail", __func__);
+        SEN_HILOGE("get sensor list fail");
         return;
     }
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
@@ -329,16 +319,14 @@ void HdiConnection::reconnect()
         ret = SetBatch(sensorTypeId, sensorInfo.second.GetSamplingPeriodNs(),
             sensorInfo.second.GetMaxReportDelayNs());
         if (ret < 0 || sensorInfo.second.GetSensorState() != true) {
-            HiLog::Error(LABEL, "%{public}s sensorTypeId: %{public}d set batch fail or not need enable sensor",
-                __func__, sensorTypeId);
+            SEN_HILOGE("sensorTypeId: %{public}d set batch fail or not need enable sensor", sensorTypeId);
             continue;
         }
         ret = EnableSensor(sensorTypeId);
         if (ret < 0) {
-            HiLog::Error(LABEL, "%{public}s enable sensor fail, sensorTypeId: %{public}d", __func__, sensorTypeId);
+            SEN_HILOGE("enable sensor fail, sensorTypeId: %{public}d", sensorTypeId);
         }
     }
-    HiLog::Debug(LABEL, "%{public}s end", __func__);
 }
 }  // namespace Sensors
 }  // namespace OHOS

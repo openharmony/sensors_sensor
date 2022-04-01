@@ -50,9 +50,9 @@ void FlushInfoRecord::ClearFlushInfoItem(uint32_t sensorId)
 
 ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush)
 {
-    HiLog::Debug(LABEL, "%{public}s, sensorId : %{public}u", __func__, sensorId);
+    SEN_HILOGD("sensorId : %{public}u", sensorId);
     if (channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s failed, channel cannot be null", __func__);
+        SEN_HILOGE("failed, channel cannot be null");
         return INVALID_POINTER;
     }
     struct FlushInfo flush(channel, isFirstFlush);
@@ -72,11 +72,9 @@ ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicD
 bool FlushInfoRecord::IsFlushChannelValid(const std::vector<sptr<SensorBasicDataChannel>> &currChannelList,
                                           const sptr<SensorBasicDataChannel> &flushChannel)
 {
-    HiLog::Debug(LABEL, "%{public}s channel list size : %{public}u", __func__,
-        static_cast<uint32_t>(currChannelList.size()));
+    SEN_HILOGD("channel list size : %{public}u", static_cast<uint32_t>(currChannelList.size()));
     for (const auto &channel : currChannelList) {
-        HiLog::Debug(LABEL, "%{public}s channel : %{public}p, flushchannel : %{public}p", __func__, channel.GetRefPtr(),
-                     flushChannel.GetRefPtr());
+        SEN_HILOGD("channel : %{public}p, flushchannel : %{public}p", channel.GetRefPtr(), flushChannel.GetRefPtr());
         if (channel == flushChannel) {
             return true;
         }
@@ -101,17 +99,17 @@ ErrCode FlushInfoRecord::FlushProcess(const uint32_t sensorId, const uint32_t fl
 {
     auto ret = sensorHdiConnection_.RunCommand(sensorId, FLUSH, 0);
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s flush command failed", __func__);
+        SEN_HILOGE("flush command failed");
         return ret;
     }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(pid);
     if (channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s channel cannot be null", __func__);
+        SEN_HILOGE("channel cannot be null");
         return ERROR;
     }
     ret = SetFlushInfo(sensorId, channel, false);
     if (ret != ERR_OK) {
-        HiLog::Error(LABEL, "%{public}s set flush info failed", __func__);
+        SEN_HILOGE("set flush info failed");
         return ret;
     }
     return ERR_OK;

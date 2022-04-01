@@ -44,14 +44,14 @@ std::atomic_bool HdiServiceImpl::g_isStop = false;
 
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInformation>& sensorList)
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
+    CALL_LOG_ENTER;
     sensorList.assign(g_sensorInfos.begin(), g_sensorInfos.end());
     return ERR_OK;
 }
 
 void HdiServiceImpl::DataReportThread()
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
+    CALL_LOG_ENTER;
     while (true) {
         usleep(g_samplingInterval / CONVERT_MULTIPLES);
         g_callback(&testEvent);
@@ -59,23 +59,23 @@ void HdiServiceImpl::DataReportThread()
             break;
         }
     }
-    HiLog::Info(LABEL, "%{public}s thread stop", __func__);
+    SEN_HILOGI("thread stop");
     return;
 }
 
 int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
+    CALL_LOG_ENTER;
     if (g_callback == nullptr) {
-        HiLog::Error(LABEL, "%{public}s enable sensor failed", __func__);
+        SEN_HILOGE("enable sensor failed");
         return -1;
     }
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
-        HiLog::Error(LABEL, "%{public}s not support enable sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGE("not support enable sensorId: %{public}d", sensorId);
         return ERR_NO_INIT;
     }
     if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) != g_enableSensors.end()) {
-        HiLog::Info(LABEL, "%{public}s sensorId: %{public}d has been enabled", __func__, sensorId);
+        SEN_HILOGI("sensorId: %{public}d has been enabled", sensorId);
         return ERR_OK;
     }
     g_enableSensors.push_back(sensorId);
@@ -92,13 +92,13 @@ int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
 
 int32_t HdiServiceImpl::DisableSensor(uint32_t sensorId)
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
+    CALL_LOG_ENTER;
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
-        HiLog::Error(LABEL, "%{public}s not support disable sensorId: %{public}d", __func__, sensorId);
+        SEN_HILOGE("not support disable sensorId: %{public}d", sensorId);
         return ERR_NO_INIT;
     }
     if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) == g_enableSensors.end()) {
-        HiLog::Error(LABEL, "%{public}s sensorId: %{public}d should be enable first", __func__, sensorId);
+        SEN_HILOGE("sensorId: %{public}d should be enable first", sensorId);
         return ERR_NO_INIT;
     }
     std::vector<int32_t>::iterator iter;
@@ -116,7 +116,7 @@ int32_t HdiServiceImpl::DisableSensor(uint32_t sensorId)
 
 int32_t HdiServiceImpl::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
-    HiLog::Info(LABEL, "%{public}s in", __func__);
+    CALL_LOG_ENTER;
     if (samplingInterval < 0 || reportInterval < 0) {
         samplingInterval = SAMPLING_INTERVAL_NS;
         reportInterval = 0;
@@ -144,7 +144,7 @@ int32_t HdiServiceImpl::SetOption(int32_t sensorId, uint32_t option)
 int32_t HdiServiceImpl::Register(RecordDataCallback cb)
 {
     if (cb == nullptr) {
-        HiLog::Error(LABEL, "%{public}s cb cannot be null", __func__);
+        SEN_HILOGE("cb cannot be null");
         return -1;
     }
     g_callback = cb;

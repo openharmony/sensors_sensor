@@ -44,14 +44,14 @@ bool ClientInfo::GetSensorState(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return false;
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find sensorId : %{public}u", __func__, sensorId);
+        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
         return false;
     }
     for (const auto &pidIt : it->second) {
@@ -59,7 +59,7 @@ bool ClientInfo::GetSensorState(uint32_t sensorId)
             return true;
         }
     }
-    HiLog::Error(LABEL, "%{public}s cannot find sensorinfo, sensorId : %{public}u", __func__, sensorId);
+    SEN_HILOGE("cannot find sensorinfo, sensorId : %{public}u", sensorId);
     return false;
 }
 
@@ -72,14 +72,14 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
     sensorInfo.SetSamplingPeriodNs(minSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(minReportDelayNs);
     if (sensorId == INVALID_SENSOR_ID) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return sensorInfo;
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find sensorId : %{public}u", __func__, sensorId);
+        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
         return sensorInfo;
     }
 
@@ -98,14 +98,14 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
-        HiLog::Error(LABEL, "%{public}s sensorId or pid is invalid", __func__);
+        SEN_HILOGE("sensorId or pid is invalid");
         return false;
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find sensorId : %{public}u", __func__, sensorId);
+        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
         return false;
     }
     bool ret = false;
@@ -125,7 +125,7 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
 {
     CALL_LOG_ENTER;
     if ((uid == INVALID_UID) || (pid <= INVALID_PID)) {
-        HiLog::Error(LABEL, "%{public}s uid or pid is invalid", __func__);
+        SEN_HILOGE("uid or pid is invalid");
         return false;
     }
     std::lock_guard<std::mutex> uidLock(uidMutex_);
@@ -133,7 +133,7 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
     auto appThreadInfoItr = appThreadInfoMap_.find(pid);
     if (appThreadInfoItr == appThreadInfoMap_.end()) {
         if (appThreadInfoMap_.size() == MAX_SUPPORT_CHANNEL) {
-            HiLog::Error(LABEL, "%{public}s max support channel size is %{public}u", __func__, MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("max support channel size is %{public}u", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = appThreadInfoMap_.insert(std::make_pair(pid, appThreadInfo));
@@ -147,13 +147,13 @@ void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid == INVALID_PID) {
-        HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
+        SEN_HILOGE("pid is invalid");
         return;
     }
     std::lock_guard<std::mutex> uidLock(uidMutex_);
     auto appThreadInfoItr = appThreadInfoMap_.find(pid);
     if (appThreadInfoItr == appThreadInfoMap_.end()) {
-        HiLog::Debug(LABEL, "%{public}s uid not exist, no need to destroy it", __func__);
+        SEN_HILOGD("uid not exist, no need to destroy it");
         return;
     }
     appThreadInfoMap_.erase(appThreadInfoItr);
@@ -163,7 +163,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int3
 {
     CALL_LOG_ENTER;
     if (uid == INVALID_UID) {
-        HiLog::Error(LABEL, "%{public}s uid is invalid", __func__);
+        SEN_HILOGE("uid is invalid");
         return {};
     }
     std::vector<sptr<SensorBasicDataChannel>> sensorChannel;
@@ -186,13 +186,13 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid == INVALID_PID) {
-        HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
+        SEN_HILOGE("pid is invalid");
         return nullptr;
     }
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto channelIt = channelMap_.find(pid);
     if (channelIt == channelMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s there is no channel belong to the pid", __func__);
+        SEN_HILOGE("there is no channel belong to the pid");
         return nullptr;
     }
     return channelIt->second;
@@ -201,14 +201,14 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
 std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t sensorId)
 {
     if (sensorId == INVALID_SENSOR_ID) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return {};
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto clientIt = clientMap_.find(sensorId);
     if (clientIt == clientMap_.end()) {
-        HiLog::Debug(LABEL, "%{public}s there is no channel belong to sensorId : %{public}u", __func__, sensorId);
+        SEN_HILOGD("there is no channel belong to sensorId : %{public}u", sensorId);
         return {};
     }
     std::vector<sptr<SensorBasicDataChannel>> sensorChannel;
@@ -227,7 +227,7 @@ bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBa
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
-        HiLog::Error(LABEL, "%{public}s params are invalid", __func__);
+        SEN_HILOGE("params are invalid");
         return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
@@ -252,7 +252,7 @@ void ClientInfo::RemoveSubscriber(uint32_t sensorId, uint32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Warn(LABEL, "%{public}s sensorId not exist", __func__);
+        SEN_HILOGW("sensorId not exist");
         return;
     }
     auto pidIt = it->second.find(pid);
@@ -265,18 +265,18 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
 {
     CALL_LOG_ENTER;
     if (pid <= INVALID_PID || channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s pid or channel is invalid or channel cannot be null", __func__);
+        SEN_HILOGE("pid or channel is invalid or channel cannot be null");
         return false;
     }
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
         if (channelMap_.size() == MAX_SUPPORT_CHANNEL) {
-            HiLog::Error(LABEL, "%{public}s max support channel size : %{public}u", __func__, MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("max support channel size : %{public}u", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = channelMap_.insert(std::make_pair(pid, channel));
-        HiLog::Debug(LABEL, "%{public}s ret.second : %{public}d", __func__, ret.second);
+        SEN_HILOGD("ret.second : %{public}d", ret.second);
         return ret.second;
     }
     channelMap_[pid] = channel;
@@ -287,13 +287,13 @@ void ClientInfo::ClearSensorInfo(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid", __func__);
+        SEN_HILOGE("sensorId is invalid");
         return;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Debug(LABEL, "%{public}s sensorId not exist, no need to clear it", __func__);
+        SEN_HILOGD("sensorId not exist, no need to clear it");
         return;
     }
     clientMap_.erase(it);
@@ -303,18 +303,18 @@ void ClientInfo::ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
-        HiLog::Error(LABEL, "%{public}s sensorId or pid is invalid", __func__);
+        SEN_HILOGE("sensorId or pid is invalid");
         return;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Debug(LABEL, "%{public}s sensorId not exist, no need to clear it", __func__);
+        SEN_HILOGD("sensorId not exist, no need to clear it");
         return;
     }
     auto pidIt = it->second.find(pid);
     if (pidIt == it->second.end()) {
-        HiLog::Debug(LABEL, "%{public}s pid not exist, no need to clear it", __func__);
+        SEN_HILOGD("pid not exist, no need to clear it");
         return;
     }
     pidIt = it->second.erase(pidIt);
@@ -327,7 +327,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid <= INVALID_PID) {
-        HiLog::Error(LABEL, "%{public}s pid is invalid", __func__);
+        SEN_HILOGE("pid is invalid");
         return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
@@ -348,7 +348,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
-        HiLog::Debug(LABEL, "%{public}s there is no channel belong to pid, no need to destroy", __func__);
+        SEN_HILOGD("there is no channel belong to pid, no need to destroy");
         return true;
     }
     it = channelMap_.erase(it);
@@ -357,25 +357,25 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
 
 SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 {
-    HiLog::Debug(LABEL, "%{public}s begin, sensorId : %{public}u", __func__, sensorId);
+    SEN_HILOGD("begin, sensorId : %{public}u", sensorId);
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
     SensorBasicInfo sensorInfo;
     sensorInfo.SetSamplingPeriodNs(minSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(minReportDelayNs);
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
-        HiLog::Error(LABEL, "%{public}s sensorId or channel is invalid", __func__);
+        SEN_HILOGE("sensorId or channel is invalid");
         return sensorInfo;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find sensorId : %{public}u", __func__, sensorId);
+        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
         return sensorInfo;
     }
     auto pidIt = it->second.find(pid);
     if (pidIt == it->second.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find pid : %{public}d", __func__, pid);
+        SEN_HILOGE("cannot find pid : %{public}d", pid);
         return sensorInfo;
     }
     sensorInfo.SetSamplingPeriodNs(pidIt->second.GetSamplingPeriodNs());
@@ -386,7 +386,7 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 uint64_t ClientInfo::ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel)
 {
     if (sensorId == INVALID_SENSOR_ID || channel == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid or channel cannot be null", __func__);
+        SEN_HILOGE("sensorId is invalid or channel cannot be null");
         return 0UL;
     }
     int32_t pid = INVALID_PID;
@@ -402,7 +402,7 @@ uint64_t ClientInfo::ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicD
     int64_t bestSamplingPeriod = GetBestSensorInfo(sensorId).GetSamplingPeriodNs();
     int64_t curSamplingPeriod = GetCurPidSensorInfo(sensorId, pid).GetSamplingPeriodNs();
     if (bestSamplingPeriod == 0L) {
-        HiLog::Error(LABEL, "%{public}s best Sensor Sampling Period is 0", __func__);
+        SEN_HILOGE("best Sensor Sampling Period is 0");
         return 0UL;
     }
     int64_t ret = curSamplingPeriod / bestSamplingPeriod;
@@ -412,7 +412,7 @@ uint64_t ClientInfo::ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicD
 uint64_t ClientInfo::ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel)
 {
     if (channel == nullptr || sensorId == INVALID_SENSOR_ID) {
-        HiLog::Error(LABEL, "%{public}s sensorId is invalid or channel cannot be null", __func__);
+        SEN_HILOGE("sensorId is invalid or channel cannot be null");
         return 0UL;
     }
     int32_t pid = INVALID_PID;
@@ -427,7 +427,7 @@ uint64_t ClientInfo::ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDat
     int64_t curReportDelay = GetCurPidSensorInfo(sensorId, pid).GetMaxReportDelayNs();
     int64_t curSamplingPeriod = GetCurPidSensorInfo(sensorId, pid).GetSamplingPeriodNs();
     if (curSamplingPeriod == 0L) {
-        HiLog::Error(LABEL, "%{public}s best sensor fifo count is 0", __func__);
+        SEN_HILOGE("best sensor fifo count is 0");
         return 0UL;
     }
     int64_t ret = curReportDelay / curSamplingPeriod;
@@ -441,13 +441,13 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, struct SensorEvent &event)
     if (storedEvent != storedEvent_.end()) {
         errno_t ret = memcpy_s(&event, sizeof(struct SensorEvent), &storedEvent->second, sizeof(struct SensorEvent));
         if (ret != EOK) {
-            HiLog::Error(LABEL, "%{public}s memcpy_s failed, sensorId : %{public}d", __func__, sensorId);
+            SEN_HILOGE("memcpy_s failed, sensorId : %{public}d", sensorId);
             return ret;
         }
         return ERR_OK;
     }
 
-    HiLog::Error(LABEL, "%{public}s can't get store event, sensorId : %{public}u", __func__, sensorId);
+    SEN_HILOGE("can't get store event, sensorId : %{public}u", sensorId);
     return NO_STROE_EVENT;
 }
 
@@ -457,23 +457,23 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
     struct SensorEvent storedEvent;
     auto sensorHdiConnection = &SensorHdiConnection::GetInstance();
     if (sensorHdiConnection == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorHdiConnection cannot be null", __func__);
+        SEN_HILOGE("sensorHdiConnection cannot be null");
         return;
     }
     std::vector<Sensor> sensors;
     int32_t ret = sensorHdiConnection->GetSensorList(sensors);
     if (ret < 0) {
-        HiLog::Error(LABEL, "%{public}s GetSensorList failed", __func__);
+        SEN_HILOGE("GetSensorList is failed");
         return;
     }
     errno_t retVal = memcpy_s(&storedEvent, sizeof(storedEvent), &event, sizeof(event));
     if (retVal != EOK) {
-        HiLog::Error(LABEL, "%{public}s memcpy_s failed", __func__);
+        SEN_HILOGE("memcpy_s is failed");
         return;
     }
     for (size_t i = 0; i < sensors.size(); i++) {
         if ((int32_t)(sensors[i].GetSensorId()) == storedEvent.sensorTypeId) {
-            HiLog::Debug(LABEL, "%{public}s sensorFlags : %{public}u", __func__, sensors[i].GetFlags());
+            SEN_HILOGD("sensorFlags : %{public}u", sensors[i].GetFlags());
             foundSensor = true;
             break;
         }
@@ -489,7 +489,7 @@ bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t 
 {
     CALL_LOG_ENTER;
     if (sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorClient cannot be null");
         return false;
     }
     std::lock_guard<std::mutex> lock(clientPidMutex_);
@@ -506,13 +506,13 @@ int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
     if (sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorClient cannot be null");
         return INVALID_PID;
     }
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find client pid", __func__);
+        SEN_HILOGE("cannot find client pid");
         return INVALID_PID;
     }
     return it->second;
@@ -522,13 +522,13 @@ void ClientInfo::DestroyClientPid(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
     if (sensorClient == nullptr) {
-        HiLog::Error(LABEL, "%{public}s sensorClient cannot be null", __func__);
+        SEN_HILOGE("sensorClient cannot be null");
         return;
     }
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
-        HiLog::Error(LABEL, "%{public}s cannot find client pid", __func__);
+        SEN_HILOGE("cannot find client pid");
         return;
     }
     clientPidMap_.erase(it);
