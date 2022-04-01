@@ -180,10 +180,8 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
 ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                                 const sptr<IRemoteObject> &sensorClient)
 {
-    if (sensorBasicDataChannel == nullptr || sensorClient == nullptr) {
-        SEN_HILOGE("sensorBasicDataChannel or sensorClient cannot be null");
-        return OBJECT_NULL;
-    }
+    CHKPR(sensorBasicDataChannel, OBJECT_NULL);
+    CHKPR(sensorClient, OBJECT_NULL);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -207,10 +205,7 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
 
 ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
 {
-    if (sensorClient == nullptr) {
-        SEN_HILOGE("sensorClient cannot be null");
-        return OBJECT_NULL;
-    }
+    CHKPR(sensorClient, OBJECT_NULL);
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;

@@ -231,10 +231,7 @@ bool Sensor::Marshalling(Parcel &parcel) const
 std::unique_ptr<Sensor> Sensor::Unmarshalling(Parcel &parcel)
 {
     auto sensor = std::make_unique<Sensor>();
-    if (sensor == nullptr) {
-        SEN_HILOGE("sensor cannot be null");
-        return nullptr;
-    }
+    CHKPP(sensor);
 
     if (!sensor->ReadFromParcel(parcel)) {
         SEN_HILOGE("ReadFromParcel is failed");

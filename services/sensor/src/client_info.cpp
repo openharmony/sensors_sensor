@@ -264,7 +264,8 @@ void ClientInfo::RemoveSubscriber(uint32_t sensorId, uint32_t pid)
 bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel)
 {
     CALL_LOG_ENTER;
-    if (pid <= INVALID_PID || channel == nullptr) {
+    CHKPR(channel, false);
+    if (pid <= INVALID_PID) {
         SEN_HILOGE("pid or channel is invalid or channel cannot be null");
         return false;
     }
@@ -488,10 +489,7 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
 bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t pid)
 {
     CALL_LOG_ENTER;
-    if (sensorClient == nullptr) {
-        SEN_HILOGE("sensorClient cannot be null");
-        return false;
-    }
+    CHKPF(sensorClient);
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
@@ -505,10 +503,7 @@ bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t 
 int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
-    if (sensorClient == nullptr) {
-        SEN_HILOGE("sensorClient cannot be null");
-        return INVALID_PID;
-    }
+    CHKPR(sensorClient, INVALID_PID);
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
@@ -521,10 +516,7 @@ int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
 void ClientInfo::DestroyClientPid(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
-    if (sensorClient == nullptr) {
-        SEN_HILOGE("sensorClient cannot be null");
-        return;
-    }
+    CHKPV(sensorClient);
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {

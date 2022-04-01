@@ -51,10 +51,7 @@ int32_t HdiConnection::ConnectHdi()
         if (sensorInterface_ != nullptr) {
             SEN_HILOGI("connect v1_0 hdi success");
             eventCallback_ = new (std::nothrow) SensorEventCallback();
-            if (eventCallback_ == nullptr) {
-                SEN_HILOGE("failed to initialize eventCallback");
-                return ERR_NO_INIT;
-            }
+            CHKPR(eventCallback_, ERR_NO_INIT);
             RegisterHdiDeathRecipient();
             return ERR_OK;
         }
@@ -69,10 +66,7 @@ int32_t HdiConnection::ConnectHdi()
 int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     CALL_LOG_ENTER;
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     std::vector<HdfSensorInformation> sensorInfos;
     int32_t ret = sensorInterface_->GetAllSensorInfo(sensorInfos);
     if (ret != 0) {
@@ -97,10 +91,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 
 int32_t HdiConnection::EnableSensor(int32_t sensorId)
 {
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->Enable(sensorId);
     if (ret < 0) {
         SEN_HILOGE("connect v1_0 hdi failed");
@@ -112,10 +103,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
 
 int32_t HdiConnection::DisableSensor(int32_t sensorId)
 {
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->Disable(sensorId);
     if (ret < 0) {
         SEN_HILOGE("Disable is failed");
@@ -127,10 +115,7 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
 
 int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret < 0) {
         SEN_HILOGE("SetBatch is failed");
@@ -143,10 +128,7 @@ int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int6
 int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     CALL_LOG_ENTER;
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->SetMode(sensorId, mode);
     if (ret < 0) {
         SEN_HILOGE("SetMode is failed");
@@ -158,10 +140,7 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
 int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
 {
     CALL_LOG_ENTER;
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->SetOption(sensorId, option);
     if (ret < 0) {
         SEN_HILOGE("SetOption is failed");
@@ -173,10 +152,8 @@ int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
 int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CALL_LOG_ENTER;
-    if (reportDataCallback == nullptr || sensorInterface_ == nullptr) {
-        SEN_HILOGE("failed, reportDataCallback or sensorInterface_ cannot be null");
-        return ERR_NO_INIT;
-    }
+    CHKPR(reportDataCallback, ERR_NO_INIT);
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->Register(0, eventCallback_);
     if (ret < 0) {
         SEN_HILOGE("Register is failed");
@@ -190,10 +167,7 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
 int32_t HdiConnection::DestroyHdiConnection()
 {
     CALL_LOG_ENTER;
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorInterface_, ERR_NO_INIT);
     int32_t ret = sensorInterface_->Unregister(0, eventCallback_);
     if (ret < 0) {
         SEN_HILOGE("Unregister is failed");
@@ -259,25 +233,17 @@ void HdiConnection::deleteSensorBasicInfoState(int32_t sensorId)
 void HdiConnection::RegisterHdiDeathRecipient()
 {
     CALL_LOG_ENTER;
-    if (sensorInterface_ == nullptr) {
-        SEN_HILOGE("connect v1_0 hdi failed");
-        return;
-    }
+    CHKPV(sensorInterface_);
     hdiDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<HdiConnection *>(this));
-    if (hdiDeathObserver_ == nullptr) {
-        SEN_HILOGE("hdiDeathObserver_ cannot be null");
-        return;
-    }
+    CHKPV(hdiDeathObserver_);
     sensorInterface_->AsObject()->AddDeathRecipient(hdiDeathObserver_);
 }
 
 void HdiConnection::UnregisterHdiDeathRecipient()
 {
     CALL_LOG_ENTER;
-    if (sensorInterface_ == nullptr || hdiDeathObserver_ == nullptr) {
-        SEN_HILOGE("sensorInterface_ or hdiDeathObserver_ is null");
-        return;
-    }
+    CHKPV(sensorInterface_);
+    CHKPV(hdiDeathObserver_);
     sensorInterface_->AsObject()->RemoveDeathRecipient(hdiDeathObserver_);
 }
 
@@ -285,10 +251,7 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
     CALL_LOG_ENTER;
     sptr<IRemoteObject> hdiService = object.promote();
-    if (hdiService == nullptr) {
-        SEN_HILOGE("invalid remote object");
-        return;
-    }
+    CHKPV(hdiService);
     hdiService->RemoveDeathRecipient(hdiDeathObserver_);
     eventCallback_ = nullptr;
     reconnect();

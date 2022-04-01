@@ -124,14 +124,13 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 
 int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *event)
 {
-    if ((event == nullptr) || (event->dataLen == 0)) {
+    CHKPR(event, ERR_INVALID_VALUE);
+    if ((event->dataLen == 0)) {
         SEN_HILOGE("event is NULL");
         return ERR_INVALID_VALUE;
     }
-    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
-        SEN_HILOGE("reportDataCb_ cannot be null");
-        return ERR_NO_INIT;
-    }
+    CHKPR(reportDataCallback_, ERR_NO_INIT);
+    CHKPR(reportDataCb_, ERR_NO_INIT);
 
     struct SensorEvent sensorEvent = {
         .sensorTypeId = event->sensorId,
@@ -155,10 +154,7 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
 
 int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
-    if (reportDataCallback == nullptr) {
-        SEN_HILOGE("failed, reportDataCallback cannot be null");
-        return ERR_INVALID_VALUE;
-    }
+    CHKPR(reportDataCallback, ERR_INVALID_VALUE);
     int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);
     if (ret < 0) {
         SEN_HILOGE("Register is failed");

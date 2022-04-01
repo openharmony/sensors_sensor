@@ -51,10 +51,7 @@ void FlushInfoRecord::ClearFlushInfoItem(uint32_t sensorId)
 ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush)
 {
     SEN_HILOGD("sensorId : %{public}u", sensorId);
-    if (channel == nullptr) {
-        SEN_HILOGE("failed, channel cannot be null");
-        return INVALID_POINTER;
-    }
+    CHKPR(channel, INVALID_POINTER);
     struct FlushInfo flush(channel, isFirstFlush);
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
     /* If the sensorId can be found, it indicates that other processes have flushed on this sensor,
@@ -103,10 +100,7 @@ ErrCode FlushInfoRecord::FlushProcess(const uint32_t sensorId, const uint32_t fl
         return ret;
     }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(pid);
-    if (channel == nullptr) {
-        SEN_HILOGE("channel cannot be null");
-        return ERROR;
-    }
+    CHKPR(channel, ERROR);
     ret = SetFlushInfo(sensorId, channel, false);
     if (ret != ERR_OK) {
         SEN_HILOGE("set flush info failed");

@@ -50,10 +50,7 @@ int32_t SensorServiceClient::InitServiceClient()
         sensorClientStub_ = new (std::nothrow) SensorClientStub();
     }
     auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityManager == nullptr) {
-        SEN_HILOGE("systemAbilityManager cannot be null");
-        return SENSOR_NATIVE_SAM_ERR;
-    }
+    CHKPR(systemAbilityManager, SENSOR_NATIVE_SAM_ERR);
     int32_t retry = 0;
     while (retry < GET_SERVICE_MAX_COUNT) {
         sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
@@ -188,10 +185,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
 {
     CALL_LOG_ENTER;
     (void)object;
-    if (dataChannel_ == nullptr) {
-        SEN_HILOGE("dataChannel_ cannot be null");
-        return;
-    }
+    CHKPL(dataChannel_);
     // STEP1 : Destroy revious data channel
     dataChannel_->DestroySensorDataChannel();
 

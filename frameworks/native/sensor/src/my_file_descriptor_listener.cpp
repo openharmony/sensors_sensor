@@ -35,6 +35,7 @@ MyFileDescriptorListener::MyFileDescriptorListener()
     if (receiveDataBuff_ == nullptr) {
         SEN_HILOGE("receiveDataBuff_ memory request failed");
     }
+    CHKPL(receiveDataBuff_);
 }
 
 MyFileDescriptorListener::~MyFileDescriptorListener()

@@ -29,10 +29,8 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
 {
     ZReportDataCb reportDataCb_ = HdiConnection_->getReportDataCb();
     sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->getReportDataCallback();
-    if (reportDataCb_ == nullptr || reportDataCallback_ == nullptr) {
-        SEN_HILOGE("reportDataCb_ or reportDataCallback_ cannot be null");
-        return ERR_NO_INIT;
-    }
+    CHKPR(reportDataCb_, ERR_NO_INIT);
+    CHKPR(reportDataCallback_, ERR_NO_INIT);
     int32_t dataSize = static_cast<int32_t>(event.data.size());
     if (dataSize == 0) {
         SEN_HILOGI("data is empty");
