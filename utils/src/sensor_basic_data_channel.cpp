@@ -103,13 +103,13 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
     }
     int32_t tmpFd = data.ReadFileDescriptor();
     if (tmpFd < 0) {
-        SEN_HILOGE("ReadFileDescriptor failed");
+        SEN_HILOGE("ReadFileDescriptor is failed");
         sendFd_ = -1;
         return SENSOR_CHANNEL_DUP_ERR;
     }
     sendFd_ = dup(tmpFd);
     if (sendFd_ < 0) {
-        SEN_HILOGE("dup FileDescriptor failed");
+        SEN_HILOGE("dup FileDescriptor is failed");
         sendFd_ = -1;
         return SENSOR_CHANNEL_DUP_ERR;
     }
