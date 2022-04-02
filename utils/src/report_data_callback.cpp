@@ -64,11 +64,17 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
         }
         return ERROR;
     }
+}
     int32_t leftSize = CIRCULAR_BUF_LEN - cb->eventsBuf_.eventNum;
     int32_t toEndLen = CIRCULAR_BUF_LEN - cb->eventsBuf_.writePosition;
+    if (leftSize < 0 || toEndLen < 0){
+        SEN_HILOGE("callback or circularBuf or event cannot be null");
+        delete[] event->data;
+        return ERROR;
+    } 
     if (toEndLen == 0) {
-            cb->eventsBuf_.circularBuf[0] = *event;
-            cb->eventsBuf_.writePosition = 1 - toEndLen;
+        cb->eventsBuf_.circularBuf[0] = *event;
+        cb->eventsBuf_.writePosition = 1 - toEndLen;
     } else {
             cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *event;
             cb->eventsBuf_.writePosition += 1;
