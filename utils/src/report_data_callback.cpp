@@ -76,8 +76,8 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
         cb->eventsBuf_.circularBuf[0] = *event;
         cb->eventsBuf_.writePosition = 1 - toEndLen;
     } else {
-            cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *event;
-            cb->eventsBuf_.writePosition += 1;
+        cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *event;
+        cb->eventsBuf_.writePosition += 1;
     }
     if (leftSize < 1) {
         cb->eventsBuf_.readPos = cb->eventsBuf_.writePosition;
