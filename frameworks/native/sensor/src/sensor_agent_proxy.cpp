@@ -102,6 +102,9 @@ void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num,
         eventStream = events[i];
         CHKPV(eventStream.data);
         if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {
+            SEN_HILOGE("sensorTypeId not in g_subscribeMap");
+            return;
+        }
         g_subscribeMap[eventStream.sensorTypeId]->callback(&eventStream);
     }
 }
