@@ -242,7 +242,7 @@ typedef struct GyroUncalibratedData {
  * there is no large movement.
  */
 typedef struct SignificantMotionData {
-    int32_t scalar;
+    float scalar;
 } SignificantMotionData;
 
 /**
@@ -250,14 +250,14 @@ typedef struct SignificantMotionData {
  * means that the user has generated the action of counting walking; if the value is 0, it means that the user has not moved.
  */
 typedef struct PedometerDetectData {
-    int32_t scalar;
+    float scalar;
 } PedometerDetectData;
 
 /**
  * @brief Defines the pedometer sensor data structure. Counts the number of steps taken by the user.
  */
 typedef struct PedometerData {
-    int32_t steps;
+    float steps;
 } PedometerData;
 
 /**
@@ -382,7 +382,7 @@ typedef struct HallData {
  * @brief Define the heart rate sensor data structure. Measures the user's heart rate, in bpm.
  */
 typedef struct HeartRateData {
-    int32_t heartRate;
+    float heartRate;
 } HeartRateData;
 
 /**
@@ -390,7 +390,7 @@ typedef struct HeartRateData {
  * 0 means not wearing it, while 1 means wearing it
  */
 typedef struct WearDetectionData {
-    int32_t value;
+    float value;
 } WearDetectionData;
 
 #ifdef __cplusplus
