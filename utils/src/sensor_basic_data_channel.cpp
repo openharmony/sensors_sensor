@@ -167,10 +167,8 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
 {
     CHKPR(vaddr, SENSOR_CHANNEL_SEND_ADDR_ERR);
-    if (receiveFd_ == -1) {
         SEN_HILOGE("failed, vaddr is null or receiveFd_ invalid");
         return SENSOR_CHANNEL_RECEIVE_ADDR_ERR;
-    }
     ssize_t length;
     do {
         length = recv(receiveFd_, vaddr, size, MSG_DONTWAIT);
