@@ -218,7 +218,6 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
 {
     CHKPV(channel);
     if (event.empty()) {
-        SEN_HILOGE("channel cannot be null or event cannot be empty");
         return;
     }
     if (!CheckSendDataPermission(channel, event[0].sensorTypeId)) {

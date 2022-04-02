@@ -164,16 +164,16 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+        return ERROR;
     }
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
         SEN_HILOGE("samplingPeroid or g_reportInterval is invalid");
-        return OHOS::Sensors::ERROR;
+        return ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
         SEN_HILOGE("subscribe sensorId first");
-        return OHOS::Sensors::ERROR;
+        return ERROR;
     }
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     int32_t ret = client.EnableSensor(sensorId, g_samplingInterval, g_reportInterval);
