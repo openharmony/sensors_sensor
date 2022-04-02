@@ -214,10 +214,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::v
             sensorData.second.pop();
             timespec time = { 0, 0 };
             struct tm *timeinfo = localtime(&(time.tv_sec));
-            if (timeinfo == nullptr) {
-                SEN_HILOGE("timeinfo cannot be null");
-                return false;
-            }
+            CHKPF(timeinfo);
             dprintf(fd, "      %2d (ts=%.9f, time=%02d:%02d:%02d.%03d) | data:%s", ++j, data.timestamp / 1e9,
                     timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, int32_t { (time.tv_nsec / MS_NS) },
                     GetDataBySensorId(sensorId, data).c_str());
@@ -231,10 +228,7 @@ void SensorDump::DumpCurrentTime(int32_t fd)
     timespec curTime = { 0, 0 };
     clock_gettime(CLOCK_REALTIME, &curTime);
     struct tm *timeinfo = localtime(&(curTime.tv_sec));
-    if (timeinfo == nullptr) {
-        SEN_HILOGE("timeinfo cannot be null");
-        return;
-    }
+    CHKPV(timeinfo);
     dprintf(fd, "Current time: %02d:%02d:%02d.%03d\n", timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec,
             int32_t { (curTime.tv_nsec / MS_NS) });
 }

@@ -148,7 +148,8 @@ void SensorBasicDataChannel::CloseSendFd()
 
 int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 {
-    if (vaddr == nullptr || sendFd_ < 0) {
+    CHKPR(vaddr, SENSOR_CHANNEL_SEND_ADDR_ERR);
+    if (sendFd_ < 0) {
         SEN_HILOGE("failed, param is invalid");
         return SENSOR_CHANNEL_SEND_ADDR_ERR;
     }
@@ -165,10 +166,9 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 
 int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
 {
-    if (vaddr == nullptr || (receiveFd_ == -1)) {
+    CHKPR(vaddr, SENSOR_CHANNEL_SEND_ADDR_ERR);
         SEN_HILOGE("failed, vaddr is null or receiveFd_ invalid");
         return SENSOR_CHANNEL_RECEIVE_ADDR_ERR;
-    }
     ssize_t length;
     do {
         length = recv(receiveFd_, vaddr, size, MSG_DONTWAIT);

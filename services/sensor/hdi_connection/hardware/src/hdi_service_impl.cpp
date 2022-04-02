@@ -66,10 +66,7 @@ void HdiServiceImpl::DataReportThread()
 int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
-    if (g_callback == nullptr) {
-        SEN_HILOGE("enable sensor failed");
-        return -1;
-    }
+    CHKPR(g_callback, ERROR);
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
         SEN_HILOGE("not support enable sensorId: %{public}d", sensorId);
         return ERR_NO_INIT;
@@ -143,10 +140,7 @@ int32_t HdiServiceImpl::SetOption(int32_t sensorId, uint32_t option)
 
 int32_t HdiServiceImpl::Register(RecordDataCallback cb)
 {
-    if (cb == nullptr) {
-        SEN_HILOGE("cb cannot be null");
-        return -1;
-    }
+    CHKPR(cb, ERROR);
     g_callback = cb;
     return ERR_OK;
 }

@@ -32,9 +32,7 @@ MyFileDescriptorListener::MyFileDescriptorListener()
     channel_ = nullptr;
     receiveDataBuff_ =
         new (std::nothrow) TransferSensorEvents[sizeof(struct TransferSensorEvents) * RECEIVE_DATA_SIZE];
-    if (receiveDataBuff_ == nullptr) {
-        SEN_HILOGE("receiveDataBuff_ memory request failed");
-    }
+    CHKPL(receiveDataBuff_);
 }
 
 MyFileDescriptorListener::~MyFileDescriptorListener()

@@ -92,22 +92,19 @@ const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 
 void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num, void *data)
 {
-    if (events == nullptr || num <= 0) {
+    CHKPV(events);
+    if (num <= 0) {
         SEN_HILOGE("events is null or num is invalid");
         return;
     }
     struct SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        CHKPV(eventStream.data);
         if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {
             SEN_HILOGE("sensorTypeId not in g_subscribeMap");
             return;
         }
-        if (g_subscribeMap[eventStream.sensorTypeId] == nullptr) {
-            SEN_HILOGE("sensor user is null");
-			return;
-        }
+        CHKPV(g_subscribeMap[eventStream.sensorTypeId]);
         g_subscribeMap[eventStream.sensorTypeId]->callback(&eventStream);
     }
 }
@@ -163,18 +160,20 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
 
 int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user) const
 {
-    if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->callback, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+        return ERROR;
     }
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
         SEN_HILOGE("samplingPeroid or g_reportInterval is invalid");
-        return OHOS::Sensors::ERROR;
+        return ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
         SEN_HILOGE("subscribe sensorId first");
-        return OHOS::Sensors::ERROR;
+        return ERROR;
     }
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     int32_t ret = client.EnableSensor(sensorId, g_samplingInterval, g_reportInterval);
@@ -191,7 +190,9 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
 
 int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user) const
 {
-    if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->callback, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
@@ -214,7 +215,8 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
 int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval,
                                    int64_t reportInterval) const
 {
-    if (user == nullptr || sensorId < 0) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
@@ -235,7 +237,9 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
 int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
     SEN_HILOGI("in, sensorId: %{public}d", sensorId);
-    if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->callback, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
@@ -252,7 +256,9 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
 int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
     SEN_HILOGI("in, sensorId: %{public}d", sensorId);
-    if (user == nullptr || sensorId < 0  || user->callback == nullptr) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->callback, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
@@ -274,7 +280,9 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
 
 int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int32_t mode) const
 {
-    if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->callback, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
@@ -288,7 +296,9 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
 
 int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, int32_t option) const
 {
-    if (user == nullptr || sensorId < 0 || user->callback == nullptr) {
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->callback, OHOS::Sensors::ERROR);
+    if (sensorId < 0) {
         SEN_HILOGE("user is null or sensorId is invalid");
         return OHOS::Sensors::ERROR;
     }
@@ -302,10 +312,8 @@ int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, in
 
 int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const
 {
-    if (sensorInfo == nullptr || count == nullptr) {
-        SEN_HILOGE("sensorInfo or count is null");
-        return OHOS::Sensors::ERROR;
-    }
+    CHKPR(sensorInfo, OHOS::Sensors::ERROR);
+    CHKPR(count, OHOS::Sensors::ERROR);
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     std::vector<OHOS::Sensors::Sensor> sensorList_ = client.GetSensorList();
     if (sensorList_.empty()) {

@@ -78,10 +78,7 @@ void SensorService::OnStart()
         return;
     }
     sensorDataProcesser_ = new (std::nothrow) SensorDataProcesser(sensorMap_);
-    if (sensorDataProcesser_ == nullptr) {
-        SEN_HILOGE("failed, sensorDataProcesser_ cannot be null");
-        return;
-    }
+    CHKPV(sensorDataProcesser_);
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
     }
@@ -107,10 +104,7 @@ bool SensorService::InitInterface()
 bool SensorService::InitDataCallback()
 {
     reportDataCallback_ = new (std::nothrow) ReportDataCallback();
-    if (reportDataCallback_ == nullptr) {
-        SEN_HILOGE("failed, reportDataCallback_ cannot be null");
-        return false;
-    }
+    CHKPF(reportDataCallback_);
     ZReportDataCb cb = &ReportDataCallback::ReportEventCallback;
     auto ret = sensorHdiConnection_.RegisteDataReport(cb, reportDataCallback_);
     if (ret != ERR_OK) {
@@ -208,10 +202,7 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
         return;
     }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(this->GetCallingPid());
-    if (channel == nullptr) {
-        SEN_HILOGE("there is no channel to be reported");
-        return;
-    }
+    CHKPV(channel);
     auto sendRet = channel->SendData(&event, sizeof(event));
     if (sendRet != ERR_OK) {
         SEN_HILOGE("send data failed");
@@ -365,10 +356,7 @@ std::vector<Sensor> SensorService::GetSensorList()
 ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                            const sptr<IRemoteObject> &sensorClient)
 {
-    if ((sensorBasicDataChannel == nullptr)) {
-        SEN_HILOGE("sensorBasicDataChannel cannot be null");
-        return ERR_NO_INIT;
-    }
+    CHKPR(sensorBasicDataChannel, ERR_NO_INIT);
     auto pid = this->GetCallingPid();
     auto uid = this->GetCallingUid();
     auto callerToken = this->GetCallingTokenID();
@@ -409,10 +397,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
     CALL_LOG_ENTER;
     sptr<IRemoteObject> client = object.promote();
-    if (client == nullptr) {
-        SEN_HILOGE("client cannot be null");
-        return;
-    }
+    CHKPV(client);
     int32_t pid = clientInfo_.FindClientPid(client);
     if (pid == INVALID_PID) {
         SEN_HILOGE("pid is -1");
@@ -429,10 +414,7 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
     CALL_LOG_ENTER;
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
-    if (clientDeathObserver_ == nullptr) {
-        SEN_HILOGE("clientDeathObserver_ cannot be null");
-        return;
-    }
+    CHKPV(clientDeathObserver_);
     client->AsObject()->AddDeathRecipient(clientDeathObserver_);
     clientInfo_.SaveClientPid(sensorClient, pid);
 }
@@ -442,10 +424,7 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
     CALL_LOG_ENTER;
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
-    if (clientDeathObserver_ == nullptr) {
-        SEN_HILOGE("clientDeathObserver_ cannot be null");
-        return;
-    }
+    CHKPV(clientDeathObserver_);
     client->AsObject()->RemoveDeathRecipient(clientDeathObserver_);
     clientInfo_.DestroyClientPid(sensorClient);
 }

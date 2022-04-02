@@ -45,10 +45,7 @@ constexpr uint32_t STOP_EVENT_ID = 0;
 
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
 {
-    if (callBack == nullptr) {
-        SEN_HILOGE("callBack cannot be null");
-        return SENSOR_NATIVE_REGSITER_CB_ERR;
-    }
+    CHKPR(callBack, SENSOR_NATIVE_REGSITER_CB_ERR);
     dataCB_ = callBack;
     privateData_ = data;
     return InnerSensorDataChannel();
@@ -56,10 +53,7 @@ int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void 
 
 int32_t SensorDataChannel::RestoreSensorDataChannel()
 {
-    if (dataCB_ == nullptr) {
-        SEN_HILOGE("dataCB_ cannot be null");
-        return SENSOR_CHANNEL_RESTORE_CB_ERR;
-    }
+    CHKPR(dataCB_, SENSOR_NATIVE_REGSITER_CB_ERR);
     if (GetReceiveDataFd() != -1) {
         SEN_HILOGE("fd not close");
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
@@ -79,15 +73,9 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     auto listener = std::make_shared<MyFileDescriptorListener>();
     listener->SetChannel(this);
     auto myRunner = AppExecFwk::EventRunner::Create(true);
-    if (myRunner == nullptr) {
-        SEN_HILOGE("myRunner is null");
-        return ERROR;
-    }
+    CHKPR(myRunner, ERROR);
     auto handler = std::make_shared<MyEventHandler>(myRunner);
-    if (handler == nullptr) {
-        SEN_HILOGE("handler is null");
-        return ERROR;
-    }
+    CHKPR(handler, ERROR);
     int32_t receiveFd = GetReceiveDataFd();
     auto inResult = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
     if (inResult != 0) {
@@ -114,10 +102,8 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
 int32_t SensorDataChannel::DestroySensorDataChannel()
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
-    if (eventHandler_ == nullptr || eventRunner_ == nullptr) {
-        SEN_HILOGE("handler or eventRunner is null");
-        return ERROR;
-    }
+    CHKPR(eventHandler_, ERROR);
+    CHKPR(eventRunner_, ERROR);
     int32_t receiveFd = GetReceiveDataFd();
     eventHandler_->RemoveFileDescriptorListener(receiveFd);
     eventHandler_ = nullptr;

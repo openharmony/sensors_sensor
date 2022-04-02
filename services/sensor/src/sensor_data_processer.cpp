@@ -74,10 +74,7 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, str
     if (dataCountIt == dataCountMap_.end()) {
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
-        if (fifoCacheData == nullptr) {
-            SEN_HILOGE("fifoCacheData cannot be null");
-            return;
-        }
+        CHKPV(fifoCacheData);
         fifoCacheData->SetChannel(channel);
         channelFifoList.push_back(fifoCacheData);
         dataCountMap_.insert(std::make_pair(sensorId, channelFifoList));
@@ -102,10 +99,7 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, str
     }
     if (!channelExist) {
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
-        if (fifoCacheData == nullptr) {
-            SEN_HILOGE("failed, fifoCacheData cannot be null");
-            return;
-        }
+        CHKPV(fifoCacheData);
         fifoCacheData->SetChannel(channel);
         dataCountIt->second.push_back(fifoCacheData);
         SendRawData(cacheBuf, channel, sendEvents);
@@ -126,10 +120,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
     if (dataCountIt == dataCountMap_.end()) {
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
-        if (fifoCacheData == nullptr) {
-            SEN_HILOGE("fifoCacheData cannot be null");
-            return;
-        }
+        CHKPV(fifoCacheData);
         fifoCacheData->SetChannel(channel);
         channelFifoList.push_back(fifoCacheData);
         dataCountMap_.insert(std::make_pair(sensorId, channelFifoList));
@@ -162,10 +153,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
     // cannot find channel in channelFifoList
     if (!channelExist) {
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
-        if (fifoCacheData == nullptr) {
-            SEN_HILOGE("failed, fifoCacheData cannot be null");
-            return;
-        }
+        CHKPV(fifoCacheData);
         fifoCacheData->SetChannel(channel);
         dataCountIt->second.push_back(fifoCacheData);
     }
@@ -173,10 +161,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, struct 
 
 void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event)
 {
-    if (channel == nullptr) {
-        SEN_HILOGE("channel cannot be null");
-        return;
-    }
+    CHKPV(channel);
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
     if (sensorId == FLUSH_COMPLETE_ID) {
         sensorId = static_cast<uint32_t>(event.sensorTypeId);
@@ -231,8 +216,8 @@ bool SensorDataProcesser::CheckSendDataPermission(sptr<SensorBasicDataChannel> c
 void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct SensorEvent> &cacheBuf,
                                       sptr<SensorBasicDataChannel> channel, std::vector<struct SensorEvent> event)
 {
-    if (channel == nullptr || event.empty()) {
-        SEN_HILOGE("channel cannot be null or event cannot be empty");
+    CHKPV(channel);
+    if (event.empty()) {
         return;
     }
     if (!CheckSendDataPermission(channel, event[0].sensorTypeId)) {
@@ -271,10 +256,7 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
 
 int32_t SensorDataProcesser::CacheSensorEvent(const struct SensorEvent &event, sptr<SensorBasicDataChannel> &channel)
 {
-    if (channel == nullptr) {
-        SEN_HILOGE("channel cannot be null");
-        return INVALID_POINTER;
-    }
+    CHKPR(channel, INVALID_POINTER);
     int32_t ret = ERR_OK;
     auto &cacheBuf = const_cast<std::unordered_map<uint32_t, struct SensorEvent> &>(channel->GetDataCacheBuf());
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
@@ -355,10 +337,7 @@ void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
 
 int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback)
 {
-    if (dataCallback == nullptr) {
-        SEN_HILOGE("dataCallback cannot be null");
-        return INVALID_POINTER;
-    }
+    CHKPR(dataCallback, INVALID_POINTER);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     ISensorHdiConnection::dataCondition_.wait(lk);
     auto &eventsBuf = dataCallback->GetEventData();
@@ -381,10 +360,7 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
 
 int32_t SensorDataProcesser::SendEvents(sptr<SensorBasicDataChannel> &channel, struct SensorEvent &event)
 {
-    if (channel == nullptr) {
-        SEN_HILOGE("channel cannot be null");
-        return INVALID_POINTER;
-    }
+    CHKPR(channel, INVALID_POINTER);
     clientInfo_.UpdateDataQueue(event.sensorTypeId, event);
     auto &cacheBuf = channel->GetDataCacheBuf();
     if (cacheBuf.empty()) {

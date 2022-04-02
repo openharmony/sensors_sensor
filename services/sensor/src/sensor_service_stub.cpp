@@ -142,30 +142,21 @@ ErrCode SensorServiceStub::CreateDataChannelInner(MessageParcel &data, MessagePa
 {
     (void)reply;
     sptr<SensorBasicDataChannel> sensorChannel = new (std::nothrow) SensorBasicDataChannel();
-    if (sensorChannel == nullptr) {
-        SEN_HILOGE("sensorChannel cannot be null");
-        return OBJECT_NULL;
-    }
+    CHKPR(sensorChannel, OBJECT_NULL);
     auto ret = sensorChannel->CreateSensorBasicChannel(data);
     if (ret != ERR_OK) {
         SEN_HILOGE("CreateSensorBasicChannel ret : %{public}d", ret);
         return OBJECT_NULL;
     }
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
-    if (sensorClient == nullptr) {
-        SEN_HILOGE("sensorClient cannot be null");
-        return OBJECT_NULL;
-    }
+    CHKPR(sensorClient, OBJECT_NULL);
     return TransferDataChannel(sensorChannel, sensorClient);
 }
 
 ErrCode SensorServiceStub::DestroyDataChannelInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
-    if (sensorClient == nullptr) {
-        SEN_HILOGE("sensorClient cannot be null");
-        return OBJECT_NULL;
-    }
+    CHKPR(sensorClient, OBJECT_NULL);
     return DestroySensorChannel(sensorClient);
 }
 }  // namespace Sensors
