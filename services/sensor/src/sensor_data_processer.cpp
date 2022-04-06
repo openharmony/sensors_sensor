@@ -225,9 +225,9 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct Sensor
         return;
     }
 
-    int32_t eventSize = static_cast<int32_t>(event.size());
+    size_t eventSize = event.size();
     std::vector<struct TransferSensorEvents> transferEvents;
-    for (int32_t i = 0; i < eventSize; i++) {
+    for (size_t i = 0; i < eventSize; i++) {
         struct TransferSensorEvents  transferEvent = {
             .sensorTypeId = event[i].sensorTypeId,
             .version = event[i].version,
