@@ -67,7 +67,7 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
     int32_t leftSize = CIRCULAR_BUF_LEN - cb->eventsBuf_.eventNum;
     int32_t toEndLen = CIRCULAR_BUF_LEN - cb->eventsBuf_.writePosition;
     if (leftSize < 0 || toEndLen < 0) {
-        HiLog::Error(LABEL, "%{public}s callback or circularBuf or event cannot be null", __func__);
+        SEN_HILOGE("Leftsize and toendlen cannot be less than zero");
         if (event->data != nullptr) {
             delete[] event->data;
             event->data = nullptr;
