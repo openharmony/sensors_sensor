@@ -59,7 +59,7 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
     }
     if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
         SEN_HILOGE("callback or circularBuf or event cannot be null");
-        if (event->data != nullptr){
+        if (event->data != nullptr) {
             delete[] event->data;
         }
         return ERROR;
@@ -70,7 +70,6 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
         SEN_HILOGE("Leftsize and toendlen cannot be less than zero");
         if (event->data != nullptr) {
             delete[] event->data;
-            event->data = nullptr;
         }
         return ERROR;
     }
