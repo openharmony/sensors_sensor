@@ -175,10 +175,9 @@ typedef enum SensorMode {
  *
  */
 typedef struct AccelData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float accuracy;
+    float x;
+    float y;
+    float z;
 } AccelData;
 
 /**
@@ -186,10 +185,9 @@ typedef struct AccelData {
  * the device on three physical axes (x, y, and z) in m/s2.
  */
 typedef struct LinearAccelData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float accuracy;
+    float x;
+    float y;
+    float z;
 } LineraAccelData;
 
 /**
@@ -197,10 +195,9 @@ typedef struct LinearAccelData {
  * device on three physical axes (x, y, and z) in rad/s.
  */
 typedef struct GyroscopeData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float accuracy;
+    float x;
+    float y;
+    float z;
 } GyroscopeData;
 
 /**
@@ -208,10 +205,9 @@ typedef struct GyroscopeData {
  * to the device on three physical axes (x, y, and z) in m/s2.
  */
 typedef struct GravityData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float accuracy;
+    float x;
+    float y;
+    float z;
 } GravityData;
 
 /**
@@ -219,12 +215,12 @@ typedef struct GravityData {
  * the device on three physical axes (x, y, and z) in m/s2.
  */
 typedef struct AccelUncalibratedData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float axisBiasX;
-    float axisBiasY;
-    float axisBiasZ;
+    float x;
+    float y;
+    float z;
+    float biasX;
+    float biasY;
+    float biasZ;
 } AccelUncalibratedData;
 
 /**
@@ -232,12 +228,12 @@ typedef struct AccelUncalibratedData {
  * device on three physical axes (x, y, and z) in rad/s.
  */
 typedef struct GyroUncalibratedData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float axisBiasX;
-    float axisBiasY;
-    float axisBiasZ;
+    float x;
+    float y;
+    float z;
+    float biasX;
+    float biasY;
+    float biasZ;
 } GyroUncalibratedData;
 
 /**
@@ -246,7 +242,7 @@ typedef struct GyroUncalibratedData {
  * there is no large movement.
  */
 typedef struct SignificantMotionData {
-    int32_t scalar;
+    float scalar;
 } SignificantMotionData;
 
 /**
@@ -254,21 +250,21 @@ typedef struct SignificantMotionData {
  * means that the user has generated the action of counting walking; if the value is 0, it means that the user has not moved.
  */
 typedef struct PedometerDetectData {
-    int32_t scalar;
+    float scalar;
 } PedometerDetectData;
 
 /**
  * @brief Defines the pedometer sensor data structure. Counts the number of steps taken by the user.
  */
 typedef struct PedometerData {
-    int32_t count;
+    float steps;
 } PedometerData;
 
 /**
  * @brief Defines the ambient temperature sensor data structure. Measures ambient temperature in degrees Celsius (°C)
  */
 typedef struct AmbientTemperatureData {
-    float degrees;
+    float temperature;
 } AmbientTemperatureData;
 
 /**
@@ -284,10 +280,9 @@ typedef struct HumidityData {
  * physical axes (x, y, z) in μT.
  */
 typedef struct MagneticFieldData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float accuracy;
+    float x;
+    float y;
+    float z;
 } MagneticFieldData;
 
 /**
@@ -295,12 +290,12 @@ typedef struct MagneticFieldData {
  * physical axes (x, y, z) in μT.
  */
 typedef struct MagneticFieldUncalibratedData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float axisBiasX;
-    float axisBiasY;
-    float axisBiasZ;
+    float x;
+    float y;
+    float z;
+    float biasX;
+    float biasY;
+    float biasZ;
 } MagneticFieldUncalibratedData;
 
 /**
@@ -319,13 +314,12 @@ typedef struct DeviceOrientationData {
 
 /**
  * @brief Defines the orientation sensor data structure. Measures the angle value of the rotation of the device
- * around all three physical axes (x, y, z), in rad.
+ * around all three physical axes (z, x, y), in rad.
  */
 typedef struct OrientationData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float accuracy;
+    float alpha; /**< The device rotates at an angle around the Z axis */
+    float beta;  /**< The device rotates at an angle around the X axis */
+    float gamma; /**< The device rotates at an angle around the Y axis */
 } OrientationData;
 
 /**
@@ -333,10 +327,10 @@ typedef struct OrientationData {
  * synthesized by acceleration sensor, gyroscope sensor.
  */
 typedef struct RotationVectorData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float axisW;
+    float x;
+    float y;
+    float z;
+    float w;
 } RotationVectorData;
 
 /**
@@ -344,10 +338,10 @@ typedef struct RotationVectorData {
  * synthesized by acceleration sensor, gyroscope sensor.
  */
 typedef struct GameRotationVectorData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float axisW;
+    float x;
+    float y;
+    float z;
+    float w;
 } GameRotationVectorData;
 
 /**
@@ -355,10 +349,10 @@ typedef struct GameRotationVectorData {
  *  sensor: synthesized by acceleration sensor and magnetic field sensor.
  */
 typedef struct GeomagneticRotaVectorData {
-    float axisX;
-    float axisY;
-    float axisZ;
-    float axisW;
+    float x;
+    float y;
+    float z;
+    float w;
 } GeomagneticRotaVectorData;
 
 /**
@@ -366,7 +360,7 @@ typedef struct GeomagneticRotaVectorData {
  * the device display, where 0 indicates proximity and 1 indicates distance.
  */
 typedef struct ProximityData {
-    int32_t scalar;
+    float distance;
 } ProximityData;
 
 /**
@@ -381,14 +375,14 @@ typedef struct AmbientLightData {
  * 0 means no magnet attraction, and 1 means there is magnet attraction.
  */
 typedef struct HallData {
-    int32_t scalar;
+    float status;
 } HallData;
 
 /**
  * @brief Define the heart rate sensor data structure. Measures the user's heart rate, in bpm.
  */
 typedef struct HeartRateData {
-    int32_t heartRateBpm;
+    float heartRate;
 } HeartRateData;
 
 /**
@@ -396,7 +390,7 @@ typedef struct HeartRateData {
  * 0 means not wearing it, while 1 means wearing it
  */
 typedef struct WearDetectionData {
-    int32_t scalar;
+    float value;
 } WearDetectionData;
 
 #ifdef __cplusplus
