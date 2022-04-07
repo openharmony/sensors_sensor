@@ -35,12 +35,9 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 std::shared_ptr<MyEventHandler> SensorDataChannel::eventHandler_;
-std::shared_ptr<AppExecFwk::EventRunner> SensorDataChannel::eventRunner_;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_NATIVE, "SensorDataChannel" };
-// max 100 data in cache buffer
-constexpr uint32_t STOP_EVENT_ID = 0;
 }  // namespace
 
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
@@ -74,26 +71,13 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     listener->SetChannel(this);
     auto myRunner = AppExecFwk::EventRunner::Create(true);
     CHKPR(myRunner, ERROR);
-    auto handler = std::make_shared<MyEventHandler>(myRunner);
-    CHKPR(handler, ERROR);
+    eventHandler_ = std::make_shared<MyEventHandler>(myRunner);
+    CHKPR(eventHandler_, ERROR);
     int32_t receiveFd = GetReceiveDataFd();
-    auto inResult = handler->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+    auto inResult = eventHandler_->AddFileDescriptorListener(receiveFd,
+        AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
     if (inResult != 0) {
         SEN_HILOGE("AddFileDescriptorListener fail");
-        return ERROR;
-    }
-    eventHandler_ = handler;
-    eventRunner_ = myRunner;
-    int64_t delayTime = 100;
-    int64_t param = 0;
-    bool sendEventResult = eventHandler_->SendEvent(STOP_EVENT_ID, param, delayTime);
-    if (!sendEventResult) {
-        SEN_HILOGE("EventHandler SendEvent fail");
-        return ERROR;
-    }
-    int32_t runResult = eventRunner_->Run();
-    if (!runResult) {
-        SEN_HILOGE("EventRunner run fail");
         return ERROR;
     }
     return ERR_OK;
@@ -102,13 +86,8 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
 int32_t SensorDataChannel::DestroySensorDataChannel()
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
-    CHKPR(eventHandler_, ERROR);
-    CHKPR(eventRunner_, ERROR);
-    int32_t receiveFd = GetReceiveDataFd();
-    eventHandler_->RemoveFileDescriptorListener(receiveFd);
+    CHKPL(eventHandler_);
     eventHandler_ = nullptr;
-    eventRunner_->Stop();
-    eventRunner_ = nullptr;
     // destroy sensor basic channelx
     return DestroySensorBasicChannel();
 }
