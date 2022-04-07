@@ -285,13 +285,11 @@ float GeomagneticField::ObtainGeomagneticDip()
 
 double GeomagneticField::ToDegrees(double angrad)
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return angrad * 180.0 / M_PI;
 }
 
 double GeomagneticField::ToRadians(double angdeg)
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return angdeg / 180.0 * M_PI;
 }
 
