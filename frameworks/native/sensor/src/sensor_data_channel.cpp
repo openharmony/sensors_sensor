@@ -74,7 +74,8 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     eventHandler_ = std::make_shared<MyEventHandler>(myRunner);
     CHKPR(eventHandler_, ERROR);
     int32_t receiveFd = GetReceiveDataFd();
-    auto inResult = eventHandler_->AddFileDescriptorListener(receiveFd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+    auto inResult = eventHandler_->AddFileDescriptorListener(receiveFd,
+        AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
     if (inResult != 0) {
         SEN_HILOGE("AddFileDescriptorListener fail");
         return ERROR;
