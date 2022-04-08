@@ -246,6 +246,22 @@ private:
         } \
     } while (0)
 
+#define CHKCF(cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("CK(%{public}s), %{public}s", #cond, message); \
+            return false; \
+        } \
+    } while (0)
+
+#define CHKCV(cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("CK(%{public}s), %{public}s", #cond, message); \
+            return; \
+        } \
+    } while (0)
+
 #define CHKPP(cond) \
     do { \
         if ((cond) == nullptr) { \
