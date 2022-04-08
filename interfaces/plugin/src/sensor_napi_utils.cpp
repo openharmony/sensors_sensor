@@ -15,12 +15,10 @@
 
 #include "sensor_napi_utils.h"
 
-#include <iostream>
 #include <map>
 #include <string>
 #include <vector>
 
-#include "hilog/log.h"
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
@@ -370,7 +368,7 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CALL_LOG_ENTER;
     CHKPV(asyncCallbackInfo);
     napi_value resourceName = nullptr;
-    CHKNRV(asyncCallbackInfo->env, napi_create_string_utf8(asyncCallbackInfo->env,"AsyncCallback",
+    CHKNRV(asyncCallbackInfo->env, napi_create_string_utf8(asyncCallbackInfo->env, "AsyncCallback",
         NAPI_AUTO_LENGTH, &resourceName));
     // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
     asyncCallbackInfo->callbackInfo = asyncCallbackInfo;

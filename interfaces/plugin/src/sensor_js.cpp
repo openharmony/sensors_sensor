@@ -27,12 +27,10 @@
 
 #include "geomagnetic_field.h"
 
-#include "hilog/log.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "refbase.h"
 #include "securec.h"
-#include "sensor_agent.h"
 #include "sensor_algorithm.h"
 #include "sensor_napi_utils.h"
 #include "sensor_system_js.h"
@@ -81,8 +79,8 @@ static void EmitOnceCallback(SensorEvent *event)
     CHKPV(event);
     int32_t sensorTypeId = event->sensorTypeId;
     std::lock_guard<std::mutex> onceCallbackLock(onceMutex_);
-    auto iter = onceCallbackLock.find(sensorTypeId);
-    CHKCV((iter != onceCallbackLock.end()), "No client subscribe once");
+    auto iter = g_onceCallbackInfos.find(sensorTypeId);
+    CHKCV((iter != g_onceCallbackInfos.end()), "No client subscribe once");
 
     auto data = (float *)(event->data);
     auto onceCallbackInfos = g_onceCallbackInfos[sensorTypeId];

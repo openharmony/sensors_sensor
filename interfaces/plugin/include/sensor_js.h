@@ -14,10 +14,7 @@
  */
 #ifndef SENSOR_JS_H
 #define SENSOR_JS_H
-
 #include "sensor_agent.h"
-#include "errors.h"
-
 namespace OHOS {
 namespace Sensors {
 static bool UnsubscribeSensor(int32_t sensorTypeId);

@@ -14,13 +14,14 @@
  */
 #ifndef ASYNC_CALLBACK_INFO_H
 #define ASYNC_CALLBACK_INFO_H
-#include <map>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "refbase.h"
+#include "sensor_agent_type.h"
 #include "sensor_log.h"
 #include "sensors_errors.h"
-#include "sensor_agent_type.h"
+
 namespace OHOS {
 namespace Sensors {
 using std::vector;
