@@ -21,6 +21,8 @@ ohos_shared_library("sensor") {
     "//third_party/libuv/include",
     "//utils/native/base/include",
     "./include",
+    "//base/sensors/sensor/utils/include",
+    "//foundation/ace/napi/interfaces/innerkits/napi",
   ]
   defines = [
     "APP_LOG_TAG = \"sensroJs\"",

@@ -83,11 +83,13 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.on(-1, onSensorCallback);
-        setTimeout(()=>{
+        try {
+            sensor.on(-1, onSensorCallback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -113,19 +115,20 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest004", 0, function () {
+    it("SensorJsTest004", 0, function (done) {
         console.info('----------------------SensorJsTest004---------------------------');
         function onSensorCallback(data) {
             console.info('SensorJsTest004  on error');
             expect(false).assertTrue();
             done();
         }
-        sensor.on(0, onSensorCallback, {'interval': 100000000}, 5);
-        setTimeout(()=>{
+        try {
+            sensor.on(0, onSensorCallback, {'interval': 100000000}, 5);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
-        console.info('----------------------SensorJsTest004--------------------------- end');
+        }
     })
 
     /*
@@ -154,11 +157,13 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.once(-1, onceSensorCallback);
-        setTimeout(()=>{
+        try {
+            sensor.once(-1, onceSensorCallback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -167,17 +172,19 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest007", 0, function () {
+    it("SensorJsTest007", 0, function (done) {
         function onceSensorCallback(data) {
             console.info('SensorJsTest007  on error');
             expect(false).assertTrue();
             done();
         }
-        sensor.once(0, onceSensorCallback, 5);
-        setTimeout(()=>{
+        try{
+            sensor.once(0, onceSensorCallback, 5);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -187,11 +194,13 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest008", 0, async function (done) {
-        sensor.off(-1, callback);
-        setTimeout(()=>{
+        try {
+            sensor.off(-1, callback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -226,11 +235,13 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.off(1000000, onSensorCallback);
-        setTimeout(()=>{
+        try {
+            sensor.off(1000000, onSensorCallback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -262,6 +273,10 @@ describe("SensorJsTest", function () {
         setTimeout(()=>{
             console.info('----------------------SensorJsTest012 off in---------------------------');
             sensor.off(0, callback);
+            console.info('----------------------SensorJsTest012 off end---------------------------');
+        }, 500);
+        setTimeout(()=>{
+            console.info('----------------------SensorJsTest012 off in---------------------------');
             sensor.off(0, callback2);
             console.info('----------------------SensorJsTest012 off end---------------------------');
             done();
@@ -274,9 +289,14 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest013", 0, function () {
-        sensor.off(0, 5);
-        expect(true).assertTrue();
+    it("SensorJsTest013", 0, function (done) {
+        try {
+            sensor.off(0, 5);
+        } catch (error) {
+            console.info(error);
+            expect(true).assertTrue();
+            done();
+        }
     })
 
     /*
@@ -291,8 +311,7 @@ describe("SensorJsTest", function () {
         sensor.once(0, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest014 off in---------------------------');
-            sensor.off(0, callback);
-            sensor.off(0, callback2);
+            sensor.off(0);
             console.info('----------------------SensorJsTest014 off end---------------------------');
             done();
         }, 1000);
@@ -311,6 +330,10 @@ describe("SensorJsTest", function () {
         setTimeout(()=>{
             console.info('----------------------SensorJsTest015 off in---------------------------');
             sensor.off(0, callback);
+            console.info('----------------------SensorJsTest015 off end---------------------------');
+        }, 500);
+        setTimeout(()=>{
+            console.info('----------------------SensorJsTest015 off in---------------------------');
             sensor.off(0, callback2);
             console.info('----------------------SensorJsTest015 off end---------------------------');
             done();

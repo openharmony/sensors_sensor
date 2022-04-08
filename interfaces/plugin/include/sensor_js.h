@@ -18,7 +18,11 @@
 #include "sensor_agent.h"
 #include "errors.h"
 
-static int32_t UnsubscribeSensor(int32_t sensorTypeId);
+namespace OHOS {
+namespace Sensors {
+static bool UnsubscribeSensor(int32_t sensorTypeId);
 static void DataCallbackImpl(SensorEvent *event);
-static int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+static bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+}  // namespace Sensors
+}  // namespace OHOS
 #endif // SENSOR_JS_H

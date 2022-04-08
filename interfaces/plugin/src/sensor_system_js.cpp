@@ -16,7 +16,8 @@
 
 #include "hilog/log.h"
 #include "sensor_agent_type.h"
-
+namespace OHOS {
+namespace Sensors {
 using namespace OHOS::HiviewDFX;
 static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorSystemJs"};
 
@@ -191,3 +192,5 @@ napi_value UnsubscribeHall(napi_env env, napi_callback_info info)
     HiLog::Debug(LABEL, "%{public}s in", __func__);
     return Unsubscribe(env, info, SENSOR_TYPE_ID_HALL);
 }
+}  // namespace Sensors
+}  // namespace OHOS
