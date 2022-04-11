@@ -20,7 +20,6 @@
 
 #include "async_callback_info.h"
 #include "refbase.h"
-#include "sensor_napi_log.h"
 namespace OHOS {
 namespace Sensors {
 using std::vector;
@@ -54,6 +53,116 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
 bool CreateNapiArray(const napi_env &env, float *data, int32_t dataLength, napi_value &result);
 bool ConvertToSensorInfos(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+
+#define GET_AND_THROW_NAPI_ERROR(env, message) \
+    do { \
+        const napi_extended_error_info* errorInfo = nullptr; \
+        napi_get_last_error_info((env), &errorInfo); \
+        bool isPending = false; \
+        napi_is_exception_pending((env), &isPending); \
+        if (!isPending && errorInfo != nullptr) { \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message) + " fail. "; \
+            const char* errorMessage = \
+                errorInfo->error_message != nullptr ? errorInfo->error_message : "empty error message"; \
+            errDesc = errDesc + std::string(errorMessage); \
+            napi_throw_error((env), nullptr, errDesc.c_str()); \
+        } \
+    } while (0)
+
+#define CHKNCR(env, cond, message, retVal) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return retVal; \
+        } \
+    } while (0)
+
+#define CHKNCP(env, cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return nullptr; \
+        } \
+    } while (0)
+
+#define CHKNCF(env, cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return false; \
+        } \
+    } while (0)
+
+#define CHKNCV(env, cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return; \
+        } \
+    } while (0)
+
+#define CHKNCC(env, cond, message) \
+    { \
+        if (!(cond)) { \
+            SEN_HILOGW("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            continue; \
+        } \
+    }
+
+#define CHKNRR(env, theCall, message, retVal) \
+    do { \
+        if ((theCall) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return retVal; \
+        } \
+    } while (0)
+
+#define CHKNRP(env, theCall, message) \
+    do { \
+        if ((theCall) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return nullptr; \
+        } \
+    } while (0)
+
+#define CHKNRF(env, theCall, message) \
+    do { \
+        if ((theCall) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return false; \
+        } \
+    } while (0)
+
+#define CHKNRV(env, theCall, message) \
+    do { \
+        if ((theCall) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return; \
+        } \
+    } while (0)
+
+#define CHKNRC(env, theCall, message) \
+    { \
+        if ((theCall) != napi_ok) { \
+            SEN_HILOGW("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            continue; \
+        } \
+    }
 }  // namespace Sensors
 }  // namespace OHOS
 #endif // SENSOR_NAPI_UTILS_H

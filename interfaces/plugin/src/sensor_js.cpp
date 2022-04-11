@@ -53,6 +53,22 @@ static bool CheckSubscribe(int32_t sensorTypeId)
     return true;
 }
 
+static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *event)
+{
+    CHKPF(callbackInfo);
+    CHKPF(event);
+    callbackInfo->data.sensorData.sensorTypeId = event->sensorTypeId;
+    callbackInfo->data.sensorData.dataLength = event->dataLen;
+    callbackInfo->data.sensorData.timestamp = event->timestamp;
+    auto data = (float *)(event->data);
+    CHKPF(data);
+    if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
+        SEN_HILOGE("Copy data failed");
+        return false;
+    }
+    return true;
+}
+
 static void EmitOnCallback(SensorEvent *event)
 {
     CHKPV(event);
@@ -60,14 +76,10 @@ static void EmitOnCallback(SensorEvent *event)
     CHKCV(CheckSubscribe(sensorTypeId), "No client subscribe");
 
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
-    auto data = (float *)(event->data);
     auto onCallbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto &onCallbackInfo : onCallbackInfos) {
-        onCallbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
-        onCallbackInfo->data.sensorData.dataLength = event->dataLen;
-        onCallbackInfo->data.sensorData.timestamp = event->timestamp;
-        if (memcpy_s(onCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
-            SEN_HILOGE("Copy data failed");
+        if (!copySensorData(onCallbackInfo, event)) {
+            SEN_HILOGE("Copy sensor data failed");
             continue;
         }
         EmitUvEventLoop(onCallbackInfo);
@@ -82,15 +94,10 @@ static void EmitOnceCallback(SensorEvent *event)
     auto iter = g_onceCallbackInfos.find(sensorTypeId);
     CHKCV((iter != g_onceCallbackInfos.end()), "No client subscribe once");
 
-    auto data = (float *)(event->data);
     auto onceCallbackInfos = g_onceCallbackInfos[sensorTypeId];
     for (auto &onceCallbackInfo : onceCallbackInfos) {
-        onceCallbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
-        onceCallbackInfo->data.sensorData.dataLength = event->dataLen;
-        onceCallbackInfo->data.sensorData.timestamp = event->timestamp;
-        if (memcpy_s(onceCallbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen)
-            != EOK) {
-            SEN_HILOGE("Copy data failed");
+        if (!copySensorData(onceCallbackInfo, event)) {
+            SEN_HILOGE("Copy sensor data failed");
             continue;
         }
         EmitUvEventLoop(onceCallbackInfo);
@@ -139,8 +146,10 @@ static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value call
 
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorTypeId];
     for (auto callbackInfo : callbackInfos) {
+        CHKNCC(env, (callbackInfo != nullptr), "callbackInfo is null");
         napi_value sensorCallback = nullptr;
-        CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback));
+        CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback),
+            "napi_get_reference_value");
         if (IsSameValue(env, callback, sensorCallback)) {
             return true;
         }
@@ -156,7 +165,8 @@ static void UpdateOnceCallback(napi_env env, int32_t sensorTypeId, napi_value ca
 
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ONCE_CALLBACK);
     CHKPV(asyncCallbackInfo);
-    CHKNRV(env, napi_create_reference(env, callback, 1, &asyncCallbackInfo->callback[0]));
+    CHKNRV(env, napi_create_reference(env, callback, 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorTypeId];
     callbackInfos.push_back(asyncCallbackInfo);
     g_onceCallbackInfos[sensorTypeId] = callbackInfos;
@@ -168,7 +178,7 @@ static napi_value Once(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, (argc == 2), "The number of parameters is not valid");
     CHKNCP(env, IsMatchType(env, args[0], napi_number), "Wrong argument type, should be number");
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
@@ -191,8 +201,10 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
     }
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto callbackInfo : callbackInfos) {
+        CHKNCC(env, (callbackInfo != nullptr), "callbackInfo is null");
         napi_value sensorCallback = nullptr;
-        CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback));
+        CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback),
+            "napi_get_reference_value");
         if (IsSameValue(env, callback, sensorCallback)) {
             return true;
         }
@@ -207,7 +219,8 @@ static void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value c
     CHKNCV(env, !IsSubscribed(env, sensorTypeId, callback), "This callback has been subscribed");
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ON_CALLBACK);
     CHKPV(asyncCallbackInfo);
-    CHKNRV(env, napi_create_reference(env, callback, 1, &asyncCallbackInfo->callback[0]));
+    CHKNRV(env, napi_create_reference(env, callback, 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     callbackInfos.push_back(asyncCallbackInfo);
     g_onCallbackInfos[sensorTypeId] = callbackInfos;
@@ -219,7 +232,7 @@ static napi_value On(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchType(env, args[0], napi_number), "Wrong argument type, should be number");
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
@@ -230,7 +243,7 @@ static napi_value On(napi_env env, napi_callback_info info)
 
     if (argc == 3) {
         napi_value value = GetNamedProperty(env, args[2], "interval");
-        CHKNCP(env, IsMatchType(env, value, napi_number), "Wrong argument type, should be number");
+        CHKNCP(env, IsMatchType(env, value, napi_number), "Wrong argument type, interval should be number");
         CHKNCP(env, GetCppInt64(env, value, interval), "Wrong argument type, get INT64 number fail");
         SEN_HILOGD("Interval is %{public}" PRId64, interval);
     }
@@ -255,7 +268,8 @@ static uint32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value ca
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end(); ++iter) {
         CHKPC(*iter);
         napi_value sensorCallback = nullptr;
-        CHKNRC(env, napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback));
+        CHKNRC(env, napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback),
+            "napi_get_reference_value");
         if (IsSameValue(env, callback, sensorCallback)) {
             callbackInfos.erase(iter++);
             SEN_HILOGD("Remove callback success");
@@ -277,7 +291,7 @@ static napi_value Off(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, NULL));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 1) || (argc == 2)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchType(env, args[0], napi_number), "Wrong argument type, should be number");
     int32_t sensorTypeId = INVALID_SENSOR_ID;
@@ -301,7 +315,7 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchType(env, args[0], napi_object), "Wrong argument type, should be object");
     CHKNCP(env, IsMatchType(env, args[1], napi_number), "Wrong argument type, should be number");
@@ -337,12 +351,14 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
 
     if (argc == 2) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[2], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -353,13 +369,13 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     size_t argc = 3;
     napi_value args[3]  = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, should be array");
     CHKNCP(env, IsMatchType(env, args[1], napi_object), "Wrong argument type, should be object");
 
     std::vector<float> inRotationVector;
-    CHKNCP(env, GetFloatArray(env, args[0], inRotationVector), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[0], inRotationVector), "Wrong argument type, get inRotationVector fail");
     napi_value napiAxisX = GetNamedProperty(env, args[1], "axisX");
     CHKNCP(env, (napiAxisX != nullptr), "napiAxisX is null");
     int32_t axisX = 0;
@@ -388,12 +404,13 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     }
     if (argc == 2) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise), "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[2], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -404,18 +421,18 @@ static napi_value GetAngleModify(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
-    CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, should be array");
-    CHKNCP(env, IsMatchArrayType(env, args[1]), "Wrong argument type, should be array");
+    CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, the first parameter should be array");
+    CHKNCP(env, IsMatchArrayType(env, args[1]), "Wrong argument type, the second parameter should be array");
 
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfo(env, GET_ANGLE_MODIFY);
     CHKPP(asyncCallbackInfo);
     std::vector<float> curRotationVector;
-    CHKNCP(env, GetFloatArray(env, args[0], curRotationVector), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[0], curRotationVector), "Wrong argument type, get curRotationVector fail");
     std::vector<float> preRotationVector;
-    CHKNCP(env, GetFloatArray(env, args[1], preRotationVector), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[1], preRotationVector), "Wrong argument type, get preRotationVector fail");
 
     std::vector<float> angleChange(ROTATION_VECTOR_LENGTH);
     SensorAlgorithm sensorAlgorithm;
@@ -432,12 +449,14 @@ static napi_value GetAngleModify(napi_env env, napi_callback_info info)
     }
     if (argc == 2) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[2], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -448,7 +467,7 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info fail");
     CHKNCP(env, ((argc == 1) || (argc == 2)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, should be array");
 
@@ -456,7 +475,7 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
         new (std::nothrow) AsyncCallbackInfo(env, GET_DIRECTION);
     CHKPP(asyncCallbackInfo);
     std::vector<float> rotationMatrix;
-    CHKNCP(env, GetFloatArray(env, args[0], rotationMatrix), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[0], rotationMatrix), "Wrong argument type, get rotationMatrix fail");
     std::vector<float> rotationAngle(ROTATION_VECTOR_LENGTH);
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.getDirection(rotationMatrix, rotationAngle);
@@ -472,12 +491,14 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
     }
     if (argc == 1) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -488,7 +509,7 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 1) || (argc == 2)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, should be array");
 
@@ -496,7 +517,8 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
         new (std::nothrow) AsyncCallbackInfo(env, CREATE_QUATERNION);
     CHKPP(asyncCallbackInfo);
     std::vector<float> rotationVector;
-    CHKNCP(env, GetFloatArray(env, args[0], rotationVector), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[0], rotationVector),
+        "Wrong argument type, get rotationVector fail");
     std::vector<float> quaternion(QUATERNION_LENGTH);
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.createQuaternion(rotationVector, quaternion);
@@ -512,12 +534,14 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
     }
     if (argc == 1) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -528,7 +552,7 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchType(env, args[0], napi_number), "Wrong argument type, should be number");
     CHKNCP(env, IsMatchType(env, args[1], napi_number), "Wrong argument type, should be number");
@@ -537,9 +561,9 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
         new (std::nothrow) AsyncCallbackInfo(env, GET_ALTITUDE);
     CHKPP(asyncCallbackInfo);
     float seaPressure = 0;
-    CHKNCP(env, GetCppFloat(env, args[0], seaPressure), "Wrong argument type, should be number");
+    CHKNCP(env, GetCppFloat(env, args[0], seaPressure), "Wrong argument type, get seaPressure fail");
     float currentPressure = 0;
-    CHKNCP(env, GetCppFloat(env, args[1], currentPressure), "Wrong argument type, should be number");
+    CHKNCP(env, GetCppFloat(env, args[1], currentPressure), "Wrong argument type, get currentPressure fail");
     float altitude = 0;
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.getAltitude(seaPressure, currentPressure, &altitude);
@@ -552,12 +576,14 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
     }
     if (argc == 2) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[2], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -568,7 +594,7 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 1) || (argc == 2)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, should be array");
 
@@ -576,7 +602,8 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
         new (std::nothrow) AsyncCallbackInfo(env, GET_GEOMAGNITIC_DIP);
     CHKPP(asyncCallbackInfo);
     std::vector<float> inclinationMatrix;
-    CHKNCP(env, GetFloatArray(env, args[0], inclinationMatrix), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[0], inclinationMatrix),
+        "Wrong argument type, get inclinationMatrix fail");
     float geomagneticDip = 0;
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.getGeomagneticDip(inclinationMatrix, &geomagneticDip);
@@ -589,12 +616,14 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
     }
     if (argc == 1) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -604,9 +633,9 @@ static napi_value createRotationAndInclination(const napi_env &env, napi_value a
     CALL_LOG_ENTER;
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
     std::vector<float> gravity;
-    CHKNCP(env, GetFloatArray(env, args[0], gravity), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[0], gravity), "Wrong argument type, get gravity fail");
     std::vector<float> geomagnetic;
-    CHKNCP(env, GetFloatArray(env, args[1], geomagnetic), "Wrong argument type, should be array");
+    CHKNCP(env, GetFloatArray(env, args[1], geomagnetic), "Wrong argument type, get geomagnetic fail");
     std::vector<float> rotation(THREE_DIMENSIONAL_MATRIX_LENGTH);
     std::vector<float> inclination(THREE_DIMENSIONAL_MATRIX_LENGTH);
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
@@ -629,12 +658,14 @@ static napi_value createRotationAndInclination(const napi_env &env, napi_value a
     }
     if (argc == 2) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[2], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -644,8 +675,9 @@ static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size
     CALL_LOG_ENTER;
     CHKNCP(env, ((argc == 1) || (argc == 2)), "The number of parameters is not valid");
     std::vector<float> rotationVector;
-    CHKNCP(env, GetFloatArray(env, args[0], rotationVector), "Wrong argument type, should be array");
-    
+    CHKNCP(env, GetFloatArray(env, args[0], rotationVector),
+        "Wrong argument type, get rotationVector fail");
+
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfo(env, CREATE_ROTATION_MATRIX);
     CHKPP(asyncCallbackInfo);
@@ -665,12 +697,14 @@ static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size
 
     if (argc == 1) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
-    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]));
+    CHKNRP(env, napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]),
+        "napi_create_reference");
     EmitAsyncCallbackWork(asyncCallbackInfo);
     return nullptr;
 }
@@ -681,7 +715,7 @@ static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc >= 1) && (argc <= 3)), "The number of parameters is not valid");
     CHKNCP(env, IsMatchArrayType(env, args[0]), "Wrong argument type, should be array");
 
@@ -699,7 +733,7 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
     size_t argc = 1;
     napi_value args[1] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, (argc <= 1), "The number of parameters is not valid");
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfo(env, GET_SENSOR_LIST);
@@ -721,7 +755,8 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
     }
     if (argc == 0) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise),
+            "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
@@ -737,7 +772,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
     CHKNCP(env, ((argc == 1) || (argc == 2)), "The number of parameters is not valid");
     int32_t sensorTypeId = INVALID_SENSOR_ID;
     CHKNCP(env, GetCppInt32(env, args[0], sensorTypeId), "Wrong argument type, get number fail");
@@ -768,7 +803,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
     }
     if (argc == 1) {
         napi_value promise = nullptr;
-        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise));
+        CHKNRP(env, napi_create_promise(env, &asyncCallbackInfo->deferred, &promise), "napi_create_promise");
         EmitPromiseWork(asyncCallbackInfo);
         return promise;
     }
@@ -784,7 +819,7 @@ static napi_value EnumClassConstructor(napi_env env, napi_callback_info info)
     napi_value args[1] = {0};
     napi_value ret = nullptr;
     void *data = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &ret, &data));
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &ret, &data), "napi_get_cb_info");
     return ret;
 }
 
@@ -823,8 +858,8 @@ static napi_value CreateEnumSensorType(napi_env env, napi_value exports)
     };
     napi_value result = nullptr;
     CHKNRP(env, napi_define_class(env, "SensorType", NAPI_AUTO_LENGTH, EnumClassConstructor, nullptr,
-        sizeof(desc) / sizeof(*desc), desc, &result));
-    CHKNRP(env, napi_set_named_property(env, exports, "SensorType", result));
+        sizeof(desc) / sizeof(*desc), desc, &result), "napi_define_class");
+    CHKNRP(env, napi_set_named_property(env, exports, "SensorType", result), "napi_set_named_property fail");
     return exports;
 }
 
@@ -872,7 +907,8 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("subscribeHall", SubscribeHall),
         DECLARE_NAPI_FUNCTION("unsubscribeHall", UnsubscribeHall),
     };
-    CHKNRP(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc));
+    CHKNRP(env, napi_define_properties(env, exports, sizeof(desc) / sizeof(napi_property_descriptor), desc),
+        "napi_define_properties");
     CHKNCP(env, CreateEnumSensorType(env, exports), "Create enum sensor type fail");
     return exports;
 }
@@ -880,7 +916,7 @@ static napi_value Init(napi_env env, napi_value exports)
 static napi_module _module = {
     .nm_version = 1,
     .nm_flags = 0,
-    .nm_filename = NULL,
+    .nm_filename = nullptr,
     .nm_register_func = Init,
     .nm_modname = "sensor",
     .nm_priv = ((void *)0),
