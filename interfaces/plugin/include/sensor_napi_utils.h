@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,10 +61,10 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
         bool isPending = false; \
         napi_is_exception_pending((env), &isPending); \
         if (!isPending && errorInfo != nullptr) { \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message) + " fail. "; \
-            const char* errorMessage = \
+            std::string errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message) + " fail. "; \
+            std::string errorMessage = \
                 errorInfo->error_message != nullptr ? errorInfo->error_message : "empty error message"; \
-            errDesc = errDesc + std::string(errorMessage); \
+            errDesc += errorMessage; \
             napi_throw_error((env), nullptr, errDesc.c_str()); \
         } \
     } while (0)
@@ -73,7 +73,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return retVal; \
         } \
@@ -83,7 +83,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return nullptr; \
         } \
@@ -93,7 +93,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return false; \
         } \
@@ -103,7 +103,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return; \
         } \
@@ -113,53 +113,53 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     { \
         if (!(cond)) { \
             SEN_HILOGW("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(message); \
+            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             continue; \
         } \
     }
 
-#define CHKNRR(env, theCall, message, retVal) \
+#define CHKNRR(env, state, message, retVal) \
     do { \
-        if ((theCall) != napi_ok) { \
+        if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
             return retVal; \
         } \
     } while (0)
 
-#define CHKNRP(env, theCall, message) \
+#define CHKNRP(env, state, message) \
     do { \
-        if ((theCall) != napi_ok) { \
+        if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
             return nullptr; \
         } \
     } while (0)
 
-#define CHKNRF(env, theCall, message) \
+#define CHKNRF(env, state, message) \
     do { \
-        if ((theCall) != napi_ok) { \
+        if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
             return false; \
         } \
     } while (0)
 
-#define CHKNRV(env, theCall, message) \
+#define CHKNRV(env, state, message) \
     do { \
-        if ((theCall) != napi_ok) { \
+        if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
             return; \
         } \
     } while (0)
 
-#define CHKNRC(env, theCall, message) \
+#define CHKNRC(env, state, message) \
     { \
-        if ((theCall) != napi_ok) { \
+        if ((state) != napi_ok) { \
             SEN_HILOGW("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
             continue; \
         } \
     }

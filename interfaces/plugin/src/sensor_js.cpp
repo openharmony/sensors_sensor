@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,15 +36,17 @@
 #include "sensor_system_js.h"
 namespace OHOS {
 namespace Sensors {
-static constexpr int32_t QUATERNION_LENGTH = 4;
-static constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
-static constexpr int32_t REPORTING_INTERVAL = 200000000;
-static constexpr int32_t INVALID_SENSOR_ID = -1;
+namespace {
+constexpr int32_t QUATERNION_LENGTH = 4;
+constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
+constexpr int32_t REPORTING_INTERVAL = 200000000;
+constexpr int32_t INVALID_SENSOR_ID = -1;
+}
+
 static std::mutex onMutex_;
 static std::mutex onceMutex_;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onceCallbackInfos;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
-
 static bool CheckSubscribe(int32_t sensorTypeId)
 {
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
@@ -60,7 +62,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
     callbackInfo->data.sensorData.sensorTypeId = event->sensorTypeId;
     callbackInfo->data.sensorData.dataLength = event->dataLen;
     callbackInfo->data.sensorData.timestamp = event->timestamp;
-    auto data = (float *)(event->data);
+    float * data = static_cast<float *>(event->data);
     CHKPF(data);
     if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");
@@ -102,7 +104,6 @@ static void EmitOnceCallback(SensorEvent *event)
         }
         EmitUvEventLoop(onceCallbackInfo);
     }
-    onceCallbackInfos.clear();
     g_onceCallbackInfos.erase(sensorTypeId);
 
     CHKCV((!CheckSubscribe(sensorTypeId)), "Has client subscribe, not need cancel subscribe");
@@ -141,6 +142,7 @@ static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value call
 {
     CALL_LOG_ENTER;
     if (g_onceCallbackInfos.find(sensorTypeId) == g_onceCallbackInfos.end()) {
+        SEN_HILOGW("already subscribed, sensorTypeId: %{public}d", sensorTypeId);
         return false;
     }
 
@@ -161,7 +163,7 @@ static void UpdateOnceCallback(napi_env env, int32_t sensorTypeId, napi_value ca
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onceCallbackLock(onceMutex_);
-    CHKNCV(env, !IsOnceSubscribed(env, sensorTypeId, callback), "This callback has been subscribed");
+    CHKNCV(env, !IsOnceSubscribed(env, sensorTypeId, callback), "The callback has been subscribed");
 
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ONCE_CALLBACK);
     CHKPV(asyncCallbackInfo);
@@ -197,6 +199,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
 {
     CALL_LOG_ENTER;
     if (g_onCallbackInfos.find(sensorTypeId) == g_onCallbackInfos.end()) {
+        SEN_HILOGW("already subscribe, sensorTypeId: %{public}d", sensorTypeId);
         return false;
     }
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];

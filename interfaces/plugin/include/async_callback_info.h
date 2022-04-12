@@ -31,7 +31,7 @@ static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr static int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_NUM = 3;
-typedef enum CallbackDataType {
+enum CallbackDataType {
     FAIL = -1,
     OFF_CALLBACK = 0,
     ON_CALLBACK = 1,
@@ -65,15 +65,15 @@ struct RationMatrixData {
 };
 
 struct SensorData {
-    int32_t sensorTypeId;
-    uint32_t dataLength;
+    int32_t sensorTypeId(0);
+    uint32_t dataLength(0);
     float data[DATA_LENGTH];
-    int64_t timestamp;
+    int64_t timestamp(0);
 };
 
 struct ReserveData {
     float reserve[DATA_LENGTH];
-    int32_t length;
+    int32_t length(0);
 };
 
 union CallbackData {
