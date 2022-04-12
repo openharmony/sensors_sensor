@@ -61,7 +61,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
         bool isPending = false; \
         napi_is_exception_pending((env), &isPending); \
         if (!isPending && errorInfo != nullptr) { \
-            std::string errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message) + " fail. "; \
+            std::string errDesc = std::string(__FUNCTION__) + ": " + #message + " fail. "; \
             std::string errorMessage = \
                 errorInfo->error_message != nullptr ? errorInfo->error_message : "empty error message"; \
             errDesc += errorMessage; \
@@ -73,7 +73,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return retVal; \
         } \
@@ -83,7 +83,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return nullptr; \
         } \
@@ -93,7 +93,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return false; \
         } \
@@ -103,7 +103,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             return; \
         } \
@@ -113,7 +113,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     { \
         if (!(cond)) { \
             SEN_HILOGW("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__)+ ": " + std::string(#message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
             napi_throw_error(env, nullptr, errDesc.c_str()); \
             continue; \
         } \
@@ -123,7 +123,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             return retVal; \
         } \
     } while (0)
@@ -132,7 +132,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             return nullptr; \
         } \
     } while (0)
@@ -141,7 +141,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             return false; \
         } \
     } while (0)
@@ -150,7 +150,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             return; \
         } \
     } while (0)
@@ -159,7 +159,7 @@ bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCal
     { \
         if ((state) != napi_ok) { \
             SEN_HILOGW("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (#message)); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             continue; \
         } \
     }
