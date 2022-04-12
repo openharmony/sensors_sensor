@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,11 +14,12 @@
  */
 #ifndef SENSOR_JS_H
 #define SENSOR_JS_H
-
 #include "sensor_agent.h"
-#include "errors.h"
-
-static int32_t UnsubscribeSensor(int32_t sensorTypeId);
+namespace OHOS {
+namespace Sensors {
+static bool UnsubscribeSensor(int32_t sensorTypeId);
 static void DataCallbackImpl(SensorEvent *event);
-static int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+static bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+}  // namespace Sensors
+}  // namespace OHOS
 #endif // SENSOR_JS_H

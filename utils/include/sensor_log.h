@@ -23,11 +23,11 @@ namespace {
 constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002800;
 } // namespace
 #ifndef SENSOR_FUNC_FMT
-#define SENSOR_FUNC_FMT "in %{public}s, #%{public}d, "
+#define SENSOR_FUNC_FMT "in %{public}s, "
 #endif
 
 #ifndef SENSOR_FUNC_INFO
-#define SENSOR_FUNC_INFO __FUNCTION__, __LINE__
+#define SENSOR_FUNC_INFO __FUNCTION__
 #endif
 
 #define SEN_HILOGD(fmt, ...) do { \
