@@ -50,13 +50,13 @@ enum CallbackDataType {
 };
 
 struct GeomagneticData {
-    float x;
-    float y;
-    float z;
-    float geomagneticDip;
-    float deflectionAngle;
-    float levelIntensity;
-    float totalIntensity;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
+    float geomagneticDip = 0.0f;
+    float deflectionAngle = 0.0f;
+    float levelIntensity = 0.0f;
+    float totalIntensity = 0.0f;
 };
 
 struct RationMatrixData {
@@ -65,15 +65,15 @@ struct RationMatrixData {
 };
 
 struct SensorData {
-    int32_t sensorTypeId;
-    uint32_t dataLength;
+    int32_t sensorTypeId = -1;
+    uint32_t dataLength = 0;
     float data[DATA_LENGTH];
-    int64_t timestamp;
+    int64_t timestamp = -1;
 };
 
 struct ReserveData {
     float reserve[DATA_LENGTH];
-    int32_t length;
+    int32_t length = -1;
 };
 
 union CallbackData {
@@ -84,7 +84,7 @@ union CallbackData {
 };
 
 struct BusinessError {
-    int32_t code;
+    int32_t code = -1;
     string message;
     string name;
     string stack;

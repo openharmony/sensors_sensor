@@ -104,6 +104,7 @@ static void EmitOnceCallback(SensorEvent *event)
         }
         EmitUvEventLoop(onceCallbackInfo);
     }
+    g_onceCallbackInfos[sensorTypeId].clear();
     g_onceCallbackInfos.erase(sensorTypeId);
 
     CHKCV((!CheckSubscribe(sensorTypeId)), "Has client subscribe, not need cancel subscribe");
@@ -141,7 +142,7 @@ static bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensor
 static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     CALL_LOG_ENTER;
-    if (g_onceCallbackInfos.find(sensorTypeId) == g_onceCallbackInfos.end()) {
+    if (auto iter = g_onceCallbackInfos.find(sensorTypeId); iter == g_onceCallbackInfos.end()) {
         SEN_HILOGW("already subscribed, sensorTypeId: %{public}d", sensorTypeId);
         return false;
     }
@@ -198,7 +199,7 @@ static napi_value Once(napi_env env, napi_callback_info info)
 static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     CALL_LOG_ENTER;
-    if (g_onCallbackInfos.find(sensorTypeId) == g_onCallbackInfos.end()) {
+    if (auto iter = g_onCallbackInfos.find(sensorTypeId); iter == g_onCallbackInfos.end()) {
         SEN_HILOGW("already subscribe, sensorTypeId: %{public}d", sensorTypeId);
         return false;
     }
