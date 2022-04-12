@@ -47,7 +47,7 @@ enum CallbackDataType {
     ROTATION_INCLINATION_MATRIX = 11,
     GET_SENSOR_LIST = 12,
     GET_SINGLE_SENSOR = 13
-} CallbackDataType;
+};
 
 struct GeomagneticData {
     float x;
@@ -65,15 +65,15 @@ struct RationMatrixData {
 };
 
 struct SensorData {
-    int32_t sensorTypeId(0);
-    uint32_t dataLength(0);
+    int32_t sensorTypeId;
+    uint32_t dataLength;
     float data[DATA_LENGTH];
-    int64_t timestamp(0);
+    int64_t timestamp;
 };
 
 struct ReserveData {
     float reserve[DATA_LENGTH];
-    int32_t length(0);
+    int32_t length;
 };
 
 union CallbackData {

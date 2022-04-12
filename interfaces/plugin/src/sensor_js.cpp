@@ -62,7 +62,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
     callbackInfo->data.sensorData.sensorTypeId = event->sensorTypeId;
     callbackInfo->data.sensorData.dataLength = event->dataLen;
     callbackInfo->data.sensorData.timestamp = event->timestamp;
-    float * data = static_cast<float *>(event->data);
+    auto data = reinterpret_cast<float *>(event->data);
     CHKPF(data);
     if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");
