@@ -154,29 +154,18 @@ import sensor from '@ohos.sensor';
 export default {
     onCreate() {
         // Step 2 Subscribe to and listen for data changes of a type of sensor.
-        sensor.on(sensor.SENSOR_TYPE_ID_ACCELEROMETER, (error, data) => {
-            if (error) {
-                console.error("Failed to subscribe to acceleration data. Error code: " + error.code + "; message: " + error.message);
-                return;
-            }
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
         }, {'interval':200000000});
         // Step 3 Unsubscribe from data changes of the sensor 10 seconds later.
         setTimeout(function(){
-            sensor.off(sensor.SENSOR_TYPE_ID_ACCELEROMETER, function(error) {
-                if (error) {
-                    console.error("Failed to unsubscribe from acceleration data. Error code: " + error.code + "; message: " + error.message);
-                    return;
-                }
-                console.info("Succeeded in unsubscribe from sensor data");
-            });
+           function callback(data) {
+               console.info("Succeeded in unsubscribe from sensor data" + data);
+           }
+               sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
         } ,10000);
         // Step 4 Subscribe to and listen for a data change of a type of sensor.
-        sensor.once(sensor.SENSOR_TYPE_ID_ACCELEROMETER, (error, data) => {
-            if (error) {
-                console.error("Failed to subscribe to gravity data. Error code: " + error.code + "; message: " + error.message);
-                return;
-            }
+        sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
        });
     }
