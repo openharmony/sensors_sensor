@@ -21,7 +21,9 @@
 
 namespace OHOS {
 namespace Sensors {
-using namespace OHOS::HiviewDFX;
+namespace {
+    constexpr int32_t STRING_LENGTH_MAX = 64;
+}
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs)
 {
     CALL_LOG_ENTER;
@@ -116,6 +118,36 @@ napi_value GetNapiInt32(const napi_env &env, int32_t number)
     return value;
 }
 
+bool GetStringValue(const napi_env &env, const napi_value &value, string &result)
+{
+    CALL_LOG_ENTER;
+    CHKNCF(env, IsMatchType(env, value, napi_string), "Wrong argument type. String or function expected");
+    char buf[STRING_LENGTH_MAX] = { 0 };
+    size_t copyLength = 0;
+    CHKNRF(env, napi_get_value_string_utf8(env, value, buf, STRING_LENGTH_MAX, &copyLength),
+        "napi_get_value_string_utf8");
+    result = std::string(buf);
+    return true;
+}
+
+bool RegisterNapiCallback(const napi_env &env, const napi_value &value,
+    napi_ref &callback)
+{
+    CHKNCF(env, IsMatchType(env, value, napi_function), "Wrong argument type, should be function");
+    CHKNRF(env, napi_create_reference(env, value, 1, &callback), "napi_create_reference");
+    return true;
+}
+
+bool CreateFailMessage(CallbackDataType type, int32_t code, string message,
+    sptr<AsyncCallbackInfo> &asyncCallbackInfo)
+{
+    CHKPF(asyncCallbackInfo);
+    asyncCallbackInfo->type = type;
+    asyncCallbackInfo->error.code = code;
+    asyncCallbackInfo->error.message = message;
+    return true;
+}
+
 std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { 0, { "x" } },
     { SENSOR_TYPE_ID_ACCELEROMETER, { "x", "y", "z" } },
@@ -156,6 +188,9 @@ std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
     {ROTATION_INCLINATION_MATRIX, ConvertToRotationMatrix},
     {GET_SENSOR_LIST, ConvertToSensorInfos},
     {GET_SINGLE_SENSOR, ConvertToSingleSensor},
+    {GET_BODY_STATE, ConvertToBodyData},
+    {SUBSCRIBE_CALLBACK, ConvertToSensorData},
+    {SUBSCRIBE_COMPASS, ConvertToCompass},
 };
 
 bool getJsonObject(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value &result)
@@ -274,6 +309,10 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
     CHKPF(asyncCallbackInfo);
     int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
     CHKNCF(env, (g_sensorAttributeList.find(sensorTypeId) != g_sensorAttributeList.end()), "Invalid sensor type");
+    if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
+        return ConvertToBodyData(env, asyncCallbackInfo, result);
+    }
+
     size_t size = g_sensorAttributeList[sensorTypeId].size();
     uint32_t dataLenth = asyncCallbackInfo->data.sensorData.dataLength / sizeof(float);
     CHKNCF(env, (size <= dataLenth), "Data length mismatch");
@@ -299,6 +338,28 @@ bool ConvertToGeomagneticData(const napi_env &env, sptr<AsyncCallbackInfo> async
 {
     CALL_LOG_ENTER;
     return getJsonObject(env, asyncCallbackInfo, result[1]);
+}
+
+bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2])
+{
+    CALL_LOG_ENTER;
+    CHKPF(asyncCallbackInfo);
+    napi_value status = nullptr;
+    CHKNRF(env, napi_get_boolean(env, asyncCallbackInfo->data.sensorData.data[0], &status),
+        "napi_get_boolean");
+    CHKNRF(env, napi_set_named_property(env, result[1], "value", status), "napi_set_named_property");
+    return true;
+}
+
+bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2])
+{
+    CALL_LOG_ENTER;
+    CHKPF(asyncCallbackInfo);
+    napi_value message = nullptr;
+    CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.sensorData.data[0], &message),
+        "napi_create_double");
+    CHKNRF(env, napi_set_named_property(env, result[1], "direction", message), "napi_set_named_property");
+    return true;
 }
 
 bool ConvertToNumber(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2])
