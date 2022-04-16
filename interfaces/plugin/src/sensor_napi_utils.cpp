@@ -467,7 +467,7 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             napi_value result[2] = {0};
             if (asyncCallbackInfo->type == SUBSCRIBE_FAIL) {
                 CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[1], &callback),
-                    "napi_get_reference_value")
+                    "napi_get_reference_value");
                 CHKNRV(env, napi_create_string_utf8(env, asyncCallbackInfo->error.message.c_str(),
                     NAPI_AUTO_LENGTH, &result[0]), "napi_create_string_utf8");
                 CHKNRV(env, napi_create_int32(env, asyncCallbackInfo->error.code, &result[1]), "napi_create_int32");
