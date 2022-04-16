@@ -344,6 +344,7 @@ bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbac
 {
     CALL_LOG_ENTER;
     CHKPF(asyncCallbackInfo);
+    CHKNRF(env, napi_create_object(env, &result[1]), "napi_create_object");
     napi_value status = nullptr;
     CHKNRF(env, napi_get_boolean(env, asyncCallbackInfo->data.sensorData.data[0], &status),
         "napi_get_boolean");
@@ -355,6 +356,7 @@ bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallback
 {
     CALL_LOG_ENTER;
     CHKPF(asyncCallbackInfo);
+    CHKNRF(env, napi_create_object(env, &result[1]), "napi_create_object");
     napi_value message = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.sensorData.data[0], &message),
         "napi_create_double");
@@ -461,10 +463,20 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
             asyncCallbackInfo->callbackInfo = nullptr;
             napi_value callback = nullptr;
-            CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback),
-                "napi_get_reference_value");
             napi_value callResult = nullptr;
             napi_value result[2] = {0};
+            if (asyncCallbackInfo->type == SUBSCRIBE_FAIL) {
+                CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[1], &callback),
+                    "napi_get_reference_value")
+                CHKNRV(env, napi_create_string_utf8(env, asyncCallbackInfo->error.message.c_str(),
+                    NAPI_AUTO_LENGTH, &result[0]), "napi_create_string_utf8");
+                CHKNRV(env, napi_create_int32(env, asyncCallbackInfo->error.code, &result[1]), "napi_create_int32");
+                CHKNRV(env, napi_call_function(env, nullptr, callback, 2, result, &callResult),
+                    "napi_call_function");
+                return;
+            }
+            CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback),
+                "napi_get_reference_value");
             CHKNCV(env, (g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
                 "Callback type invalid in async work");
             bool ret = g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);

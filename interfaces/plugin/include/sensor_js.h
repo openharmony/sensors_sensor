@@ -14,6 +14,7 @@
  */
 #ifndef SENSOR_JS_H
 #define SENSOR_JS_H
+#include "async_callback_info.h"
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "sensor_agent.h"

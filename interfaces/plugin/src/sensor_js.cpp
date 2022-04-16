@@ -146,6 +146,7 @@ static void EmitOnceCallback(SensorEvent *event)
     g_onceCallbackInfos.erase(sensorTypeId);
 
     CHKCV((!CheckSubscribe(sensorTypeId)), "Has client subscribe, not need cancel subscribe");
+    CHKCV((!CheckSystemSubscribe(sensorTypeId)), "Has client subscribe system api, not need cancel subscribe");
     UnsubscribeSensor(sensorTypeId);
 }
 
@@ -239,7 +240,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
 {
     CALL_LOG_ENTER;
     if (auto iter = g_onCallbackInfos.find(sensorTypeId); iter == g_onCallbackInfos.end()) {
-        SEN_HILOGW("already subscribe, sensorTypeId: %{public}d", sensorTypeId);
+        SEN_HILOGW("no client subscribe, sensorTypeId: %{public}d", sensorTypeId);
         return false;
     }
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
@@ -871,7 +872,8 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     CHKNCP(env, IsMatchType(env, args[0], napi_object), "Wrong argument type, should be object");
 
     string interval = "normal";
-    if ((sensorTypeId == SENSOR_TYPE_ID_ACCELEROMETER) || (sensorTypeId == SENSOR_TYPE_ID_ORIENTATION)
+    if ((sensorTypeId == SENSOR_TYPE_ID_ACCELEROMETER) ||
+        ((sensorTypeId == SENSOR_TYPE_ID_ORIENTATION) && (type != SUBSCRIBE_COMPASS))
         || (sensorTypeId == SENSOR_TYPE_ID_GYROSCOPE)) {
         napi_value napiInterval = GetNamedProperty(env, args[0], "interval");
         CHKNCP(env, GetStringValue(env, napiInterval, interval), "get interval fail");
@@ -889,7 +891,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     }
     if (auto iter = g_samplingPeriod.find(interval); iter == g_samplingPeriod.end()) {
         CHKNCP(env, (napiFail != nullptr), "input error, interval is invalid");
-        CreateFailMessage(FAIL, INPUT_ERROR, "input error", asyncCallbackInfo);
+        CreateFailMessage(SUBSCRIBE_FAIL, INPUT_ERROR, "input error", asyncCallbackInfo);
         EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
@@ -897,7 +899,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     bool ret = SubscribeSensor(sensorTypeId, g_samplingPeriod[interval], DataCallbackImpl);
     if (!ret) {
         CHKNCP(env, (napiFail != nullptr), "subscribe fail");
-        CreateFailMessage(FAIL, SENSOR_SUBSCRIBE_FAILURE, "subscribe fail", asyncCallbackInfo);
+        CreateFailMessage(SUBSCRIBE_FAIL, SENSOR_SUBSCRIBE_FAILURE, "subscribe fail", asyncCallbackInfo);
         EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }

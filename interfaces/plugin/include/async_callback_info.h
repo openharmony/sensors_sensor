@@ -33,6 +33,7 @@ constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr static int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_NUM = 3;
 enum CallbackDataType {
+    SUBSCRIBE_FAIL = -2,
     FAIL = -1,
     OFF_CALLBACK = 0,
     ON_CALLBACK = 1,
