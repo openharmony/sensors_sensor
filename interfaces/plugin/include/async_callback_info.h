@@ -14,6 +14,7 @@
  */
 #ifndef ASYNC_CALLBACK_INFO_H
 #define ASYNC_CALLBACK_INFO_H
+#include <uv.h>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -32,6 +33,7 @@ constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr static int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_NUM = 3;
 enum CallbackDataType {
+    SUBSCRIBE_FAIL = -2,
     FAIL = -1,
     OFF_CALLBACK = 0,
     ON_CALLBACK = 1,
@@ -46,7 +48,10 @@ enum CallbackDataType {
     GET_DIRECTION = 10,
     ROTATION_INCLINATION_MATRIX = 11,
     GET_SENSOR_LIST = 12,
-    GET_SINGLE_SENSOR = 13
+    GET_SINGLE_SENSOR = 13,
+    SUBSCRIBE_CALLBACK = 14,
+    SUBSCRIBE_COMPASS = 15,
+    GET_BODY_STATE = 16,
 };
 
 struct GeomagneticData {

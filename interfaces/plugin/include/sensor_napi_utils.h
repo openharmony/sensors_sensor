@@ -16,7 +16,6 @@
 #define SENSOR_NAPI_UTILS_H
 
 #include <iostream>
-#include <uv.h>
 
 #include "async_callback_info.h"
 #include "refbase.h"
@@ -35,9 +34,11 @@ bool GetCppDouble(const napi_env &env, const napi_value &value, double &number);
 bool GetCppBool(const napi_env &env, const napi_value &value);
 bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &array);
 bool GetCppInt64(const napi_env &env, const napi_value &value, int64_t &number);
+bool RegisterNapiCallback(const napi_env &env, const napi_value &value, napi_ref &callback);
 napi_value GetNamedProperty(const napi_env &env, const napi_value &object, string name);
 bool GetCppFloat(const napi_env &env, const napi_value &value, float &number);
 napi_value GetNapiInt32(const napi_env &env, int32_t number);
+bool GetStringValue(const napi_env &env, const napi_value &value, string &result);
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
@@ -53,6 +54,11 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
 bool CreateNapiArray(const napi_env &env, float *data, int32_t dataLength, napi_value &result);
 bool ConvertToSensorInfos(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool CreateFailMessage(CallbackDataType type, int32_t code, string message,
+    sptr<AsyncCallbackInfo> &asyncCallbackInfo);
+bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 
 #define GET_AND_THROW_NAPI_ERROR(env, message) \
     do { \

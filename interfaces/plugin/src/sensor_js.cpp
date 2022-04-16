@@ -26,9 +26,6 @@
 #include <unistd.h>
 
 #include "geomagnetic_field.h"
-
-#include "napi/native_api.h"
-#include "napi/native_node_api.h"
 #include "refbase.h"
 #include "securec.h"
 #include "sensor_algorithm.h"
@@ -41,12 +38,25 @@ constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
 constexpr int32_t REPORTING_INTERVAL = 200000000;
 constexpr int32_t INVALID_SENSOR_ID = -1;
+constexpr int32_t SENSOR_SUBSCRIBE_FAILURE = 1001;
+constexpr int32_t INPUT_ERROR = 202;
+constexpr float BODY_STATE_EXCEPT = 1.0f;
+constexpr float THREESHOLD = 0.000001f;
 }
-
+static std::map<std::string, int64_t> g_samplingPeriod = {
+    {"normal", 200000000},
+    {"ui", 60000000},
+    {"game", 20000000},
+};
+static std::mutex mutex_;
+static std::mutex bodyMutex_;
+static float g_bodyState = -1.0f;
+static std::map<int32_t, sptr<AsyncCallbackInfo>> g_subscribeCallbacks;
 static std::mutex onMutex_;
 static std::mutex onceMutex_;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onceCallbackInfos;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
+
 static bool CheckSubscribe(int32_t sensorTypeId)
 {
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
@@ -59,16 +69,44 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
 {
     CHKPF(callbackInfo);
     CHKPF(event);
-    callbackInfo->data.sensorData.sensorTypeId = event->sensorTypeId;
+    int32_t sensorTypeId = event->sensorTypeId;
+    callbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
     callbackInfo->data.sensorData.dataLength = event->dataLen;
     callbackInfo->data.sensorData.timestamp = event->timestamp;
     auto data = reinterpret_cast<float *>(event->data);
+    if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && callbackInfo->type == SUBSCRIBE_CALLBACK) {
+        std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
+        g_bodyState = *data;
+        callbackInfo->data.sensorData.data[0] =
+            (fabs(g_bodyState - BODY_STATE_EXCEPT) < THREESHOLD) ? true : false;
+        return true;
+    }
     CHKPF(data);
     if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");
         return false;
     }
     return true;
+}
+
+static bool CheckSystemSubscribe(int32_t sensorTypeId)
+{
+    std::lock_guard<std::mutex> subscribeLock(mutex_);
+    auto iter = g_subscribeCallbacks.find(sensorTypeId);
+    CHKCF((iter != g_subscribeCallbacks.end()), "No client subscribe");
+    return true;
+}
+
+static void EmitSubscribeCallback(SensorEvent *event)
+{
+    CHKPV(event);
+    int32_t sensorTypeId = event->sensorTypeId;
+    CHKCV(CheckSystemSubscribe(sensorTypeId), "No client subscribe");
+
+    std::lock_guard<std::mutex> subscribeLock(mutex_);
+    auto callback = g_subscribeCallbacks[sensorTypeId];
+    CHKCV(copySensorData(callback, event), "Copy sensor data failed");
+    EmitUvEventLoop(callback);
 }
 
 static void EmitOnCallback(SensorEvent *event)
@@ -108,21 +146,23 @@ static void EmitOnceCallback(SensorEvent *event)
     g_onceCallbackInfos.erase(sensorTypeId);
 
     CHKCV((!CheckSubscribe(sensorTypeId)), "Has client subscribe, not need cancel subscribe");
+    CHKCV((!CheckSystemSubscribe(sensorTypeId)), "Has client subscribe system api, not need cancel subscribe");
     UnsubscribeSensor(sensorTypeId);
 }
 
-static void DataCallbackImpl(SensorEvent *event)
+void DataCallbackImpl(SensorEvent *event)
 {
     CHKPV(event);
     EmitOnCallback(event);
+    EmitSubscribeCallback(event);
     EmitOnceCallback(event);
 }
 
-static const SensorUser user = {
+const SensorUser user = {
     .callback = DataCallbackImpl
 };
 
-static bool UnsubscribeSensor(int32_t sensorTypeId)
+bool UnsubscribeSensor(int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
     CHKCF((DeactivateSensor(sensorTypeId, &user) == SUCCESS), "DeactivateSensor failed");
@@ -130,7 +170,7 @@ static bool UnsubscribeSensor(int32_t sensorTypeId)
     return true;
 }
 
-static bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback)
+bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback)
 {
     CALL_LOG_ENTER;
     CHKCF((SubscribeSensor(sensorTypeId, &user) == ERR_OK), "SubscribeSensor failed");
@@ -200,7 +240,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
 {
     CALL_LOG_ENTER;
     if (auto iter = g_onCallbackInfos.find(sensorTypeId); iter == g_onCallbackInfos.end()) {
-        SEN_HILOGW("already subscribe, sensorTypeId: %{public}d", sensorTypeId);
+        SEN_HILOGW("no client subscribe, sensorTypeId: %{public}d", sensorTypeId);
         return false;
     }
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
@@ -308,6 +348,10 @@ static napi_value Off(napi_env env, napi_callback_info info)
         CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
         CHKNCP(env, (RemoveCallback(env, sensorTypeId, args[1]) == 0),
             "There are other client subscribe as well, not need unsubscribe");
+    }
+    if (CheckSystemSubscribe(sensorTypeId)) {
+        SEN_HILOGW("There are other client subscribe system js api as well, not need unsubscribe");
+        return nullptr;
     }
     CHKNCP(env, UnsubscribeSensor(sensorTypeId), "UnsubscribeSensor failed");
     return nullptr;
@@ -814,6 +858,91 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
     CHKNCP(env, IsMatchType(env, args[1], napi_function), "Wrong argument type, should be function");
     napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
     EmitAsyncCallbackWork(asyncCallbackInfo);
+    return nullptr;
+}
+
+napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type)
+{
+    CALL_LOG_ENTER;
+    size_t argc = 1;
+    napi_value args[1] = { 0 };
+    napi_value thisVar = nullptr;
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
+    CHKNCP(env, (argc == 1), "The number of parameters is not valid");
+    CHKNCP(env, IsMatchType(env, args[0], napi_object), "Wrong argument type, should be object");
+
+    string interval = "normal";
+    if ((sensorTypeId == SENSOR_TYPE_ID_ACCELEROMETER) ||
+        ((sensorTypeId == SENSOR_TYPE_ID_ORIENTATION) && (type != SUBSCRIBE_COMPASS))
+        || (sensorTypeId == SENSOR_TYPE_ID_GYROSCOPE)) {
+        napi_value napiInterval = GetNamedProperty(env, args[0], "interval");
+        CHKNCP(env, GetStringValue(env, napiInterval, interval), "get interval fail");
+    }
+    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, type);
+    CHKPP(asyncCallbackInfo);
+    napi_value napiSuccess = GetNamedProperty(env, args[0], "success");
+    CHKNCP(env, RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
+        "register callback fail");
+    napi_value napiFail = GetNamedProperty(env, args[0], "success");
+    if (napiFail != nullptr) {
+        SEN_HILOGD("has fail callback");
+        CHKNCP(env, RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]),
+            "register callback fail");
+    }
+    if (auto iter = g_samplingPeriod.find(interval); iter == g_samplingPeriod.end()) {
+        CHKNCP(env, (napiFail != nullptr), "input error, interval is invalid");
+        CreateFailMessage(SUBSCRIBE_FAIL, INPUT_ERROR, "input error", asyncCallbackInfo);
+        EmitAsyncCallbackWork(asyncCallbackInfo);
+        return nullptr;
+    }
+    std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
+    bool ret = SubscribeSensor(sensorTypeId, g_samplingPeriod[interval], DataCallbackImpl);
+    if (!ret) {
+        CHKNCP(env, (napiFail != nullptr), "subscribe fail");
+        CreateFailMessage(SUBSCRIBE_FAIL, SENSOR_SUBSCRIBE_FAILURE, "subscribe fail", asyncCallbackInfo);
+        EmitAsyncCallbackWork(asyncCallbackInfo);
+        return nullptr;
+    }
+    g_subscribeCallbacks[sensorTypeId] = asyncCallbackInfo;
+    return nullptr;
+}
+
+napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId)
+{
+    CALL_LOG_ENTER;
+    size_t argc = 1;
+    napi_value args[1] = { 0 };
+    napi_value thisVar = nullptr;
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
+    CHKNCP(env, (argc == 0), "The number of parameters is not valid");
+    std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
+    g_subscribeCallbacks[sensorTypeId] = nullptr;
+    if (CheckSubscribe(sensorTypeId)) {
+        SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
+        return nullptr;
+    }
+    CHKNCP(env, UnsubscribeSensor(sensorTypeId), "UnsubscribeSensor failed");
+    return nullptr;
+}
+
+napi_value GetBodyState(napi_env env, napi_callback_info info)
+{
+    CALL_LOG_ENTER;
+    size_t argc = 1;
+    napi_value args[1] = { 0 };
+    napi_value thisVar = nullptr;
+    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
+    CHKNCP(env, (argc == 1), "The number of parameters is not valid");
+    CHKNCP(env, IsMatchType(env, args[0], napi_object), "Wrong argument type, should be object");
+    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, GET_BODY_STATE);
+    CHKPP(asyncCallbackInfo);
+    napi_value napiSuccess = GetNamedProperty(env, args[0], "success");
+    CHKNCP(env, RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
+        "register success callback fail");
+    std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
+    asyncCallbackInfo->data.sensorData.data[0] =
+        (fabs(g_bodyState - BODY_STATE_EXCEPT) < THREESHOLD) ? true : false;
+    EmitUvEventLoop(asyncCallbackInfo);
     return nullptr;
 }
 

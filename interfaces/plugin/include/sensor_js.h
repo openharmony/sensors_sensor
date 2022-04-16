@@ -14,12 +14,18 @@
  */
 #ifndef SENSOR_JS_H
 #define SENSOR_JS_H
+#include "async_callback_info.h"
+#include "napi/native_api.h"
+#include "napi/native_node_api.h"
 #include "sensor_agent.h"
 namespace OHOS {
 namespace Sensors {
-static bool UnsubscribeSensor(int32_t sensorTypeId);
-static void DataCallbackImpl(SensorEvent *event);
-static bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+bool UnsubscribeSensor(int32_t sensorTypeId);
+void DataCallbackImpl(SensorEvent *event);
+bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
+napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
+napi_value GetBodyState(napi_env env, napi_callback_info info);
 }  // namespace Sensors
 }  // namespace OHOS
 #endif // SENSOR_JS_H
