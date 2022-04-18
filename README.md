@@ -159,12 +159,9 @@ export default {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
         }, {'interval':200000000});
         // Step 3 Unsubscribe from data changes of the sensor 10 seconds later.
-        setTimeout(function(){
-           function callback(data) {
-               console.info("Succeeded in unsubscribe from sensor data" + data);
-           }
-               sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
-        } ,10000);
+        sensor.off(sensor.SensorType.SENSOR_TYPE_ID_LINEAR_ACCELERATION, (data) => {
+            console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
+        });
         // Step 4 Subscribe to and listen for a data change of a type of sensor.
         sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
