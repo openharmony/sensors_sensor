@@ -524,6 +524,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             "Asynccallback Type invalid in uv work");
         g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
         CHKNRV(env, napi_call_function(env, nullptr, callback, 1, &result[1], &callResult), "napi_call_function");
+        asyncCallbackInfo->work = nullptr;
         CHKPV(work);
         delete work;
         work = nullptr;
@@ -531,6 +532,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     if (ret != 0) {
         SEN_HILOGE("uv_queue_work fail");
         asyncCallbackInfo->callbackInfo = nullptr;
+        asyncCallbackInfo->work = nullptr;
         CHKPV(work);
         delete work;
         work = nullptr;
