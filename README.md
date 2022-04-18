@@ -163,7 +163,7 @@ export default {
            function callback(data) {
                console.info("Succeeded in unsubscribe from sensor data" + data);
            }
-               sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
+               sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
         } ,10000);
         // Step 4 Subscribe to and listen for a data change of a type of sensor.
         sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {

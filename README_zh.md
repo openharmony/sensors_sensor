@@ -163,7 +163,7 @@ export default {
             function callback(data) {
                 console.info("Succeeded in unsubscribe from sensor data" + data);
             }
-                sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
+                sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
         } ,10000);
         //步骤4 监听传感器数据变化一次，并注册传感器类型
         sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
