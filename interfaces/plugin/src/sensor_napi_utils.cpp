@@ -67,6 +67,12 @@ bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &
 napi_value GetNamedProperty(const napi_env &env, const napi_value &object, string name)
 {
     CALL_LOG_ENTER;
+    bool status = false;
+    CHKNRP(env, napi_has_named_property(env, object, name.c_str(), &status), "napi_has_named_property");
+    if (!status) {
+        SEN_HILOGW("%{public}s not exists on the object", name.c_str());
+        return nullptr;
+    }
     napi_value value = nullptr;
     CHKNRP(env, napi_get_named_property(env, object, name.c_str(), &value),
         "napi_get_named_property");

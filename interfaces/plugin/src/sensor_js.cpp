@@ -881,9 +881,10 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, type);
     CHKPP(asyncCallbackInfo);
     napi_value napiSuccess = GetNamedProperty(env, args[0], "success");
+    CHKNCP(env, (napiSuccess != nullptr), "get napiSuccess fail");
     CHKNCP(env, RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
         "register callback fail");
-    napi_value napiFail = GetNamedProperty(env, args[0], "success");
+    napi_value napiFail = GetNamedProperty(env, args[0], "fail");
     if (napiFail != nullptr) {
         SEN_HILOGD("has fail callback");
         CHKNCP(env, RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]),
