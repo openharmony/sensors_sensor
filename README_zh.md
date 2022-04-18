@@ -130,13 +130,14 @@ sensor导入模块的示例代码如下：
 <td class="cellrowborder" valign="top" width="59.89%" headers="mcps1.2.3.1.2 "><p id="p5900163115564"><a name="p5900163115564"></a><a name="p5900163115564"></a>监听传感器数据变化一次。SensorType为支持订阅的传感器类型，callback表示订阅传感器的回调函数。</p>
 </td>
 </tr>
-<tr id="row1909165317562"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p16909135319564"><a name="p16909135319564"></a><a name="p16909135319564"></a>off(type: SensorType, callback: Callback&lt;void&gt;)</p>
+<tr id="row1909165317562"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p16909135319564"><a name="p16909135319564"></a><a name="p16909135319564"></a>off(type: SensorType, callback: Callback&lt;Response&gt;)</p>
 </td>
 <td class="cellrowborder" valign="top" width="59.89%" headers="mcps1.2.3.1.2 "><p id="p3909165315613"><a name="p3909165315613"></a><a name="p3909165315613"></a>取消订阅传感器数据。SensorType为支持的取消订阅的传感器类型，callback表示取消订阅传感器是否成功。</p>
 </td>
 </tr>
 </tbody>
 </table>
+
 
 
 ### 使用说明<a name="section1543714111810"></a>
