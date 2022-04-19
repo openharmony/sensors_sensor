@@ -120,23 +120,25 @@ The sensor JS APIs listen for sensor data changes. If an API is called multiple 
 </th>
 </tr>
 </thead>
-<tbody><tr id="row1782284211544"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p18666622171316"><a name="p18666622171316"></a><a name="p18666622171316"></a>on(type: SensorType, callback: AsyncCallback&lt;Response&gt;, options?: Options)</p>
+<tbody><tr id="row1782284211544"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p18666622171316"><a name="p18666622171316"></a><a name="p18666622171316"></a>on(type: SensorType, callback: Callback&lt;Response&gt;, options?: Options)</p>
 </td>
 <td class="cellrowborder" valign="top" width="59.89%" headers="mcps1.2.3.1.2 "><p id="p1476355071517"><a name="p1476355071517"></a><a name="p1476355071517"></a>Subscribes to a type of sensor that listens for changes of sensor data. <strong id="b14384115423516"><a name="b14384115423516"></a><a name="b14384115423516"></a>SensorType</strong> indicates the type of the sensor that can be subscribed to. <strong id="b6384145413356"><a name="b6384145413356"></a><a name="b6384145413356"></a>callback</strong> specifies whether the subscription is successful. <strong id="b562874515315"><a name="b562874515315"></a><a name="b562874515315"></a>options</strong> indicates the interval for reporting sensor data.</p>
 </td>
 </tr>
-<tr id="row1489993155613"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p1490010315564"><a name="p1490010315564"></a><a name="p1490010315564"></a>once(type: SensorType, callback: AsyncCallback&lt;Response&gt;)</p>
+<tr id="row1489993155613"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p1490010315564"><a name="p1490010315564"></a><a name="p1490010315564"></a>once(type: SensorType, callback: Callback&lt;Response&gt;)</p>
 </td>
 <td class="cellrowborder" valign="top" width="59.89%" headers="mcps1.2.3.1.2 "><p id="p5900163115564"><a name="p5900163115564"></a><a name="p5900163115564"></a>Subscribes to a type of sensor that listens for the sensor data change once. <strong id="b16369115653114"><a name="b16369115653114"></a><a name="b16369115653114"></a>SensorType</strong> indicates the type of the sensor that can be subscribed to. <strong id="b2370135693114"><a name="b2370135693114"></a><a name="b2370135693114"></a>callback</strong> specifies whether the subscription is successful.</p>
 </td>
 </tr>
-<tr id="row1909165317562"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p16909135319564"><a name="p16909135319564"></a><a name="p16909135319564"></a>off(type: SensorType, callback: AsyncCallback&lt;void&gt;)</p>
+<tr id="row1909165317562"><td class="cellrowborder" valign="top" width="40.11%" headers="mcps1.2.3.1.1 "><p id="p16909135319564"><a name="p16909135319564"></a><a name="p16909135319564"></a>off(type: SensorType, callback: Callback&lt;Response&gt;)</p>
 </td>
 <td class="cellrowborder" valign="top" width="59.89%" headers="mcps1.2.3.1.2 "><p id="p3909165315613"><a name="p3909165315613"></a><a name="p3909165315613"></a>Unsubscribes from a type of sensor that listens for data changes. <strong id="b63331753103316"><a name="b63331753103316"></a><a name="b63331753103316"></a>SensorType</strong> indicates the type of the sensor that can be unsubscribed from. <strong id="b153331453173315"><a name="b153331453173315"></a><a name="b153331453173315"></a>callback</strong> specifies whether the unsubscription is successful.</p>
 </td>
 </tr>
 </tbody>
 </table>
+
+
 
 ### How to Use<a name="section1543714111810"></a>
 
@@ -153,29 +155,13 @@ import sensor from '@ohos.sensor';
 export default {
     onCreate() {
         // Step 2 Subscribe to and listen for data changes of a type of sensor.
-        sensor.on(sensor.SENSOR_TYPE_ID_ACCELEROMETER, (error, data) => {
-            if (error) {
-                console.error("Failed to subscribe to acceleration data. Error code: " + error.code + "; message: " + error.message);
-                return;
-            }
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
         }, {'interval':200000000});
         // Step 3 Unsubscribe from data changes of the sensor 10 seconds later.
-        setTimeout(function(){
-            sensor.off(sensor.SENSOR_TYPE_ID_ACCELEROMETER, function(error) {
-                if (error) {
-                    console.error("Failed to unsubscribe from acceleration data. Error code: " + error.code + "; message: " + error.message);
-                    return;
-                }
-                console.info("Succeeded in unsubscribe from sensor data");
-            });
-        } ,10000);
+        sensor.off(sensor.SensorType.SENSOR_TYPE_ID_LINEAR_ACCELERATION);
         // Step 4 Subscribe to and listen for a data change of a type of sensor.
-        sensor.once(sensor.SENSOR_TYPE_ID_ACCELEROMETER, (error, data) => {
-            if (error) {
-                console.error("Failed to subscribe to gravity data. Error code: " + error.code + "; message: " + error.message);
-                return;
-            }
+        sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
        });
     }
