@@ -159,9 +159,7 @@ export default {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
         }, {'interval':200000000});
         //步骤3 设置10秒后取消订阅传感器数据
-        sensor.off(sensor.SensorType.SENSOR_TYPE_ID_LINEAR_ACCELERATION, (data) => {
-            console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
-        });
+        sensor.off(sensor.SensorType.SENSOR_TYPE_ID_LINEAR_ACCELERATION);
         //步骤4 监听传感器数据变化一次，并注册传感器类型
         sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (data) => {
             console.info("Acceleration data obtained. x: " + data.x + "; y: " + data.y + "; z: " + data.z);
