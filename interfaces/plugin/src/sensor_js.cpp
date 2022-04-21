@@ -448,7 +448,7 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
         for (size_t i = 0; i < length; ++i) {
             asyncCallbackInfo->data.reserveData.reserve[i] = outRotationVector[i];
         }
-        asyncCallbackInfo->data.reserveData.length = length;
+        asyncCallbackInfo->data.reserveData.length = static_cast<int32_t>(length);
     }
     if (argc == 2) {
         napi_value promise = nullptr;

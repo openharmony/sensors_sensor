@@ -63,7 +63,7 @@ void HdiServiceImpl::DataReportThread()
     return;
 }
 
-int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
+int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     CHKPR(g_callback, ERROR);
@@ -87,7 +87,7 @@ int32_t HdiServiceImpl::EnableSensor(uint32_t sensorId)
     return ERR_OK;
 };
 
-int32_t HdiServiceImpl::DisableSensor(uint32_t sensorId)
+int32_t HdiServiceImpl::DisableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
@@ -128,12 +128,12 @@ int32_t HdiServiceImpl::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::RunCommand(uint32_t sensorId, int32_t cmd, int32_t params)
+int32_t HdiServiceImpl::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
 {
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::SetOption(int32_t sensorId, uint32_t option)
+int32_t HdiServiceImpl::SetOption(int32_t sensorId, int32_t option)
 {
     return ERR_OK;
 }
