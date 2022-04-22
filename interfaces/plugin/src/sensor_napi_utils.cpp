@@ -450,6 +450,16 @@ bool CreateNapiArray(const napi_env &env, float data[], int32_t dataLength, napi
     return true;
 }
 
+sptr<AsyncCallbackInfo> GetCallbackInfo(void *data)
+{
+    CHKPP(data);
+    sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(data));
+    CHKPP(asyncCallbackInfo);
+    // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
+    asyncCallbackInfo->DecStrongRef(nullptr);
+    return asyncCallbackInfo;
+}
+
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 {
     CALL_LOG_ENTER;
@@ -458,16 +468,13 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKNRV(asyncCallbackInfo->env, napi_create_string_utf8(asyncCallbackInfo->env, "AsyncCallback",
         NAPI_AUTO_LENGTH, &resourceName), "napi_create_string_utf8");
     // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
-    asyncCallbackInfo->callbackInfo = asyncCallbackInfo;
+    asyncCallbackInfo->IncStrongRef(nullptr);
     napi_status status = napi_create_async_work(asyncCallbackInfo->env, nullptr, resourceName,
         [](napi_env env, void* data) {},
         [](napi_env env, napi_status status, void* data) {
             CALL_LOG_ENTER;
-            CHKPV(data);
-            sptr<AsyncCallbackInfo> asyncCallbackInfo = reinterpret_cast<AsyncCallbackInfo *>(data)->callbackInfo;
+            sptr<AsyncCallbackInfo> asyncCallbackInfo = GetCallbackInfo(data);
             CHKPV(asyncCallbackInfo);
-            // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
-            asyncCallbackInfo->callbackInfo = nullptr;
             napi_value callback = nullptr;
             napi_value callResult = nullptr;
             napi_value result[2] = {0};
@@ -495,13 +502,20 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         || napi_queue_async_work(asyncCallbackInfo->env, asyncCallbackInfo->asyncWork) != napi_ok) {
         SEN_HILOGE("Create async work fail");
         // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
-        asyncCallbackInfo->callbackInfo = nullptr;
+        asyncCallbackInfo->DecStrongRef(nullptr);
     }
+}
+
+void freeWork(uv_work_t *work)
+{
+    CALL_LOG_ENTER;
+    CHKPV(work);
+    delete work;
+    work = nullptr;
 }
 
 void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 {
-    CALL_LOG_ENTER;
     CHKPV(asyncCallbackInfo);
     uv_loop_s *loop(nullptr);
     CHKNRV(asyncCallbackInfo->env, napi_get_uv_event_loop(asyncCallbackInfo->env, &loop),
@@ -509,17 +523,14 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKPV(loop);
     uv_work_t *work = new(std::nothrow) uv_work_t;
     CHKPV(work);
-    asyncCallbackInfo->callbackInfo = asyncCallbackInfo;
+    // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
+    asyncCallbackInfo->IncStrongRef(nullptr);
     asyncCallbackInfo->work = work;
     work->data = asyncCallbackInfo.GetRefPtr();
     int32_t ret = uv_queue_work(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
-        CALL_LOG_ENTER;
         CHKPV(work);
-        CHKPV(work->data);
-        sptr<AsyncCallbackInfo> asyncCallbackInfo =
-            reinterpret_cast<AsyncCallbackInfo *>(work->data)->callbackInfo;
+        sptr<AsyncCallbackInfo> asyncCallbackInfo = GetCallbackInfo(work->data);
         CHKPV(asyncCallbackInfo);
-        asyncCallbackInfo->callbackInfo = nullptr;
         napi_env env = asyncCallbackInfo->env;
         napi_value callback = nullptr;
         CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback),
@@ -531,17 +542,14 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
         CHKNRV(env, napi_call_function(env, nullptr, callback, 1, &result[1], &callResult), "napi_call_function");
         asyncCallbackInfo->work = nullptr;
-        CHKPV(work);
-        delete work;
-        work = nullptr;
+        freeWork(work);
     });
     if (ret != 0) {
         SEN_HILOGE("uv_queue_work fail");
-        asyncCallbackInfo->callbackInfo = nullptr;
+        // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
+        asyncCallbackInfo->DecStrongRef(nullptr);
         asyncCallbackInfo->work = nullptr;
-        CHKPV(work);
-        delete work;
-        work = nullptr;
+        freeWork(work);
     }
 }
 
@@ -553,16 +561,13 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKNRV(asyncCallbackInfo->env, napi_create_string_latin1(asyncCallbackInfo->env, "Promise",
         NAPI_AUTO_LENGTH, &resourceName), "napi_create_string_latin1");
     // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
-    asyncCallbackInfo->callbackInfo = asyncCallbackInfo;
+    asyncCallbackInfo->IncStrongRef(nullptr);
     napi_status status = napi_create_async_work(asyncCallbackInfo->env, nullptr, resourceName,
         [](napi_env env, void* data) {},
         [](napi_env env, napi_status status, void* data) {
             CALL_LOG_ENTER;
-            CHKPV(data);
-            sptr<AsyncCallbackInfo> asyncCallbackInfo = reinterpret_cast<AsyncCallbackInfo *>(data)->callbackInfo;
+            sptr<AsyncCallbackInfo> asyncCallbackInfo = GetCallbackInfo(data);
             CHKPV(asyncCallbackInfo);
-            // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
-            asyncCallbackInfo->callbackInfo = nullptr;
             napi_value result[2] = {0};
             CHKNCV(env, (g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
                 "Callback type invalid in promise");
@@ -581,7 +586,7 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         || napi_queue_async_work(asyncCallbackInfo->env, asyncCallbackInfo->asyncWork) != napi_ok) {
         SEN_HILOGE("Create async work fail");
         // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
-        asyncCallbackInfo->callbackInfo = nullptr;
+        asyncCallbackInfo->DecStrongRef(nullptr);
     }
 }
 }  // namespace Sensors

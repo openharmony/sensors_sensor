@@ -106,7 +106,6 @@ public:
     BusinessError error;
     CallbackDataType type;
     vector<SensorInfo> sensorInfos;
-    sptr<AsyncCallbackInfo> callbackInfo = nullptr;
 
     AsyncCallbackInfo(napi_env env, CallbackDataType type) : env(env), type(type) {}
     ~AsyncCallbackInfo()
