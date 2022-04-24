@@ -450,16 +450,6 @@ bool CreateNapiArray(const napi_env &env, float data[], int32_t dataLength, napi
     return true;
 }
 
-sptr<AsyncCallbackInfo> GetCallbackInfo(void *data)
-{
-    CHKPP(data);
-    sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(data));
-    CHKPP(asyncCallbackInfo);
-    // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
-    asyncCallbackInfo->DecStrongRef(nullptr);
-    return asyncCallbackInfo;
-}
-
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 {
     CALL_LOG_ENTER;
@@ -467,14 +457,19 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     napi_value resourceName = nullptr;
     CHKNRV(asyncCallbackInfo->env, napi_create_string_utf8(asyncCallbackInfo->env, "AsyncCallback",
         NAPI_AUTO_LENGTH, &resourceName), "napi_create_string_utf8");
-    // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
     asyncCallbackInfo->IncStrongRef(nullptr);
     napi_status status = napi_create_async_work(asyncCallbackInfo->env, nullptr, resourceName,
         [](napi_env env, void* data) {},
         [](napi_env env, napi_status status, void* data) {
             CALL_LOG_ENTER;
-            sptr<AsyncCallbackInfo> asyncCallbackInfo = GetCallbackInfo(data);
-            CHKPV(asyncCallbackInfo);
+            sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(data));
+            /**
+             * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced to 0 destructions,
+             * so you need to add 1 to the asyncCallbackInfo reference count when the asynchronous task is created, and
+             * subtract 1 from the reference count after the naked pointer is converted to a pointer when the asynchronous
+             * task is executed, the reference count of the smart pointer is guaranteed to be 1.
+             */
+            asyncCallbackInfo->DecStrongRef(nullptr);
             napi_value callback = nullptr;
             napi_value callResult = nullptr;
             napi_value result[2] = {0};
@@ -501,7 +496,6 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     if (status != napi_ok
         || napi_queue_async_work(asyncCallbackInfo->env, asyncCallbackInfo->asyncWork) != napi_ok) {
         SEN_HILOGE("Create async work fail");
-        // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
 }
@@ -523,14 +517,19 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKPV(loop);
     uv_work_t *work = new(std::nothrow) uv_work_t;
     CHKPV(work);
-    // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
-    asyncCallbackInfo->IncStrongRef(nullptr);
     asyncCallbackInfo->work = work;
+    asyncCallbackInfo->IncStrongRef(nullptr);
     work->data = asyncCallbackInfo.GetRefPtr();
     int32_t ret = uv_queue_work(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
         CHKPV(work);
-        sptr<AsyncCallbackInfo> asyncCallbackInfo = GetCallbackInfo(work->data);
-        CHKPV(asyncCallbackInfo);
+        sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(work->data));
+        /**
+         * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced to 0 destructions,
+         * so you need to add 1 to the asyncCallbackInfo reference count when the asynchronous task is created, and
+         * subtract 1 from the reference count after the naked pointer is converted to a pointer when the asynchronous
+         * task is executed, the reference count of the smart pointer is guaranteed to be 1.
+         */
+        asyncCallbackInfo->DecStrongRef(nullptr);
         napi_env env = asyncCallbackInfo->env;
         napi_value callback = nullptr;
         CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback),
@@ -546,7 +545,6 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     });
     if (ret != 0) {
         SEN_HILOGE("uv_queue_work fail");
-        // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
         asyncCallbackInfo->DecStrongRef(nullptr);
         asyncCallbackInfo->work = nullptr;
         freeWork(work);
@@ -560,14 +558,19 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     napi_value resourceName = nullptr;
     CHKNRV(asyncCallbackInfo->env, napi_create_string_latin1(asyncCallbackInfo->env, "Promise",
         NAPI_AUTO_LENGTH, &resourceName), "napi_create_string_latin1");
-    // Make the reference count of asyncCallbackInfo add 1, and the function exits the non-destructor
     asyncCallbackInfo->IncStrongRef(nullptr);
     napi_status status = napi_create_async_work(asyncCallbackInfo->env, nullptr, resourceName,
         [](napi_env env, void* data) {},
         [](napi_env env, napi_status status, void* data) {
             CALL_LOG_ENTER;
-            sptr<AsyncCallbackInfo> asyncCallbackInfo = GetCallbackInfo(data);
-            CHKPV(asyncCallbackInfo);
+            sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(data));
+            /**
+             * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced to 0 destructions,
+             * so you need to add 1 to the asyncCallbackInfo reference count when the asynchronous task is created, and
+             * subtract 1 from the reference count after the naked pointer is converted to a pointer when the asynchronous
+             * task is executed, the reference count of the smart pointer is guaranteed to be 1.
+             */
+            asyncCallbackInfo->DecStrongRef(nullptr);
             napi_value result[2] = {0};
             CHKNCV(env, (g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
                 "Callback type invalid in promise");
@@ -585,7 +588,6 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     if (status != napi_ok
         || napi_queue_async_work(asyncCallbackInfo->env, asyncCallbackInfo->asyncWork) != napi_ok) {
         SEN_HILOGE("Create async work fail");
-        // The reference count of asyncCallbackInfo is subtracted by 1, and the function exits the destructor
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
 }
