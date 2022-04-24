@@ -12,9 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("//foundation/appexecfwk/standard/appexecfwk.gni")
-import(
-    "//foundation/appexecfwk/standard/libs/libeventhandler/lib_event_handler_sources.gni")
 
 SUBSYSTEM_DIR = "//base/sensors"
 
@@ -36,8 +33,6 @@ ohos_shared_library("libsensor_native") {
     "$SUBSYSTEM_DIR/sensor/utils/include",
     "$SUBSYSTEM_DIR/sensor/services/sensor/include",
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
-    "//foundation/appexecfwk/standard/interfaces/innerkits/libeventhandler/include",
-    "//foundation/appexecfwk/standard/libs/test/moduletest/common/event_handler",
   ]
   deps = [
     "$SUBSYSTEM_DIR/sensor/services/sensor:libsensor_service",
