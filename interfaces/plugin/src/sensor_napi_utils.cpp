@@ -464,10 +464,11 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             CALL_LOG_ENTER;
             sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(data));
             /**
-             * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced to 0 destructions,
-             * so you need to add 1 to the asyncCallbackInfo reference count when the asynchronous task is created, and
-             * subtract 1 from the reference count after the naked pointer is converted to a pointer when the asynchronous
-             * task is executed, the reference count of the smart pointer is guaranteed to be 1.
+             * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced
+             * to 0 destructions, so you need to add 1 to the asyncCallbackInfo reference count when the
+             * asynchronous task is created, and subtract 1 from the reference count after the naked
+             * pointer is converted to a pointer when the asynchronous task is executed, the reference
+             * count of the smart pointer is guaranteed to be 1.
              */
             asyncCallbackInfo->DecStrongRef(nullptr);
             napi_value callback = nullptr;
@@ -524,10 +525,11 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         CHKPV(work);
         sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(work->data));
         /**
-         * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced to 0 destructions,
-         * so you need to add 1 to the asyncCallbackInfo reference count when the asynchronous task is created, and
-         * subtract 1 from the reference count after the naked pointer is converted to a pointer when the asynchronous
-         * task is executed, the reference count of the smart pointer is guaranteed to be 1.
+         * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced
+         * to 0 destructions, so you need to add 1 to the asyncCallbackInfo reference count when the
+         * asynchronous task is created, and subtract 1 from the reference count after the naked
+         * pointer is converted to a pointer when the asynchronous task is executed, the reference
+         * count of the smart pointer is guaranteed to be 1.
          */
         asyncCallbackInfo->DecStrongRef(nullptr);
         napi_env env = asyncCallbackInfo->env;
@@ -565,10 +567,11 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             CALL_LOG_ENTER;
             sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(data));
             /**
-             * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced to 0 destructions,
-             * so you need to add 1 to the asyncCallbackInfo reference count when the asynchronous task is created, and
-             * subtract 1 from the reference count after the naked pointer is converted to a pointer when the asynchronous
-             * task is executed, the reference count of the smart pointer is guaranteed to be 1.
+             * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced
+             * to 0 destructions, so you need to add 1 to the asyncCallbackInfo reference count when the
+             * asynchronous task is created, and subtract 1 from the reference count after the naked
+             * pointer is converted to a pointer when the asynchronous task is executed, the reference
+             * count of the smart pointer is guaranteed to be 1.
              */
             asyncCallbackInfo->DecStrongRef(nullptr);
             napi_value result[2] = {0};
