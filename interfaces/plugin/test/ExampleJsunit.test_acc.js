@@ -96,7 +96,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest003", 0, function (done) {
+    it("SensorJsTest003", 0, async function (done) {
         console.info('----------------------SensorJsTest003---------------------------');
         function onSensorCallback(data) {
             console.info('SensorJsTest003  on error');
@@ -132,7 +132,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest005", 0, function (done) {
+    it("SensorJsTest005", 0, async function (done) {
         function onceSensorCallback(data) {
             console.info('SensorJsTest005  on error');
             expect(false).assertTrue();
