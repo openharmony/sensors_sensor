@@ -70,6 +70,8 @@ public:
 
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
 
+    ErrCode DisableSensor(uint32_t sensorId, int32_t pid);
+
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);

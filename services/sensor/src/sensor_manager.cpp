@@ -15,9 +15,13 @@
 
 #include "sensor_manager.h"
 
+#include "bundle_mgr_interface.h"
+#include "bundle_mgr_client.h"
+#include "iservice_registry.h"
 #include "sensor.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -181,6 +185,12 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
 {
     CALL_LOG_ENTER;
+    AppExecFwk::BundleMgrClient bundleMgrClient;
+    auto ret = bundleMgrClient.GetBundleNameForUid(uid, packageName);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("GetNameForUid failed, ret : %{public}d, packageName : %{public}s", uid, packageName.c_str());
+        return;
+    }
 }
 }  // namespace Sensors
 }  // namespace OHOS
