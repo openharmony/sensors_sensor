@@ -22,7 +22,7 @@ ohos_shared_library("sensor") {
     "//utils/native/base/include",
     "./include",
     "//base/sensors/sensor/utils/include",
-    "//foundation/ace/napi/interfaces/innerkits/napi",
+    "//foundation/arkui/napi/interfaces/inner_api/napi",
   ]
   defines = [
     "APP_LOG_TAG = \"sensroJs\"",
