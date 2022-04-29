@@ -70,8 +70,6 @@ public:
 
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
 
-    ErrCode DisableSensor(uint32_t sensorId, int32_t pid);
-
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);
@@ -82,6 +80,7 @@ private:
     bool InitSensorPolicy();
     void ReportOnChangeData(uint32_t sensorId);
     void ReportSensorSysEvent(uint32_t sensorId, bool enable);
+    ErrCode DisableSensor(uint32_t sensorId, int32_t pid);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

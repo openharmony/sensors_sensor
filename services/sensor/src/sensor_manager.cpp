@@ -189,7 +189,6 @@ void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
     auto ret = bundleMgrClient.GetBundleNameForUid(uid, packageName);
     if (ret != ERR_OK) {
         SEN_HILOGE("GetNameForUid failed, ret : %{public}d, packageName : %{public}s", uid, packageName.c_str());
-        return;
     }
 }
 }  // namespace Sensors
