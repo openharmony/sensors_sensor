@@ -24,7 +24,7 @@ describe("SensorJsTest", function () {
         expect(typeof(data.alpha)).assertEqual("number");
     }
 
-    function callback2() {
+    function callback2(data) {
         console.info("callback2" + JSON.stringify(data));
         expect(typeof(data.beta)).assertEqual("number");
         expect(typeof(data.gamma)).assertEqual("number");
