@@ -46,13 +46,15 @@ ohos_shared_library("libsensor_service") {
     "hdi_connection/hardware/include",
   ]
 
-  deps = [ 
+  deps = [
     "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils",
     "//foundation/aafwk/standard/interfaces/innerkits/want:want",
-    ]
+  ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
@@ -60,8 +62,6 @@ ohos_shared_library("libsensor_service") {
     "samgr_standard:samgr_proxy",
     "sensor_device_driver:libsensor_proxy_1.0",
     "utils_base:utils",
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
   ]
   part_name = "sensor"
   subsystem_name = "sensors"

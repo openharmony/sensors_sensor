@@ -17,6 +17,7 @@
 
 #include "bundle_mgr_interface.h"
 #include "bundle_mgr_client.h"
+#include "bundle_mgr_proxy.h"
 #include "iservice_registry.h"
 #include "sensor.h"
 #include "sensors_errors.h"
