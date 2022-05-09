@@ -27,7 +27,7 @@ describe("SensorJsTest", function () {
         expect(typeof(data.intensity)).assertEqual("number");
     }
     
-    beforeAll(function() {
+    beforeAll(function(data) {
         /*
          * @tc.setup: setup invoked before all testcases
          */
