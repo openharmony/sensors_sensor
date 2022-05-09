@@ -152,10 +152,9 @@ void SensorService::OnStop()
     }
 }
 
-void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable)
+void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t uid)
 {
     char uidChar[REPORT_STATUS_LEN] = {0};
-    int32_t uid = this->GetCallingUid();
     std::string packageName("");
     sensorManager_.GetPackageNameFromUid(uid, packageName);
     int32_t ret = sprintf_s(uidChar, sizeof(uidChar) - 1, "%d", uid);
@@ -235,6 +234,8 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         SEN_HILOGE("sensorId is 0 or maxReportDelayNs exceeded the maximum value");
         return ERR_NO_INIT;
     }
+    int32_t pid = this->GetCallingPid();
+    int32_t uid = clientInfo_.GetUidByPid(pid);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (clientInfo_.GetSensorState(sensorId)) {
         SEN_HILOGW("sensor has been enabled already");
@@ -243,9 +244,8 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
             SEN_HILOGE("SaveSubscriber failed");
             return ret;
         }
-        ReportSensorSysEvent(sensorId, true);
+        ReportSensorSysEvent(sensorId, true, uid);
         uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
-        int32_t pid = this->GetCallingPid();
         ret = flushInfo_.FlushProcess(sensorId, flag, pid, true);
         if (ret != ERR_OK) {
             SEN_HILOGE("ret : %{public}d", ret);
@@ -266,7 +266,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         clientInfo_.RemoveSubscriber(sensorId, this->GetCallingPid());
         return ENABLE_SENSOR_ERR;
     }
-    ReportSensorSysEvent(sensorId, true);
+    ReportSensorSysEvent(sensorId, true, uid);
     return ret;
 }
 
@@ -281,8 +281,8 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId, int32_t pid)
         SEN_HILOGE("pid is invalid, pid : %{public}d", pid);
         return CLIENT_PID_INVALID_ERR;
     }
-    ReportSensorSysEvent(sensorId, false);
     int32_t uid = clientInfo_.GetUidByPid(pid);
+    ReportSensorSysEvent(sensorId, false, uid);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (sensorManager_.IsOtherClientUsingSensor(sensorId, pid)) {
         SEN_HILOGW("other client is using this sensor now, cannot disable");
