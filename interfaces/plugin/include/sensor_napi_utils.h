@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,142 +16,159 @@
 #define SENSOR_NAPI_UTILS_H
 
 #include <iostream>
-#include <uv.h>
 
-#include "napi/native_api.h"
-#include "napi/native_node_api.h"
-
-#include "sensor_agent.h"
-
+#include "async_callback_info.h"
+#include "refbase.h"
+namespace OHOS {
+namespace Sensors {
 using std::vector;
 using std::string;
+using ConvertDataFunc = bool(*)(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo,
+    napi_value result[2]);
 
-const int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
-const int32_t FOUR_DIMENSIONAL_MATRIX_LENGTH = 16;
-const int32_t QUATERNION_LENGTH = 4;
-const int32_t ROTATION_VECTOR_LENGTH = 3;
-struct GeomagneticData {
-    float x;
-    float y;
-    float z;
-    float geomagneticDip;
-    float deflectionAngle;
-    float levelIntensity;
-    float totalIntensity;
-};
+bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs);
+bool IsMatchType(const napi_env &env, const napi_value &value, const napi_valuetype &type);
+bool IsMatchArrayType(const napi_env &env, const napi_value &value);
+bool GetCppInt32(const napi_env &env, const napi_value &value, int32_t &number);
+bool GetCppDouble(const napi_env &env, const napi_value &value, double &number);
+bool GetCppBool(const napi_env &env, const napi_value &value);
+bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &array);
+bool GetCppInt64(const napi_env &env, const napi_value &value, int64_t &number);
+bool RegisterNapiCallback(const napi_env &env, const napi_value &value, napi_ref &callback);
+napi_value GetNamedProperty(const napi_env &env, const napi_value &object, string name);
+bool GetCppFloat(const napi_env &env, const napi_value &value, float &number);
+napi_value GetNapiInt32(const napi_env &env, int32_t number);
+bool GetStringValue(const napi_env &env, const napi_value &value, string &result);
+void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
+void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo);
+void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 
-struct RationMatrixData {
-    float rotationMatrix[THREE_DIMENSIONAL_MATRIX_LENGTH];
-    float inclinationMatrix[THREE_DIMENSIONAL_MATRIX_LENGTH];
-};
-
-struct SensorData {
-    int32_t sensorTypeId;
-    uint32_t dataLength;
-    float data[16];
-    int64_t timestamp;
-};
-
-struct ReserveData {
-    float reserve[16];
-    int32_t length;
-};
-
-union CallbackData {
-    SensorData sensorData;
-    GeomagneticData geomagneticData;
-    RationMatrixData rationMatrixData;
-    ReserveData reserveData;
-};
-
-struct BusinessError {
-    int32_t code;
-    string message;
-    string name;
-    string stack;
-};
-
-typedef enum CallbackDataType {
-    FAIL = -1,
-    OFF_CALLBACK = 0,
-    ON_CALLBACK = 1,
-    ONCE_CALLBACK = 2,
-    GET_GEOMAGNETIC_FIELD = 3,
-    GET_ALTITUDE = 4,
-    GET_GEOMAGNITIC_DIP = 5,
-    GET_ANGLE_MODIFY = 6,
-    CREATE_ROTATION_MATRIX = 7,
-    TRANSFORM_COORDINATE_SYSTEM = 8,
-    CREATE_QUATERNION = 9,
-    GET_DIRECTION = 10,
-    ROTATION_INCLINATION_MATRIX = 11,
-    GET_SENSOR_LIST = 12,
-    GET_SINGLE_SENSOR = 13
-} CallbackDataType;
-
-struct AsyncCallbackInfo {
-    napi_env env;
-    napi_async_work asyncWork;
-    napi_deferred deferred;
-    napi_ref callback[1] = { 0 };
-    CallbackData data;
-    BusinessError error;
-    CallbackDataType type;
-    vector<SensorInfo> sensorInfos;
-};
-
-using ConvertDataFunc = void(*)(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
-
-bool IsNapiValueSame(napi_env env, napi_value lhs, napi_value rhs);
-
-bool IsMatchType(napi_env env, napi_value value, napi_valuetype type);
-
-napi_value GetNapiInt32(int32_t number, napi_env env);
-
-int32_t GetCppInt32(napi_value value, napi_env env);
-
-bool GetCppBool(napi_value value, napi_env env);
-
-void EmitAsyncCallbackWork(AsyncCallbackInfo *async_callback_info);
-
-void EmitUvEventLoop(AsyncCallbackInfo **async_callback_info);
-
-int64_t GetCppInt64(napi_value value, napi_env env);
-
-napi_value NapiGetNamedProperty(napi_value jsonObject, string name, napi_env env);
-
-napi_value GetUndefined(napi_env env);
-
-void EmitPromiseWork(AsyncCallbackInfo *asyncCallbackInfo);
-
-bool IsMatchArrayType(napi_env env, napi_value value, napi_typedarray_type type);
-
-vector<float> GetCppArrayFloat(napi_env env, napi_value value);
-
-float GetCppFloat(napi_env env, napi_value value);
-
-napi_value GreateBusinessError(napi_env env, int32_t errCode, string errMessage,
+napi_value GreateBusinessError(const napi_env &env, int32_t errCode, string errMessage,
     string errName, string errStack);
+bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToGeomagneticData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToNumber(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToArray(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToRotationMatrix(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool CreateNapiArray(const napi_env &env, float *data, int32_t dataLength, napi_value &result);
+bool ConvertToSensorInfos(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToSingleSensor(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool CreateFailMessage(CallbackDataType type, int32_t code, string message,
+    sptr<AsyncCallbackInfo> &asyncCallbackInfo);
+bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 
-bool IsMatchArrayType(napi_env env, napi_value value);
+#define GET_AND_THROW_NAPI_ERROR(env, message) \
+    do { \
+        const napi_extended_error_info* errorInfo = nullptr; \
+        napi_get_last_error_info((env), &errorInfo); \
+        bool isPending = false; \
+        napi_is_exception_pending((env), &isPending); \
+        if (!isPending && errorInfo != nullptr) { \
+            std::string errDesc = std::string(__FUNCTION__) + ": " + #message + " fail. "; \
+            std::string errorMessage = \
+                errorInfo->error_message != nullptr ? errorInfo->error_message : "empty error message"; \
+            errDesc += errorMessage; \
+            napi_throw_error((env), nullptr, errDesc.c_str()); \
+        } \
+    } while (0)
 
-void ConvertToFailData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNCR(env, cond, message, retVal) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return retVal; \
+        } \
+    } while (0)
 
-void ConvertToNoData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNCP(env, cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return nullptr; \
+        } \
+    } while (0)
 
-void ConvertToGeomagneticData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNCF(env, cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return false; \
+        } \
+    } while (0)
 
-void ConvertToNumber(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNCV(env, cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            return; \
+        } \
+    } while (0)
 
-void ConvertToArray(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNCC(env, cond, message) \
+    { \
+        if (!(cond)) { \
+            SEN_HILOGW("(%{public}s)", #message); \
+            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
+            napi_throw_error(env, nullptr, errDesc.c_str()); \
+            continue; \
+        } \
+    }
 
-void ConvertToRotationMatrix(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNRR(env, state, message, retVal) \
+    do { \
+        if ((state) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return retVal; \
+        } \
+    } while (0)
 
-void ConvertToSensorData(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNRP(env, state, message) \
+    do { \
+        if ((state) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return nullptr; \
+        } \
+    } while (0)
 
-void CreateNapiArray(napi_env env, float *data, int32_t dataLength, napi_value result);
+#define CHKNRF(env, state, message) \
+    do { \
+        if ((state) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return false; \
+        } \
+    } while (0)
 
-void ConvertToSensorInfos(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNRV(env, state, message) \
+    do { \
+        if ((state) != napi_ok) { \
+            SEN_HILOGE("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            return; \
+        } \
+    } while (0)
 
-void ConvertToSingleSensor(napi_env env, AsyncCallbackInfo *asyncCallbackInfo, napi_value result[2]);
+#define CHKNRC(env, state, message) \
+    { \
+        if ((state) != napi_ok) { \
+            SEN_HILOGW("(%{public}s) fail", #message); \
+            GET_AND_THROW_NAPI_ERROR((env), (message)); \
+            continue; \
+        } \
+    }
+}  // namespace Sensors
+}  // namespace OHOS
 #endif // SENSOR_NAPI_UTILS_H
