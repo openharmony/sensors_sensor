@@ -185,10 +185,27 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
 {
     CALL_LOG_ENTER;
-    AppExecFwk::BundleMgrClient bundleMgrClient;
-    auto ret = bundleMgrClient.GetBundleNameForUid(uid, packageName);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("GetNameForUid failed, ret : %{public}d, packageName : %{public}s", uid, packageName.c_str());
+    sptr<ISystemAbilityManager> systemMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemMgr == nullptr) {
+        SEN_HILOGE("Fail to get system ability mgr");
+        return ;
+    }
+
+    sptr<IRemoteObject> remoteObject = systemMgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (remoteObject == nullptr) {
+        SEN_HILOGE("Fail to get bundle manager proxy");
+        return ;
+    }
+
+    sptr<OHOS::AppExecFwk::IBundleMgr> bundleMgrProxy = iface_cast<OHOS::AppExecFwk::IBundleMgr>(remoteObject);
+    if (bundleMgrProxy == nullptr) {
+        SEN_HILOGE("Bundle mgr proxy is nullptr");
+        return ;
+    }
+
+    if (!bundleMgrProxy->GetNameForUid(uid, packageName)) {
+        SEN_HILOGE("Get bundle name failed");
+        return ;
     }
 }
 }  // namespace Sensors
