@@ -188,24 +188,24 @@ void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
     sptr<ISystemAbilityManager> systemMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (systemMgr == nullptr) {
         SEN_HILOGE("Fail to get system ability mgr");
-        return ;
+        return;
     }
 
     sptr<IRemoteObject> remoteObject = systemMgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     if (remoteObject == nullptr) {
         SEN_HILOGE("Fail to get bundle manager proxy");
-        return ;
+        return;
     }
 
     sptr<OHOS::AppExecFwk::IBundleMgr> bundleMgrProxy = iface_cast<OHOS::AppExecFwk::IBundleMgr>(remoteObject);
     if (bundleMgrProxy == nullptr) {
         SEN_HILOGE("Bundle mgr proxy is nullptr");
-        return ;
+        return;
     }
 
     if (!bundleMgrProxy->GetNameForUid(uid, packageName)) {
         SEN_HILOGE("Get bundle name failed");
-        return ;
+        return;
     }
 }
 }  // namespace Sensors

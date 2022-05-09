@@ -407,7 +407,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     }
     SEN_HILOGI("pid is %{pubilc}d", pid);
     std::vector<uint32_t> activeSensors = clientInfo_.GetSensorIdByPid(pid);
-    for (uint32_t i = 0;i < activeSensors.size();++i) {
+    for (uint32_t i = 0; i < activeSensors.size(); ++i) {
         int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {
             SEN_HILOGE("disablesensor failed, ret : %{pubilc}d", ret);
