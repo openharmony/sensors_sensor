@@ -73,10 +73,10 @@ public:
     void UpdateDataQueue(int32_t sensorId, struct SensorEvent &event);
     std::unordered_map<uint32_t, std::queue<struct SensorEvent>> GetDumpQueue();
     void ClearDataQueue(int32_t sensorId);
+    int32_t GetUidByPid(int32_t pid);
 
 private:
     DISALLOW_COPY_AND_MOVE(ClientInfo);
-    int32_t GetUidByPid(int32_t pid);
     std::vector<int32_t> GetCmdList(uint32_t sensorId, int32_t uid);
     std::mutex clientMutex_;
     std::mutex channelMutex_;

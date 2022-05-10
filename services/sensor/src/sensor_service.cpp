@@ -152,10 +152,9 @@ void SensorService::OnStop()
     }
 }
 
-void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable)
+void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t uid)
 {
     char uidChar[REPORT_STATUS_LEN] = {0};
-    int32_t uid = this->GetCallingUid();
     std::string packageName("");
     sensorManager_.GetPackageNameFromUid(uid, packageName);
     int32_t ret = sprintf_s(uidChar, sizeof(uidChar) - 1, "%d", uid);
@@ -169,13 +168,13 @@ void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable)
     if (enable) {
         // define in LogPower.java, 500 stand for enable sensor
         message.append("uid : ").append(std::to_string(uid)).append(" pkgName : ").append(packageName)
-            .append(" type : ");
+            .append(" type : ").append(std::to_string(sensorId));
         HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "EnableSensor", HiSysEvent::EventType::FAULT,
             "LEVEL", logLevel, "TAG", "DUBAI_TAG_HSENSOR_ENABLE", "MESSAGE", message);
     } else {
         // define in LogPower.java, 501 stand for disable sensor
         message.append("uid : ").append(std::to_string(uid)).append(" pkgName : ").append(packageName)
-            .append(" type : ");
+            .append(" type : ").append(std::to_string(sensorId));
         HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "DisableSensor", HiSysEvent::EventType::FAULT,
             "LEVEL", logLevel, "TAG", "DUBAI_TAG_HSENSOR_DISABLE", "MESSAGE", message);
     }
@@ -235,7 +234,8 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         SEN_HILOGE("sensorId is 0 or maxReportDelayNs exceeded the maximum value");
         return ERR_NO_INIT;
     }
-    ReportSensorSysEvent(sensorId, true);
+    int32_t pid = this->GetCallingPid();
+    int32_t uid = clientInfo_.GetUidByPid(pid);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (clientInfo_.GetSensorState(sensorId)) {
         SEN_HILOGW("sensor has been enabled already");
@@ -244,8 +244,8 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
             SEN_HILOGE("SaveSubscriber failed");
             return ret;
         }
+        ReportSensorSysEvent(sensorId, true, uid);
         uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
-        int32_t pid = this->GetCallingPid();
         ret = flushInfo_.FlushProcess(sensorId, flag, pid, true);
         if (ret != ERR_OK) {
             SEN_HILOGE("ret : %{public}d", ret);
@@ -266,29 +266,25 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         clientInfo_.RemoveSubscriber(sensorId, this->GetCallingPid());
         return ENABLE_SENSOR_ERR;
     }
-
+    ReportSensorSysEvent(sensorId, true, uid);
     return ret;
 }
 
-ErrCode SensorService::DisableSensor(uint32_t sensorId)
+ErrCode SensorService::DisableSensor(uint32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid");
         return ERR_NO_INIT;
     }
-    ReportSensorSysEvent(sensorId, false);
-    std::lock_guard<std::mutex> serviceLock(serviceLock_);
-    const int32_t clientPid = this->GetCallingPid();
-    if (clientPid < 0) {
-        SEN_HILOGE("clientPid is invalid, clientPid : %{public}d", clientPid);
+    if (pid < 0) {
+        SEN_HILOGE("pid is invalid, pid : %{public}d", pid);
         return CLIENT_PID_INVALID_ERR;
     }
-    if (!clientInfo_.GetSensorState(sensorId)) {
-        SEN_HILOGE("sensor should be enabled first");
-        return DISABLE_SENSOR_ERR;
-    }
-    if (sensorManager_.IsOtherClientUsingSensor(sensorId, clientPid)) {
+    int32_t uid = clientInfo_.GetUidByPid(pid);
+    ReportSensorSysEvent(sensorId, false, uid);
+    std::lock_guard<std::mutex> serviceLock(serviceLock_);
+    if (sensorManager_.IsOtherClientUsingSensor(sensorId, pid)) {
         SEN_HILOGW("other client is using this sensor now, cannot disable");
         return ERR_OK;
     }
@@ -296,9 +292,15 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
         SEN_HILOGE("DisableSensor is failed");
         return DISABLE_SENSOR_ERR;
     }
-    clientInfo_.DestroyCmd(this->GetCallingUid());
+    clientInfo_.DestroyCmd(uid);
     clientInfo_.ClearDataQueue(sensorId);
     return sensorManager_.AfterDisableSensor(sensorId);
+}
+
+ErrCode SensorService::DisableSensor(uint32_t sensorId)
+{
+    CALL_LOG_ENTER;
+    return DisableSensor(sensorId, this->GetCallingPid());
 }
 
 int32_t SensorService::GetSensorState(uint32_t sensorId)
@@ -403,10 +405,17 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
         SEN_HILOGE("pid is -1");
         return;
     }
-    SEN_HILOGI("pid is %d", pid);
+    SEN_HILOGI("pid is %{pubilc}d", pid);
+    std::vector<uint32_t> activeSensors = clientInfo_.GetSensorIdByPid(pid);
+    for (size_t i = 0; i < activeSensors.size(); ++i) {
+        int32_t ret = DisableSensor(activeSensors[i], pid);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("disablesensor failed, ret : %{pubilc}d", ret);
+        }
+    }
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
-    clientInfo_.DestroyCmd(this->GetCallingUid());
+    clientInfo_.DestroyCmd(clientInfo_.GetUidByPid(pid));
 }
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
