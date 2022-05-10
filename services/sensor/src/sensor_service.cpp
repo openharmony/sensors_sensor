@@ -413,10 +413,9 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
             SEN_HILOGE("disablesensor failed, ret : %{pubilc}d", ret);
         }
     }
-    int32_t uid = clientInfo_.GetUidByPid(pid);
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
-    clientInfo_.DestroyCmd(uid);
+    clientInfo_.DestroyCmd(clientInfo_.GetUidByPid(pid));
 }
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
