@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,10 +14,18 @@
  */
 #ifndef SENSOR_JS_H
 #define SENSOR_JS_H
-
+#include "async_callback_info.h"
+#include "napi/native_api.h"
+#include "napi/native_node_api.h"
 #include "sensor_agent.h"
-
-static int32_t UnsubscribeSensor(int32_t sensorTypeId);
-static void DataCallbackImpl(SensorEvent *event);
-static int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+namespace OHOS {
+namespace Sensors {
+bool UnsubscribeSensor(int32_t sensorTypeId);
+void DataCallbackImpl(SensorEvent *event);
+bool SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
+napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
+napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
+napi_value GetBodyState(napi_env env, napi_callback_info info);
+}  // namespace Sensors
+}  // namespace OHOS
 #endif // SENSOR_JS_H

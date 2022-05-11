@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,8 @@
 #define SENSOR_SYSTEM_JS_H
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-
+namespace OHOS {
+namespace Sensors {
 napi_value SubscribeAccelerometer(napi_env env, napi_callback_info info);
 napi_value UnsubscribeAccelerometer(napi_env env, napi_callback_info info);
 napi_value SubscribeCompass(napi_env env, napi_callback_info info);
@@ -44,5 +45,6 @@ napi_value SubscribeMagnetic(napi_env env, napi_callback_info info);
 napi_value UnsubscribeMagnetic(napi_env env, napi_callback_info info);
 napi_value SubscribeHall(napi_env env, napi_callback_info info);
 napi_value UnsubscribeHall(napi_env env, napi_callback_info info);
-
+}  // namespace Sensors
+}  // namespace OHOS
 #endif // SENSOR_SYSTEM_JS_H

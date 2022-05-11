@@ -63,9 +63,9 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest001", 0, async function (done) {
         console.info('----------------------SensorJsTest001---------------------------');
-        sensor.on(0, callback);
+        sensor.on(1, callback);
         setTimeout(()=>{
-            sensor.off(0);
+            sensor.off(1);
             done();
         }, 500);
     })
@@ -83,11 +83,13 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.on(-1, onSensorCallback);
-        setTimeout(()=>{
+        try {
+            sensor.on(-1, onSensorCallback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -98,10 +100,10 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest003", 0, async function (done) {
         console.info('----------------------SensorJsTest003---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
+        sensor.on(1, callback, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest003 off in---------------------------');
-            sensor.off(0);
+            sensor.off(1);
             console.info('----------------------SensorJsTest003 off end---------------------------');
             done();
         }, 500);
@@ -113,19 +115,20 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest004", 0, function () {
+    it("SensorJsTest004", 0, function (done) {
         console.info('----------------------SensorJsTest004---------------------------');
         function onSensorCallback(data) {
             console.info('SensorJsTest004  on error');
             expect(false).assertTrue();
             done();
         }
-        sensor.on(0, onSensorCallback, {'interval': 100000000}, 5);
-        setTimeout(()=>{
+        try {
+            sensor.on(1, onSensorCallback, {'interval': 100000000}, 5);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
-        console.info('----------------------SensorJsTest004--------------------------- end');
+        }
     })
 
     /*
@@ -135,7 +138,7 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest005", 0, async function (done) {
-        sensor.once(0, callback);
+        sensor.once(1, callback);
         setTimeout(()=>{
             expect(true).assertTrue();
             done();
@@ -154,11 +157,13 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.once(-1, onceSensorCallback);
-        setTimeout(()=>{
+        try {
+            sensor.once(-1, onceSensorCallback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -167,17 +172,19 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest007", 0, function () {
+    it("SensorJsTest007", 0, function (done) {
         function onceSensorCallback(data) {
             console.info('SensorJsTest007  on error');
             expect(false).assertTrue();
             done();
         }
-        sensor.once(0, onceSensorCallback, 5);
-        setTimeout(()=>{
+        try{
+            sensor.once(1, onceSensorCallback, 5);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -187,11 +194,13 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest008", 0, async function (done) {
-        sensor.off(-1, callback);
-        setTimeout(()=>{
+        try {
+            sensor.off(-1, callback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -206,8 +215,8 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.on(0, onSensorCallback);
-        sensor.off(0, onSensorCallback);
+        sensor.on(1, onSensorCallback);
+        sensor.off(1, onSensorCallback);
         setTimeout(()=>{
             expect(true).assertTrue();
             done();
@@ -226,11 +235,13 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.off(1000000, onSensorCallback);
-        setTimeout(()=>{
+        try {
+            sensor.off(1000000, onSensorCallback);
+        } catch (error) {
+            console.info(error);
             expect(true).assertTrue();
             done();
-        }, 500);
+        }
     })
 
     /*
@@ -240,11 +251,11 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest011", 0, async function (done) {
-        sensor.on(0, callback);
-        sensor.on(0, callback2);
+        sensor.on(1, callback);
+        sensor.on(1, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest011 off in---------------------------');
-            sensor.off(0);
+            sensor.off(1);
             console.info('----------------------SensorJsTest011 off end---------------------------');
             done();
         }, 1000);
@@ -257,12 +268,16 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest012", 0, async function (done) {
-        sensor.on(0, callback);
-        sensor.on(0, callback2);
+        sensor.on(1, callback);
+        sensor.on(1, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest012 off in---------------------------');
-            sensor.off(0, callback);
-            sensor.off(0, callback2);
+            sensor.off(1, callback);
+            console.info('----------------------SensorJsTest012 off end---------------------------');
+        }, 500);
+        setTimeout(()=>{
+            console.info('----------------------SensorJsTest012 off in---------------------------');
+            sensor.off(1, callback2);
             console.info('----------------------SensorJsTest012 off end---------------------------');
             done();
         }, 1000);
@@ -274,9 +289,14 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest013", 0, function () {
-        sensor.off(0, 5);
-        expect(true).assertTrue();
+    it("SensorJsTest013", 0, function (done) {
+        try {
+            sensor.off(1, 5);
+        } catch (error) {
+            console.info(error);
+            expect(true).assertTrue();
+            done();
+        }
     })
 
     /*
@@ -287,12 +307,11 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest014", 0, async function (done) {
         console.info('----------------------SensorJsTest014---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
-        sensor.once(0, callback2);
+        sensor.on(1, callback, {'interval': 100000000});
+        sensor.once(1, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest014 off in---------------------------');
-            sensor.off(0, callback);
-            sensor.off(0, callback2);
+            sensor.off(1);
             console.info('----------------------SensorJsTest014 off end---------------------------');
             done();
         }, 1000);
@@ -306,12 +325,16 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest015", 0, async function (done) {
         console.info('----------------------SensorJsTest015---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
-        sensor.on(0, callback2, {'interval': 100000000});
+        sensor.on(1, callback, {'interval': 100000000});
+        sensor.on(1, callback2, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest015 off in---------------------------');
-            sensor.off(0, callback);
-            sensor.off(0, callback2);
+            sensor.off(1, callback);
+            console.info('----------------------SensorJsTest015 off end---------------------------');
+        }, 500);
+        setTimeout(()=>{
+            console.info('----------------------SensorJsTest015 off in---------------------------');
+            sensor.off(1, callback2);
             console.info('----------------------SensorJsTest015 off end---------------------------');
             done();
         }, 1000);
@@ -325,11 +348,11 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest016", 0, async function (done) {
         console.info('----------------------SensorJsTest016---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
-        sensor.on(0, callback2, {'interval': 100000000});
+        sensor.on(1, callback, {'interval': 100000000});
+        sensor.on(1, callback2, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest016 off in---------------------------');
-            sensor.off(0);
+            sensor.off(1);
             console.info('----------------------SensorJsTest016 off end---------------------------');
             done();
         }, 1000);
@@ -2581,7 +2604,7 @@ describe("SensorJsTest", function () {
     */
     it("SensorJsTest_113", 0, async function (done) {
         console.info("---------------------------SensorJsTest_113----------------------------------");
-        sensor.getSingleSensor(0, (error, data) => {
+        sensor.getSingleSensor(1, (error, data) => {
             if (error) {
                 console.info('SensorJsTest_113 failed');
                 expect(false).assertTrue();
@@ -2623,7 +2646,7 @@ describe("SensorJsTest", function () {
     */
     it("SensorJsTest_115", 0, async function (done) {
         console.info("---------------------------SensorJsTest_115----------------------------------");
-        sensor.getSingleSensor(0).then((data) => {
+        sensor.getSingleSensor(1).then((data) => {
             console.info("SensorJsTest_115 " + JSON.stringify(data));
             expect(true).assertTrue();
             done()
