@@ -60,7 +60,7 @@ ohos_shared_library("libsensor_service") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "sensor_device_driver:libsensor_proxy_1.0",
+    "sensor_device_driver_interface:libsensor_proxy_1.0",
     "utils_base:utils",
   ]
   part_name = "sensor"
