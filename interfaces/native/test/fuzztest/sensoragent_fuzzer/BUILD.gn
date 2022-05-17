@@ -36,13 +36,9 @@ ohos_fuzztest("SensorAgentFuzzTest") {
 
   sources = [ "sensoragent_fuzzer.cpp" ]
 
-  deps = [
-    "//base/sensors/sensor/interfaces/native:sensor_interface_native",
-  ]
+  deps = [ "//base/sensors/sensor/interfaces/native:sensor_interface_native" ]
 
-  external_deps = [
-    "utils_base:utils",
-  ]
+  external_deps = [ "utils_base:utils" ]
 }
 
 group("fuzztest") {
