@@ -465,38 +465,6 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: SensorJsTest_019
-     * @tc.desc: Verification results of the incorrect parameters of the test interface.
-     * @tc.require: AR000GH2U6
-     * @tc.author:
-     */
-    it('SensorJsTest_019', 0, async function (done) {
-        console.info("---------------------------SensorJsTest_019----------------------------------");
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
-        sensor.getGeomagneticField({'latitude':0, 'longitude':0, 'altitude':0}, Number.MAX_VALUE, (error, data) => {
-            if (error) {
-                console.info('SensorJsTest_019 failed');
-                expect(false).assertTrue();
-            } else {
-                console.info('SensorJsTest_019 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
-                + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                expect(data.x).assertEqual(geomagneticComponent[0])
-                expect(data.y).assertEqual(geomagneticComponent[1])
-                expect(data.z).assertEqual(geomagneticComponent[2])
-                expect(data.geomagneticDip).assertEqual(geomagneticComponent[3])
-                expect(data.deflectionAngle).assertEqual(geomagneticComponent[4])
-                expect(data.levelIntensity).assertEqual(geomagneticComponent[5])
-                expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
-            }
-            setTimeout(() =>{
-                done()
-            }, 500)
-        })
-    })
-
-    /**
-     * test
-     *
      * @tc.name: SensorJsTest_020
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
@@ -1105,33 +1073,6 @@ describe("SensorJsTest", function () {
                 console.info("promise::catch", error);
             })
         }
-        done()
-    })
-
-    /**
-     * test
-     *
-     * @tc.name: SensorJsTest_043
-     * @tc.desc: Verification results of the incorrect parameters of the test interface.
-     * @tc.require: AR000GH2UB
-     * @tc.author:
-     */
-    it("SensorJsTest_043", 0, async function (done) {
-        console.info('----------------------SensorJsTest_043---------------------------');
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
-        await sensor.getGeomagneticField({'latitude':0, 'longitude':0, 'altitude':0}, Number.MAX_VALUE).then((data) => {
-            console.info('SensorJsTest_043 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
-            + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-            expect(data.x).assertEqual(geomagneticComponent[0])
-            expect(data.y).assertEqual(geomagneticComponent[1])
-            expect(data.z).assertEqual(geomagneticComponent[2])
-            expect(data.geomagneticDip).assertEqual(geomagneticComponent[3])
-            expect(data.deflectionAngle).assertEqual(geomagneticComponent[4])
-            expect(data.levelIntensity).assertEqual(geomagneticComponent[5])
-            expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
-        }).catch((error) => {
-            console.info("promise::catch", error)
-        });
         done()
     })
 
