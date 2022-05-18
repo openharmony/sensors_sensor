@@ -16,7 +16,5 @@ import("//build/test.gni")
 
 group("fuzztest") {
   testonly = true
-  deps = [
-    "sensoragent_fuzzer:fuzztest",
-  ]
+  deps = [ "sensoragent_fuzzer:fuzztest" ]
 }
