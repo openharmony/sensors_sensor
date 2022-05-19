@@ -70,7 +70,7 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
 int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorId);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("enable sensor failed, sensorId: %{public}d", sensorId);
         return ret;
     }
@@ -80,7 +80,7 @@ int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
 int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorId);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("disable sensor failed, sensorId: %{public}d", sensorId);
         return ret;
     }
@@ -90,7 +90,7 @@ int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
 int32_t CompatibleConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
     int32_t ret = hdiServiceImpl_.SetBatch(sensorId, samplingInterval, reportInterval);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("set batch failed, sensorId: %{public}d", sensorId);
         return ret;
     }
@@ -156,7 +156,7 @@ int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDat
 {
     CHKPR(reportDataCallback, ERR_INVALID_VALUE);
     int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("Register is failed");
         return ret;
     }
@@ -168,7 +168,7 @@ int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDat
 int32_t CompatibleConnection::DestroyHdiConnection()
 {
     int32_t ret = hdiServiceImpl_.Unregister();
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("Unregister is failed");
         return ret;
     }
