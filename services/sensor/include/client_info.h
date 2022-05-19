@@ -71,7 +71,7 @@ public:
     void UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType);
     void DestroyCmd(int32_t uid);
     void UpdateDataQueue(int32_t sensorId, struct SensorEvent &event);
-    std::unordered_map<uint32_t, std::queue<struct SensorEvent>> GetDumpQueue();
+    std::unordered_map<uint32_t, std::queue<struct TransferSensorEvents>> GetDumpQueue();
     void ClearDataQueue(int32_t sensorId);
     int32_t GetUidByPid(int32_t pid);
 
@@ -91,7 +91,7 @@ private:
     std::unordered_map<int32_t, AppThreadInfo> appThreadInfoMap_;
     std::map<sptr<IRemoteObject>, int32_t> clientPidMap_;
     std::unordered_map<uint32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
-    std::unordered_map<uint32_t, std::queue<struct SensorEvent>> dumpQueue_;
+    std::unordered_map<uint32_t, std::queue<struct TransferSensorEvents>> dumpQueue_;
 };
 }  // namespace Sensors
 }  // namespace OHOS
