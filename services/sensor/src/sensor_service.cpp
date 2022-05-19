@@ -118,7 +118,7 @@ bool SensorService::InitSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("GetSensorList is failed");
         return false;
     }
@@ -344,7 +344,7 @@ std::vector<Sensor> SensorService::GetSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("GetSensorList is failed");
         return sensors_;
     }

@@ -463,7 +463,7 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
     }
     std::vector<Sensor> sensors;
     int32_t ret = sensorHdiConnection->GetSensorList(sensors);
-    if (ret < 0) {
+    if (ret != 0) {
         SEN_HILOGE("GetSensorList is failed");
         return;
     }
