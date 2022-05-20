@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,41 +29,30 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorDump" };
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t MS_NS = 1000000;
-constexpr uint32_t ACCELEROMETER = 256;
-constexpr uint32_t ACCELEROMETER_UNCALIBRATED = 65792;
-constexpr uint32_t LINEAR_ACCELERATION = 131328;
-constexpr uint32_t GRAVITY = 196864;
-constexpr uint32_t GYROSCOPE = 262400;
-constexpr uint32_t GYROSCOPE_UNCALIBRATED = 327936;
-constexpr uint32_t SIGNIFICANT_MOTION = 393472;
-constexpr uint32_t DROP_DETECTION = 459008;
-constexpr uint32_t PEDOMETER_DETECTION = 524544;
-constexpr uint32_t PEDOMETER = 590080;
-constexpr uint32_t AMBIENT_TEMPERATURE = 16777472;
-constexpr uint32_t MAGNETIC_FIELD = 16843008;
-constexpr uint32_t MAGNETIC_FIELD_UNCALIBRATED = 16908544;
-constexpr uint32_t HUMIDITY = 16974080;
-constexpr uint32_t BAROMETER = 17039616;
-constexpr uint32_t SAR = 17105152;
-constexpr uint32_t SIXDOF_ATTITUDE = 33554688;
-constexpr uint32_t SCREEN_ROTATION = 33620224;
-constexpr uint32_t DEVICE_ORIENTATION = 33685760;
-constexpr uint32_t ORIENTATION = 33751296;
-constexpr uint32_t ROTATION_VECTOR = 33816832;
-constexpr uint32_t GAME_ROTATION_VECTOR = 33882368;
-constexpr uint32_t GEOMAGNETIC_ROTATION_VECTOR = 33947904;
-constexpr uint32_t PROXIMITY = 50331904;
-constexpr uint32_t TOF = 50397440;
-constexpr uint32_t AMBIENT_LIGHT = 50462976;
-constexpr uint32_t COLOR_TEMPERATURE = 50528512;
-constexpr uint32_t COLOR_RGB = 50594048;
-constexpr uint32_t COLOR_XYZ = 50659584;
-constexpr uint32_t HALL = 67109120;
-constexpr uint32_t GRIP_DETECTOR = 67174656;
-constexpr uint32_t MAGNET_BRACKET = 67240192;
-constexpr uint32_t PRESSURE_DETECTOR = 67305728;
-constexpr uint32_t HEART_RATE = 83886336;
-constexpr uint32_t WEAR_DETECTION = 83951872;
+constexpr uint32_t ACCELEROMETER = 1;
+constexpr uint32_t GYROSCOPE = 2;
+constexpr uint32_t AMBIENT_LIGHT = 5;
+constexpr uint32_t MAGNETIC_FIELD = 6;
+constexpr uint32_t BAROMETER = 8;
+constexpr uint32_t HALL = 10;
+constexpr uint32_t PROXIMITY = 12;
+constexpr uint32_t HUMIDITY = 13;
+constexpr uint32_t ORIENTATION = 256;
+constexpr uint32_t GRAVITY = 257;
+constexpr uint32_t LINEAR_ACCELERATION = 258;
+constexpr uint32_t ROTATION_VECTOR = 259;
+constexpr uint32_t AMBIENT_TEMPERATURE = 260;
+constexpr uint32_t MAGNETIC_FIELD_UNCALIBRATED = 261;
+constexpr uint32_t GAME_ROTATION_VECTOR = 262;
+constexpr uint32_t GYROSCOPE_UNCALIBRATED = 263;
+constexpr uint32_t SIGNIFICANT_MOTION = 264;
+constexpr uint32_t PEDOMETER_DETECTION = 265;
+constexpr uint32_t PEDOMETER = 266;
+constexpr uint32_t GEOMAGNETIC_ROTATION_VECTOR = 277;
+constexpr uint32_t HEART_RATE = 278;
+constexpr uint32_t DEVICE_ORIENTATION = 279;
+constexpr uint32_t WEAR_DETECTION = 280;
+constexpr uint32_t ACCELEROMETER_UNCALIBRATED = 281;
 
 enum {
     SOLITARIES_DIMENSION = 1,
@@ -83,7 +72,6 @@ std::unordered_map<uint32_t, std::string> SensorDump::sensorMap_ = {
     { GYROSCOPE, "GYROSCOPE" },
     { GYROSCOPE_UNCALIBRATED, "GYROSCOPE UNCALIBRATED" },
     { SIGNIFICANT_MOTION, "SIGNIFICANT MOTION" },
-    { DROP_DETECTION, "DROP DETECTION" },
     { PEDOMETER_DETECTION, "PEDOMETER DETECTION" },
     { PEDOMETER, "PEDOMETER" },
     { AMBIENT_TEMPERATURE, "AMBIENT TEMPERATURE" },
@@ -91,24 +79,14 @@ std::unordered_map<uint32_t, std::string> SensorDump::sensorMap_ = {
     { MAGNETIC_FIELD_UNCALIBRATED, "MAGNETIC FIELD UNCALIBRATED" },
     { HUMIDITY, "HUMIDITY" },
     { BAROMETER, "BAROMETER" },
-    { SAR, "SAR" },
-    { SIXDOF_ATTITUDE, "6DOF ATTITUDE" },
-    { SCREEN_ROTATION, "SCREEN ROTATION" },
     { DEVICE_ORIENTATION, "DEVICE ORIENTATION" },
     { ORIENTATION, "ORIENTATION" },
     { ROTATION_VECTOR, "ROTATION VECTOR" },
     { GAME_ROTATION_VECTOR, "GAME ROTATION VECTOR" },
     { GEOMAGNETIC_ROTATION_VECTOR, "GEOMAGNETIC ROTATION VECTOR" },
     { PROXIMITY, "PROXIMITY" },
-    { TOF, "TOF" },
     { AMBIENT_LIGHT, "AMBIENT LIGHT" },
-    { COLOR_TEMPERATURE, "COLOR TEMPERATURE" },
-    { COLOR_RGB, "COLOR RGB" },
-    { COLOR_XYZ, "COLOR XYZ" },
     { HALL, "HALL" },
-    { GRIP_DETECTOR, "GRIP DETECTOR" },
-    { MAGNET_BRACKET, "MAGNET BRACKET" },
-    { PRESSURE_DETECTOR, "PRESSURE DETECTOR" },
     { HEART_RATE, "HEART RATE" },
     { WEAR_DETECTION, "WEAR DETECTION" },
 };
@@ -213,6 +191,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::v
             auto data = sensorData.second.front();
             sensorData.second.pop();
             timespec time = { 0, 0 };
+            clock_gettime(CLOCK_REALTIME, &time);
             struct tm *timeinfo = localtime(&(time.tv_sec));
             CHKPF(timeinfo);
             dprintf(fd, "      %2d (ts=%.9f, time=%02d:%02d:%02d.%03d) | data:%s", ++j, data.timestamp / 1e9,
@@ -236,53 +215,45 @@ void SensorDump::DumpCurrentTime(int32_t fd)
 int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
 {
     switch (sensorId) {
-        case SIXDOF_ATTITUDE:
-            return POSE_6DOF_DIMENSION;
-        case ACCELEROMETER_UNCALIBRATED:
-        case MAGNETIC_FIELD_UNCALIBRATED:
-        case GYROSCOPE_UNCALIBRATED:
-            return UNCALIBRATED_DIMENSION;
-        case GEOMAGNETIC_ROTATION_VECTOR:
-        case GAME_ROTATION_VECTOR:
-        case ROTATION_VECTOR:
-            return VECTOR_DIMENSION;
+        case AMBIENT_LIGHT:
+        case BAROMETER:
+        case HALL:
+        case PROXIMITY:
+        case HUMIDITY:
+        case AMBIENT_TEMPERATURE:
         case SIGNIFICANT_MOTION:
         case PEDOMETER_DETECTION:
         case PEDOMETER:
-        case AMBIENT_TEMPERATURE:
-        case HUMIDITY:
         case HEART_RATE:
-        case DEVICE_ORIENTATION:
         case WEAR_DETECTION:
             return SOLITARIES_DIMENSION;
+        case ROTATION_VECTOR:
+            return VECTOR_DIMENSION;
+        case MAGNETIC_FIELD_UNCALIBRATED:
+        case GYROSCOPE_UNCALIBRATED:
+        case ACCELEROMETER_UNCALIBRATED:
+            return UNCALIBRATED_DIMENSION;
         default:
+            SEN_HILOGW("sensorId: %{public}u,size: %{public}d", sensorId, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }
 
-std::string SensorDump::GetDataBySensorId(uint32_t sensorId, struct SensorEvent &sensorData)
+std::string SensorDump::GetDataBySensorId(uint32_t sensorId, struct TransferSensorEvents &sensorData)
 {
     SEN_HILOGD("sensorId: %{public}u", sensorId);
-    std::string buffer;
+    std::string str;
     int32_t dataLen = DataSizeBySensorId(sensorId);
+    auto data = reinterpret_cast<float *>(sensorData.data);
     for (int32_t i = 0; i < dataLen; ++i) {
-        if (sensorId >= ACCELEROMETER && sensorId <= PEDOMETER) {
-            buffer.append(std::to_string(sensorData.data[i]));
-        } else if (sensorId >= AMBIENT_TEMPERATURE && sensorId <= SAR) {
-            buffer.append(std::to_string(sensorData.data[i]));
-        } else if (sensorId >= SIXDOF_ATTITUDE && sensorId <= GEOMAGNETIC_ROTATION_VECTOR) {
-            buffer.append(std::to_string(sensorData.data[i]));
-        } else if (sensorId >= PROXIMITY && sensorId <= COLOR_XYZ) {
-            buffer.append(std::to_string(sensorData.data[i]));
-        } else if (sensorId >= HALL && sensorId <= PRESSURE_DETECTOR) {
-            buffer.append(std::to_string(sensorData.data[i]));
-        } else if (sensorId >= HEART_RATE && sensorId <= WEAR_DETECTION) {
-            buffer.append(std::to_string(sensorData.data[i]));
+        str.append(std::to_string(*data));
+        if (i != dataLen - 1) {
+            str.append(",");
         }
-        buffer.append(",");
+        ++data;
     }
-    buffer.append("\n");
-    return buffer;
+    str.append("\n");
+    return str;
 }
 }  // namespace Sensors
 }  // namespace OHOS

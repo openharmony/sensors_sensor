@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -656,20 +656,32 @@ void ClientInfo::UpdateDataQueue(int32_t sensorId, struct SensorEvent &event)
         return;
     }
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
+    struct TransferSensorEvents  transferEvent = {
+        .sensorTypeId = event.sensorTypeId,
+        .version = event.version,
+        .timestamp = event.timestamp,
+        .option = event.option,
+        .mode = event.mode,
+        .dataLen = event.dataLen
+    };
+    if (memcpy_s(transferEvent.data, event.dataLen, event.data, event.dataLen) != EOK) {
+        SEN_HILOGE("Copy data failed");
+        return;
+    }
     auto it = dumpQueue_.find(sensorId);
     if (it == dumpQueue_.end()) {
-        std::queue<struct SensorEvent> q;
-        q.push(event);
+        std::queue<struct TransferSensorEvents> q;
+        q.push(transferEvent);
         dumpQueue_.insert(std::make_pair(sensorId, q));
         return;
     }
-    it->second.push(event);
+    it->second.push(transferEvent);
     if (it->second.size() > MAX_DUMP_DATA_SIZE) {
         it->second.pop();
     }
 }
 
-std::unordered_map<uint32_t, std::queue<struct SensorEvent>> ClientInfo::GetDumpQueue()
+std::unordered_map<uint32_t, std::queue<struct TransferSensorEvents>> ClientInfo::GetDumpQueue()
 {
     return dumpQueue_;
 }
