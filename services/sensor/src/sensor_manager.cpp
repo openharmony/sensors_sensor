@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,19 +15,14 @@
 
 #include "sensor_manager.h"
 
-#include "bundle_mgr_interface.h"
-#include "bundle_mgr_client.h"
-#include "bundle_mgr_proxy.h"
 #include "iservice_registry.h"
 #include "sensor.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
-#include "system_ability_definition.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorManager" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
@@ -183,19 +178,15 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
     return ERR_OK;
 }
 
-void SensorManager::GetPackageNameFromUid(int32_t uid, std::string &packageName)
+void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageName)
 {
     CALL_LOG_ENTER;
-    sptr<ISystemAbilityManager> systemMgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    CHKPV(systemMgr);
-    sptr<IRemoteObject> remoteObject = systemMgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    CHKPV(remoteObject);
-    sptr<OHOS::AppExecFwk::IBundleMgr> bundleMgrProxy = iface_cast<OHOS::AppExecFwk::IBundleMgr>(remoteObject);
-    CHKPV(bundleMgrProxy);
-    if (!bundleMgrProxy->GetNameForUid(uid, packageName)) {
-        SEN_HILOGE("Get bundle name failed");
+    HapTokenInfo hapInfo;
+    if (AccessTokenKit::GetHapTokenInfo(tokenId, hapInfo) != 0) {
+        SEN_HILOGE("get hap token info fail");
         return;
     }
+    packageName = hapInfo.bundleName;
 }
 }  // namespace Sensors
 }  // namespace OHOS

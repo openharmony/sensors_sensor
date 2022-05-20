@@ -25,9 +25,9 @@
 #include "sensor_data_processer.h"
 #include "sensor_hdi_connection.h"
 #include "sensor_agent_type.h"
-
 namespace OHOS {
 namespace Sensors {
+using namespace Security::AccessToken;
 class SensorManager : public Singleton<SensorManager> {
 public:
     bool SetBestSensorParams(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
@@ -40,7 +40,7 @@ public:
     void InitSensorMap(std::unordered_map<uint32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
                        sptr<ReportDataCallback> dataCallback);
     uint32_t GetSensorFlag(uint32_t sensorId);
-    void GetPackageNameFromUid(int32_t uid, std::string &packageName);
+    void GetPackageName(AccessTokenID tokenId, std::string &packageName);
 
 private:
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
