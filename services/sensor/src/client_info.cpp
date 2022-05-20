@@ -17,12 +17,11 @@
 
 #include <mutex>
 
+#include "permission_util.h"
 #include "securec.h"
 #include "sensor_hdi_connection.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
-
-#include "permission_util.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -603,6 +602,16 @@ int32_t ClientInfo::GetUidByPid(int32_t pid)
         return INVALID_UID;
     }
     return appThreadInfoIt->second.uid;
+}
+
+AccessTokenID ClientInfo::GetTokenIdByPid(int32_t pid)
+{
+    std::lock_guard<std::mutex> uidLock(uidMutex_);
+    auto appThreadInfoIt = appThreadInfoMap_.find(pid);
+    if (appThreadInfoIt == appThreadInfoMap_.end()) {
+        return INVALID_UID;
+    }
+    return appThreadInfoIt->second.callerToken;
 }
 
 void ClientInfo::UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType)
