@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,29 +30,29 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "Sens
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t MS_NS = 1000000;
 constexpr uint32_t ACCELEROMETER = 1;
-constexpr uint32_t ACCELEROMETER_UNCALIBRATED = 281;
-constexpr uint32_t LINEAR_ACCELERATION = 258;
-constexpr uint32_t GRAVITY = 257;
 constexpr uint32_t GYROSCOPE = 2;
+constexpr uint32_t AMBIENT_LIGHT = 5;
+constexpr uint32_t MAGNETIC_FIELD = 6;
+constexpr uint32_t BAROMETER = 8;
+constexpr uint32_t HALL = 10;
+constexpr uint32_t PROXIMITY = 12;
+constexpr uint32_t HUMIDITY = 13;
+constexpr uint32_t ORIENTATION = 256;
+constexpr uint32_t GRAVITY = 257;
+constexpr uint32_t LINEAR_ACCELERATION = 258;
+constexpr uint32_t ROTATION_VECTOR = 259;
+constexpr uint32_t AMBIENT_TEMPERATURE = 260;
+constexpr uint32_t MAGNETIC_FIELD_UNCALIBRATED = 261;
+constexpr uint32_t GAME_ROTATION_VECTOR = 262;
 constexpr uint32_t GYROSCOPE_UNCALIBRATED = 263;
 constexpr uint32_t SIGNIFICANT_MOTION = 264;
 constexpr uint32_t PEDOMETER_DETECTION = 265;
 constexpr uint32_t PEDOMETER = 266;
-constexpr uint32_t AMBIENT_TEMPERATURE = 260;
-constexpr uint32_t MAGNETIC_FIELD = 6;
-constexpr uint32_t MAGNETIC_FIELD_UNCALIBRATED = 261;
-constexpr uint32_t HUMIDITY = 13;
-constexpr uint32_t BAROMETER = 8;
-constexpr uint32_t DEVICE_ORIENTATION = 279;
-constexpr uint32_t ORIENTATION = 256;
-constexpr uint32_t ROTATION_VECTOR = 259;
-constexpr uint32_t GAME_ROTATION_VECTOR = 262;
 constexpr uint32_t GEOMAGNETIC_ROTATION_VECTOR = 277;
-constexpr uint32_t PROXIMITY = 12;
-constexpr uint32_t AMBIENT_LIGHT = 5;
-constexpr uint32_t HALL = 10;
 constexpr uint32_t HEART_RATE = 278;
+constexpr uint32_t DEVICE_ORIENTATION = 279;
 constexpr uint32_t WEAR_DETECTION = 280;
+constexpr uint32_t ACCELEROMETER_UNCALIBRATED = 281;
 
 enum {
     SOLITARIES_DIMENSION = 1,
@@ -234,6 +234,7 @@ int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
         case ACCELEROMETER_UNCALIBRATED:
             return UNCALIBRATED_DIMENSION;
         default:
+            SEN_HILOGW("sensorId: %{public}u,size: %{public}d", sensorId, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }
@@ -241,18 +242,18 @@ int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
 std::string SensorDump::GetDataBySensorId(uint32_t sensorId, struct TransferSensorEvents &sensorData)
 {
     SEN_HILOGD("sensorId: %{public}u", sensorId);
-    std::string buffer;
+    std::string str;
     int32_t dataLen = DataSizeBySensorId(sensorId);
     auto data = reinterpret_cast<float *>(sensorData.data);
     for (int32_t i = 0; i < dataLen; ++i) {
-        buffer.append(std::to_string(*data));
+        str.append(std::to_string(*data));
         if (i != dataLen - 1) {
-            buffer.append(",");
+            str.append(",");
         }
         ++data;
     }
-    buffer.append("\n");
-    return buffer;
+    str.append("\n");
+    return str;
 }
 }  // namespace Sensors
 }  // namespace OHOS
