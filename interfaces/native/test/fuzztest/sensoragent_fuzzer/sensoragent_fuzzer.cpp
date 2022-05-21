@@ -45,7 +45,7 @@ bool CheckSensorTypeId(int32_t sensorTypeId)
 
 bool SensorAgentFuzzTest(const uint8_t* data, size_t size)
 {
-    int32_t sensorTypeId = reinterpret_cast<int32_t>(data);
+    intptr_t sensorTypeId = reinterpret_cast<intptr_t>(data);
     bool validSensorId = CheckSensorTypeId(sensorTypeId);
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
