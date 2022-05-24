@@ -63,7 +63,7 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest001", 0, async function (done) {
         console.info('----------------------SensorJsTest001---------------------------');
-        sensor.on(0, callback);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
         setTimeout(()=>{
             sensor.off(0);
             done();
@@ -100,7 +100,7 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest003", 0, async function (done) {
         console.info('----------------------SensorJsTest003---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest003 off in---------------------------');
             sensor.off(0);
@@ -123,7 +123,7 @@ describe("SensorJsTest", function () {
             done();
         }
         try {
-            sensor.on(0, onSensorCallback, {'interval': 100000000}, 5);
+            sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, onSensorCallback, {'interval': 100000000}, 5);
         } catch (error) {
             console.info(error);
             expect(true).assertTrue();
@@ -138,7 +138,7 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest005", 0, async function (done) {
-        sensor.once(0, callback);
+        sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
         setTimeout(()=>{
             expect(true).assertTrue();
             done();
@@ -179,7 +179,7 @@ describe("SensorJsTest", function () {
             done();
         }
         try{
-            sensor.once(0, onceSensorCallback, 5);
+            sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, onceSensorCallback, 5);
         } catch (error) {
             console.info(error);
             expect(true).assertTrue();
@@ -215,8 +215,8 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        sensor.on(0, onSensorCallback);
-        sensor.off(0, onSensorCallback);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, onSensorCallback);
+        sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, onSensorCallback);
         setTimeout(()=>{
             expect(true).assertTrue();
             done();
@@ -251,8 +251,8 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest011", 0, async function (done) {
-        sensor.on(0, callback);
-        sensor.on(0, callback2);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest011 off in---------------------------');
             sensor.off(0);
@@ -268,16 +268,16 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest012", 0, async function (done) {
-        sensor.on(0, callback);
-        sensor.on(0, callback2);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest012 off in---------------------------');
-            sensor.off(0, callback);
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
             console.info('----------------------SensorJsTest012 off end---------------------------');
         }, 500);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest012 off in---------------------------');
-            sensor.off(0, callback2);
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
             console.info('----------------------SensorJsTest012 off end---------------------------');
             done();
         }, 1000);
@@ -291,7 +291,7 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest013", 0, function (done) {
         try {
-            sensor.off(0, 5);
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, 5);
         } catch (error) {
             console.info(error);
             expect(true).assertTrue();
@@ -307,8 +307,8 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest014", 0, async function (done) {
         console.info('----------------------SensorJsTest014---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
-        sensor.once(0, callback2);
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback, {'interval': 100000000});
+        sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest014 off in---------------------------');
             sensor.off(0);
@@ -325,16 +325,16 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest015", 0, async function (done) {
         console.info('----------------------SensorJsTest015---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
-        sensor.on(0, callback2, {'interval': 100000000});
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback, {'interval': 100000000});
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest015 off in---------------------------');
-            sensor.off(0, callback);
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
             console.info('----------------------SensorJsTest015 off end---------------------------');
         }, 500);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest015 off in---------------------------');
-            sensor.off(0, callback2);
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
             console.info('----------------------SensorJsTest015 off end---------------------------');
             done();
         }, 1000);
@@ -348,8 +348,8 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest016", 0, async function (done) {
         console.info('----------------------SensorJsTest016---------------------------');
-        sensor.on(0, callback, {'interval': 100000000});
-        sensor.on(0, callback2, {'interval': 100000000});
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback, {'interval': 100000000});
+        sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest016 off in---------------------------');
             sensor.off(0);

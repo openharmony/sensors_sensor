@@ -373,7 +373,7 @@ describe("SensorJsTest", function () {
         console.info('----------------------SensorJsTest013---------------------------');
         sensor.subscribeOnBodyState({
             success: function(data) {
-                expect(typeof(data.value)).assertEqual("number");
+                expect(typeof(data.value)).assertEqual("boolean");
                 console.info("SensorJsTest013 subscribeOnBodyState" + JSON.stringify(data));
             },
             fail: function(data, code) {
