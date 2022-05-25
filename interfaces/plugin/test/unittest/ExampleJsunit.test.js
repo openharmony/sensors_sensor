@@ -65,7 +65,7 @@ describe("SensorJsTest", function () {
         console.info('----------------------SensorJsTest001---------------------------');
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
         setTimeout(()=>{
-            sensor.off(0);
+            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
             done();
         }, 500);
     })
@@ -103,7 +103,7 @@ describe("SensorJsTest", function () {
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest003 off in---------------------------');
-            sensor.off(0);
+            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
             console.info('----------------------SensorJsTest003 off end---------------------------');
             done();
         }, 500);
@@ -255,7 +255,7 @@ describe("SensorJsTest", function () {
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest011 off in---------------------------');
-            sensor.off(0);
+            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
             console.info('----------------------SensorJsTest011 off end---------------------------');
             done();
         }, 1000);
@@ -311,7 +311,7 @@ describe("SensorJsTest", function () {
         sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest014 off in---------------------------');
-            sensor.off(0);
+            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
             console.info('----------------------SensorJsTest014 off end---------------------------');
             done();
         }, 1000);
@@ -352,7 +352,7 @@ describe("SensorJsTest", function () {
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest016 off in---------------------------');
-            sensor.off(0);
+            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
             console.info('----------------------SensorJsTest016 off end---------------------------');
             done();
         }, 1000);
