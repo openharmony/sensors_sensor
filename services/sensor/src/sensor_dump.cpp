@@ -143,16 +143,11 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo, const std
     clientInfo.GetSensorChannelInfo(channelInfo);
     for (const auto &channel : channelInfo) {
         auto sensorId = channel.GetSensorId();
-        std::string cmds("");
-        auto cmdList = channel.GetCmdType();
-        for (auto cmd : cmdList) {
-            cmds += (std::to_string(cmd) + " ");
-        }
         dprintf(fd,
                 "uid:%d | packageName:%s | sensorId:%8u | sensorType:%s | samplingPeriodNs:%d "
-                "| fifoCount:%u | cmdType:%s\n",
+                "| fifoCount:%u\n",
                 channel.GetUid(), channel.GetPackageName().c_str(), sensorId, sensorMap_[sensorId].c_str(),
-                int32_t { channel.GetSamplingPeriodNs() }, channel.GetFifoCount(), cmds.c_str());
+                int32_t { channel.GetSamplingPeriodNs() }, channel.GetFifoCount());
     }
     return true;
 }
