@@ -165,7 +165,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
         uint32_t sensorId = sensor.GetSensorId();
         if (clientInfo.GetSensorState(sensorId)) {
             dprintf(fd, "sensorId: %8u | sensorType: %s | channelSize: %d\n",
-            sensorId, sensorMap_[sensorId].c_str(), clientInfo.GetSensorChannel(sensorId).size());
+                sensorId, sensorMap_[sensorId].c_str(), clientInfo.GetSensorChannel(sensorId).size());
         }
     }
     return true;
