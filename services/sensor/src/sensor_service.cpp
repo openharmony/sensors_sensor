@@ -160,13 +160,11 @@ void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t
     int32_t uid = clientInfo_.GetUidByPid(pid);
     std::string message;
     if (enable) {
-        // define in LogPower.java, 500 stand for enable sensor
         message.append("uid : ").append(std::to_string(uid)).append(" pkgName : ").append(packageName)
             .append(" type : ").append(std::to_string(sensorId));
         HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "EnableSensor", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "TAG", "DUBAI_TAG_SENSOR_ENABLE", "MESSAGE", message);
     } else {
-        // define in LogPower.java, 501 stand for disable sensor
         message.append("uid : ").append(std::to_string(uid)).append(" pkgName : ").append(packageName)
             .append(" type : ").append(std::to_string(sensorId));
         HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "DisableSensor", HiSysEvent::EventType::STATISTIC,
