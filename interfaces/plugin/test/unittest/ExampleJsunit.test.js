@@ -65,7 +65,7 @@ describe("SensorJsTest", function () {
         console.info('----------------------SensorJsTest001---------------------------');
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback);
         setTimeout(()=>{
-            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
             done();
         }, 500);
     })
@@ -103,7 +103,7 @@ describe("SensorJsTest", function () {
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest003 off in---------------------------');
-            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
             console.info('----------------------SensorJsTest003 off end---------------------------');
             done();
         }, 500);
@@ -255,7 +255,7 @@ describe("SensorJsTest", function () {
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest011 off in---------------------------');
-            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
             console.info('----------------------SensorJsTest011 off end---------------------------');
             done();
         }, 1000);
@@ -311,7 +311,7 @@ describe("SensorJsTest", function () {
         sensor.once(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2);
         setTimeout(()=>{
             console.info('----------------------SensorJsTest014 off in---------------------------');
-            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
             console.info('----------------------SensorJsTest014 off end---------------------------');
             done();
         }, 1000);
@@ -352,7 +352,7 @@ describe("SensorJsTest", function () {
         sensor.on(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, callback2, {'interval': 100000000});
         setTimeout(()=>{
             console.info('----------------------SensorJsTest016 off in---------------------------');
-            sensor.sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER;
+            sensor.off(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER);
             console.info('----------------------SensorJsTest016 off end---------------------------');
             done();
         }, 1000);
@@ -2447,7 +2447,7 @@ describe("SensorJsTest", function () {
     */
     it('SensorJsTest_103', 0, async function (done) {
         console.info('SensorJsTest_103 start')
-        sensor.getAltitude(0, 100, (error, data) => {
+        sensor.getAltitude(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, 100, (error, data) => {
 			if (error) {
                 console.info('SensorJsTest_103 failed');
                 expect(false).assertTrue();
@@ -2488,7 +2488,7 @@ describe("SensorJsTest", function () {
     * @tc.author:
     */
     it('SensorJsTest_105', 0, async function (done) {
-        sensor.getAltitude(0, 100).then((data)=>{
+        sensor.getAltitude(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, 100).then((data)=>{
             console.info("SensorJsTest_104" + data)
             expect(data).assertEqual(getGeomagneticDipResult[2])
             done()
@@ -2659,7 +2659,7 @@ describe("SensorJsTest", function () {
     */
     it("SensorJsTest_113", 0, async function (done) {
         console.info("---------------------------SensorJsTest_113----------------------------------");
-        sensor.getSingleSensor(0, (error, data) => {
+        sensor.getSingleSensor(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, (error, data) => {
             if (error) {
                 console.info('SensorJsTest_113 failed');
                 expect(false).assertTrue();
