@@ -2447,7 +2447,7 @@ describe("SensorJsTest", function () {
     */
     it('SensorJsTest_103', 0, async function (done) {
         console.info('SensorJsTest_103 start')
-        sensor.getAltitude(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, 100, (error, data) => {
+        sensor.getAltitude(0, 100, (error, data) => {
 			if (error) {
                 console.info('SensorJsTest_103 failed');
                 expect(false).assertTrue();
@@ -2488,12 +2488,12 @@ describe("SensorJsTest", function () {
     * @tc.author:
     */
     it('SensorJsTest_105', 0, async function (done) {
-        sensor.getAltitude(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER, 100).then((data)=>{
+        sensor.getAltitude(0, 100).then((data)=>{
             console.info("SensorJsTest_104" + data)
             expect(data).assertEqual(getGeomagneticDipResult[2])
             done()
         }, (error)=>{
-            console.info('SensorJsTest_104 failed');
+            console.info('SensorJsTest_105 failed');
             expect(false).assertTrue();
             done()
         });
@@ -2507,11 +2507,11 @@ describe("SensorJsTest", function () {
     */
     it('SensorJsTest_106', 0, async function (done) {
         sensor.getAltitude(5, 0).then((data)=>{
-            console.info("SensorJsTest_104" + data)
+            console.info("SensorJsTest_106" + data)
             expect(data).assertEqual(getGeomagneticDipResult[3])
             done()
         }, (error)=>{
-            console.info('SensorJsTest_104 failed');
+            console.info('SensorJsTest_106 failed');
             expect(false).assertTrue();
             done()
         });
@@ -2600,7 +2600,7 @@ describe("SensorJsTest", function () {
             }
             done()
         }, (error)=>{
-            console.info('SensorJsTest_109 failed');
+            console.info('SensorJsTest_110 failed');
             expect(false).assertTrue();
             done()
         });
@@ -2701,7 +2701,7 @@ describe("SensorJsTest", function () {
     */
     it("SensorJsTest_115", 0, async function (done) {
         console.info("---------------------------SensorJsTest_115----------------------------------");
-        sensor.getSingleSensor(0).then((data) => {
+        sensor.getSingleSensor(sensor.SensorType.SENSOR_TYPE_ID_ACCELEROMETER).then((data) => {
             console.info("SensorJsTest_115 " + JSON.stringify(data));
             expect(true).assertTrue();
             done()
