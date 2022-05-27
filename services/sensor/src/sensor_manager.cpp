@@ -183,7 +183,7 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
     CALL_LOG_ENTER;
     int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);
     switch(tokenType) {
-        case ATokenTypeEnum::TOKEN_NATIVE:
+        case ATokenTypeEnum::TOKEN_NATIVE: {
             NativeTokenInfo tokenInfo;
             if (AccessTokenKit::GetNativeTokenInfo(tokenId, tokenInfo) != 0) {
                 SEN_HILOGE("get native token info fail");
@@ -191,7 +191,8 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
             }
             packageName = tokenInfo.processName;
             break;
-        case ATokenTypeEnum::TOKEN_HA:
+        }
+        case ATokenTypeEnum::TOKEN_HAP: {
             HapTokenInfo hapInfo;
             if (AccessTokenKit::GetHapTokenInfo(tokenId, hapInfo) != 0) {
                 SEN_HILOGE("get hap token info fail");
@@ -199,9 +200,11 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
             }
             packageName = hapInfo.bundleName;
             break;
-        default:
+        }
+        default: {
             SEN_HILOGW("token type not match");
             break;
+        }
     }
 }
 }  // namespace Sensors
