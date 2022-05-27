@@ -74,6 +74,11 @@ int32_t SensorServiceClient::InitServiceClient()
 
 bool SensorServiceClient::IsValidSensorId(uint32_t sensorId)
 {
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        return false;
+    }
     if (sensorList_.empty()) {
         SEN_HILOGE("sensorList_ cannot be empty");
         return false;

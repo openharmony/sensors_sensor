@@ -28,6 +28,7 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::SensorsLogDomain::SENSORS_IMPLEMENT, "SensorAgentProxy" };
+constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 }  // namespace
 
 OHOS::sptr<SensorAgentProxy> SensorAgentProxy::sensorObj_ = nullptr;
@@ -302,7 +303,11 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         SEN_HILOGE("get sensor lists failed");
         return ERROR;
     }
-    int32_t count = sensorList.size();
+    uint32_t count = sensorList.size();
+    if (count > MAX_SENSOR_LIST_SIZE) {
+        SEN_HILOGE("The number of sensors exceeds the maximum value");
+        return ERROR;
+    }
     sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
     CHKPR(sensorInfos_, ERROR);
     for (int32_t i = 0; i < count; ++i) {
