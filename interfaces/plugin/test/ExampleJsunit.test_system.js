@@ -424,7 +424,7 @@ describe("SensorJsTest", function () {
      * @tc.require: SR000H0ALK, AR000H0ALM
      */
     it('SensorJsTest015', 0, async function (done) {
-        console.info("---------------------------SensorJsTest014----------------------------------");
+        console.info("---------------------------SensorJsTest015----------------------------------");
         try {
             sensor.getOnBodyState();
         } catch (error) {
@@ -451,7 +451,7 @@ describe("SensorJsTest", function () {
                 console.info("SensorJsTest016 subscribeDeviceOrientation" + JSON.stringify(data));
             },
             fail: function(data, code) {
-                console.error('SensorJsTest015 Subscription failed. Code: ' + code + '; Data: ' + data);
+                console.error('SensorJsTest016 Subscription failed. Code: ' + code + '; Data: ' + data);
                 expect(false).assertTrue();
             },
           });
