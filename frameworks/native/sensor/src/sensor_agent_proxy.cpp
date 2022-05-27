@@ -297,6 +297,7 @@ void SensorAgentProxy::FreeMemory(void *pointer) const
 
 int32_t SensorAgentProxy::ConvertSensorInfos() const
 {
+    CALL_LOG_ENTER;
     SensorServiceClient &client = SensorServiceClient::GetInstance();
     std::vector<Sensor> sensorList = client.GetSensorList();
     if (sensorList.empty()) {
@@ -335,6 +336,7 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
 
 int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const
 {
+    CALL_LOG_ENTER;
     CHKPR(sensorInfo, OHOS::Sensors::ERROR);
     CHKPR(count, OHOS::Sensors::ERROR);
     std::lock_guard<std::mutex> listLock(sensorInfoMutex_);

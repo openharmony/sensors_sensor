@@ -798,8 +798,6 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
         for (int32_t i = 0; i < count; ++i) {
             asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
         }
-        free(sensorInfos);
-        sensorInfos = nullptr;
     }
     if (argc == 0) {
         napi_value promise = nullptr;
@@ -846,8 +844,6 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
             SEN_HILOGE("Not find sensorTypeId: %{public}d", sensorTypeId);
             asyncCallbackInfo->type = FAIL;
         }
-        free(sensorInfos);
-        sensorInfos = nullptr;
     }
     if (argc == 1) {
         napi_value promise = nullptr;
