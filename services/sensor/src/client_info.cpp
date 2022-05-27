@@ -578,12 +578,13 @@ void ClientInfo::GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInf
             int32_t pid = pidIt.first;
             int32_t uid = GetUidByPid(pid);
             if (uid == INVALID_UID) {
+                SEN_HILOGW("uid is invalid, uid:%{public}d", uid);
                 continue;
             }
             SensorChannelInfo channel;
             channel.SetUid(uid);
             channel.SetSensorId(sensorIt.first);
-            std::string packageName("");
+            std::string packageName;
             SensorManager::GetInstance().GetPackageName(GetTokenIdByPid(pid), packageName);
             channel.SetPackageName(packageName);
             int64_t samplingPeriodNs = pidIt.second.GetSamplingPeriodNs();
