@@ -182,7 +182,7 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
 {
     CALL_LOG_ENTER;
     int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);
-    switch(tokenType) {
+    switch (tokenType) {
         case ATokenTypeEnum::TOKEN_NATIVE: {
             NativeTokenInfo tokenInfo;
             if (AccessTokenKit::GetNativeTokenInfo(tokenId, tokenInfo) != 0) {
