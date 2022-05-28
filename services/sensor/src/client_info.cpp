@@ -20,6 +20,7 @@
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_hdi_connection.h"
+#include "sensor_manager.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
 
@@ -574,14 +575,17 @@ void ClientInfo::GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInf
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto &sensorIt : clientMap_) {
         for (const auto &pidIt : sensorIt.second) {
-            SensorChannelInfo channel;
-            int32_t uid = GetUidByPid(pidIt.first);
+            int32_t pid = pidIt.first;
+            int32_t uid = GetUidByPid(pid);
             if (uid == INVALID_UID) {
+                SEN_HILOGW("uid is invalid, uid:%{public}d", uid);
                 continue;
             }
+            SensorChannelInfo channel;
             channel.SetUid(uid);
-            std::string packageName("");
             channel.SetSensorId(sensorIt.first);
+            std::string packageName;
+            SensorManager::GetInstance().GetPackageName(GetTokenIdByPid(pid), packageName);
             channel.SetPackageName(packageName);
             int64_t samplingPeriodNs = pidIt.second.GetSamplingPeriodNs();
             int64_t maxReportDelayNs = pidIt.second.GetMaxReportDelayNs();

@@ -181,12 +181,31 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
 void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageName)
 {
     CALL_LOG_ENTER;
-    HapTokenInfo hapInfo;
-    if (AccessTokenKit::GetHapTokenInfo(tokenId, hapInfo) != 0) {
-        SEN_HILOGE("get hap token info fail");
-        return;
+    int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);
+    switch (tokenType) {
+        case ATokenTypeEnum::TOKEN_NATIVE: {
+            NativeTokenInfo tokenInfo;
+            if (AccessTokenKit::GetNativeTokenInfo(tokenId, tokenInfo) != 0) {
+                SEN_HILOGE("get native token info fail");
+                return;
+            }
+            packageName = tokenInfo.processName;
+            break;
+        }
+        case ATokenTypeEnum::TOKEN_HAP: {
+            HapTokenInfo hapInfo;
+            if (AccessTokenKit::GetHapTokenInfo(tokenId, hapInfo) != 0) {
+                SEN_HILOGE("get hap token info fail");
+                return;
+            }
+            packageName = hapInfo.bundleName;
+            break;
+        }
+        default: {
+            SEN_HILOGW("token type not match");
+            break;
+        }
     }
-    packageName = hapInfo.bundleName;
 }
 }  // namespace Sensors
 }  // namespace OHOS
