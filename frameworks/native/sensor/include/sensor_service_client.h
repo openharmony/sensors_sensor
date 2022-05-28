@@ -42,7 +42,7 @@ public:
     int32_t TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel);
     int32_t DestroyDataChannel();
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
-    bool IsValidSensorId(uint32_t sensorId);
+    bool IsValid(uint32_t sensorId);
 
 private:
     int32_t InitServiceClient();

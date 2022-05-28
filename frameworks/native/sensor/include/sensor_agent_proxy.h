@@ -48,6 +48,9 @@ private:
     int32_t CreateSensorDataChannel() const;
     int32_t DestroySensorDataChannel() const;
     static void HandleSensorData(SensorEvent *events, int32_t num, void *data);
+    int32_t ConvertSensorInfos() const;
+    void ClearSensorInfos() const;
+
     static OHOS::sptr<SensorAgentProxy> sensorObj_;
     static std::mutex subscribeMutex_;
     static std::mutex chanelMutex_;
@@ -57,9 +60,6 @@ private:
     static int64_t g_reportInterval;
     static std::map<int32_t, const SensorUser *> g_subscribeMap;
     static std::map<int32_t, const SensorUser *> g_unsubscribeMap;
-    static std::mutex sensorInfoMutex_;
-    int32_t ConvertSensorInfos() const;
-    void FreeMemory(void *pointer) const;
 };
 }  // namespace Sensors
 }  // namespace OHOS
