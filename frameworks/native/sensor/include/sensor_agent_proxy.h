@@ -33,7 +33,7 @@ typedef int32_t (*SensorDataCallback)(struct SensorNativeData *events, uint32_t 
 struct SensorAgentProxy : public OHOS::RefBase {
 public:
     SensorAgentProxy();
-    ~SensorAgentProxy();
+    ~SensorAgentProxy() = default;
     static const SensorAgentProxy *GetSensorsObj();
     int32_t ActivateSensor(int32_t sensorId, const SensorUser *user) const;
     int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user) const;
@@ -48,9 +48,6 @@ private:
     int32_t CreateSensorDataChannel() const;
     int32_t DestroySensorDataChannel() const;
     static void HandleSensorData(SensorEvent *events, int32_t num, void *data);
-    int32_t ConvertSensorInfos() const;
-    void ClearSensorInfos() const;
-
     static OHOS::sptr<SensorAgentProxy> sensorObj_;
     static std::mutex subscribeMutex_;
     static std::mutex chanelMutex_;

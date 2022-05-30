@@ -72,13 +72,8 @@ int32_t SensorServiceClient::InitServiceClient()
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }
 
-bool SensorServiceClient::IsValid(uint32_t sensorId)
+bool SensorServiceClient::IsValidSensorId(uint32_t sensorId)
 {
-    int32_t ret = InitServiceClient();
-    if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
-        return false;
-    }
     if (sensorList_.empty()) {
         SEN_HILOGE("sensorList_ cannot be empty");
         return false;
@@ -94,7 +89,7 @@ bool SensorServiceClient::IsValid(uint32_t sensorId)
 int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
 {
     CALL_LOG_ENTER;
-    if (!IsValid(sensorId)) {
+    if (!IsValidSensorId(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
         return SENSOR_NATIVE_SAM_ERR;
     }
@@ -113,7 +108,7 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
 int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
-    if (!IsValid(sensorId)) {
+    if (!IsValidSensorId(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
         return SENSOR_NATIVE_SAM_ERR;
     }
@@ -132,7 +127,7 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
 int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int32_t params)
 {
     CALL_LOG_ENTER;
-    if (!IsValid(sensorId)) {
+    if (!IsValidSensorId(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
         return SENSOR_NATIVE_SAM_ERR;
     }
