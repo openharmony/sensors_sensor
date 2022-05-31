@@ -104,6 +104,7 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    CHKPR(sensorServer_, ERROR);
     HITRACE_BEGIN("EnableSensor");
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
     HITRACE_END();
@@ -125,6 +126,7 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    CHKPR(sensorServer_, ERROR);
     HITRACE_BEGIN("DisableSensor");
     ret = sensorServer_->DisableSensor(sensorId);
     HITRACE_END();
@@ -146,7 +148,10 @@ int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int3
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    CHKPR(sensorServer_, ERROR);
+    HITRACE_BEGIN("RunCommand");
     ret = sensorServer_->RunCommand(sensorId, cmdType, params);
+    HITRACE_END();
     if (ret != ERR_OK) {
         SEN_HILOGE("RunCommand failed");
         return ret;
@@ -177,6 +182,7 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    CHKPR(sensorServer_, ERROR);
     HITRACE_BEGIN("TransferDataChannel");
     ret = sensorServer_->TransferDataChannel(sensorDataChannel, sensorClientStub_);
     HITRACE_END();
@@ -191,6 +197,7 @@ int32_t SensorServiceClient::DestroyDataChannel()
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    CHKPR(sensorServer_, ERROR);
     HITRACE_BEGIN("DestroyDataChannel");
     ret = sensorServer_->DestroySensorChannel(sensorClientStub_);
     HITRACE_END();
