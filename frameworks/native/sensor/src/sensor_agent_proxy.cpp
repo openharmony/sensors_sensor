@@ -28,50 +28,19 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::SensorsLogDomain::SENSORS_IMPLEMENT, "SensorAgentProxy" };
-
-using OHOS::ERR_OK;
-using OHOS::Sensors::BODY;
-using OHOS::Sensors::DEVICE_MOTION;
-using OHOS::Sensors::ENVIRONMENT;
-using OHOS::Sensors::INVALID_POINTER;
-using OHOS::Sensors::LIGHT;
-using OHOS::Sensors::ORIENTATION;
-using OHOS::Sensors::OTHER;
-using OHOS::Sensors::SENSOR_TYPE_6DOF_ATTITUDE;
-using OHOS::Sensors::SENSOR_TYPE_ACCELEROMETER;
-using OHOS::Sensors::SENSOR_TYPE_ACCELEROMETER_UNCALIBRATED;
-using OHOS::Sensors::SENSOR_TYPE_AMBIENT_LIGHT;
-using OHOS::Sensors::SENSOR_TYPE_AMBIENT_TEMPERATURE;
-using OHOS::Sensors::SENSOR_TYPE_BAROMETER;
-using OHOS::Sensors::SENSOR_TYPE_DEVICE_ORIENTATION;
-using OHOS::Sensors::SENSOR_TYPE_GAME_ROTATION_VECTOR;
-using OHOS::Sensors::SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR;
-using OHOS::Sensors::SENSOR_TYPE_GRAVITY;
-using OHOS::Sensors::SENSOR_TYPE_GYROSCOPE;
-using OHOS::Sensors::SENSOR_TYPE_GYROSCOPE_UNCALIBRATED;
-using OHOS::Sensors::SENSOR_TYPE_HEART_RATE_DETECTOR;
-using OHOS::Sensors::SENSOR_TYPE_HUMIDITY;
-using OHOS::Sensors::SENSOR_TYPE_LINEAR_ACCELERATION;
-using OHOS::Sensors::SENSOR_TYPE_MAGNETIC_FIELD;
-using OHOS::Sensors::SENSOR_TYPE_MAGNETIC_FIELD_UNCALIBRATED;
-using OHOS::Sensors::SENSOR_TYPE_ORIENTATION;
-using OHOS::Sensors::SENSOR_TYPE_PRESSURE_DETECTOR;
-using OHOS::Sensors::SENSOR_TYPE_PROXIMITY;
-using OHOS::Sensors::SENSOR_TYPE_ROTATION_VECTOR;
-using OHOS::Sensors::SENSOR_TYPE_SIGNIFICANT_MOTION;
-using OHOS::Sensors::SENSOR_TYPE_STEP_COUNTER;
-using OHOS::Sensors::SENSOR_TYPE_STEP_DETECTOR;
-using OHOS::Sensors::SENSOR_TYPE_WEAR_DETECTOR;
-using OHOS::Sensors::SensorDataChannel;
-using OHOS::Sensors::SensorServiceClient;
+constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 }  // namespace
 
+#define SenClient SensorServiceClient::GetInstance()
 OHOS::sptr<SensorAgentProxy> SensorAgentProxy::sensorObj_ = nullptr;
 bool SensorAgentProxy::g_isChannelCreated;
 int64_t SensorAgentProxy::g_samplingInterval;
 int64_t SensorAgentProxy::g_reportInterval;
 std::mutex SensorAgentProxy::subscribeMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
+std::mutex sensorInfoMutex_;
+SensorInfo *sensorInfos_ = nullptr;
+int32_t sensorInfoCount_ = 0;
 std::map<int32_t, const SensorUser *> SensorAgentProxy::g_subscribeMap;
 std::map<int32_t, const SensorUser *> SensorAgentProxy::g_unsubscribeMap;
 
@@ -79,10 +48,15 @@ SensorAgentProxy::SensorAgentProxy()
     : dataChannel_(new (std::nothrow) SensorDataChannel())
 {}
 
+SensorAgentProxy::~SensorAgentProxy()
+{
+    CALL_LOG_ENTER;
+    ClearSensorInfos();
+}
+
 const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
 {
     CALL_LOG_ENTER;
-
     if (sensorObj_ == nullptr) {
         SEN_HILOGD("sensorObj_ new object");
         sensorObj_ = new (std::nothrow) SensorAgentProxy();
@@ -123,8 +97,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
         SEN_HILOGE("create data channel failed, ret: %{public}d", ret);
         return ret;
     }
-    auto &client = SensorServiceClient::GetInstance();
-    ret = client.TransferDataChannel(dataChannel_);
+    ret = SenClient.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
         auto destoryRet = dataChannel_->DestroySensorDataChannel();
         SEN_HILOGE("transfer data channel failed, ret : %{public}d, destoryRet : %{public}d", ret, destoryRet);
@@ -148,8 +121,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
         SEN_HILOGE("destory data channel failed, ret : %{public}d", ret);
         return ret;
     }
-    SensorServiceClient &client = SensorServiceClient::GetInstance();
-    ret = client.DestroyDataChannel();
+    ret = SenClient.DestroyDataChannel();
     if (ret != ERR_OK) {
         SEN_HILOGE("destory service data channel fail, ret : %{public}d", ret);
         return ret;
@@ -162,21 +134,20 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user is null or sensorId is invalid");
-        return ERROR;
-    }
+    std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
         SEN_HILOGE("samplingPeroid or g_reportInterval is invalid");
         return ERROR;
     }
-    std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
+    }
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
         SEN_HILOGE("subscribe sensorId first");
         return ERROR;
     }
-    SensorServiceClient &client = SensorServiceClient::GetInstance();
-    int32_t ret = client.EnableSensor(sensorId, g_samplingInterval, g_reportInterval);
+    int32_t ret = SenClient.EnableSensor(sensorId, g_samplingInterval, g_reportInterval);
     g_samplingInterval = -1;
     g_reportInterval = -1;
     if (ret != 0) {
@@ -192,9 +163,9 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
@@ -203,8 +174,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     }
     g_subscribeMap.erase(sensorId);
     g_unsubscribeMap[sensorId] = user;
-    SensorServiceClient &client = SensorServiceClient::GetInstance();
-    int32_t ret = client.DisableSensor(sensorId);
+    int32_t ret = SenClient.DisableSensor(sensorId);
     if (ret != 0) {
         SEN_HILOGE("disable sensor failed, ret: %{public}d", ret);
         return OHOS::Sensors::ERROR;
@@ -216,9 +186,9 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
                                    int64_t reportInterval) const
 {
     CHKPR(user, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
     }
     if (samplingInterval < 0 || reportInterval < 0) {
         SEN_HILOGE("samplingInterval or reportInterval is invalid");
@@ -239,9 +209,9 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
     }
     int32_t ret = CreateSensorDataChannel();
     if (ret != ERR_OK) {
@@ -258,9 +228,9 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if (g_unsubscribeMap.find(sensorId) == g_unsubscribeMap.end() || g_unsubscribeMap[sensorId] != user) {
@@ -282,9 +252,9 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
@@ -298,9 +268,9 @@ int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, in
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (sensorId < 0) {
-        SEN_HILOGE("user is null or sensorId is invalid");
-        return OHOS::Sensors::ERROR;
+    if (!SenClient.IsValid(sensorId)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+        return ERROR;
     }
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
@@ -310,51 +280,68 @@ int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, in
     return OHOS::Sensors::SUCCESS;
 }
 
+void SensorAgentProxy::ClearSensorInfos() const
+{
+    CHKPV(sensorInfos_);
+    free(sensorInfos_);
+    sensorInfos_ = nullptr;
+}
+
+int32_t SensorAgentProxy::ConvertSensorInfos() const
+{
+    CALL_LOG_ENTER;
+    std::vector<Sensor> sensorList = SenClient.GetSensorList();
+    if (sensorList.empty()) {
+        SEN_HILOGE("get sensor lists failed");
+        return ERROR;
+    }
+    size_t count = sensorList.size();
+    if (count > MAX_SENSOR_LIST_SIZE) {
+        SEN_HILOGE("The number of sensors exceeds the maximum value");
+        return ERROR;
+    }
+    sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
+    CHKPR(sensorInfos_, ERROR);
+    for (size_t i = 0; i < count; ++i) {
+        errno_t ret = strcpy_s((sensorInfos_ + i)->sensorName, NAME_MAX_LEN,
+            sensorList[i].GetSensorName().c_str());
+        CHKCR(ret == EOK, ERROR);
+        ret = strcpy_s((sensorInfos_ + i)->vendorName, NAME_MAX_LEN,
+            sensorList[i].GetVendorName().c_str());
+        CHKCR(ret == EOK, ERROR);
+        ret = strcpy_s((sensorInfos_ + i)->hardwareVersion, VERSION_MAX_LEN,
+            sensorList[i].GetHardwareVersion().c_str());
+        CHKCR(ret == EOK, ERROR);
+        ret = strcpy_s((sensorInfos_ + i)->firmwareVersion, VERSION_MAX_LEN,
+            sensorList[i].GetFirmwareVersion().c_str());
+        CHKCR(ret == EOK, ERROR);
+        (sensorInfos_ + i)->sensorId = static_cast<int32_t>(sensorList[i].GetSensorId());
+        (sensorInfos_ + i)->sensorTypeId = static_cast<int32_t>(sensorList[i].GetSensorTypeId());
+        (sensorInfos_ + i)->maxRange = sensorList[i].GetMaxRange();
+        (sensorInfos_ + i)->precision = sensorList[i].GetResolution();
+        (sensorInfos_ + i)->power = sensorList[i].GetPower();
+    }
+    sensorInfoCount_ = count;
+    return SUCCESS;
+}
+
 int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const
 {
+    CALL_LOG_ENTER;
     CHKPR(sensorInfo, OHOS::Sensors::ERROR);
     CHKPR(count, OHOS::Sensors::ERROR);
-    SensorServiceClient &client = SensorServiceClient::GetInstance();
-    std::vector<OHOS::Sensors::Sensor> sensorList_ = client.GetSensorList();
-    if (sensorList_.empty()) {
-        SEN_HILOGE("get sensor lists failed");
-        return OHOS::Sensors::ERROR;
+    std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
+    if (sensorInfos_ == nullptr) {
+        int32_t ret = ConvertSensorInfos();
+        if (ret != SUCCESS) {
+            SEN_HILOGE("convert sensor lists failed");
+            ClearSensorInfos();
+            return ERROR;
+        }
     }
-    *count = sensorList_.size();
-    *sensorInfo = (SensorInfo *)malloc(sizeof(SensorInfo) * (*count));
-    CHKPR(*sensorInfo, ERROR);
-    for (int32_t index = 0; index < *count; ++index) {
-        errno_t ret = strcpy_s((*sensorInfo + index)->sensorName, NAME_MAX_LEN,
-            sensorList_[index].GetSensorName().c_str());
-        if (ret != EOK) {
-            SEN_HILOGE("strcpy sensorName failed");
-            return OHOS::Sensors::ERROR;
-        }
-        ret = strcpy_s((*sensorInfo + index)->vendorName, NAME_MAX_LEN,
-            sensorList_[index].GetVendorName().c_str());
-        if (ret != EOK) {
-            SEN_HILOGE("strcpy vendorName failed");
-            return OHOS::Sensors::ERROR;
-        }
-        ret = strcpy_s((*sensorInfo + index)->hardwareVersion, VERSION_MAX_LEN,
-            sensorList_[index].GetHardwareVersion().c_str());
-        if (ret != EOK) {
-            SEN_HILOGE("strcpy hardwareVersion failed");
-            return OHOS::Sensors::ERROR;
-        }
-        ret = strcpy_s((*sensorInfo + index)->firmwareVersion, VERSION_MAX_LEN,
-            sensorList_[index].GetFirmwareVersion().c_str());
-        if (ret != EOK) {
-            SEN_HILOGE("strcpy hardwareVersion failed");
-            return OHOS::Sensors::ERROR;
-        }
-        (*sensorInfo + index)->sensorId = static_cast<int32_t>(sensorList_[index].GetSensorId());
-        (*sensorInfo + index)->sensorTypeId = static_cast<int32_t>(sensorList_[index].GetSensorTypeId());
-        (*sensorInfo + index)->maxRange = sensorList_[index].GetMaxRange();
-        (*sensorInfo + index)->precision = sensorList_[index].GetResolution();
-        (*sensorInfo + index)->power = sensorList_[index].GetPower();
-    }
-    return OHOS::Sensors::SUCCESS;
+    *sensorInfo = sensorInfos_;
+    *count = sensorInfoCount_;
+    return SUCCESS;
 }
 }  // namespace Sensors
 }  // namespace OHOS
