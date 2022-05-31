@@ -55,6 +55,7 @@ ohos_shared_library("libsensor_service") {
     "bundle_framework:appexecfwk_core",
     "hisysevent_native:libhisysevent",
     "hiviewdfx_hilog_native:libhilog",
+    "hitrace_native:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",

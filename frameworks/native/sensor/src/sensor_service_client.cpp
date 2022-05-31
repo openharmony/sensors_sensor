@@ -24,6 +24,7 @@
 #include "dmd_report.h"
 #include "ipc_skeleton.h"
 #include "sensor_service_proxy.h"
+#include "sensor_trace.h"
 #include "sensors_errors.h"
 #include "sensors_log_domain.h"
 #include "system_ability_definition.h"
@@ -103,7 +104,9 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    HITRACE_BEGIN("EnableSensor");
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
+    HITRACE_END();
     if (ret == ERR_OK) {
         UpdateSensorInfoMap(sensorId, samplingPeriod, maxReportDelay);
     }
@@ -122,7 +125,9 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
+    HITRACE_BEGIN("DisableSensor");
     ret = sensorServer_->DisableSensor(sensorId);
+    HITRACE_END();
     if (ret == ERR_OK) {
         DeleteSensorInfoItem(sensorId);
     }
@@ -172,7 +177,10 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
-    return sensorServer_->TransferDataChannel(sensorDataChannel, sensorClientStub_);
+    HITRACE_BEGIN("TransferDataChannel");
+    ret = sensorServer_->TransferDataChannel(sensorDataChannel, sensorClientStub_);
+    HITRACE_END();
+    return ret;
 }
 
 int32_t SensorServiceClient::DestroyDataChannel()
@@ -183,7 +191,10 @@ int32_t SensorServiceClient::DestroyDataChannel()
         SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
         return ret;
     }
-    return sensorServer_->DestroySensorChannel(sensorClientStub_);
+    HITRACE_BEGIN("DestroyDataChannel");
+    ret = sensorServer_->DestroySensorChannel(sensorClientStub_);
+    HITRACE_END();
+    return ret;
 }
 
 void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
