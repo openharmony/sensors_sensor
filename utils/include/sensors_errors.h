@@ -277,6 +277,14 @@ private:
         } \
     } while (0)
 
+#define CHKCR(cond, r) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("CK(%{public}s), errCode:%{public}d", #cond, r); \
+            return r; \
+        } \
+    } while (0)
+
 #endif
 }  // namespace Sensors
 }  // namespace OHOS
