@@ -41,6 +41,7 @@ ohos_shared_library("libsensor_native") {
 
   external_deps = [
     "eventhandler:libeventhandler",
+    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
