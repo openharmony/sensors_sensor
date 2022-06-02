@@ -321,7 +321,7 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         (sensorInfos_ + i)->precision = sensorList[i].GetResolution();
         (sensorInfos_ + i)->power = sensorList[i].GetPower();
     }
-    sensorInfoCount_ = count;
+    sensorInfoCount_ = static_cast<int32_t>(count);
     return SUCCESS;
 }
 
