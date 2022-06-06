@@ -190,6 +190,9 @@ static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value call
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorTypeId];
     for (auto callbackInfo : callbackInfos) {
         CHKNCC(env, (callbackInfo != nullptr), "callbackInfo is null");
+        if (callbackInfo->env != env) {
+            continue;
+        }
         napi_value sensorCallback = nullptr;
         CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback),
             "napi_get_reference_value");
@@ -246,6 +249,9 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto callbackInfo : callbackInfos) {
         CHKNCC(env, (callbackInfo != nullptr), "callbackInfo is null");
+        if (callbackInfo->env != env) {
+            continue;
+        }
         napi_value sensorCallback = nullptr;
         CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback),
             "napi_get_reference_value");
