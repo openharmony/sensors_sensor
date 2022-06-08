@@ -62,7 +62,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
         return WRITE_MSG_ERR;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "EnableSensor", ret);
@@ -85,7 +85,7 @@ ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
         return WRITE_MSG_ERR;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::DISABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "DisableSensor", ret);
@@ -108,7 +108,7 @@ int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
         return WRITE_MSG_ERR;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::GET_SENSOR_STATE, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "GetSensorState", ret);
@@ -143,7 +143,7 @@ ErrCode SensorServiceProxy::RunCommand(uint32_t sensorId, uint32_t cmdType, uint
         return WRITE_MSG_ERR;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::RUN_COMMAND, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "RunCommand", ret);
@@ -163,7 +163,10 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         return sensors;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    if (remote == nullptr) {
+        SEN_HILOGE("remote is null");
+        return sensors;
+    }
     int32_t ret = remote->SendRequest(ISensorService::GET_SENSOR_LIST, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "GetSensorList", ret);
@@ -205,7 +208,7 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
         return WRITE_MSG_ERR;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::TRANSFER_DATA_CHANNEL, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "TransferDataChannel", ret);
@@ -230,7 +233,7 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
         return WRITE_MSG_ERR;
     }
     auto remote = Remote();
-    CHKPR(remote, INVALID_POINTER);
+    CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::DESTROY_SENSOR_CHANNEL, data, reply, option);
     if (ret != NO_ERROR) {
         DmdReport::ReportException(SENSOR_SERVICE_IPC_EXCEPTION, "DestroySensorChannel", ret);
