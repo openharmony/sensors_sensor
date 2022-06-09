@@ -61,7 +61,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
         SEN_HILOGE("write maxReportDelayNs failed");
         return WRITE_MSG_ERR;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
@@ -84,7 +84,7 @@ ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
         SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::DISABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
@@ -107,7 +107,7 @@ int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
         SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::GET_SENSOR_STATE, data, reply, option);
     if (ret != NO_ERROR) {
@@ -142,7 +142,7 @@ ErrCode SensorServiceProxy::RunCommand(uint32_t sensorId, uint32_t cmdType, uint
         SEN_HILOGE("write params failed");
         return WRITE_MSG_ERR;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::RUN_COMMAND, data, reply, option);
     if (ret != NO_ERROR) {
@@ -162,7 +162,7 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         SEN_HILOGE("write descriptor failed");
         return sensors;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     if (remote == nullptr) {
         SEN_HILOGE("remote is null");
         return sensors;
@@ -207,7 +207,7 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
         SEN_HILOGE("sensorClient failed");
         return WRITE_MSG_ERR;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::TRANSFER_DATA_CHANNEL, data, reply, option);
     if (ret != NO_ERROR) {
@@ -232,7 +232,7 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
         SEN_HILOGE("write sensorClient failed");
         return WRITE_MSG_ERR;
     }
-    auto remote = Remote();
+    sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::DESTROY_SENSOR_CHANNEL, data, reply, option);
     if (ret != NO_ERROR) {
