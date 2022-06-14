@@ -14,11 +14,9 @@
  */
 
 #include "my_event_handler.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
-using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 
 namespace {

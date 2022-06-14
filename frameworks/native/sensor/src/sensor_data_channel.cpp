@@ -23,7 +23,6 @@
 
 #include "my_file_descriptor_listener.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 #include "string_ex.h"
 
 #ifndef O_NONBLOCK
@@ -37,7 +36,7 @@ using namespace OHOS::AppExecFwk;
 std::shared_ptr<MyEventHandler> SensorDataChannel::eventHandler_;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_NATIVE, "SensorDataChannel" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataChannel" };
 }  // namespace
 
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)

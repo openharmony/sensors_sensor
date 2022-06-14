@@ -21,13 +21,12 @@
 #include "sensor_catalog.h"
 #include "sensor_service_client.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 using namespace OHOS::HiviewDFX;
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::SensorsLogDomain::SENSORS_IMPLEMENT, "SensorAgentProxy" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorAgentProxy" };
 constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 }  // namespace
 

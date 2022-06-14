@@ -20,7 +20,7 @@
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002800;
+constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002700;
 } // namespace
 #ifndef SENSOR_FUNC_FMT
 #define SENSOR_FUNC_FMT "in %{public}s, "

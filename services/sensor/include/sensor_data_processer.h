@@ -28,7 +28,6 @@
 #include "flush_info_record.h"
 #include "report_data_callback.h"
 #include "sensor.h"
-#include "sensors_log_domain.h"
 #include "sensor_hdi_connection.h"
 #include "sensor_agent_type.h"
 

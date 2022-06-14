@@ -17,14 +17,13 @@
 
 #include "message_parcel.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorClientStub" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorClientStub" };
 }
 
 int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
