@@ -18,13 +18,12 @@
 #include "hdi_connection.h"
 #include "sensor_trace.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorHdiConnection" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorHdiConnection" };
 }
 
 int32_t SensorHdiConnection::ConnectHdi()

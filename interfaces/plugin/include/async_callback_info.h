@@ -28,7 +28,7 @@ namespace Sensors {
 using std::vector;
 using std::string;
 using namespace OHOS::HiviewDFX;
-static constexpr HiLogLabel LABEL = {LOG_CORE, 0xD002708, "SensorJsAPI"};
+static constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "SensorJsAPI"};
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr static int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_NUM = 3;

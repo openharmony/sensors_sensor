@@ -25,14 +25,13 @@
 #include "permission_util.h"
 #include "sensor_client_proxy.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorServiceStub" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" };
 }  // namespace
 
 SensorServiceStub::SensorServiceStub()

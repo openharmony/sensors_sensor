@@ -26,7 +26,6 @@
 #include "sensor.h"
 #include "sensor_dump.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -34,7 +33,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorService" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t MAX_DMUP_PARAM = 2;
 constexpr int32_t INVALID_PID = -1;

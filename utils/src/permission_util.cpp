@@ -18,14 +18,13 @@
 #include <thread>
 #include "sensor_agent_type.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_UTILS, "PermissionUtil" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "PermissionUtil" };
 const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
 const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
 const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";

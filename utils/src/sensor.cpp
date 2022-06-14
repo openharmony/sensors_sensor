@@ -16,13 +16,12 @@
 #include "sensor.h"
 
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_UTILS, "Sensor" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "Sensor" };
 }
 
 Sensor::Sensor()

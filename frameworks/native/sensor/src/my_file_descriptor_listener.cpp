@@ -15,7 +15,6 @@
 
 #include "my_file_descriptor_listener.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -23,7 +22,7 @@ using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "MyFileDescriptorListener" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "MyFileDescriptorListener" };
 constexpr int32_t RECEIVE_DATA_SIZE = 100;
 }  // namespace
 

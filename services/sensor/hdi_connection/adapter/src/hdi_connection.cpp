@@ -20,7 +20,6 @@
 
 #include "sensor_event_callback.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 #include "v1_0/sensor_interface_proxy.h"
 
 namespace OHOS {
@@ -30,7 +29,7 @@ using OHOS::HDI::Sensor::V1_0::ISensorInterface;
 using OHOS::HDI::Sensor::V1_0::ISensorCallback;
 using OHOS::HDI::Sensor::V1_0::HdfSensorInformation;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiConnection" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 sptr<ISensorInterface> sensorInterface_ = nullptr;
 sptr<ISensorCallback> eventCallback_ = nullptr;
 std::map<int32_t, SensorBasicInfo> sensorBasicInfoMap_;

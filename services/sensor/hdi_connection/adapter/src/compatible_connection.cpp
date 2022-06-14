@@ -17,14 +17,13 @@
 #include <cstring>
 #include "securec.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "CompatibleConnection" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "CompatibleConnection" };
 }
 
 ZReportDataCb CompatibleConnection::reportDataCb_ = nullptr;

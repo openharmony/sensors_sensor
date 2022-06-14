@@ -15,7 +15,6 @@
 #include "hdi_service_impl.h"
 
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 #include "unistd.h"
 
 namespace OHOS {
@@ -23,7 +22,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "HdiServiceImpl" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
 std::vector<SensorInformation> g_sensorInfos = {

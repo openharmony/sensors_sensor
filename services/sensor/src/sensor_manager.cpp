@@ -18,13 +18,12 @@
 #include "iservice_registry.h"
 #include "sensor.h"
 #include "sensors_errors.h"
-#include "sensors_log_domain.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorManager" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorManager" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;

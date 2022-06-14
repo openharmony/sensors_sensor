@@ -14,12 +14,9 @@
  */
 
 #include "geomagnetic_field.h"
-#include "sensors_log_domain.h"
 
-using namespace OHOS::HiviewDFX;
 using namespace std;
 namespace {
-constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::SensorsLogDomain::SENSORS_INTERFACE, "GeomagneticField"};
 constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
 constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
 constexpr float EARTH_REFERENCE_RADIUS = 6371.2f;
@@ -141,7 +138,6 @@ std::vector<std::vector<float>> GeomagneticField::GetSchmidtQuasiNormalFactors(i
 
 void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     float yearsSinceBase = (timeMillis - WMM_BASE_TIME) / (365.0f * 24.0f * 60.0f * 60.0f * 1000.0f);
     float inverseCosLatitude = DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
     GetLongitudeTrigonometric();
@@ -176,7 +172,6 @@ void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t 
 
 void GeomagneticField::GetLongitudeTrigonometric()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     sinMLongitude[0] = 0.0f;
     cosMLongitude[0] = 1.0f;
     sinMLongitude[1] = static_cast<float>(sin(geocentricLongitude));
@@ -192,7 +187,6 @@ void GeomagneticField::GetLongitudeTrigonometric()
 
 void GeomagneticField::GetRelativeRadiusPower()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     relativeRadiusPower[0] = 1.0f;
     relativeRadiusPower[1] = EARTH_REFERENCE_RADIUS / geocentricRadius;
     for (int32_t index = 2; index < static_cast<int32_t>(relativeRadiusPower.size()); ++index) {
@@ -202,7 +196,6 @@ void GeomagneticField::GetRelativeRadiusPower()
 
 void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float longitude, float altitude)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     float altitudeKm = altitude / CONVERSION_FACTOR;
     float a2 = EARTH_MAJOR_AXIS_RADIUS * EARTH_MAJOR_AXIS_RADIUS;
     float b2 = EARTH_MINOR_AXIS_RADIUS * EARTH_MINOR_AXIS_RADIUS;
@@ -223,7 +216,6 @@ void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float long
 
 void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad)
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     polynomials[0].resize(1);
     polynomials[0][0] = 1.0f;
     polynomialsDerivative[0].resize(1);
@@ -257,21 +249,18 @@ void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad
 
 float GeomagneticField::ObtainX()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return northComponent;
 }
 
 float GeomagneticField::ObtainY()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return eastComponent;
 }
 
 float GeomagneticField::ObtainZ()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return downComponent;
 }
@@ -295,14 +284,12 @@ double GeomagneticField::ToRadians(double angdeg)
 
 float GeomagneticField::ObtainDeflectionAngle()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     return static_cast<float>(ToDegrees(atan2(eastComponent, northComponent)));
 }
 
 float GeomagneticField::ObtainLevelIntensity()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     float horizontalIntensity = hypot(northComponent, eastComponent);
     return horizontalIntensity;
@@ -310,7 +297,6 @@ float GeomagneticField::ObtainLevelIntensity()
 
 float GeomagneticField::ObtainTotalIntensity()
 {
-    HiLog::Info(LABEL, "%{public}s begin", __func__);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     float sumOfSquares = northComponent * northComponent + eastComponent * eastComponent
         + downComponent * downComponent;

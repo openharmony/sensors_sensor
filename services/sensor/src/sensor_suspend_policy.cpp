@@ -17,7 +17,6 @@
 
 #include "sensor.h"
 #include "sensor_service.h"
-#include "sensors_log_domain.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -25,7 +24,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SensorsLogDomain::SENSOR_SERVICE, "SensorSuspendPolicy" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorSuspendPolicy" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 constexpr int64_t DEFAULT_SAMPLEING_RATE = 200000000;
