@@ -16,6 +16,7 @@
 #include "sensor_service.h"
 
 #include <cinttypes>
+#include <string_ex.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -35,7 +36,6 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
-constexpr int32_t MAX_DMUP_PARAM = 2;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 enum {
@@ -429,24 +429,23 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
 int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
     CALL_LOG_ENTER;
+    if (fd < 0) {
+        SEN_HILOGE("fd is invalid");
+        return DUMP_PARAM_ERR;
+    }
     SensorDump &sensorDump = SensorDump::GetInstance();
-    if ((args.empty()) || (args[0].size() != MAX_DMUP_PARAM)) {
-        SEN_HILOGE("param cannot be empty or the length is not 2");
-        dprintf(fd, "cmd param number is not equal to 2\n");
+    if (args.empty()) {
+        SEN_HILOGE("param cannot be empty");
+        dprintf(fd, "param cannot be empty\n");
         sensorDump.DumpHelp(fd);
         return DUMP_PARAM_ERR;
     }
-    bool helpRet = sensorDump.DumpSensorHelp(fd, args);
-    bool listRet = sensorDump.DumpSensorList(fd, sensors_, args);
-    bool channelRet = sensorDump.DumpSensorChannel(fd, clientInfo_, args);
-    bool openRet = sensorDump.DumpOpeningSensor(fd, sensors_, clientInfo_, args);
-    bool dataRet = sensorDump.DumpSensorData(fd, clientInfo_, args);
-    bool total = helpRet + listRet + channelRet + openRet + dataRet;
-    if (!total) {
-        dprintf(fd, "cmd param is error\n");
-        sensorDump.DumpHelp(fd);
-        return DUMP_PARAM_ERR;
-    }
+    std::vector<std::string> argList = { "" };
+    std::transform(args.begin(), args.end(), std::back_inserter(argList),
+        [](const std::u16string &arg) {
+        return Str16ToStr8(arg);
+    });
+    sensorDump.ParseCommand(fd, argList, sensors_, clientInfo_);
     return ERR_OK;
 }
 }  // namespace Sensors

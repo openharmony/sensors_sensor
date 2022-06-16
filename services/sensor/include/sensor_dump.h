@@ -32,13 +32,13 @@ class SensorDump : public Singleton<SensorDump> {
 public:
     SensorDump() = default;
     virtual ~SensorDump() = default;
+    void ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
+        ClientInfo &clientInfo);
     void DumpHelp(int32_t fd);
-    bool DumpSensorHelp(int32_t fd, const std::vector<std::u16string> &args);
-    bool DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, const std::vector<std::u16string> &args);
-    bool DumpSensorChannel(int32_t fd, ClientInfo &clientInfo, const std::vector<std::u16string> &args);
-    bool DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensors, ClientInfo &clientInfo,
-                           const std::vector<std::u16string> &args);
-    bool DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::vector<std::u16string> &args);
+    bool DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors);
+    bool DumpSensorChannel(int32_t fd, ClientInfo &clientInfo);
+    bool DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensors, ClientInfo &clientInfo);
+    bool DumpSensorData(int32_t fd, ClientInfo &clientInfo);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorDump);
