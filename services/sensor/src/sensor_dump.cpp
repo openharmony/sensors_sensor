@@ -15,10 +15,14 @@
 
 #include "sensor_dump.h"
 
+#include <getopt.h>
+
 #include <cinttypes>
+#include <cstring>
 #include <ctime>
 #include <queue>
 
+#include "securec.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -90,32 +94,77 @@ std::unordered_map<uint32_t, std::string> SensorDump::sensorMap_ = {
     { WEAR_DETECTION, "WEAR DETECTION" },
 };
 
-bool SensorDump::DumpSensorHelp(int32_t fd, const std::vector<std::u16string> &args)
+void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
+    ClientInfo &clientInfo)
 {
-    if ((args.empty()) || (args[0].compare(u"-h") != 0)) {
-        SEN_HILOGE("args cannot be empty or invalid");
-        return false;
+    int32_t optionIndex = 0;
+    struct option dumpOptions[] = {
+        {"channel", no_argument, 0, 'c'},
+        {"data", no_argument, 0, 'd'},
+        {"open", no_argument, 0, 'o'},
+        {"help", no_argument, 0, 'h'},
+        {"list", no_argument, 0, 'l'},
+        {NULL, 0, 0, 0}
+    };
+    char **argv = new char *[args.size()];
+    for (size_t i = 0; i < args.size(); ++i) {
+        argv[i] = new char[args[i].size() + 1];
+        if (strcpy_s(argv[i], args[i].size() + 1, args[i].c_str()) != EOK) {
+            SEN_HILOGE("strcpy_s error");
+            goto RELEASE_RES;
+            return;
+        }
     }
-    DumpHelp(fd);
-    return true;
+    optind = 1;
+    int32_t c;
+    while ((c = getopt_long(args.size(), argv, "cdohl", dumpOptions, &optionIndex)) != -1) {
+        switch (c) {
+            case 'c': {
+                DumpSensorChannel(fd, clientInfo);
+                break;
+            }
+            case 'd': {
+                DumpSensorData(fd, clientInfo);
+                break;
+            }
+            case 'o': {
+                DumpOpeningSensor(fd, sensors, clientInfo);
+                break;
+            }
+            case 'h': {
+                DumpHelp(fd);
+                break;
+            }
+            case 'l': {
+                DumpSensorList(fd, sensors);
+                break;
+            }
+            default: {
+                dprintf(fd, "cmd param is error\n");
+                DumpHelp(fd);
+                break;
+            }
+        }
+    }
+    RELEASE_RES:
+    for (size_t i = 0; i < args.size(); ++i) {
+        delete[] argv[i];
+    }
+    delete[] argv;
 }
 
 void SensorDump::DumpHelp(int32_t fd)
 {
     dprintf(fd, "Usage:\n");
-    dprintf(fd, "      -h: dump help\n");
-    dprintf(fd, "      -l: dump the sensor list\n");
-    dprintf(fd, "      -c: dump the sensor data channel info\n");
-    dprintf(fd, "      -o: dump the opening sensors\n");
-    dprintf(fd, "      -d: dump the last 10 packages sensor data\n");
+    dprintf(fd, "      -h, --help: dump help\n");
+    dprintf(fd, "      -l, --list: dump the sensor list\n");
+    dprintf(fd, "      -c, --channel: dump the sensor data channel info\n");
+    dprintf(fd, "      -o, --open: dump the opening sensors\n");
+    dprintf(fd, "      -d, --data: dump the last 10 packages sensor data\n");
 }
 
-bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, const std::vector<std::u16string> &args)
+bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
 {
-    if ((args.empty()) || (args[0].compare(u"-l") != 0)) {
-        SEN_HILOGE("args cannot be empty or invalid");
-        return false;
-    }
     DumpCurrentTime(fd);
     dprintf(fd, "Total sensor:%d, Sensor list:\n", int32_t { sensors.size() });
     for (const auto &sensor : sensors) {
@@ -130,12 +179,8 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors, 
     return true;
 }
 
-bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo, const std::vector<std::u16string> &args)
+bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
 {
-    if ((args.empty()) || (args[0].compare(u"-c") != 0)) {
-        SEN_HILOGE("args cannot be empty or invalid");
-        return false;
-    }
     DumpCurrentTime(fd);
     dprintf(fd, "Sensor channel info:\n");
     std::vector<SensorChannelInfo> channelInfo;
@@ -151,13 +196,8 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo, const std
     return true;
 }
 
-bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensors, ClientInfo &clientInfo,
-                                   const std::vector<std::u16string> &args)
+bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensors, ClientInfo &clientInfo)
 {
-    if ((args.empty()) || (args[0].compare(u"-o") != 0)) {
-        SEN_HILOGE("args cannot be empty or invalid");
-        return false;
-    }
     DumpCurrentTime(fd);
     dprintf(fd, "Opening sensors:\n");
     for (const auto &sensor : sensors) {
@@ -170,12 +210,8 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     return true;
 }
 
-bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo, const std::vector<std::u16string> &args)
+bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
 {
-    if ((args.empty()) || (args[0].compare(u"-d") != 0)) {
-        SEN_HILOGE("args cannot be empty or invalid");
-        return false;
-    }
     dprintf(fd, "Last 10 packages sensor data:\n");
     auto dataMap = clientInfo.GetDumpQueue();
     int32_t j = 0;
