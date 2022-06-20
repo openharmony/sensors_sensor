@@ -16,7 +16,7 @@
 
 #include "compatible_connection.h"
 #include "hdi_connection.h"
-#include "sensor_trace.h"
+#include "hitrace_meter.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -65,9 +65,9 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 
 int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
-    HITRACE_BEGIN("EnableSensor");
+    StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     int32_t ret = iSensorHdiConnection_->EnableSensor(sensorId);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("enable sensor failed, sensorId: %{public}d", sensorId);
         return ENABLE_SENSOR_ERR;
@@ -77,9 +77,9 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 
 int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
-    HITRACE_BEGIN("DisableSensor");
+    StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     int32_t ret = iSensorHdiConnection_->DisableSensor(sensorId);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("disable sensor failed, sensorId: %{public}d", sensorId);
         return DISABLE_SENSOR_ERR;
@@ -89,9 +89,9 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 
 int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
-    HITRACE_BEGIN("SetBatch");
+    StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
     int32_t ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("set batch failed, sensorId: %{public}d", sensorId);
         return SET_SENSOR_CONFIG_ERR;
@@ -101,9 +101,9 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 
 int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
-    HITRACE_BEGIN("SetMode");
+    StartTrace(HITRACE_TAG_SENSORS, "SetMode");
     int32_t ret = iSensorHdiConnection_->SetMode(sensorId, mode);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("set mode failed, sensorId: %{public}d", sensorId);
         return SET_SENSOR_MODE_ERR;
@@ -113,9 +113,9 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 
 int32_t SensorHdiConnection::SetOption(int32_t sensorId, int32_t option)
 {
-    HITRACE_BEGIN("SetOption");
+    StartTrace(HITRACE_TAG_SENSORS, "SetOption");
     int32_t ret = iSensorHdiConnection_->SetOption(sensorId, option);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("set option failed, sensorId: %{public}d", sensorId);
         return SET_SENSOR_OPTION_ERR;
@@ -125,9 +125,9 @@ int32_t SensorHdiConnection::SetOption(int32_t sensorId, int32_t option)
 
 int32_t SensorHdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
 {
-    HITRACE_BEGIN("RunCommand");
+    StartTrace(HITRACE_TAG_SENSORS, "RunCommand");
     int32_t ret = iSensorHdiConnection_->RunCommand(sensorId, cmd, params);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("run command failed, sensorId: %{public}d", sensorId);
         return RUN_COMMAND_ERR;
@@ -137,9 +137,9 @@ int32_t SensorHdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t p
 
 int32_t SensorHdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
-    HITRACE_BEGIN("RegisteDataReport");
+    StartTrace(HITRACE_TAG_SENSORS, "RegisteDataReport");
     int32_t ret = iSensorHdiConnection_->RegisteDataReport(cb, reportDataCallback);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("registe dataReport failed");
         return REGIST_CALLBACK_ERR;

@@ -22,9 +22,9 @@
 
 #include "death_recipient_template.h"
 #include "dmd_report.h"
+#include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "sensor_service_proxy.h"
-#include "sensor_trace.h"
 #include "sensors_errors.h"
 #include "system_ability_definition.h"
 
@@ -104,9 +104,9 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
-    HITRACE_BEGIN("EnableSensor");
+    StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret == ERR_OK) {
         UpdateSensorInfoMap(sensorId, samplingPeriod, maxReportDelay);
     }
@@ -126,9 +126,9 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
-    HITRACE_BEGIN("DisableSensor");
+    StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     ret = sensorServer_->DisableSensor(sensorId);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret == ERR_OK) {
         DeleteSensorInfoItem(sensorId);
     }
@@ -148,9 +148,9 @@ int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int3
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
-    HITRACE_BEGIN("RunCommand");
+    StartTrace(HITRACE_TAG_SENSORS, "RunCommand");
     ret = sensorServer_->RunCommand(sensorId, cmdType, params);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != ERR_OK) {
         SEN_HILOGE("RunCommand failed");
         return ret;
@@ -182,9 +182,9 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
-    HITRACE_BEGIN("TransferDataChannel");
+    StartTrace(HITRACE_TAG_SENSORS, "TransferDataChannel");
     ret = sensorServer_->TransferDataChannel(sensorDataChannel, sensorClientStub_);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
 
@@ -197,9 +197,9 @@ int32_t SensorServiceClient::DestroyDataChannel()
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
-    HITRACE_BEGIN("DestroyDataChannel");
+    StartTrace(HITRACE_TAG_SENSORS, "DestroyDataChannel");
     ret = sensorServer_->DestroySensorChannel(sensorClientStub_);
-    HITRACE_END();
+    FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
 
