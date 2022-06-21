@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <thread>
 
+#include "hisysevent.h"
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_basic_data_channel.h"
@@ -210,7 +211,14 @@ bool SensorDataProcesser::CheckSendDataPermission(sptr<SensorBasicDataChannel> c
 {
     AppThreadInfo appThreadInfo = clientInfo_.GetAppInfoByChannel(channel);
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    return permissionUtil.CheckSensorPermission(appThreadInfo.callerToken, sensorId);
+    int32_t ret = permissionUtil.CheckSensorPermission(appThreadInfo.callerToken, sensorId);
+    if (ret != PERMISSION_GRANTED) {
+        HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
+            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "CheckSendDataPermission", "ERROR_CODE", ret);
+        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
+        return false;
+    }
+    return true;
 }
 
 void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct SensorEvent> &cacheBuf,

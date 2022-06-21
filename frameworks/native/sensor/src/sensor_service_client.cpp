@@ -21,10 +21,10 @@
 #include <vector>
 
 #include "death_recipient_template.h"
-#include "dmd_report.h"
-#include "hitrace_meter.h"
+#include "hisysevent.h"
 #include "ipc_skeleton.h"
 #include "sensor_service_proxy.h"
+#include "sensor_trace.h"
 #include "sensors_errors.h"
 #include "system_ability_definition.h"
 
@@ -67,7 +67,8 @@ int32_t SensorServiceClient::InitServiceClient()
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }
-    DmdReport::ReportException(SENSOR_SERVICE_EXCEPTION, "InitServiceClient", SENSOR_NATIVE_GET_SERVICE_ERR);
+    HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSORS, "SENSOR_SERVICE_EXCEPTION",
+        HiSysEvent::EventType::FAULT, "FUNC_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
     SEN_HILOGE("get service failed");
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }
