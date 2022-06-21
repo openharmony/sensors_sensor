@@ -22,6 +22,7 @@
 
 #include "death_recipient_template.h"
 #include "hisysevent.h"
+#include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "sensor_service_proxy.h"
 #include "sensors_errors.h"
