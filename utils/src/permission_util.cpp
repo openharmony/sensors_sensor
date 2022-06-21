@@ -21,7 +21,6 @@
 
 namespace OHOS {
 namespace Sensors {
-
 namespace {
 const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
 const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
