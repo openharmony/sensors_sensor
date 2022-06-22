@@ -20,6 +20,7 @@
 #include <unistd.h>
 #include <vector>
 
+#include "hisysevent.h"
 #include "ipc_skeleton.h"
 #include "message_parcel.h"
 #include "permission_util.h"
@@ -78,8 +79,11 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        SEN_HILOGE("permission denied");
+    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    if (ret != PERMISSION_GRANTED) {
+        HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
+            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "SensorEnableInner", "ERROR_CODE", ret);
+        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return EnableSensor(sensorId, data.ReadInt64(), data.ReadInt64());
@@ -90,8 +94,11 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        SEN_HILOGE("permission denied");
+    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    if (ret != PERMISSION_GRANTED) {
+        HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
+            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "SensorDisableInner", "ERROR_CODE", ret);
+        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return DisableSensor(sensorId);
@@ -102,8 +109,11 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        SEN_HILOGE("permission denied");
+    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    if (ret != PERMISSION_GRANTED) {
+        HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
+            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "GetSensorStateInner", "ERROR_CODE", ret);
+        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return GetSensorState(sensorId);
@@ -114,8 +124,11 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId)) {
-        SEN_HILOGE("permission denied");
+    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    if (ret != PERMISSION_GRANTED) {
+        HiSysEvent::Write(HiSysEvent::Domain::SENSORS, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
+            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "RunCommandInner", "ERROR_CODE", ret);
+        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return RunCommand(sensorId, data.ReadUint32(), data.ReadUint32());

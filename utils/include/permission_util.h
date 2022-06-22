@@ -29,7 +29,7 @@ class PermissionUtil : public Singleton<PermissionUtil> {
 public:
     PermissionUtil() = default;
     virtual ~PermissionUtil() {};
-    bool CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
+    int32_t CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
 
 private:
     static std::unordered_map<uint32_t, std::string> sensorPermissions_;

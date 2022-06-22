@@ -21,10 +21,7 @@
 
 namespace OHOS {
 namespace Sensors {
-using namespace OHOS::HiviewDFX;
-
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "PermissionUtil" };
 const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
 const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
 const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
@@ -42,19 +39,13 @@ std::unordered_map<uint32_t, std::string> PermissionUtil::sensorPermissions_ = {
     { SENSOR_TYPE_ID_HEART_RATE, READ_HEALTH_DATA_PERMISSION }
 };
 
-bool PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId)
+int32_t PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId)
 {
     if (sensorPermissions_.find(sensorTypeId) == sensorPermissions_.end()) {
         return true;
     }
     std::string permissionName = sensorPermissions_[sensorTypeId];
-    int32_t result = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
-    if (result != PERMISSION_GRANTED) {
-        SEN_HILOGE("sensorId: %{public}d grant failed, result: %{public}d", sensorTypeId, result);
-        return false;
-    }
-    SEN_HILOGD("sensorId: %{public}d grant success", sensorTypeId);
-    return true;
+    return AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
 }
 }  // namespace Sensors
 }  // namespace OHOS
