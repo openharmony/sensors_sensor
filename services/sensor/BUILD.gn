@@ -24,7 +24,6 @@ ohos_shared_library("libsensor_service") {
     "src/client_info.cpp",
     "src/fifo_cache_data.cpp",
     "src/flush_info_record.cpp",
-    "src/sensor_client_stub.cpp",
     "src/sensor_data_processer.cpp",
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
