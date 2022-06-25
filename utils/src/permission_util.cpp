@@ -42,7 +42,7 @@ std::unordered_map<uint32_t, std::string> PermissionUtil::sensorPermissions_ = {
 int32_t PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId)
 {
     if (sensorPermissions_.find(sensorTypeId) == sensorPermissions_.end()) {
-        return true;
+        return PERMISSION_GRANTED;
     }
     std::string permissionName = sensorPermissions_[sensorTypeId];
     return AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
