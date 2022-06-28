@@ -15,8 +15,8 @@
     "rom": "2048KB",
     "ram": "~4096KB",
     "hisysevent_config": [
-      "//base/sensors/sensor/hisysevent.yaml"
-  ],
+        "//base/sensors/sensor/hisysevent.yaml"
+    ],
     "deps": {
       "components": [
         "access_token",
