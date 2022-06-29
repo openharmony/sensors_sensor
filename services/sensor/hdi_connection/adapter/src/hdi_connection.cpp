@@ -297,15 +297,19 @@ void HdiConnection::reconnect()
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     for (const auto &sensorInfo: sensorBasicInfoMap_) {
         int32_t sensorTypeId = sensorInfo.first;
-        ret = SetBatch(sensorTypeId, sensorInfo.second.GetSamplingPeriodNs(),
-            sensorInfo.second.GetMaxReportDelayNs());
-        if (ret != 0 || sensorInfo.second.GetSensorState() != true) {
-            SEN_HILOGE("sensorTypeId: %{public}d set batch fail or not need enable sensor", sensorTypeId);
+        SensorBasicInfo info = sensorInfo.second;
+        if (info.GetSensorState() != true) {
+            SEN_HILOGE("sensorTypeId: %{public}d don't need enable sensor", sensorTypeId);
             continue;
         }
-        ret = EnableSensor(sensorTypeId);
+        ret = sensorInterface_->SetBatch(sensorTypeId, info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
         if (ret != 0) {
-            SEN_HILOGE("enable sensor fail, sensorTypeId: %{public}d", sensorTypeId);
+            SEN_HILOGE("sensorTypeId: %{public}d set batch fail, error: %{public}d", sensorTypeId, ret);
+            continue;
+        }
+        ret = sensorInterface_->Enable(sensorTypeId);
+        if (ret != 0) {
+            SEN_HILOGE("enable sensor fail, sensorTypeId: %{public}d, error: %{public}d", sensorTypeId, ret);
         }
     }
 }
