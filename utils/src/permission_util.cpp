@@ -16,6 +16,7 @@
 #include "permission_util.h"
 
 #include <thread>
+#include "privacy_kit.h"
 #include "sensor_agent_type.h"
 #include "sensors_errors.h"
 
@@ -45,7 +46,18 @@ int32_t PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t
         return PERMISSION_GRANTED;
     }
     std::string permissionName = sensorPermissions_[sensorTypeId];
-    return AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    int32_t ret = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    if ((permissionName == ACTIVITY_MOTION_PERMISSION)
+        || (permissionName == READ_HEALTH_DATA_PERMISSION)) {
+        AddPermissionRecord(callerToken, permissionName, (ret == PERMISSION_GRANTED));
+    }
+    return ret;
+}
+
+void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status)
+{
+    int32_t successCount = status ? 1 : 0;
+    (void)PrivacyKit::AddPermissionUsedRecord(tokenID, permissionName, successCount, (1 - successCount));
 }
 }  // namespace Sensors
 }  // namespace OHOS

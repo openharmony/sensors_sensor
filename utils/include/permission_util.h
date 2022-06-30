@@ -30,7 +30,7 @@ public:
     PermissionUtil() = default;
     virtual ~PermissionUtil() {};
     int32_t CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
-
+    void AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status);
 private:
     static std::unordered_map<uint32_t, std::string> sensorPermissions_;
 };
