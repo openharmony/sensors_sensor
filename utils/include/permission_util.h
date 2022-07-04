@@ -32,6 +32,7 @@ public:
     int32_t CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
 
 private:
+    void AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status);
     static std::unordered_map<uint32_t, std::string> sensorPermissions_;
 };
 }  // namespace Sensors

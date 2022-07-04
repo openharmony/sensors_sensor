@@ -16,12 +16,16 @@
 #include "permission_util.h"
 
 #include <thread>
+#include "privacy_kit.h"
 #include "sensor_agent_type.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
+using namespace OHOS::HiviewDFX;
+
 namespace {
+constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "PermissionUtil"};
 const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
 const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
 const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
@@ -45,7 +49,23 @@ int32_t PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t
         return PERMISSION_GRANTED;
     }
     std::string permissionName = sensorPermissions_[sensorTypeId];
-    return AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    int32_t ret = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
+    if ((permissionName == ACTIVITY_MOTION_PERMISSION)
+        || (permissionName == READ_HEALTH_DATA_PERMISSION)) {
+        AddPermissionRecord(callerToken, permissionName, (ret == PERMISSION_GRANTED));
+    }
+    return ret;
+}
+
+void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status)
+{
+    int32_t successCount = status ? 1 : 0;
+    int32_t failCount = status ? 0 : 1;
+    int32_t ret = PrivacyKit::AddPermissionUsedRecord(tokenID, permissionName, successCount, failCount);
+    if (ret != 0) {
+        SEN_HILOGE("AddPermissionUsedRecord fail, permissionName: %{public}s, successCount: %{public}d, failCount: %{public}d",
+            permissionName.c_str(), successCount, failCount);
+    }
 }
 }  // namespace Sensors
 }  // namespace OHOS
