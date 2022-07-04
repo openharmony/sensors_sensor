@@ -22,10 +22,10 @@ namespace OHOS {
 namespace Sensors {
 using Security::AccessToken::AccessTokenID;
 struct AppThreadInfo {
-    int32_t pid;
-    int32_t uid;
-    AccessTokenID callerToken;
-    AppThreadInfo() : pid(0), uid(0) {};
+    int32_t pid { 0 };
+    int32_t uid { 0 };
+    AccessTokenID callerToken { 0 };
+    AppThreadInfo() {};
     AppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
         : pid(pid), uid(uid), callerToken(callerToken) {};
 };

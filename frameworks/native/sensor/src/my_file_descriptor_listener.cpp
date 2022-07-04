@@ -67,8 +67,8 @@ void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
                 .timestamp = receiveDataBuff_[i].timestamp,
                 .option = receiveDataBuff_[i].option,
                 .mode = receiveDataBuff_[i].mode,
-                .dataLen = receiveDataBuff_[i].dataLen,
-                .data = receiveDataBuff_[i].data
+                .data = receiveDataBuff_[i].data,
+                .dataLen = receiveDataBuff_[i].dataLen
             };
             channel_->dataCB_(&event, 1, channel_->privateData_);
         }
