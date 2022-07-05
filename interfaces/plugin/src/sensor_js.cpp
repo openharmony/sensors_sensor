@@ -61,8 +61,7 @@ static bool CheckSubscribe(int32_t sensorTypeId)
 {
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
     auto iter = g_onCallbackInfos.find(sensorTypeId);
-    CHKCF((iter != g_onCallbackInfos.end()), "No client subscribe");
-    return true;
+    return iter != g_onCallbackInfos.end();
 }
 
 static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *event)
@@ -113,7 +112,9 @@ static void EmitOnCallback(SensorEvent *event)
 {
     CHKPV(event);
     int32_t sensorTypeId = event->sensorTypeId;
-    CHKCV(CheckSubscribe(sensorTypeId), "No client subscribe");
+    if (!CheckSubscribe(sensorTypeId)) {
+        return;
+    }
 
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
     auto onCallbackInfos = g_onCallbackInfos[sensorTypeId];
@@ -132,10 +133,11 @@ static void EmitOnceCallback(SensorEvent *event)
     int32_t sensorTypeId = event->sensorTypeId;
     std::lock_guard<std::mutex> onceCallbackLock(onceMutex_);
     auto iter = g_onceCallbackInfos.find(sensorTypeId);
-    CHKCV((iter != g_onceCallbackInfos.end()), "No client subscribe once");
+    if (iter == g_onceCallbackInfos.end()) {
+        return;
+    }
 
-    auto onceCallbackInfos = g_onceCallbackInfos[sensorTypeId];
-    for (auto &onceCallbackInfo : onceCallbackInfos) {
+    for (auto &onceCallbackInfo : iter->second) {
         if (!copySensorData(onceCallbackInfo, event)) {
             SEN_HILOGE("Copy sensor data failed");
             continue;
@@ -430,6 +432,9 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
 
     std::vector<float> inRotationVector;
     CHKNCP(env, GetFloatArray(env, args[0], inRotationVector), "Wrong argument type, get inRotationVector fail");
+    size_t length = inRotationVector.size();
+    CHKNCP(env, ((length == DATA_LENGTH) || (length == THREE_DIMENSIONAL_MATRIX_LENGTH)),
+        "Wrong inRotationVector length");
     napi_value napiAxisX = GetNamedProperty(env, args[1], "axisX");
     CHKNCP(env, (napiAxisX != nullptr), "napiAxisX is null");
     int32_t axisX = 0;
@@ -442,7 +447,6 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfo(env, TRANSFORM_COORDINATE_SYSTEM);
     CHKPP(asyncCallbackInfo);
-    size_t length = inRotationVector.size();
     std::vector<float> outRotationVector(length);
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.transformCoordinateSystem(inRotationVector, axisX, axisY, outRotationVector);
