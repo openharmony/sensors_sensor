@@ -137,8 +137,7 @@ static void EmitOnceCallback(SensorEvent *event)
         return;
     }
 
-    auto onceCallbackInfos = g_onceCallbackInfos[sensorTypeId];
-    for (auto &onceCallbackInfo : onceCallbackInfos) {
+    for (auto &onceCallbackInfo : iter->second) {
         if (!copySensorData(onceCallbackInfo, event)) {
             SEN_HILOGE("Copy sensor data failed");
             continue;
