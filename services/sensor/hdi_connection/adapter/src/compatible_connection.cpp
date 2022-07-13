@@ -138,6 +138,7 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         .dataLen = event->dataLen
     };
     sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
+    CHKPR(sensorEvent.data, ERR_INVALID_VALUE);
     errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
     if (ret != EOK) {
         SEN_HILOGE("copy data failed");
