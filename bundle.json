@@ -56,7 +56,8 @@
       ],
       "test": [
           "//base/sensors/sensor/interfaces/plugin/test/unittest:unittest",
-          "//base/sensors/sensor/interfaces/native/test/fuzztest:fuzztest"
+          "//base/sensors/sensor/interfaces/native/test/fuzztest:fuzztest",
+          "//base/sensors/sensor/interfaces/native/test:unittest"
       ]
     }
   }
