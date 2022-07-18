@@ -48,7 +48,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
     int32_t socketPair[SOCKET_PAIR_SIZE] = { 0 };
     if (socketpair(AF_UNIX, SOCK_SEQPACKET, 0, socketPair) != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_DATA_CHANNEL_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "CreateSensorBasicChannel", "ERROR_CODE", errno);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateSensorBasicChannel", "ERROR_CODE", errno);
         SEN_HILOGE("create socketpair failed");
         sendFd_ = -1;
         receiveFd_ = -1;
@@ -158,7 +158,7 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
     } while (errno == EINTR);
     if (length < 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_DATA_CHANNEL_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "SendData", "ERROR_CODE", errno);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "SendData", "ERROR_CODE", errno);
         SEN_HILOGE("send fail : %{public}d, length = %{public}d", errno, (int32_t)length);
         return SENSOR_CHANNEL_SEND_DATA_ERR;
     }
