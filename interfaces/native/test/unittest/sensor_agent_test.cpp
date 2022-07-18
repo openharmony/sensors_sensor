@@ -53,7 +53,7 @@ void SensorAgentTest::TearDown()
 void SensorDataCallbackImpl(SensorEvent *event)
 {
     if (event == nullptr) {
-       SEN_HILOGE("SensorEvent is null");
+        SEN_HILOGE("SensorEvent is null");
         return;
     }
     float *sensorData = (float *)event[0].data;
