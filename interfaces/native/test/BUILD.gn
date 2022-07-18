@@ -37,8 +37,6 @@ ohos_unittest("SensorAgentTest") {
   ]
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
-
-    #"communication_L2:ipc_core",
     "ipc:ipc_core",
   ]
 }
