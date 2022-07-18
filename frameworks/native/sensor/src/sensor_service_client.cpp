@@ -68,7 +68,7 @@ int32_t SensorServiceClient::InitServiceClient()
         retry++;
     }
     HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_EXCEPTION",
-        HiSysEvent::EventType::FAULT, "FUNC_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
+        HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
     SEN_HILOGE("get service failed");
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }

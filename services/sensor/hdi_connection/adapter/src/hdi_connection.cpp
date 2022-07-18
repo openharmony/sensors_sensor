@@ -60,7 +60,7 @@ int32_t HdiConnection::ConnectHdi()
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
     }
     HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-        HiSysEvent::EventType::FAULT, "FUNC_NAME", "ConnectHdi", "ERROR_CODE", CONNECT_SENSOR_HDF_ERR);
+        HiSysEvent::EventType::FAULT, "PKG_NAME", "ConnectHdi", "ERROR_CODE", CONNECT_SENSOR_HDF_ERR);
     SEN_HILOGE("connect v1_0 hdi failed");
     return ERR_NO_INIT;
 }
@@ -73,7 +73,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
     int32_t ret = sensorInterface_->GetAllSensorInfo(sensorInfos);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "GetSensorList", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
         SEN_HILOGE("get sensor list failed");
         return ret;
     }
@@ -99,7 +99,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
     int32_t ret = sensorInterface_->Enable(sensorId);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "EnableSensor", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
         SEN_HILOGE("connect v1_0 hdi failed");
         return ret;
     }
@@ -113,7 +113,7 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
     int32_t ret = sensorInterface_->Disable(sensorId);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "DisableSensor", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableSensor", "ERROR_CODE", ret);
         SEN_HILOGE("Disable is failed");
         return ret;
     }
@@ -127,7 +127,7 @@ int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int6
     int32_t ret = sensorInterface_->SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "SetBatch", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "SetBatch", "ERROR_CODE", ret);
         SEN_HILOGE("SetBatch is failed");
         return ret;
     }
@@ -142,7 +142,7 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
     int32_t ret = sensorInterface_->SetMode(sensorId, mode);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "SetMode", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "SetMode", "ERROR_CODE", ret);
         SEN_HILOGE("SetMode is failed");
         return ret;
     }
@@ -156,7 +156,7 @@ int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
     int32_t ret = sensorInterface_->SetOption(sensorId, option);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "SetOption", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "SetOption", "ERROR_CODE", ret);
         SEN_HILOGE("SetOption is failed");
         return ret;
     }
@@ -171,7 +171,7 @@ int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallba
     int32_t ret = sensorInterface_->Register(0, eventCallback_);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "RegisteDataReport", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisteDataReport", "ERROR_CODE", ret);
         SEN_HILOGE("Register is failed");
         return ret;
     }
@@ -187,7 +187,7 @@ int32_t HdiConnection::DestroyHdiConnection()
     int32_t ret = sensorInterface_->Unregister(0, eventCallback_);
     if (ret != 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "FUNC_NAME", "DestroyHdiConnection", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroyHdiConnection", "ERROR_CODE", ret);
         SEN_HILOGE("Unregister is failed");
         return ret;
     }

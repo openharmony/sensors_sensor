@@ -82,7 +82,7 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "SensorEnableInner", "ERROR_CODE", ret);
+            HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
@@ -97,7 +97,7 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "SensorDisableInner", "ERROR_CODE", ret);
+            HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
@@ -112,7 +112,7 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
     int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "GetSensorStateInner", "ERROR_CODE", ret);
+            HiSysEvent::EventType::SECURITY, "PKG_NAME", "GetSensorStateInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
@@ -127,7 +127,7 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
     int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "RunCommandInner", "ERROR_CODE", ret);
+            HiSysEvent::EventType::SECURITY, "PKG_NAME", "RunCommandInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
