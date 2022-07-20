@@ -17,6 +17,7 @@
 #define SENSOR_EVENT_CALLBACK_H
 
 #include "v1_0/isensor_callback.h"
+#include "v1_0/sensor_types.h"
 
 using OHOS::HDI::Sensor::V1_0::HdfSensorEvents;
 using OHOS::HDI::Sensor::V1_0::ISensorCallback;

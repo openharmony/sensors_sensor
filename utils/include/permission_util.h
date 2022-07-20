@@ -19,7 +19,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "accesstoken_kit.h"
+#include "access_token.h"
 #include "singleton.h"
 
 namespace OHOS {

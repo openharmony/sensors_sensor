@@ -14,12 +14,6 @@
  */
 
 #include "report_data_callback.h"
-
-#include <cstdlib>
-#include <cstring>
-
-#include "errors.h"
-#include "securec.h"
 #include "sensors_errors.h"
 
 namespace OHOS {

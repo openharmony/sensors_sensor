@@ -15,6 +15,9 @@
 
 #include "geomagnetic_field.h"
 
+#include <cmath>
+#include <mutex>
+
 using namespace std;
 namespace {
 constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;

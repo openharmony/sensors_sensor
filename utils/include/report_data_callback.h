@@ -16,10 +16,7 @@
 #ifndef REPORT_DATA_CALLBACK_H
 #define REPORT_DATA_CALLBACK_H
 
-#include <vector>
-
 #include "refbase.h"
-
 #include "sensor_agent_type.h"
 
 namespace OHOS {

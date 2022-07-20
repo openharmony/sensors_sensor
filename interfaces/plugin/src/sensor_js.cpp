@@ -15,14 +15,12 @@
 #include "sensor_js.h"
 
 #include <cinttypes>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <cmath>
 #include <memory.h>
-#include <pthread.h>
 #include <string>
-#include <thread>
 #include <unistd.h>
 
 #include "geomagnetic_field.h"

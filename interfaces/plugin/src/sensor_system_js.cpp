@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 #include "sensor_system_js.h"
+
+#include "async_callback_info.h"
 #include "sensor_js.h"
-#include "sensor_napi_utils.h"
 
 namespace OHOS {
 namespace Sensors {

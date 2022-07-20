@@ -15,7 +15,8 @@
 #include "sensor_algorithm.h"
 
 #include <cmath>
-#include <mutex>
+#include <vector>
+
 #include "sensors_errors.h"
 
 using OHOS::HiviewDFX::HiLog;

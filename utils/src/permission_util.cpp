@@ -15,10 +15,10 @@
 
 #include "permission_util.h"
 
-#include <thread>
+#include "accesstoken_kit.h"
 #include "privacy_kit.h"
 #include "sensor_agent_type.h"
-#include "sensors_errors.h"
+#include "sensor_log.h"
 
 namespace OHOS {
 namespace Sensors {
