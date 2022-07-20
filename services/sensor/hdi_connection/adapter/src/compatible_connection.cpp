@@ -15,6 +15,7 @@
 #include "compatible_connection.h"
 
 #include <cstring>
+
 #include "securec.h"
 #include "sensors_errors.h"
 

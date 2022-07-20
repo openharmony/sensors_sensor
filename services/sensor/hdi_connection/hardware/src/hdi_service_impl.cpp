@@ -14,8 +14,10 @@
  */
 #include "hdi_service_impl.h"
 
+#include <thread>
+#include <unistd.h>
+
 #include "sensors_errors.h"
-#include "unistd.h"
 
 namespace OHOS {
 namespace Sensors {

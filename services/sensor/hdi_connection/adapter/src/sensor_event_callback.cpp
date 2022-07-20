@@ -14,7 +14,9 @@
  */
 
 #include "sensor_event_callback.h"
+
 #include "hdi_connection.h"
+#include "sensor_agent_type.h"
 #include "sensors_errors.h"
 
 namespace OHOS {

@@ -15,19 +15,9 @@
 
 #include "sensor_data_channel.h"
 
-#include <cerrno>
-#include <unistd.h>
-
-#include <fcntl.h>
-#include <sys/socket.h>
-
+#include "errors.h"
 #include "my_file_descriptor_listener.h"
 #include "sensors_errors.h"
-#include "string_ex.h"
-
-#ifndef O_NONBLOCK
-# define O_NONBLOCK	  04000
-#endif
 
 namespace OHOS {
 namespace Sensors {

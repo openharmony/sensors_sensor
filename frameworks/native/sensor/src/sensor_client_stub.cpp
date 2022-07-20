@@ -16,7 +16,7 @@
 #include "sensor_client_stub.h"
 
 #include "message_parcel.h"
-#include "sensors_errors.h"
+#include "sensor_log.h"
 
 namespace OHOS {
 namespace Sensors {

@@ -16,15 +16,8 @@
 #ifndef GEOMAGNETIC_FIELD_H
 #define GEOMAGNETIC_FIELD_H
 
-#include <cmath>
-#include <ctime>
-#include <cstring>
-#include <iostream>
+#include <cstdint>
 #include <vector>
-
-#include <stdint.h>
-#include <stdio.h>
-#include <time.h>
 
 class GeomagneticField {
 public:
