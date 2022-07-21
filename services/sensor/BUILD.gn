@@ -35,7 +35,7 @@ ohos_shared_library("libsensor_service") {
     "include",
     "$SUBSYSTEM_DIR/sensor/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/sensor/utils/include",
     "$SUBSYSTEM_DIR/sensor/services/sensor/include",
@@ -49,6 +49,7 @@ ohos_shared_library("libsensor_service") {
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
+    "c_utils:utils",
     "drivers_interface_sensor:libsensor_proxy_1.0",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
@@ -56,7 +57,6 @@ ohos_shared_library("libsensor_service") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "utils_base:utils",
   ]
   part_name = "sensor"
   subsystem_name = "sensors"
