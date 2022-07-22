@@ -38,6 +38,8 @@ enum {
     ERROR = -1,
     SUCCESS = 0,
     COMMON_ERR = COMMON_ERR_OFFSET,
+    FILE_OPEN_FAIL = COMMON_ERR_OFFSET + 1,
+    STREAM_BUF_READ_FAIL = FILE_OPEN_FAIL + 1,
 };
 
 // Error code for device

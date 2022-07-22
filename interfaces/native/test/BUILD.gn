@@ -20,12 +20,16 @@ module_output_path = "sensors/sensor/interfaces"
 ohos_unittest("SensorAgentTest") {
   module_out_path = module_output_path
 
-  sources = [ "unittest/sensor_agent_test.cpp" ]
+  sources = [
+    "$SUBSYSTEM_DIR/sensor/test/unittest/common/src/system_info.cpp",
+    "unittest/sensor_agent_test.cpp",
+  ]
 
   include_dirs = [
     "//utils/native/base/include",
     "$SUBSYSTEM_DIR/sensor/utils/include",
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
+    "$SUBSYSTEM_DIR/sensor/test/unittest/common/include",
   ]
 
   deps = [

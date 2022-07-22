@@ -18,6 +18,7 @@
 
 #include "sensor_agent.h"
 #include "sensors_errors.h"
+#include "system_info.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -296,6 +297,16 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level1)
 
     ret = UnsubscribeSensor(sensorId, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, GetProcCpuUsageTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("GetProcCpuUsageTest_001 in");
+    SYSTEM_INFO::CpuInfo cpuInfo;
+    const std::string process_name = "sensors";
+    auto usage = cpuInfo.GetProcCpuUsage(process_name);
+    SEN_HILOGD("The CPU usage of the %{public}s process is %{public}.2f", process_name.c_str(), usage);
+    ASSERT_TRUE(usage < SYSTEM_INFO::CPU_USAGE_LOAD && usage != SYSTEM_INFO::CPU_USAGE_UNKONW);
 }
 }  // namespace Sensors
 }  // namespace OHOS
