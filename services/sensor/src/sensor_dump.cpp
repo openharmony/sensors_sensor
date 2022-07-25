@@ -107,7 +107,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         {NULL, 0, 0, 0}
     };
     char **argv = new (std::nothrow) char *[args.size()];
-    CHKPV(**argv);
+    CHKPV(argv);
     for (size_t i = 0; i < args.size(); ++i) {
         argv[i] = new (std::nothrow) char[args[i].size() + 1];
         CHKPV(argv[i]);
