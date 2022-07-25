@@ -106,9 +106,11 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         {"list", no_argument, 0, 'l'},
         {NULL, 0, 0, 0}
     };
-    char **argv = new char *[args.size()];
+    char **argv = new (std::nothrow) char *[args.size()];
+    CHKPV(argv);
     for (size_t i = 0; i < args.size(); ++i) {
-        argv[i] = new char[args[i].size() + 1];
+        argv[i] = new (std::nothrow) char[args[i].size() + 1];
+        CHKPV(argv[i]);
         if (strcpy_s(argv[i], args[i].size() + 1, args[i].c_str()) != EOK) {
             SEN_HILOGE("strcpy_s error");
             goto RELEASE_RES;
