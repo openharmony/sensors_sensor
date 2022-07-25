@@ -25,7 +25,7 @@ constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "ReportDataCallback"}
 }  // namespace
 ReportDataCallback::ReportDataCallback()
 {
-    eventsBuf_.circularBuf = new struct SensorEvent[CIRCULAR_BUF_LEN];
+    eventsBuf_.circularBuf = new (std::nothrow) struct SensorEvent[CIRCULAR_BUF_LEN];
     eventsBuf_.readPos = 0;
     eventsBuf_.writePosition = 0;
     eventsBuf_.eventNum = 0;
@@ -35,6 +35,7 @@ ReportDataCallback::~ReportDataCallback()
 {
     if (eventsBuf_.circularBuf != nullptr) {
         delete[] eventsBuf_.circularBuf;
+        eventsBuf_.circularBuf = nullptr;
     }
     eventsBuf_.circularBuf = nullptr;
     eventsBuf_.readPos = 0;
@@ -49,6 +50,7 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
         SEN_HILOGE("callback or circularBuf or event cannot be null");
         if (event->data != nullptr) {
             delete[] event->data;
+            event->data = nullptr;
         }
         return ERROR;
     }
@@ -58,6 +60,7 @@ int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event,
         SEN_HILOGE("Leftsize and toendlen cannot be less than zero");
         if (event->data != nullptr) {
             delete[] event->data;
+            event->data = nullptr;
         }
         return ERROR;
     }
