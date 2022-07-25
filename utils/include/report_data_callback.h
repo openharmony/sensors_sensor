@@ -35,7 +35,7 @@ class ReportDataCallback : public RefBase {
 public:
     ReportDataCallback();
     ~ReportDataCallback();
-    int32_t ReportEventCallback(const struct SensorEvent *event, sptr<ReportDataCallback> cb);
+    int32_t ReportEventCallback(struct SensorEvent *event, sptr<ReportDataCallback> cb);
     struct CircularEventBuf &GetEventData();
     struct CircularEventBuf eventsBuf_;
 };

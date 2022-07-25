@@ -44,7 +44,7 @@ ReportDataCallback::~ReportDataCallback()
     eventsBuf_.eventNum = 0;
 }
 
-int32_t ReportDataCallback::ReportEventCallback(const struct SensorEvent* event, sptr<ReportDataCallback> cb)
+int32_t ReportDataCallback::ReportEventCallback(struct SensorEvent* event, sptr<ReportDataCallback> cb)
 {
     CHKPR(event, ERROR);
     if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
