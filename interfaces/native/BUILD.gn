@@ -24,7 +24,7 @@ ohos_ndk_library("libsensor_ndk") {
 
 config("sensor_private_config") {
   include_dirs = [
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/utils/include",
@@ -55,9 +55,9 @@ ohos_shared_library("sensor_interface_native") {
   ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
-    "utils_base:utils",
   ]
   part_name = "sensor"
   subsystem_name = "sensors"
