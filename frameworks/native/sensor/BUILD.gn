@@ -29,7 +29,7 @@ ohos_shared_library("libsensor_native") {
 
   include_dirs = [
     "include",
-    "//utils/native/base/include",
+    "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/sensor/utils/include",
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
@@ -37,6 +37,7 @@ ohos_shared_library("libsensor_native") {
   deps = [ "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils" ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
@@ -44,7 +45,6 @@ ohos_shared_library("libsensor_native") {
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
     "samgr_standard:samgr_proxy",
-    "utils_base:utils",
   ]
 
   part_name = "sensor"

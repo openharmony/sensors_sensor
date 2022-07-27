@@ -38,7 +38,7 @@ ohos_fuzztest("SensorAgentFuzzTest") {
 
   deps = [ "//base/sensors/sensor/interfaces/native:sensor_interface_native" ]
 
-  external_deps = [ "utils_base:utils" ]
+  external_deps = [ "c_utils:utils" ]
 }
 
 group("fuzztest") {
