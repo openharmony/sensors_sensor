@@ -15,14 +15,12 @@
 #include "sensor_js.h"
 
 #include <cinttypes>
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <cmath>
 #include <memory.h>
-#include <pthread.h>
 #include <string>
-#include <thread>
 #include <unistd.h>
 
 #include "geomagnetic_field.h"
@@ -430,6 +428,9 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
 
     std::vector<float> inRotationVector;
     CHKNCP(env, GetFloatArray(env, args[0], inRotationVector), "Wrong argument type, get inRotationVector fail");
+    size_t length = inRotationVector.size();
+    CHKNCP(env, ((length == DATA_LENGTH) || (length == THREE_DIMENSIONAL_MATRIX_LENGTH)),
+        "Wrong inRotationVector length");
     napi_value napiAxisX = GetNamedProperty(env, args[1], "axisX");
     CHKNCP(env, (napiAxisX != nullptr), "napiAxisX is null");
     int32_t axisX = 0;
@@ -442,7 +443,6 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
         new (std::nothrow) AsyncCallbackInfo(env, TRANSFORM_COORDINATE_SYSTEM);
     CHKPP(asyncCallbackInfo);
-    size_t length = inRotationVector.size();
     std::vector<float> outRotationVector(length);
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.transformCoordinateSystem(inRotationVector, axisX, axisY, outRotationVector);
