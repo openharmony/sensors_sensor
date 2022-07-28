@@ -207,29 +207,11 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<uint32_t, s
     return false;
 }
 
-bool SensorDataProcesser::CheckSendDataPermission(sptr<SensorBasicDataChannel> channel, uint32_t sensorId)
-{
-    AppThreadInfo appThreadInfo = clientInfo_.GetAppInfoByChannel(channel);
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckSensorPermission(appThreadInfo.callerToken, sensorId);
-    if (ret != PERMISSION_GRANTED) {
-        HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "FUNC_NAME", "CheckSendDataPermission", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
-        return false;
-    }
-    return true;
-}
-
 void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct SensorEvent> &cacheBuf,
                                       sptr<SensorBasicDataChannel> channel, std::vector<struct SensorEvent> event)
 {
     CHKPV(channel);
     if (event.empty()) {
-        return;
-    }
-    if (!CheckSendDataPermission(channel, event[0].sensorTypeId)) {
-        SEN_HILOGE("permission denied");
         return;
     }
 

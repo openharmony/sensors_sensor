@@ -55,7 +55,6 @@ private:
     void SendRawData(std::unordered_map<uint32_t, struct SensorEvent> &cacheBuf, sptr<SensorBasicDataChannel> channel,
                      std::vector<struct SensorEvent> event);
     void EventFilter(struct CircularEventBuf &eventsBuf);
-    bool CheckSendDataPermission(sptr<SensorBasicDataChannel> channel, uint32_t sensorId);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
     std::mutex dataCountMutex_;
