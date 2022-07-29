@@ -14,6 +14,10 @@
  */
 
 #include "geomagnetic_field.h"
+
+#include <cmath>
+#include <mutex>
+
 #include "sensors_log_domain.h"
 
 using namespace OHOS::HiviewDFX;

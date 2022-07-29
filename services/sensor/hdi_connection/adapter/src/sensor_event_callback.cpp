@@ -44,7 +44,8 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
         .mode = event.mode,
         .dataLen = event.dataLen
     };
-    sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
+    sensorEvent.data = new (std::nothrow) uint8_t[SENSOR_DATA_LENGHT];
+    CHKPR(sensorEvent.data, ERR_NO_INIT);
     for (int32_t i = 0; i < static_cast<int32_t>(dataSize); i++) {
         sensorEvent.data[i] = event.data[i];
     }

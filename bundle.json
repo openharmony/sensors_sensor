@@ -22,7 +22,6 @@
         "safwk",
         "samgr_standard",
         "utils_base",
-        "appexecfwk_standard",
         "napi",
         "hisysevent_native",
         "sensor_device_driver"

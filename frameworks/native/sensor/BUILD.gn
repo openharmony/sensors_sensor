@@ -21,6 +21,7 @@ ohos_shared_library("libsensor_native") {
     "src/my_event_handler.cpp",
     "src/my_file_descriptor_listener.cpp",
     "src/sensor_agent_proxy.cpp",
+    "src/sensor_client_stub.cpp",
     "src/sensor_data_channel.cpp",
     "src/sensor_service_client.cpp",
     "src/sensor_service_proxy.cpp",
@@ -31,13 +32,9 @@ ohos_shared_library("libsensor_native") {
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/sensor/utils/include",
-    "$SUBSYSTEM_DIR/sensor/services/sensor/include",
     "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
   ]
-  deps = [
-    "$SUBSYSTEM_DIR/sensor/services/sensor:libsensor_service",
-    "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils",
-  ]
+  deps = [ "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils" ]
 
   external_deps = [
     "eventhandler:libeventhandler",

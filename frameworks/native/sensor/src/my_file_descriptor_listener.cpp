@@ -46,7 +46,6 @@ MyFileDescriptorListener::~MyFileDescriptorListener()
 
 void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
-    CALL_LOG_ENTER;
     if (fileDescriptor < 0) {
         SEN_HILOGE("fileDescriptor: %{public}d", fileDescriptor);
         return;

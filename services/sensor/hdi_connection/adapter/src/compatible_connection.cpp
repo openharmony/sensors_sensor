@@ -129,8 +129,6 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         SEN_HILOGE("event is NULL");
         return ERR_INVALID_VALUE;
     }
-    CHKPR(reportDataCallback_, ERR_NO_INIT);
-    CHKPR(reportDataCb_, ERR_NO_INIT);
 
     struct SensorEvent sensorEvent = {
         .sensorTypeId = event->sensorId,
@@ -140,13 +138,16 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         .mode = event->mode,
         .dataLen = event->dataLen
     };
-    sensorEvent.data = new uint8_t[SENSOR_DATA_LENGHT];
+    sensorEvent.data = new (std::nothrow) uint8_t[SENSOR_DATA_LENGHT];
+    CHKPR(sensorEvent.data, ERR_INVALID_VALUE);
     errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
     if (ret != EOK) {
         SEN_HILOGE("copy data failed");
         delete[] sensorEvent.data;
         return COPY_ERR;
     }
+    CHKPR(reportDataCallback_, ERR_NO_INIT);
+    CHKPR(reportDataCb_, ERR_NO_INIT);
     (void)(reportDataCallback_->*reportDataCb_)(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
