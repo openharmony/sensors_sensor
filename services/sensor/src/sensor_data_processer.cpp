@@ -206,22 +206,11 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<uint32_t, s
     return false;
 }
 
-bool SensorDataProcesser::CheckSendDataPermission(sptr<SensorBasicDataChannel> channel, uint32_t sensorId)
-{
-    AppThreadInfo appThreadInfo = clientInfo_.GetAppInfoByChannel(channel);
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    return permissionUtil.CheckSensorPermission(appThreadInfo.callerToken, sensorId);
-}
-
 void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, struct SensorEvent> &cacheBuf,
                                       sptr<SensorBasicDataChannel> channel, std::vector<struct SensorEvent> event)
 {
     CHKPV(channel);
     if (event.empty()) {
-        return;
-    }
-    if (!CheckSendDataPermission(channel, event[0].sensorTypeId)) {
-        SEN_HILOGE("permission denied");
         return;
     }
 
