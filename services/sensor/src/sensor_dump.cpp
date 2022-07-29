@@ -108,9 +108,17 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     };
     char **argv = new (std::nothrow) char *[args.size()];
     CHKPV(argv);
+    if (memset_s(argv, args.size() * sizeof(char *), 0, args.size() * sizeof(char *)) != EOK) {
+        SEN_HILOGE("Call memset_s failed");
+        delete[] argv;
+        return;
+    }
     for (size_t i = 0; i < args.size(); ++i) {
         argv[i] = new (std::nothrow) char[args[i].size() + 1];
-        CHKPV(argv[i]);
+        if (argv[i] == nullptr) {
+            SEN_HILOGE("alloc failure");
+            goto RELEASE_RES;
+        }
         if (strcpy_s(argv[i], args[i].size() + 1, args[i].c_str()) != EOK) {
             SEN_HILOGE("strcpy_s error");
             goto RELEASE_RES;
