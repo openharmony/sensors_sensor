@@ -188,7 +188,7 @@ typedef struct LinearAccelData {
     float x;
     float y;
     float z;
-} LineraAccelData;
+} LinearAccelData;
 
 /**
  * @brief Defines the gyroscope sensor data structure. Measures the rotational angular velocity of the
@@ -211,7 +211,7 @@ typedef struct GravityData {
 } GravityData;
 
 /**
- * @brief Defines the uncalibred accelerometer data structure. Measures the uncalibred accelerometer applied to
+ * @brief Defines the uncalibrated accelerometer data structure. Measures the uncalibrated accelerometer applied to
  * the device on three physical axes (x, y, and z) in m/s2.
  */
 typedef struct AccelUncalibratedData {
@@ -224,7 +224,7 @@ typedef struct AccelUncalibratedData {
 } AccelUncalibratedData;
 
 /**
- * @brief Defines the uncalibred gyroscope sensor data structure. Measures the uncalibred rotational angular velocity of the
+ * @brief Defines the uncalibrated gyroscope sensor data structure. Measures the uncalibrated rotational angular velocity of the
  * device on three physical axes (x, y, and z) in rad/s.
  */
 typedef struct GyroUncalibratedData {
@@ -286,7 +286,7 @@ typedef struct MagneticFieldData {
 } MagneticFieldData;
 
 /**
- * @brief Defines the uncalibred magnetic field sensor data structure. Measure the uncalibred ambient geomagnetic field in three
+ * @brief Defines the uncalibrated magnetic field sensor data structure. Measure the uncalibrated ambient geomagnetic field in three
  * physical axes (x, y, z) in μT.
  */
 typedef struct MagneticFieldUncalibratedData {
