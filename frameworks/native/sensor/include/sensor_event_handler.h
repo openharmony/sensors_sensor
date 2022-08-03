@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#ifndef MY_EVENT_HANDLER_H
-#define MY_EVENT_HANDLER_H
+#ifndef SENSOR_EVENT_HANDLER_H
+#define SENSOR_EVENT_HANDLER_H
 
 #include "event_handler.h"
 #include "event_runner.h"
 
 namespace OHOS {
 namespace Sensors {
-class MyEventHandler : public AppExecFwk::EventHandler {
+class SensorEventHandler : public AppExecFwk::EventHandler {
 public:
-    explicit MyEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
-    ~MyEventHandler() = default;
+    explicit SensorEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
+    ~SensorEventHandler() = default;
 
     /**
      * Function: Process the event. Override the method of base class.
@@ -34,4 +34,4 @@ public:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // MY_EVENT_HANDLER_H
+#endif  // SENSOR_EVENT_HANDLER_H

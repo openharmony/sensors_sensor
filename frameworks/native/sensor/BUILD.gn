@@ -18,11 +18,11 @@ SUBSYSTEM_DIR = "//base/sensors"
 ##############################################
 ohos_shared_library("libsensor_native") {
   sources = [
-    "src/my_event_handler.cpp",
-    "src/my_file_descriptor_listener.cpp",
     "src/sensor_agent_proxy.cpp",
     "src/sensor_client_stub.cpp",
     "src/sensor_data_channel.cpp",
+    "src/sensor_event_handler.cpp",
+    "src/sensor_file_descriptor_listener.cpp",
     "src/sensor_service_client.cpp",
     "src/sensor_service_proxy.cpp",
   ]

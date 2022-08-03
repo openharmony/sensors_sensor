@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef MY_FILE_DESCRIPTOR_LISTENER_H
-#define MY_FILE_DESCRIPTOR_LISTENER_H
+#ifndef SENSOR_FILE_DESCRIPTOR_LISTENER_H
+#define SENSOR_FILE_DESCRIPTOR_LISTENER_H
 
 #include <cstdint>
 
@@ -23,11 +23,11 @@
 
 namespace OHOS {
 namespace Sensors {
-class MyFileDescriptorListener : public AppExecFwk::FileDescriptorListener {
+class SensorFileDescriptorListener : public AppExecFwk::FileDescriptorListener {
 public:
-    explicit MyFileDescriptorListener();
+    explicit SensorFileDescriptorListener();
 
-    ~MyFileDescriptorListener();
+    ~SensorFileDescriptorListener();
 
     void OnReadable(int32_t fileDescriptor) override;
 
@@ -45,4 +45,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // MY_FILE_DESCRIPTOR_LISTENER_H
+#endif  // SENSOR_FILE_DESCRIPTOR_LISTENER_H
