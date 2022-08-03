@@ -16,14 +16,14 @@
 #include "sensor_data_channel.h"
 
 #include "errors.h"
-#include "my_file_descriptor_listener.h"
+#include "sensor_file_descriptor_listener.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
-std::shared_ptr<MyEventHandler> SensorDataChannel::eventHandler_;
+std::shared_ptr<SensorEventHandler> SensorDataChannel::eventHandler_;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataChannel" };
@@ -56,11 +56,11 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
         SEN_HILOGE("create basic channel failed, ret : %{public}d", ret);
         return ret;
     }
-    auto listener = std::make_shared<MyFileDescriptorListener>();
+    auto listener = std::make_shared<SensorFileDescriptorListener>();
     listener->SetChannel(this);
     auto myRunner = AppExecFwk::EventRunner::Create(true);
     CHKPR(myRunner, ERROR);
-    eventHandler_ = std::make_shared<MyEventHandler>(myRunner);
+    eventHandler_ = std::make_shared<SensorEventHandler>(myRunner);
     CHKPR(eventHandler_, ERROR);
     int32_t receiveFd = GetReceiveDataFd();
     auto inResult = eventHandler_->AddFileDescriptorListener(receiveFd,

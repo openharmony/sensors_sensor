@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "my_file_descriptor_listener.h"
+#include "sensor_file_descriptor_listener.h"
 #include "sensor_agent_type.h"
 #include "sensor_basic_data_channel.h"
 #include "sensors_errors.h"
@@ -25,11 +25,11 @@ using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "MyFileDescriptorListener" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorFileDescriptorListener" };
 constexpr int32_t RECEIVE_DATA_SIZE = 100;
 }  // namespace
 
-MyFileDescriptorListener::MyFileDescriptorListener()
+SensorFileDescriptorListener::SensorFileDescriptorListener()
 {
     channel_ = nullptr;
     receiveDataBuff_ =
@@ -37,7 +37,7 @@ MyFileDescriptorListener::MyFileDescriptorListener()
     CHKPL(receiveDataBuff_);
 }
 
-MyFileDescriptorListener::~MyFileDescriptorListener()
+SensorFileDescriptorListener::~SensorFileDescriptorListener()
 {
     CALL_LOG_ENTER;
     if (receiveDataBuff_ != nullptr) {
@@ -46,7 +46,7 @@ MyFileDescriptorListener::~MyFileDescriptorListener()
     }
 }
 
-void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
+void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
         SEN_HILOGE("fileDescriptor: %{public}d", fileDescriptor);
@@ -78,14 +78,14 @@ void MyFileDescriptorListener::OnReadable(int32_t fileDescriptor)
     }
 }
 
-void MyFileDescriptorListener::OnWritable(int32_t fileDescriptor){}
+void SensorFileDescriptorListener::OnWritable(int32_t fileDescriptor) {}
 
-void MyFileDescriptorListener::SetChannel(SensorDataChannel* channel)
+void SensorFileDescriptorListener::SetChannel(SensorDataChannel* channel)
 {
     channel_ = channel;
 }
 
-void MyFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
+void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
         SEN_HILOGE("param is error: %{public}d", fileDescriptor);
@@ -98,7 +98,7 @@ void MyFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
     }
 }
 
-void MyFileDescriptorListener::OnException(int32_t fileDescriptor)
+void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
         SEN_HILOGE("param is error: %{public}d", fileDescriptor);
