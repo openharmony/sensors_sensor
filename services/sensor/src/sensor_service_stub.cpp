@@ -37,7 +37,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" 
 
 SensorServiceStub::SensorServiceStub()
 {
-    SEN_HILOGI("begin,  %{public}p", this);
+    CALL_LOG_ENTER;
     baseFuncs_[ENABLE_SENSOR] = &SensorServiceStub::SensorEnableInner;
     baseFuncs_[DISABLE_SENSOR] = &SensorServiceStub::SensorDisableInner;
     baseFuncs_[GET_SENSOR_STATE] = &SensorServiceStub::GetSensorStateInner;
@@ -49,7 +49,7 @@ SensorServiceStub::SensorServiceStub()
 
 SensorServiceStub::~SensorServiceStub()
 {
-    SEN_HILOGI("begin, yigou %{public}p", this);
+    CALL_LOG_ENTER;
     baseFuncs_.clear();
 }
 
