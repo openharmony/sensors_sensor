@@ -35,7 +35,7 @@ constexpr int32_t SOCKET_PAIR_SIZE = 2;
 
 SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), isActive_(false)
 {
-    SEN_HILOGD("isActive_ : %{public}d, sendFd: %{public}d", isActive_, sendFd_);
+    SEN_HILOGD("isActive_ : %{public}d,sendFd: %{public}d", isActive_, sendFd_);
 }
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
@@ -89,7 +89,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
     }
     sendFd_ = socketPair[0];
     receiveFd_ = socketPair[1];
-    SEN_HILOGD("create socketpair success, receiveFd_ : %{public}d, sendFd_ : %{public}d", receiveFd_, sendFd_);
+    SEN_HILOGD("create socketpair success,receiveFd_ : %{public}d,sendFd_ : %{public}d", receiveFd_, sendFd_);
     return ERR_OK;
 }
 

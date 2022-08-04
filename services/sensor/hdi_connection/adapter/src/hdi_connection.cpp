@@ -309,7 +309,7 @@ void HdiConnection::reconnect()
         }
         ret = sensorInterface_->Enable(sensorTypeId);
         if (ret != 0) {
-            SEN_HILOGE("enable sensor fail, sensorTypeId: %{public}d, error: %{public}d", sensorTypeId, ret);
+            SEN_HILOGE("enable sensor fail, sensorTypeId: %{public}d,error: %{public}d", sensorTypeId, ret);
         }
     }
 }

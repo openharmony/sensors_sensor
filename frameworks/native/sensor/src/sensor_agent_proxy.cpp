@@ -99,7 +99,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
     ret = SenClient.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
         auto destoryRet = dataChannel_->DestroySensorDataChannel();
-        SEN_HILOGE("transfer data channel failed, ret : %{public}d, destoryRet : %{public}d", ret, destoryRet);
+        SEN_HILOGE("transfer data channel failed, ret : %{public}d,destoryRet : %{public}d", ret, destoryRet);
         return ret;
     }
     g_isChannelCreated = true;
