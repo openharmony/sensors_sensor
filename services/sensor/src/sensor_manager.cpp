@@ -166,7 +166,7 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
     CALL_LOG_ENTER;
     clientInfo_.ClearSensorInfo(sensorId);
     if (sensorId == PROXIMITY_SENSOR_ID) {
-        struct SensorEvent event;
+        SensorEvent event;
         auto ret = clientInfo_.GetStoreEvent(sensorId, event);
         if (ret == ERR_OK) {
             SEN_HILOGD("change the default state is far");

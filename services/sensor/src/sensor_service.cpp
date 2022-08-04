@@ -180,7 +180,7 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
         SEN_HILOGW("it is not onchange data, no need to report");
         return;
     }
-    struct SensorEvent event;
+    SensorEvent event;
     auto ret = clientInfo_.GetStoreEvent(sensorId, event);
     if (ret != ERR_OK) {
         SEN_HILOGE("there is no data to be reported");

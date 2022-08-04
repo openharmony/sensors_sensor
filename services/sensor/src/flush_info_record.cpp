@@ -31,7 +31,7 @@ enum {
 };
 }  // namespace
 
-std::unordered_map<uint32_t, std::vector<struct FlushInfo>> FlushInfoRecord::GetFlushInfo()
+std::unordered_map<uint32_t, std::vector<FlushInfo>> FlushInfoRecord::GetFlushInfo()
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
@@ -51,7 +51,7 @@ ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicD
 {
     SEN_HILOGD("sensorId : %{public}u", sensorId);
     CHKPR(channel, INVALID_POINTER);
-    struct FlushInfo flush(channel, isFirstFlush);
+    FlushInfo flush(channel, isFirstFlush);
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
     /* If the sensorId can be found, it indicates that other processes have flushed on this sensor,
     so need to insert this flush command to the end of the vector */
@@ -59,7 +59,7 @@ ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicD
     if (it != flushInfo_.end()) {
         it->second.push_back(flush);
     } else {
-        std::vector<struct FlushInfo> vec { flush };
+        std::vector<FlushInfo> vec { flush };
         flushInfo_.insert(std::make_pair(sensorId, vec));
     }
     return ERR_OK;
@@ -78,7 +78,7 @@ bool FlushInfoRecord::IsFlushChannelValid(const std::vector<sptr<SensorBasicData
     return false;
 }
 
-int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<struct FlushInfo> &flushInfoList,
+int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<FlushInfo> &flushInfoList,
                                               const sptr<SensorBasicDataChannel> &channel)
 {
     CALL_LOG_ENTER;
