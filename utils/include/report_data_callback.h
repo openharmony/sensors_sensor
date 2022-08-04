@@ -36,8 +36,8 @@ public:
     ReportDataCallback();
     ~ReportDataCallback();
     int32_t ReportEventCallback(SensorEvent *event, sptr<ReportDataCallback> cb);
-    struct CircularEventBuf &GetEventData();
-    struct CircularEventBuf eventsBuf_;
+    CircularEventBuf &GetEventData();
+    CircularEventBuf eventsBuf_;
 };
 
 using ZReportDataCb = int32_t (ReportDataCallback::*)(SensorEvent *event, sptr<ReportDataCallback> cb);

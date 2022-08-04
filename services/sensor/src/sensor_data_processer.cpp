@@ -277,7 +277,7 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorEvent &event, sptr<Sen
     return ret;
 }
 
-void SensorDataProcesser::EventFilter(struct CircularEventBuf &eventsBuf)
+void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
     uint32_t realSensorId = 0;
     uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId);

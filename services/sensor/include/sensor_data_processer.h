@@ -54,7 +54,7 @@ private:
                            uint64_t fifoCount);
     void SendRawData(std::unordered_map<uint32_t, SensorEvent> &cacheBuf, sptr<SensorBasicDataChannel> channel,
                      std::vector<SensorEvent> event);
-    void EventFilter(struct CircularEventBuf &eventsBuf);
+    void EventFilter(CircularEventBuf &eventsBuf);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
     std::mutex dataCountMutex_;

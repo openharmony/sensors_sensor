@@ -85,7 +85,7 @@ int32_t ReportDataCallback::ReportEventCallback(SensorEvent* event, sptr<ReportD
     return ERR_OK;
 }
 
-struct CircularEventBuf &ReportDataCallback::GetEventData()
+CircularEventBuf &ReportDataCallback::GetEventData()
 {
     return eventsBuf_;
 }
