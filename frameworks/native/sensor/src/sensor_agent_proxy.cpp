@@ -63,14 +63,14 @@ const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
     return sensorObj_;
 }
 
-void SensorAgentProxy::HandleSensorData(struct SensorEvent *events, int32_t num, void *data)
+void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *data)
 {
     CHKPV(events);
     if (num <= 0) {
         SEN_HILOGE("events is null or num is invalid");
         return;
     }
-    struct SensorEvent eventStream;
+    SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
         if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {

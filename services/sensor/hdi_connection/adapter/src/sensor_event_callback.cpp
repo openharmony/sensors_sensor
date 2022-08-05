@@ -37,7 +37,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
         SEN_HILOGI("data is empty");
         return ERR_INVALID_VALUE;
     }
-    struct SensorEvent sensorEvent = {
+    SensorEvent sensorEvent = {
         .sensorTypeId = event.sensorId,
         .version = event.version,
         .timestamp = event.timestamp,

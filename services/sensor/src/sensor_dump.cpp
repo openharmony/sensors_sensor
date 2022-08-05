@@ -279,7 +279,7 @@ int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
     }
 }
 
-std::string SensorDump::GetDataBySensorId(uint32_t sensorId, struct TransferSensorEvents &sensorData)
+std::string SensorDump::GetDataBySensorId(uint32_t sensorId, TransferSensorEvents &sensorData)
 {
     SEN_HILOGD("sensorId: %{public}u", sensorId);
     std::string str;

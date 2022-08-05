@@ -31,8 +31,8 @@ public:
     virtual ~FifoCacheData();
     void SetPeriodCount(uint64_t periodCount);
     uint64_t GetPeriodCount() const;
-    void SetFifoCacheData(const std::vector<struct SensorEvent> &fifoCacheData);
-    std::vector<struct SensorEvent> GetFifoCacheData() const;
+    void SetFifoCacheData(const std::vector<SensorEvent> &fifoCacheData);
+    std::vector<SensorEvent> GetFifoCacheData() const;
     void SetChannel(const sptr<SensorBasicDataChannel> &channel);
     sptr<SensorBasicDataChannel> GetChannel() const;
     void InitFifoCache();
@@ -41,7 +41,7 @@ private:
     DISALLOW_COPY_AND_MOVE(FifoCacheData);
     uint64_t periodCount_;
     sptr<SensorBasicDataChannel> channel_;
-    std::vector<struct SensorEvent> fifoCacheData_;
+    std::vector<SensorEvent> fifoCacheData_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

@@ -25,7 +25,7 @@ constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "ReportDataCallback"}
 }  // namespace
 ReportDataCallback::ReportDataCallback()
 {
-    eventsBuf_.circularBuf = new (std::nothrow) struct SensorEvent[CIRCULAR_BUF_LEN];
+    eventsBuf_.circularBuf = new (std::nothrow) SensorEvent[CIRCULAR_BUF_LEN];
     CHKPL(eventsBuf_.circularBuf);
     eventsBuf_.readPos = 0;
     eventsBuf_.writePosition = 0;
@@ -44,7 +44,7 @@ ReportDataCallback::~ReportDataCallback()
     eventsBuf_.eventNum = 0;
 }
 
-int32_t ReportDataCallback::ReportEventCallback(struct SensorEvent* event, sptr<ReportDataCallback> cb)
+int32_t ReportDataCallback::ReportEventCallback(SensorEvent* event, sptr<ReportDataCallback> cb)
 {
     CHKPR(event, ERROR);
     if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
@@ -85,7 +85,7 @@ int32_t ReportDataCallback::ReportEventCallback(struct SensorEvent* event, sptr<
     return ERR_OK;
 }
 
-struct CircularEventBuf &ReportDataCallback::GetEventData()
+CircularEventBuf &ReportDataCallback::GetEventData()
 {
     return eventsBuf_;
 }

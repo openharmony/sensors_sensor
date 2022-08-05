@@ -24,7 +24,7 @@
 
 namespace OHOS {
 namespace Sensors {
-typedef void (*DataChannelCB)(struct SensorEvent *events, int32_t num, void *data);
+typedef void (*DataChannelCB)(SensorEvent *events, int32_t num, void *data);
 class SensorDataChannel : public SensorBasicDataChannel {
 public:
     SensorDataChannel() = default;
