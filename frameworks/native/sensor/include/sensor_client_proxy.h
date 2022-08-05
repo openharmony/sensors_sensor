@@ -28,7 +28,6 @@ class SensorClientProxy : public IRemoteProxy<ISensorClient> {
 public:
     explicit SensorClientProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorClient>(impl)
     {}
-
     virtual ~SensorClientProxy() = default;
 
 private:

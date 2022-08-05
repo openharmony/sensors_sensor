@@ -23,9 +23,7 @@ namespace Sensors {
 class ISensorClient : public IRemoteBroker {
 public:
     ISensorClient() = default;
-
     virtual ~ISensorClient() = default;
-
     DECLARE_INTERFACE_DESCRIPTOR(u"ISensorClient");
 };
 }  // namespace Sensors

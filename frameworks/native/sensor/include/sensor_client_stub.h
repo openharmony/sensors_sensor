@@ -26,9 +26,7 @@ namespace Sensors {
 class SensorClientStub : public IRemoteStub<ISensorClient> {
 public:
     SensorClientStub() = default;
-
     virtual ~SensorClientStub() = default;
-
     virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                     MessageOption &option) override;
 };

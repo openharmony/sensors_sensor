@@ -35,7 +35,6 @@ namespace Sensors {
 struct FlushInfo {
     sptr<SensorBasicDataChannel> flushChannel;
     bool flushFromEnable;
-
     FlushInfo(const sptr<SensorBasicDataChannel> &channel, bool enableFlush)
         : flushChannel(channel), flushFromEnable(enableFlush){};
 };
@@ -47,7 +46,6 @@ public:
     {
         flushInfo_.clear();
     }
-
     std::unordered_map<uint32_t, std::vector<FlushInfo>> GetFlushInfo();
     void ClearFlushInfoItem(uint32_t sensorId);
     ErrCode SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush);
