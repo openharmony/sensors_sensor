@@ -33,7 +33,6 @@ enum {
 
 std::unordered_map<uint32_t, std::vector<FlushInfo>> FlushInfoRecord::GetFlushInfo()
 {
-    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
     return flushInfo_;
 }
@@ -81,7 +80,6 @@ bool FlushInfoRecord::IsFlushChannelValid(const std::vector<sptr<SensorBasicData
 int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<FlushInfo> &flushInfoList,
                                               const sptr<SensorBasicDataChannel> &channel)
 {
-    CALL_LOG_ENTER;
     for (size_t i = 0; i < flushInfoList.size(); i++) {
         if (flushInfoList[i].flushChannel == channel) {
             return i;
