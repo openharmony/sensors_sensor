@@ -210,7 +210,6 @@ void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float long
     geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
         / (latRad * altitudeKm + a2)));
     geocentricLongitude = static_cast<float>(ToRadians(longitude));
-
     float radSq = altitudeKm * altitudeKm + 2 * altitudeKm
         * latRad + (a2 * a2 * clat * clat + b2 * b2 * slat * slat)
         / (a2 * clat * clat + b2 * slat * slat);

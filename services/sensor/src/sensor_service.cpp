@@ -203,7 +203,6 @@ ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodN
         return ret;
     }
     sensorManager_.StartDataReportThread();
-
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
@@ -244,7 +243,6 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ret;
     }
-
     ret = sensorHdiConnection_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
         SEN_HILOGE("EnableSensor failed");

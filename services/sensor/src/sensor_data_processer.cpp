@@ -214,7 +214,6 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, SensorEvent> 
     if (event.empty()) {
         return;
     }
-
     size_t eventSize = event.size();
     std::vector<TransferSensorEvents> transferEvents;
     for (size_t i = 0; i < eventSize; i++) {
