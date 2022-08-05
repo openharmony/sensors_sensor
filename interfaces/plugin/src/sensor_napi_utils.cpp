@@ -483,7 +483,6 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 
 void freeWork(uv_work_t *work)
 {
-    CALL_LOG_ENTER;
     CHKPV(work);
     delete work;
     work = nullptr;

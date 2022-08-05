@@ -90,7 +90,9 @@ static bool CheckSystemSubscribe(int32_t sensorTypeId)
 {
     std::lock_guard<std::mutex> subscribeLock(mutex_);
     auto iter = g_subscribeCallbacks.find(sensorTypeId);
-    CHKCF((iter != g_subscribeCallbacks.end()), "No client subscribe");
+    if (iter == g_subscribeCallbacks.end()) {
+        return false;
+    }
     return true;
 }
 
@@ -98,7 +100,9 @@ static void EmitSubscribeCallback(SensorEvent *event)
 {
     CHKPV(event);
     int32_t sensorTypeId = event->sensorTypeId;
-    CHKCV(CheckSystemSubscribe(sensorTypeId), "No client subscribe");
+    if (!CheckSystemSubscribe(sensorTypeId)) {
+        return;
+    }
     std::lock_guard<std::mutex> subscribeLock(mutex_);
     auto callback = g_subscribeCallbacks[sensorTypeId];
     CHKCV(copySensorData(callback, event), "Copy sensor data failed");
