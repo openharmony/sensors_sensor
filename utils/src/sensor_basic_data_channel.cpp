@@ -159,7 +159,7 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
     if (length < 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_DATA_CHANNEL_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "SendData", "ERROR_CODE", errno);
-        SEN_HILOGE("send fail:%{public}d,length = %{public}d", errno, (int32_t)length);
+        SEN_HILOGE("send fail:%{public}d,length:%{public}d", errno, (int32_t)length);
         return SENSOR_CHANNEL_SEND_DATA_ERR;
     }
     return ERR_OK;
