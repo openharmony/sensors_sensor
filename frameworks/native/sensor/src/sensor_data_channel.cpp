@@ -53,7 +53,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     // create basic data channel
     int32_t ret = CreateSensorBasicChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("create basic channel failed, ret : %{public}d", ret);
+        SEN_HILOGE("create basic channel failed, ret:%{public}d", ret);
         return ret;
     }
     auto listener = std::make_shared<SensorFileDescriptorListener>();

@@ -47,7 +47,7 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
     static const std::string procPath = "/proc";
     DIR* dir = ::opendir(procPath.c_str());
     if (dir == nullptr) {
-        SEN_HILOGE("Failed to open path: %{public}s", procPath.c_str());
+        SEN_HILOGE("Failed to open path:%{public}s", procPath.c_str());
         return DEFAULT_PID;
     }
     struct dirent* pidFile;
@@ -121,7 +121,7 @@ int32_t CpuInfo::GetProcOccupy(int32_t pid)
     static const std::string procPath = "/proc/" + std::to_string(pid) + "/stat";
     std::ifstream file(procPath);
     if (!file.is_open()) {
-        SEN_HILOGE("Failed to open path: %{public}s", procPath.c_str());
+        SEN_HILOGE("Failed to open path:%{public}s", procPath.c_str());
         return OHOS::Sensors::ERROR;
     }
 

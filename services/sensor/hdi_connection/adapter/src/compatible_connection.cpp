@@ -71,7 +71,7 @@ int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorId);
     if (ret != 0) {
-        SEN_HILOGE("enable sensor failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGE("enable sensor failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -81,7 +81,7 @@ int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorId);
     if (ret != 0) {
-        SEN_HILOGE("disable sensor failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGE("disable sensor failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -91,7 +91,7 @@ int32_t CompatibleConnection::SetBatch(int32_t sensorId, int64_t samplingInterva
 {
     int32_t ret = hdiServiceImpl_.SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret != 0) {
-        SEN_HILOGE("set batch failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGE("set batch failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -101,7 +101,7 @@ int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     int32_t ret = hdiServiceImpl_.SetMode(sensorId, mode);
     if (ret != 0) {
-        SEN_HILOGI("set mode failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("set mode failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -116,7 +116,7 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
 {
     int32_t ret = hdiServiceImpl_.SetOption(sensorId, option);
     if (ret != 0) {
-        SEN_HILOGI("set option failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("set option failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;

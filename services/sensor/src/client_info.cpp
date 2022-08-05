@@ -50,7 +50,7 @@ bool ClientInfo::GetSensorState(uint32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
         return false;
     }
     for (const auto &pidIt : it->second) {
@@ -58,7 +58,7 @@ bool ClientInfo::GetSensorState(uint32_t sensorId)
             return true;
         }
     }
-    SEN_HILOGE("cannot find sensorinfo, sensorId : %{public}u", sensorId);
+    SEN_HILOGE("cannot find sensorinfo, sensorId:%{public}u", sensorId);
     return false;
 }
 
@@ -78,7 +78,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
         return sensorInfo;
     }
 
@@ -104,7 +104,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
         return false;
     }
     bool ret = false;
@@ -207,7 +207,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto clientIt = clientMap_.find(sensorId);
     if (clientIt == clientMap_.end()) {
-        SEN_HILOGD("there is no channel belong to sensorId : %{public}u", sensorId);
+        SEN_HILOGD("there is no channel belong to sensorId:%{public}u", sensorId);
         return {};
     }
     std::vector<sptr<SensorBasicDataChannel>> sensorChannel;
@@ -272,11 +272,11 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
         if (channelMap_.size() == MAX_SUPPORT_CHANNEL) {
-            SEN_HILOGE("max support channel size : %{public}u", MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("max support channel size:%{public}u", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = channelMap_.insert(std::make_pair(pid, channel));
-        SEN_HILOGD("ret.second : %{public}d", ret.second);
+        SEN_HILOGD("ret.second:%{public}d", ret.second);
         return ret.second;
     }
     channelMap_[pid] = channel;
@@ -357,7 +357,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
 
 SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 {
-    SEN_HILOGD("begin, sensorId : %{public}u", sensorId);
+    SEN_HILOGD("begin, sensorId:%{public}u", sensorId);
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
     SensorBasicInfo sensorInfo;
@@ -370,12 +370,12 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
         return sensorInfo;
     }
     auto pidIt = it->second.find(pid);
     if (pidIt == it->second.end()) {
-        SEN_HILOGE("cannot find pid : %{public}d", pid);
+        SEN_HILOGE("cannot find pid:%{public}d", pid);
         return sensorInfo;
     }
     sensorInfo.SetSamplingPeriodNs(pidIt->second.GetSamplingPeriodNs());
@@ -441,13 +441,13 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, struct SensorEvent &event)
     if (storedEvent != storedEvent_.end()) {
         errno_t ret = memcpy_s(&event, sizeof(struct SensorEvent), &storedEvent->second, sizeof(struct SensorEvent));
         if (ret != EOK) {
-            SEN_HILOGE("memcpy_s failed, sensorId : %{public}d", sensorId);
+            SEN_HILOGE("memcpy_s failed, sensorId:%{public}d", sensorId);
             return ret;
         }
         return ERR_OK;
     }
 
-    SEN_HILOGE("can't get store event, sensorId : %{public}u", sensorId);
+    SEN_HILOGE("can't get store event, sensorId:%{public}u", sensorId);
     return NO_STROE_EVENT;
 }
 
@@ -473,7 +473,7 @@ void ClientInfo::StoreEvent(const struct SensorEvent &event)
     }
     for (size_t i = 0; i < sensors.size(); i++) {
         if ((int32_t)(sensors[i].GetSensorId()) == storedEvent.sensorTypeId) {
-            SEN_HILOGD("sensorFlags : %{public}u", sensors[i].GetFlags());
+            SEN_HILOGD("sensorFlags:%{public}u", sensors[i].GetFlags());
             foundSensor = true;
             break;
         }

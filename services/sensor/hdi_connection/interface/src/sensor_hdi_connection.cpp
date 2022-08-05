@@ -69,7 +69,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
     int32_t ret = iSensorHdiConnection_->EnableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("enable sensor failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("enable sensor failed, sensorId:%{public}d", sensorId);
         return ENABLE_SENSOR_ERR;
     }
     return ret;
@@ -81,7 +81,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
     int32_t ret = iSensorHdiConnection_->DisableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("disable sensor failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("disable sensor failed, sensorId:%{public}d", sensorId);
         return DISABLE_SENSOR_ERR;
     }
     return ret;
@@ -93,7 +93,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
     int32_t ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("set batch failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("set batch failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_CONFIG_ERR;
     }
     return ret;
@@ -105,7 +105,7 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
     int32_t ret = iSensorHdiConnection_->SetMode(sensorId, mode);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("set mode failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("set mode failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_MODE_ERR;
     }
     return ret;
@@ -117,7 +117,7 @@ int32_t SensorHdiConnection::SetOption(int32_t sensorId, int32_t option)
     int32_t ret = iSensorHdiConnection_->SetOption(sensorId, option);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("set option failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("set option failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_OPTION_ERR;
     }
     return ret;
@@ -129,7 +129,7 @@ int32_t SensorHdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t p
     int32_t ret = iSensorHdiConnection_->RunCommand(sensorId, cmd, params);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("run command failed, sensorId: %{public}d", sensorId);
+        SEN_HILOGI("run command failed, sensorId:%{public}d", sensorId);
         return RUN_COMMAND_ERR;
     }
     return ret;

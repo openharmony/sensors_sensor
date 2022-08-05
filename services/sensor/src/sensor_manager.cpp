@@ -36,7 +36,7 @@ void SensorManager::InitSensorMap(std::unordered_map<uint32_t, Sensor> &sensorMa
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
     sensorDataProcesser_ = dataProcesser;
     reportDataCallback_ = dataCallback;
-    SEN_HILOGD("begin sensorMap_.size : %{public}d", int32_t { sensorMap_.size() });
+    SEN_HILOGD("begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
     return;
 }
 
