@@ -206,30 +206,24 @@ bool getJsonObject(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInf
     napi_value value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.x, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "x", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.y, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "y", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.z, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "z", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.geomagneticDip, &value),
         "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "geomagneticDip", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.deflectionAngle, &value),
         "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "deflectionAngle", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.levelIntensity, &value),
         "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "levelIntensity", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.geomagneticData.totalIntensity, &value),
         "napi_create_double");
@@ -245,34 +239,27 @@ bool ConvertToSensorInfo(const napi_env &env, SensorInfo sensorInfo, napi_value 
     CHKNRF(env, napi_create_string_latin1(env, sensorInfo.sensorName, NAPI_AUTO_LENGTH, &value),
         "napi_create_string_latin1");
     CHKNRF(env, napi_set_named_property(env, result, "sensorName", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_string_latin1(env, sensorInfo.vendorName, NAPI_AUTO_LENGTH, &value),
         "napi_create_string_latin1");
     CHKNRF(env, napi_set_named_property(env, result, "vendorName", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_string_latin1(env, sensorInfo.firmwareVersion, NAPI_AUTO_LENGTH, &value),
         "napi_create_string_latin1");
     CHKNRF(env, napi_set_named_property(env, result, "firmwareVersion", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_string_latin1(env, sensorInfo.hardwareVersion, NAPI_AUTO_LENGTH, &value),
         "napi_create_string_latin1");
     CHKNRF(env, napi_set_named_property(env, result, "hardwareVersion", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.sensorTypeId, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "sensorTypeId", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.maxRange, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "maxRange", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.precision, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "precision", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.power, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "power", value), "napi_set_named_property");
@@ -318,7 +305,6 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
     if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
         return ConvertToBodyData(env, asyncCallbackInfo, result);
     }
-
     size_t size = g_sensorAttributeList[sensorTypeId].size();
     uint32_t dataLenth = asyncCallbackInfo->data.sensorData.dataLength / sizeof(float);
     CHKNCF(env, (size <= dataLenth), "Data length mismatch");
@@ -333,7 +319,6 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
             "napi_set_named_property");
         message = nullptr;
     }
-
     CHKNRF(env, napi_create_int64(env, asyncCallbackInfo->data.sensorData.timestamp, &message),
         "napi_create_int64");
     CHKNRF(env, napi_set_named_property(env, result[1], "timestamp", message), "napi_set_named_property");
@@ -398,12 +383,10 @@ bool ConvertToRotationMatrix(const napi_env &env, sptr<AsyncCallbackInfo> asyncC
     bool ret = CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.rotationMatrix,
         THREE_DIMENSIONAL_MATRIX_LENGTH, rotation);
     CHKNCF(env, ret, "Create napi array rotation fail");
-
     napi_value inclination = nullptr;
     ret = CreateNapiArray(env, asyncCallbackInfo->data.rationMatrixData.inclinationMatrix,
         THREE_DIMENSIONAL_MATRIX_LENGTH, inclination);
     CHKNCF(env, ret, "Create napi array inclination fail");
-
     CHKNRF(env, napi_create_object(env, &result[1]), "napi_create_object");
     CHKNRF(env, napi_set_named_property(env, result[1], "rotation", rotation),
         "napi_set_named_property");
@@ -421,17 +404,14 @@ napi_value GreateBusinessError(const napi_env &env, int32_t errCode, string errM
     napi_value value = nullptr;
     CHKNRP(env, napi_create_int32(env, errCode, &value), "napi_create_int32");
     CHKNRP(env, napi_set_named_property(env, result, "code", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRP(env, napi_create_string_utf8(env, errMessage.data(), NAPI_AUTO_LENGTH, &value),
         "napi_create_string_utf8");
     CHKNRP(env, napi_set_named_property(env, result, "message", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRP(env, napi_create_string_utf8(env, errName.data(), NAPI_AUTO_LENGTH, &value),
         "napi_create_string_utf8");
     CHKNRP(env, napi_set_named_property(env, result, "name", value), "napi_set_named_property");
-
     value = nullptr;
     CHKNRP(env, napi_create_string_utf8(env, errStack.data(), NAPI_AUTO_LENGTH, &value),
         "napi_create_string_utf8");

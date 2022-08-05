@@ -26,31 +26,18 @@ namespace Sensors {
 class ISensorHdiConnection {
 public:
     ISensorHdiConnection() = default;
-
     virtual ~ISensorHdiConnection() = default;
-
     virtual int32_t ConnectHdi() = 0;
-
     virtual int32_t GetSensorList(std::vector<Sensor>& sensorList) = 0;
-
     virtual int32_t EnableSensor(int32_t sensorId) = 0;
-
     virtual int32_t DisableSensor(int32_t sensorId)  = 0;
-
     virtual int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) = 0;
-
     virtual int32_t SetMode(int32_t sensorId, int32_t mode) = 0;
-
     virtual int32_t SetOption(int32_t sensorId, int32_t option) = 0;
-
     virtual int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params) = 0;
-
     virtual int32_t RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) = 0;
-
     virtual int32_t DestroyHdiConnection() = 0;
-
     static std::mutex dataMutex_;
-
     static std::condition_variable dataCondition_;
 
 private:

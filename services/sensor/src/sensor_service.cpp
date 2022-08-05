@@ -186,7 +186,7 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
         SEN_HILOGE("there is no data to be reported");
         return;
     }
-    sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(this->GetCallingPid());
+    sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(GetCallingPid());
     CHKPV(channel);
     auto sendRet = channel->SendData(&event, sizeof(event));
     if (sendRet != ERR_OK) {
@@ -197,16 +197,15 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
 
 ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    auto ret = sensorManager_.SaveSubscriber(sensorId, this->GetCallingPid(), samplingPeriodNs, maxReportDelayNs);
+    auto ret = sensorManager_.SaveSubscriber(sensorId, GetCallingPid(), samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
         SEN_HILOGE("SaveSubscriber failed");
         return ret;
     }
     sensorManager_.StartDataReportThread();
-
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
-        clientInfo_.RemoveSubscriber(sensorId, this->GetCallingPid());
+        clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ENABLE_SENSOR_ERR;
     }
     return ret;
@@ -220,7 +219,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
         SEN_HILOGE("sensorId is 0 or maxReportDelayNs exceeded the maximum value");
         return ERR_NO_INIT;
     }
-    int32_t pid = this->GetCallingPid();
+    int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (clientInfo_.GetSensorState(sensorId)) {
         SEN_HILOGW("sensor has been enabled already");
@@ -241,14 +240,13 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
         SEN_HILOGE("SaveSubscriber failed");
-        clientInfo_.RemoveSubscriber(sensorId, this->GetCallingPid());
+        clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ret;
     }
-
     ret = sensorHdiConnection_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
         SEN_HILOGE("EnableSensor failed");
-        clientInfo_.RemoveSubscriber(sensorId, this->GetCallingPid());
+        clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ENABLE_SENSOR_ERR;
     }
     ReportSensorSysEvent(sensorId, true, pid);
@@ -285,7 +283,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId, int32_t pid)
 ErrCode SensorService::DisableSensor(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
-    return DisableSensor(sensorId, this->GetCallingPid());
+    return DisableSensor(sensorId, GetCallingPid());
 }
 
 int32_t SensorService::GetSensorState(uint32_t sensorId)
@@ -308,7 +306,7 @@ ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t 
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
     if (cmdType == FLUSH) {
-        int32_t pid = this->GetCallingPid();
+        int32_t pid = GetCallingPid();
         SEN_HILOGI("sensorId : %{public}u, flag : %{public}u", sensorId, flag);
         auto retFlush = flushInfo_.FlushProcess(sensorId, flag, pid, false);
         if (retFlush != ERR_OK) {
@@ -320,7 +318,7 @@ ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t 
         SEN_HILOGE("RunCommand is failed");
         return RUN_COMMAND_ERR;
     }
-    auto uid = this->GetCallingUid();
+    auto uid = GetCallingUid();
     clientInfo_.UpdateCmd(sensorId, uid, cmdType);
     return ERR_OK;
 }
@@ -344,9 +342,9 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
                                            const sptr<IRemoteObject> &sensorClient)
 {
     CHKPR(sensorBasicDataChannel, ERR_NO_INIT);
-    auto pid = this->GetCallingPid();
-    auto uid = this->GetCallingUid();
-    auto callerToken = this->GetCallingTokenID();
+    auto pid = GetCallingPid();
+    auto uid = GetCallingUid();
+    auto callerToken = GetCallingTokenID();
     if (!clientInfo_.UpdateAppThreadInfo(pid, uid, callerToken)) {
         SEN_HILOGE("UpdateUid is failed");
         return UPDATE_UID_ERR;
@@ -363,7 +361,7 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
 ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
 {
     CALL_LOG_ENTER;
-    const int32_t clientPid = this->GetCallingPid();
+    const int32_t clientPid = GetCallingPid();
     if (clientPid < 0) {
         SEN_HILOGE("clientPid is invalid, clientPid : %{public}d", clientPid);
         
@@ -375,7 +373,7 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
         SEN_HILOGE("DestroySensorChannel is failed");
         return DESTROY_SENSOR_CHANNEL_ERR;
     }
-    clientInfo_.DestroyCmd(this->GetCallingUid());
+    clientInfo_.DestroyCmd(GetCallingUid());
     UnregisterClientDeathRecipient(sensorClient);
     return ERR_OK;
 }

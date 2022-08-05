@@ -30,27 +30,17 @@ namespace Sensors {
 class ISensorService : public IRemoteBroker {
 public:
     ISensorService() = default;
-
     virtual ~ISensorService() = default;
-
     DECLARE_INTERFACE_DESCRIPTOR(u"ISensorService");
-
     virtual ErrCode EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
                                  int64_t maxReportDelayNs) = 0;
-
     virtual ErrCode DisableSensor(uint32_t sensorId) = 0;
-
     virtual int32_t GetSensorState(uint32_t sensorId) = 0;
-
     virtual ErrCode RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params) = 0;
-
     virtual std::vector<Sensor> GetSensorList() = 0;
-
     virtual ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                         const sptr<IRemoteObject> &sensorClient) = 0;
-
     virtual ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) = 0;
-
     enum {
         ENABLE_SENSOR = 0,
         DISABLE_SENSOR,

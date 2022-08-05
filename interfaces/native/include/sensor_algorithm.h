@@ -23,23 +23,15 @@ class SensorAlgorithm {
 public:
     SensorAlgorithm() = default;
     ~SensorAlgorithm() = default;
-
     int32_t createQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion);
-
     int32_t transformCoordinateSystem(std::vector<float> inRotationMatrix, int32_t axisX,
                                     int32_t axisY, std::vector<float> &outRotationMatrix);
-
     int32_t getAltitude(float seaPressure, float currentPressure, float *altitude);
-
     int32_t getGeomagneticDip(std::vector<float> inclinationMatrix, float *geomagneticDip);
-
     int32_t getAngleModify(std::vector<float> currotationMatrix, std::vector<float> prerotationMatrix,
                         std::vector<float> &angleChange);
-
     int32_t getDirection(std::vector<float> rotationMatrix, std::vector<float> &rotationAngle);
-
     int32_t createRotationMatrix(std::vector<float> rotationVector, std::vector<float> &rotationMatrix);
-
     int32_t createRotationAndInclination(std::vector<float> gravity, std::vector<float> geomagnetic,
                                         std::vector<float> &rotationMatrix, std::vector<float> &inclinationMatrix);
 

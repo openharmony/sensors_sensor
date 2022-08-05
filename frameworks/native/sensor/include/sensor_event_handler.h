@@ -25,7 +25,6 @@ class SensorEventHandler : public AppExecFwk::EventHandler {
 public:
     explicit SensorEventHandler(const std::shared_ptr<AppExecFwk::EventRunner> &runner);
     ~SensorEventHandler() = default;
-
     /**
      * Function: Process the event. Override the method of base class.
      * @param event The event need to be processed.

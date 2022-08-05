@@ -211,14 +211,12 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     CHKPV(dataChannel_);
     // STEP1 : Destroy revious data channel
     dataChannel_->DestroySensorDataChannel();
-
     // STEP2 : Restore data channel
     dataChannel_->RestoreSensorDataChannel();
 
     // STEP3 : Clear sensorlist and sensorServer_
     sensorList_.clear();
     sensorServer_ = nullptr;
-
     // STEP4 : ReGet sensors  3601 service
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -226,10 +224,8 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
         dataChannel_->DestroySensorDataChannel();
         return;
     }
-
     // STEP5 : Retransfer new channel to sensors
     sensorServer_->TransferDataChannel(dataChannel_, sensorClientStub_);
-
     // STEP6 : Restore Sensor status
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {

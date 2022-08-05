@@ -52,7 +52,6 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         SEN_HILOGE("fileDescriptor: %{public}d", fileDescriptor);
         return;
     }
-
     FileDescriptorListener::OnReadable(fileDescriptor);
     if (receiveDataBuff_ == nullptr) {
         return;
@@ -90,7 +89,6 @@ void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
     if (fileDescriptor < 0) {
         SEN_HILOGE("param is error: %{public}d", fileDescriptor);
     }
-
     FileDescriptorListener::OnShutdown(fileDescriptor);
     if (receiveDataBuff_ != nullptr) {
         delete[] receiveDataBuff_;
@@ -104,7 +102,6 @@ void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
         SEN_HILOGE("param is error: %{public}d", fileDescriptor);
         return;
     }
-
     FileDescriptorListener::OnException(fileDescriptor);
     if (receiveDataBuff_ != nullptr) {
         delete[] receiveDataBuff_;

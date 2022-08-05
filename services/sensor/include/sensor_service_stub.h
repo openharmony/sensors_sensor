@@ -34,7 +34,6 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(SensorServiceStub);
     using SensorBaseFunc = ErrCode (SensorServiceStub::*)(MessageParcel &data, MessageParcel &reply);
-
     ErrCode SensorEnableInner(MessageParcel &data, MessageParcel &reply);
     ErrCode SensorDisableInner(MessageParcel &data, MessageParcel &reply);
     ErrCode GetSensorStateInner(MessageParcel &data, MessageParcel &reply);

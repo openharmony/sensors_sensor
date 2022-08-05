@@ -46,7 +46,6 @@ bool ClientInfo::GetSensorState(uint32_t sensorId)
         SEN_HILOGE("sensorId is invalid");
         return false;
     }
-
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
@@ -81,7 +80,6 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
         SEN_HILOGE("cannot find sensorId : %{public}u", sensorId);
         return sensorInfo;
     }
-
     for (const auto &pidIt : it->second) {
         int64_t curSamplingPeriodNs = pidIt.second.GetSamplingPeriodNs();
         int64_t curReportDelayNs = pidIt.second.GetMaxReportDelayNs();
@@ -100,7 +98,6 @@ bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
         SEN_HILOGE("sensorId or pid is invalid");
         return false;
     }
-
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
@@ -203,7 +200,6 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
         SEN_HILOGE("sensorId is invalid");
         return {};
     }
-
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto clientIt = clientMap_.find(sensorId);
     if (clientIt == clientMap_.end()) {
@@ -398,7 +394,6 @@ uint64_t ClientInfo::ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicD
             }
         }
     }
-
     int64_t bestSamplingPeriod = GetBestSensorInfo(sensorId).GetSamplingPeriodNs();
     int64_t curSamplingPeriod = GetCurPidSensorInfo(sensorId, pid).GetSamplingPeriodNs();
     if (bestSamplingPeriod == 0L) {
@@ -446,7 +441,6 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorEvent &event)
         }
         return ERR_OK;
     }
-
     SEN_HILOGE("can't get store event, sensorId : %{public}u", sensorId);
     return NO_STROE_EVENT;
 }
