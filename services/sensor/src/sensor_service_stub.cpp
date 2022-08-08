@@ -79,7 +79,7 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
@@ -94,7 +94,7 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
@@ -109,7 +109,7 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "GetSensorStateInner", "ERROR_CODE", ret);
@@ -124,7 +124,7 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
     (void)reply;
     uint32_t sensorId = data.ReadUint32();
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckSensorPermission(this->GetCallingTokenID(), sensorId);
+    int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "RunCommandInner", "ERROR_CODE", ret);

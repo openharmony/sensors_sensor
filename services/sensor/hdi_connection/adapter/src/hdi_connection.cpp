@@ -203,7 +203,6 @@ int32_t HdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
 
 ZReportDataCb HdiConnection::getReportDataCb()
 {
-    CALL_LOG_ENTER;
     if (reportDataCb_ == nullptr) {
         SEN_HILOGE("reportDataCb_ cannot be null");
     }
@@ -212,7 +211,6 @@ ZReportDataCb HdiConnection::getReportDataCb()
 
 sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
 {
-    CALL_LOG_ENTER;
     if (reportDataCallback_ == nullptr) {
         SEN_HILOGE("reportDataCallback_ cannot be null");
     }

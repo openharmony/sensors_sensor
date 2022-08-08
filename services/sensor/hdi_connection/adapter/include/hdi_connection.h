@@ -25,33 +25,19 @@ namespace Sensors {
 class HdiConnection : public ISensorHdiConnection {
 public:
     HdiConnection() = default;
-
     virtual ~HdiConnection() {}
-
     int32_t ConnectHdi() override;
-
     int32_t GetSensorList(std::vector<Sensor>& sensorList) override;
-
     int32_t EnableSensor(int32_t sensorId) override;
-
     int32_t DisableSensor(int32_t sensorId)  override;
-
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
-
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
-
     int32_t SetOption(int32_t sensorId, int32_t option) override;
-
     int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params) override;
-
     int32_t RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
-
     int32_t DestroyHdiConnection() override;
-
     ZReportDataCb getReportDataCb();
-
     sptr<ReportDataCallback> getReportDataCallback();
-
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
 
 private:

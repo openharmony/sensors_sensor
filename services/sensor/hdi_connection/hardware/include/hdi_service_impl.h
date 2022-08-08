@@ -28,25 +28,15 @@ namespace Sensors {
 class HdiServiceImpl : public Singleton<HdiServiceImpl> {
 public:
     HdiServiceImpl() = default;
-
     virtual ~HdiServiceImpl() {}
-
     int32_t GetSensorList(std::vector<SensorInformation>& sensorList);
-
     int32_t EnableSensor(int32_t sensorId);
-
     int32_t DisableSensor(int32_t sensorId);
-
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval);
-
     int32_t SetMode(int32_t sensorId, int32_t mode);
-
     int32_t SetOption(int32_t sensorId, int32_t option);
-
     int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params);
-
     int32_t Register(RecordDataCallback cb);
-
     int32_t Unregister();
 
 private:

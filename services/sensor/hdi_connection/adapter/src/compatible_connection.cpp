@@ -122,7 +122,7 @@ int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *event)
+int32_t CompatibleConnection::SensorDataCallback(const SensorEvents *event)
 {
     CHKPR(event, ERR_INVALID_VALUE);
     if ((event->dataLen == 0)) {
@@ -130,7 +130,7 @@ int32_t CompatibleConnection::SensorDataCallback(const struct SensorEvents *even
         return ERR_INVALID_VALUE;
     }
 
-    struct SensorEvent sensorEvent = {
+    SensorEvent sensorEvent = {
         .sensorTypeId = event->sensorId,
         .version = event->version,
         .timestamp = event->timestamp,

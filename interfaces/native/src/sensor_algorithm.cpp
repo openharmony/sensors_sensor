@@ -60,7 +60,6 @@ int32_t SensorAlgorithm::transformCoordinateSystemImpl(std::vector<float> inRota
         return OHOS::Sensors::ERROR;
     }
     int32_t axisZ = axisX ^ axisY;
-
     int32_t x = (axisX & 0x3) - 1;
     int32_t y = (axisY & 0x3) - 1;
     int32_t z = (axisZ & 0x3) - 1;
@@ -84,7 +83,6 @@ int32_t SensorAlgorithm::transformCoordinateSystemImpl(std::vector<float> inRota
             }
         }
     }
-
     if (inRotationMatrixLength == FOUR_DIMENSIONAL_MATRIX_LENGTH) {
         outRotationMatrix[3] = outRotationMatrix[7] = outRotationMatrix[11] =
             outRotationMatrix[12] = outRotationMatrix[13] = outRotationMatrix[14] = 0;
@@ -167,7 +165,6 @@ int32_t SensorAlgorithm::getAngleModify(std::vector<float> curRotationMatrix, st
         SEN_HILOGE("Invalid input currotationMatrix parameter");
         return OHOS::Sensors::ERROR;
     }
-
     float curMatrix[THREE_DIMENSIONAL_MATRIX_LENGTH] = {0};
     float preMatrix[THREE_DIMENSIONAL_MATRIX_LENGTH] = {0};
     int32_t curmatrixDimension = ((curRotationMatrixLength == FOUR_DIMENSIONAL_MATRIX_LENGTH)
@@ -180,7 +177,6 @@ int32_t SensorAlgorithm::getAngleModify(std::vector<float> curRotationMatrix, st
         int32_t preMatrixIndex = i % ROTATION_VECTOR_LENGTH + (i / ROTATION_VECTOR_LENGTH) * prematrixDimension;
         preMatrix[i] = preRotationMatrix[preMatrixIndex];
     }
-
     float radian[THREE_DIMENSIONAL_MATRIX_LENGTH] = {0};
     radian[1] = preMatrix[0] * curMatrix[1] + preMatrix[3] * curMatrix[4] + preMatrix[6] * curMatrix[7];
     radian[4] = preMatrix[1] * curMatrix[1] + preMatrix[4] * curMatrix[4] + preMatrix[7] * curMatrix[7];
@@ -278,12 +274,10 @@ int32_t SensorAlgorithm::createRotationAndInclination(std::vector<float> gravity
         SEN_HILOGE("Invalid input gravity parameter");
         return OHOS::Sensors::ERROR;
     }
-
     std::vector<float> componentH(3);
     componentH[0] = geomagnetic[1] * gravity[2] - geomagnetic[2] * gravity[1];
     componentH[1] = geomagnetic[2] * gravity[0] - geomagnetic[0] * gravity[2];
     componentH[2] = geomagnetic[0] * gravity[1] - geomagnetic[1] * gravity[0];
-
     float totalH = static_cast<float>(std::sqrt(pow(componentH[0], 2) + pow(componentH[1], 2)
         + pow(componentH[2], 2)));
     if (totalH < 0.1f) {
@@ -303,7 +297,6 @@ int32_t SensorAlgorithm::createRotationAndInclination(std::vector<float> gravity
     measuredValue[0] = gravity[1] * componentH[2] - gravity[2] * componentH[1];
     measuredValue[1] = gravity[2] * componentH[0] - gravity[0] * componentH[2];
     measuredValue[2] = gravity[0] * componentH[1] - gravity[1] * componentH[0];
-
     int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
     int32_t inclinationMatrixLength = static_cast<int32_t>(inclinationMatrix.size());
     if ((rotationMatrixLength != 9 && rotationMatrixLength != 16) || (inclinationMatrixLength != 9

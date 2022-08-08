@@ -42,32 +42,19 @@ class SensorService : public SystemAbility, public SensorServiceStub {
 
 public:
     explicit SensorService(int32_t systemAbilityId, bool runOnCreate = false);
-
     virtual ~SensorService() = default;
-
     void OnDump() override;
-
     void OnStart() override;
-
     void OnStop() override;
-
     int Dump(int fd, const std::vector<std::u16string> &args) override;
-
     ErrCode EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
-
     ErrCode DisableSensor(uint32_t sensorId) override;
-
     int32_t GetSensorState(uint32_t sensorId) override;
-
     ErrCode RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params) override;
-
     std::vector<Sensor> GetSensorList() override;
-
     ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                 const sptr<IRemoteObject> &sensorClient) override;
-
     ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) override;
-
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
 
 private:

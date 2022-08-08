@@ -50,7 +50,6 @@ private:
     static void HandleSensorData(SensorEvent *events, int32_t num, void *data);
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
-
     static OHOS::sptr<SensorAgentProxy> sensorObj_;
     static std::mutex subscribeMutex_;
     static std::mutex chanelMutex_;

@@ -41,7 +41,6 @@ class ClientInfo : public Singleton<ClientInfo> {
 public:
     ClientInfo() = default;
     virtual ~ClientInfo() = default;
-
     bool GetSensorState(uint32_t sensorId);
     SensorBasicInfo GetBestSensorInfo(uint32_t sensorId);
     bool OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid);
@@ -59,8 +58,8 @@ public:
     SensorBasicInfo GetCurPidSensorInfo(uint32_t sensorId, int32_t pid);
     uint64_t ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel);
     uint64_t ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel);
-    int32_t GetStoreEvent(int32_t sensorId, struct SensorEvent &event);
-    void StoreEvent(const struct SensorEvent &event);
+    int32_t GetStoreEvent(int32_t sensorId, SensorEvent &event);
+    void StoreEvent(const SensorEvent &event);
     void ClearEvent();
     AppThreadInfo GetAppInfoByChannel(const sptr<SensorBasicDataChannel> &channel);
     bool SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t pid);
@@ -70,8 +69,8 @@ public:
     void GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInfo);
     void UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType);
     void DestroyCmd(int32_t uid);
-    void UpdateDataQueue(int32_t sensorId, struct SensorEvent &event);
-    std::unordered_map<uint32_t, std::queue<struct TransferSensorEvents>> GetDumpQueue();
+    void UpdateDataQueue(int32_t sensorId, SensorEvent &event);
+    std::unordered_map<uint32_t, std::queue<TransferSensorEvents>> GetDumpQueue();
     void ClearDataQueue(int32_t sensorId);
     int32_t GetUidByPid(int32_t pid);
     AccessTokenID GetTokenIdByPid(int32_t pid);
@@ -88,11 +87,11 @@ private:
     std::mutex dataQueueMutex_;
     std::unordered_map<uint32_t, std::unordered_map<int32_t, SensorBasicInfo>> clientMap_;
     std::unordered_map<int32_t, sptr<SensorBasicDataChannel>> channelMap_;
-    std::unordered_map<int32_t, struct SensorEvent> storedEvent_;
+    std::unordered_map<int32_t, SensorEvent> storedEvent_;
     std::unordered_map<int32_t, AppThreadInfo> appThreadInfoMap_;
     std::map<sptr<IRemoteObject>, int32_t> clientPidMap_;
     std::unordered_map<uint32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
-    std::unordered_map<uint32_t, std::queue<struct TransferSensorEvents>> dumpQueue_;
+    std::unordered_map<uint32_t, std::queue<TransferSensorEvents>> dumpQueue_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

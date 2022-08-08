@@ -29,43 +29,30 @@ public:
     virtual ~Sensor() = default;
     uint32_t GetSensorId() const;
     void SetSensorId(uint32_t sensorId);
-
     uint32_t GetSensorTypeId() const;
     void SetSensorTypeId(uint32_t sensorTypeId);
-
     std::string GetSensorName() const;
     void SetSensorName(const std::string &sensorName);
-
     std::string GetVendorName() const;
     void SetVendorName(const std::string &vendorName);
-
     std::string GetHardwareVersion() const;
     void SetHardwareVersion(const std::string &hardwareVersion);
-
     std::string GetFirmwareVersion() const;
     void SetFirmwareVersion(const std::string &firmwareVersion);
-
     float GetMaxRange() const;
     void SetMaxRange(float maxRange);
-
     float GetResolution() const;
     void SetResolution(float resolution);
-
     float GetPower() const;
     void SetPower(float power);
-
     uint32_t GetFlags() const;
     void SetFlags(uint32_t flags);
-
     int32_t GetFifoMaxEventCount() const;
     void SetFifoMaxEventCount(int32_t fifoMaxEventCount);
-
     int64_t GetMinSamplePeriodNs() const;
     void SetMinSamplePeriodNs(int64_t minSamplePeriodNs);
-
     int64_t GetMaxSamplePeriodNs() const;
     void SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs);
-
     bool ReadFromParcel(Parcel &parcel);
     static std::unique_ptr<Sensor> Unmarshalling(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;

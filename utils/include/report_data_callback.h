@@ -35,12 +35,12 @@ class ReportDataCallback : public RefBase {
 public:
     ReportDataCallback();
     ~ReportDataCallback();
-    int32_t ReportEventCallback(struct SensorEvent *event, sptr<ReportDataCallback> cb);
-    struct CircularEventBuf &GetEventData();
-    struct CircularEventBuf eventsBuf_;
+    int32_t ReportEventCallback(SensorEvent *event, sptr<ReportDataCallback> cb);
+    CircularEventBuf &GetEventData();
+    CircularEventBuf eventsBuf_;
 };
 
-using ZReportDataCb = int32_t (ReportDataCallback::*)(struct SensorEvent *event, sptr<ReportDataCallback> cb);
+using ZReportDataCb = int32_t (ReportDataCallback::*)(SensorEvent *event, sptr<ReportDataCallback> cb);
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // REPORT_DATA_CALLBACK_H

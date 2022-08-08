@@ -42,7 +42,6 @@ bool GetStringValue(const napi_env &env, const napi_value &value, string &result
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
-
 napi_value GreateBusinessError(const napi_env &env, int32_t errCode, string errMessage,
     string errName, string errStack);
 bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
