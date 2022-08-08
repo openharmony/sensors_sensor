@@ -184,7 +184,7 @@ static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value call
 {
     CALL_LOG_ENTER;
     if (auto iter = g_onceCallbackInfos.find(sensorTypeId); iter == g_onceCallbackInfos.end()) {
-        SEN_HILOGW("already subscribed, sensorTypeId: %{public}d", sensorTypeId);
+        SEN_HILOGW("already subscribed, sensorTypeId:%{public}d", sensorTypeId);
         return false;
     }
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorTypeId];
@@ -241,7 +241,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
 {
     CALL_LOG_ENTER;
     if (auto iter = g_onCallbackInfos.find(sensorTypeId); iter == g_onCallbackInfos.end()) {
-        SEN_HILOGW("no client subscribe, sensorTypeId: %{public}d", sensorTypeId);
+        SEN_HILOGW("no client subscribe, sensorTypeId:%{public}d", sensorTypeId);
         return false;
     }
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
@@ -830,7 +830,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
             }
         }
         if (asyncCallbackInfo->sensorInfos.empty()) {
-            SEN_HILOGE("Not find sensorTypeId: %{public}d", sensorTypeId);
+            SEN_HILOGE("Not find sensorTypeId:%{public}d", sensorTypeId);
             asyncCallbackInfo->type = FAIL;
         }
     }

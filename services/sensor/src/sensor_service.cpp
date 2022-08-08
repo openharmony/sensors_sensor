@@ -261,7 +261,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId, int32_t pid)
         return ERR_NO_INIT;
     }
     if (pid < 0) {
-        SEN_HILOGE("pid is invalid, pid : %{public}d", pid);
+        SEN_HILOGE("pid is invalid, pid:%{public}d", pid);
         return CLIENT_PID_INVALID_ERR;
     }
     ReportSensorSysEvent(sensorId, false, pid);
@@ -306,11 +306,11 @@ ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t 
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
     if (cmdType == FLUSH) {
-        int32_t pid = GetCallingPid();
-        SEN_HILOGI("sensorId : %{public}u, flag : %{public}u", sensorId, flag);
+        int32_t pid = this->GetCallingPid();
+        SEN_HILOGI("sensorId:%{public}u,flag:%{public}u", sensorId, flag);
         auto retFlush = flushInfo_.FlushProcess(sensorId, flag, pid, false);
         if (retFlush != ERR_OK) {
-            SEN_HILOGE("ret : %{public}d", retFlush);
+            SEN_HILOGE("ret:%{public}d", retFlush);
         }
         return retFlush;
     }
@@ -363,7 +363,7 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
     CALL_LOG_ENTER;
     const int32_t clientPid = GetCallingPid();
     if (clientPid < 0) {
-        SEN_HILOGE("clientPid is invalid, clientPid : %{public}d", clientPid);
+        SEN_HILOGE("clientPid is invalid, clientPid:%{public}d", clientPid);
         
         return CLIENT_PID_INVALID_ERR;
     }
@@ -393,7 +393,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     for (size_t i = 0; i < activeSensors.size(); ++i) {
         int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {
-            SEN_HILOGE("disablesensor failed, ret : %{pubilc}d", ret);
+            SEN_HILOGE("disablesensor failed, ret:%{pubilc}d", ret);
         }
     }
     clientInfo_.DestroySensorChannel(pid);

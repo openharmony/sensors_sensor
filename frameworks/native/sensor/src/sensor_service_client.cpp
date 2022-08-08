@@ -55,7 +55,7 @@ int32_t SensorServiceClient::InitServiceClient()
     while (retry < GET_SERVICE_MAX_COUNT) {
         sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
         if (sensorServer_ != nullptr) {
-            SEN_HILOGD("get service success, retry : %{public}d", retry);
+            SEN_HILOGD("get service success, retry:%{public}d", retry);
             serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
             if (serviceDeathObserver_ != nullptr) {
                 sensorServer_->AsObject()->AddDeathRecipient(serviceDeathObserver_);
@@ -63,7 +63,7 @@ int32_t SensorServiceClient::InitServiceClient()
             sensorList_ = sensorServer_->GetSensorList();
             return ERR_OK;
         }
-        SEN_HILOGW("get service failed, retry : %{public}d", retry);
+        SEN_HILOGW("get service failed, retry:%{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }
@@ -77,7 +77,7 @@ bool SensorServiceClient::IsValid(uint32_t sensorId)
 {
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return false;
     }
     if (sensorList_.empty()) {
@@ -101,7 +101,7 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
@@ -123,7 +123,7 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
@@ -145,7 +145,7 @@ int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int3
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
@@ -164,7 +164,7 @@ std::vector<Sensor> SensorServiceClient::GetSensorList()
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return {};
     }
     if (sensorList_.empty()) {
@@ -179,7 +179,7 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
     dataChannel_ = sensorDataChannel;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
@@ -194,7 +194,7 @@ int32_t SensorServiceClient::DestroyDataChannel()
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
     CHKPR(sensorServer_, ERROR);
@@ -220,7 +220,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     // STEP4 : ReGet sensors  3601 service
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret : %{public}d", ret);
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         dataChannel_->DestroySensorDataChannel();
         return;
     }

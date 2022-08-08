@@ -63,7 +63,7 @@ void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::strin
     int32_t failCount = status ? 0 : 1;
     int32_t ret = PrivacyKit::AddPermissionUsedRecord(tokenID, permissionName, successCount, failCount);
     if (ret != 0) {
-        SEN_HILOGE("AddPermissionUsedRecord fail, permissionName: %{public}s, successCount: %{public}d, failCount: %{public}d",
+        SEN_HILOGE("AddPermissionUsedRecord fail,permissionName:%{public}s,successCount:%{public}d,failCount:%{public}d",
             permissionName.c_str(), successCount, failCount);
     }
 }

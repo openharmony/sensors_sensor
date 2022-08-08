@@ -48,7 +48,7 @@ void FlushInfoRecord::ClearFlushInfoItem(uint32_t sensorId)
 
 ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush)
 {
-    SEN_HILOGD("sensorId : %{public}u", sensorId);
+    SEN_HILOGD("sensorId:%{public}u", sensorId);
     CHKPR(channel, INVALID_POINTER);
     FlushInfo flush(channel, isFirstFlush);
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
@@ -67,9 +67,9 @@ ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicD
 bool FlushInfoRecord::IsFlushChannelValid(const std::vector<sptr<SensorBasicDataChannel>> &currChannelList,
                                           const sptr<SensorBasicDataChannel> &flushChannel)
 {
-    SEN_HILOGD("channel list size : %{public}u", static_cast<uint32_t>(currChannelList.size()));
+    SEN_HILOGD("channel list size:%{public}u", static_cast<uint32_t>(currChannelList.size()));
     for (const auto &channel : currChannelList) {
-        SEN_HILOGD("channel : %{public}p, flushchannel : %{public}p", channel.GetRefPtr(), flushChannel.GetRefPtr());
+        SEN_HILOGD("channel:%{public}p,flushchannel:%{public}p", channel.GetRefPtr(), flushChannel.GetRefPtr());
         if (channel == flushChannel) {
             return true;
         }

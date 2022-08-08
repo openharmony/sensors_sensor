@@ -117,7 +117,7 @@ ErrCode SensorSuspendPolicy::EnableSensor(uint32_t sensorId, int32_t pid, int64_
         uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
         ret = flushInfo_.FlushProcess(sensorId, flag, pid, true);
         if (ret != ERR_OK) {
-            SEN_HILOGW("ret : %{public}d", ret);
+            SEN_HILOGW("ret:%{public}d", ret);
         }
         return ERR_OK;
     }
@@ -137,13 +137,13 @@ ErrCode SensorSuspendPolicy::EnableSensor(uint32_t sensorId, int32_t pid, int64_
 
 std::vector<uint32_t> SensorSuspendPolicy::GetSensorIdByPid(int32_t pid)
 {
-    SEN_HILOGD("pid : %{public}d", pid);
+    SEN_HILOGD("pid:%{public}d", pid);
     auto it = pidSensorIdMap_.find(pid);
     if (it != pidSensorIdMap_.end()) {
-        SEN_HILOGD("pid : %{public}d found", pid);
+        SEN_HILOGD("pid:%{public}d found", pid);
         return it->second;
     }
-    SEN_HILOGD("pid : %{public}d not found", pid);
+    SEN_HILOGD("pid:%{public}d not found", pid);
     return {};
 }
 
@@ -168,7 +168,7 @@ void SensorSuspendPolicy::DoActive(const std::shared_ptr<ResourceSchedule::Suspe
             }
             auto ret = EnableSensor(sensorId, appInfo.pid, samplePeriod, maxReportDelay);
             if (ret != ERR_OK) {
-                SEN_HILOGE("sensorId : %{public}u, pid : %{public}d, ret : %{public}d"), sensorId, appInfo.pid, ret);
+                SEN_HILOGE("sensorId:%{public}u,pid:%{public}d,ret:%{public}d"), sensorId, appInfo.pid, ret);
             }
         }
     }

@@ -56,7 +56,7 @@ int32_t HdiConnection::ConnectHdi()
             return ERR_OK;
         }
         retry++;
-        SEN_HILOGW("connect hdi service failed, retry : %{public}d", retry);
+        SEN_HILOGW("connect hdi service failed, retry:%{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
     }
     HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
@@ -302,12 +302,12 @@ void HdiConnection::reconnect()
         }
         ret = sensorInterface_->SetBatch(sensorTypeId, info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
         if (ret != 0) {
-            SEN_HILOGE("sensorTypeId: %{public}d set batch fail, error: %{public}d", sensorTypeId, ret);
+            SEN_HILOGE("sensorTypeId:%{public}d set batch fail,error:%{public}d", sensorTypeId, ret);
             continue;
         }
         ret = sensorInterface_->Enable(sensorTypeId);
         if (ret != 0) {
-            SEN_HILOGE("enable sensor fail, sensorTypeId: %{public}d, error: %{public}d", sensorTypeId, ret);
+            SEN_HILOGE("enable sensor fail, sensorTypeId:%{public}d,error:%{public}d", sensorTypeId, ret);
         }
     }
 }

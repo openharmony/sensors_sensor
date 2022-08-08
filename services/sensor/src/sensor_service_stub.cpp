@@ -83,7 +83,7 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return EnableSensor(sensorId, data.ReadInt64(), data.ReadInt64());
@@ -98,7 +98,7 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return DisableSensor(sensorId);
@@ -113,7 +113,7 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "GetSensorStateInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}u grant failed, result:%{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return GetSensorState(sensorId);
@@ -128,7 +128,7 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
     if (ret != PERMISSION_GRANTED) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "RunCommandInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId: %{public}u grant failed, result: %{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return ERR_PERMISSION_DENIED;
     }
     return RunCommand(sensorId, data.ReadUint32(), data.ReadUint32());
@@ -157,7 +157,7 @@ ErrCode SensorServiceStub::CreateDataChannelInner(MessageParcel &data, MessagePa
     CHKPR(sensorChannel, OBJECT_NULL);
     auto ret = sensorChannel->CreateSensorBasicChannel(data);
     if (ret != ERR_OK) {
-        SEN_HILOGE("CreateSensorBasicChannel ret : %{public}d", ret);
+        SEN_HILOGE("CreateSensorBasicChannel ret:%{public}d", ret);
         return OBJECT_NULL;
     }
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();

@@ -93,13 +93,13 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
     CHKPR(dataChannel_, INVALID_POINTER);
     auto ret = dataChannel_->CreateSensorDataChannel(HandleSensorData, nullptr);
     if (ret != ERR_OK) {
-        SEN_HILOGE("create data channel failed, ret: %{public}d", ret);
+        SEN_HILOGE("create data channel failed, ret:%{public}d", ret);
         return ret;
     }
     ret = SenClient.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
         auto destoryRet = dataChannel_->DestroySensorDataChannel();
-        SEN_HILOGE("transfer data channel failed, ret : %{public}d, destoryRet : %{public}d", ret, destoryRet);
+        SEN_HILOGE("transfer data channel failed, ret:%{public}d,destoryRet:%{public}d", ret, destoryRet);
         return ret;
     }
     g_isChannelCreated = true;
@@ -117,12 +117,12 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
     CHKPR(dataChannel_, INVALID_POINTER);
     int32_t ret = dataChannel_->DestroySensorDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destory data channel failed, ret : %{public}d", ret);
+        SEN_HILOGE("destory data channel failed, ret:%{public}d", ret);
         return ret;
     }
     ret = SenClient.DestroyDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destory service data channel fail, ret : %{public}d", ret);
+        SEN_HILOGE("destory service data channel fail, ret:%{public}d", ret);
         return ret;
     }
     g_isChannelCreated = false;
@@ -150,7 +150,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     g_samplingInterval = -1;
     g_reportInterval = -1;
     if (ret != 0) {
-        SEN_HILOGE("enable sensor failed, ret: %{public}d", ret);
+        SEN_HILOGE("enable sensor failed, ret:%{public}d", ret);
         g_subscribeMap.erase(sensorId);
 
         return OHOS::Sensors::ERROR;
@@ -175,7 +175,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     g_unsubscribeMap[sensorId] = user;
     int32_t ret = SenClient.DisableSensor(sensorId);
     if (ret != 0) {
-        SEN_HILOGE("disable sensor failed, ret: %{public}d", ret);
+        SEN_HILOGE("disable sensor failed, ret:%{public}d", ret);
         return OHOS::Sensors::ERROR;
     }
     return OHOS::Sensors::SUCCESS;
@@ -205,7 +205,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
 
 int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user) const
 {
-    SEN_HILOGI("in, sensorId: %{public}d", sensorId);
+    SEN_HILOGI("in, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (!SenClient.IsValid(sensorId)) {
@@ -239,7 +239,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     if (g_subscribeMap.empty()) {
         int32_t ret = DestroySensorDataChannel();
         if (ret != ERR_OK) {
-            SEN_HILOGE("destory data channel fail, ret : %{public}d", ret);
+            SEN_HILOGE("destory data channel fail, ret:%{public}d", ret);
             return ret;
         }
     }

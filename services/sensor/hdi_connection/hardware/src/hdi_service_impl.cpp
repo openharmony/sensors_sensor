@@ -69,11 +69,11 @@ int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
     CALL_LOG_ENTER;
     CHKPR(g_callback, ERROR);
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
-        SEN_HILOGE("not support enable sensorId: %{public}d", sensorId);
+        SEN_HILOGE("not support enable sensorId:%{public}d", sensorId);
         return ERR_NO_INIT;
     }
     if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) != g_enableSensors.end()) {
-        SEN_HILOGI("sensorId: %{public}d has been enabled", sensorId);
+        SEN_HILOGI("sensorId:%{public}d has been enabled", sensorId);
         return ERR_OK;
     }
     g_enableSensors.push_back(sensorId);
@@ -92,11 +92,11 @@ int32_t HdiServiceImpl::DisableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
-        SEN_HILOGE("not support disable sensorId: %{public}d", sensorId);
+        SEN_HILOGE("not support disable sensorId:%{public}d", sensorId);
         return ERR_NO_INIT;
     }
     if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) == g_enableSensors.end()) {
-        SEN_HILOGE("sensorId: %{public}d should be enable first", sensorId);
+        SEN_HILOGE("sensorId:%{public}d should be enable first", sensorId);
         return ERR_NO_INIT;
     }
     std::vector<int32_t>::iterator iter;

@@ -51,7 +51,7 @@ constexpr uint32_t FLUSH_COMPLETE_ID = ((uint32_t)OTHER << SENSOR_CATAGORY_SHIFT
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<uint32_t, Sensor> &sensorMap)
 {
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
-    SEN_HILOGD("sensorMap_.size : %{public}d", int32_t { sensorMap_.size() });
+    SEN_HILOGD("sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
 }
 
 SensorDataProcesser::~SensorDataProcesser()
@@ -234,7 +234,7 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, SensorEvent> 
     }
     auto ret = channel->SendData(transferEvents.data(), eventSize * sizeof(TransferSensorEvents));
     if (ret != ERR_OK) {
-        SEN_HILOGE("send data failed, ret : %{public}d", ret);
+        SEN_HILOGE("send data failed, ret:%{public}d", ret);
         uint32_t sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
         if (sensorId == FLUSH_COMPLETE_ID) {
             sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
@@ -257,11 +257,11 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorEvent &event, sptr<Sen
         // Try to send the last failed value, if it still fails, replace the previous cache directly
         ret = channel->SendData(&cacheEvent->second, sizeof(SensorEvent));
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret : %{public}d", ret);
+            SEN_HILOGE("ret:%{public}d", ret);
         }
         ret = channel->SendData(&event, sizeof(SensorEvent));
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret : %{public}d", ret);
+            SEN_HILOGE("ret:%{public}d", ret);
             cacheBuf[sensorId] = event;
         } else {
             cacheBuf.erase(cacheEvent);
@@ -269,7 +269,7 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorEvent &event, sptr<Sen
     } else {
         ret = channel->SendData(&event, sizeof(SensorEvent));
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret : %{public}d", ret);
+            SEN_HILOGE("ret:%{public}d", ret);
             cacheBuf[sensorId] = event;
         }
     }
@@ -290,7 +290,7 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
     auto flushInfo = flushInfo_.GetFlushInfo();
     std::vector<FlushInfo> flushVec;
     if (sensorId == FLUSH_COMPLETE_ID) {
-        SEN_HILOGD("sensorId : %{public}u", sensorId);
+        SEN_HILOGD("sensorId:%{public}u", sensorId);
         auto it = flushInfo.find(realSensorId);
         if (it != flushInfo.end()) {
             flushVec = it->second;

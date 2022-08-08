@@ -66,7 +66,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnaleSensor", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -90,7 +90,7 @@ ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableSensor", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -114,7 +114,7 @@ int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorState", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -122,7 +122,7 @@ int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
 ErrCode SensorServiceProxy::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params)
 {
     if (cmdType > RESERVED) {
-        SEN_HILOGE("failed, cmdType : %{public}u", cmdType);
+        SEN_HILOGE("failed, cmdType:%{public}u", cmdType);
         return CMD_TYPE_ERR;
     }
     MessageParcel data;
@@ -150,7 +150,7 @@ ErrCode SensorServiceProxy::RunCommand(uint32_t sensorId, uint32_t cmdType, uint
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "RunCommand", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -174,11 +174,11 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
         return sensors;
     }
     int32_t sensorCount = reply.ReadInt32();
-    SEN_HILOGD("sensorCount : %{public}d", sensorCount);
+    SEN_HILOGD("sensorCount:%{public}d", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;
     }
@@ -216,7 +216,7 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "TransferDataChannel", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     sensorBasicDataChannel->CloseSendFd();
     return static_cast<ErrCode>(ret);
@@ -242,7 +242,7 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySensorChannel", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret : %{public}d", ret);
+        SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }

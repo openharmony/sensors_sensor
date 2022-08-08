@@ -35,7 +35,7 @@ constexpr int32_t SOCKET_PAIR_SIZE = 2;
 
 SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), isActive_(false)
 {
-    SEN_HILOGD("isActive_ : %{public}d, sendFd: %{public}d", isActive_, sendFd_);
+    SEN_HILOGD("isActive_:%{public}d,sendFd:%{public}d", isActive_, sendFd_);
 }
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
@@ -89,7 +89,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
     }
     sendFd_ = socketPair[0];
     receiveFd_ = socketPair[1];
-    SEN_HILOGD("create socketpair success, receiveFd_ : %{public}d, sendFd_ : %{public}d", receiveFd_, sendFd_);
+    SEN_HILOGD("create socketpair success,receiveFd_:%{public}d,sendFd_:%{public}d", receiveFd_, sendFd_);
     return ERR_OK;
 }
 
@@ -122,7 +122,7 @@ SensorBasicDataChannel::~SensorBasicDataChannel()
 
 int32_t SensorBasicDataChannel::SendToBinder(MessageParcel &data)
 {
-    SEN_HILOGD("sendFd: %{public}d", sendFd_);
+    SEN_HILOGD("sendFd:%{public}d", sendFd_);
     if (sendFd_ < 0) {
         SEN_HILOGE("sendFd FileDescriptor error");
         return SENSOR_CHANNEL_SENDFD_ERR;
@@ -159,7 +159,7 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
     if (length < 0) {
         HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_DATA_CHANNEL_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "SendData", "ERROR_CODE", errno);
-        SEN_HILOGE("send fail : %{public}d, length = %{public}d", errno, (int32_t)length);
+        SEN_HILOGE("send fail:%{public}d,length:%{public}d", errno, (int32_t)length);
         return SENSOR_CHANNEL_SEND_DATA_ERR;
     }
     return ERR_OK;
@@ -217,7 +217,7 @@ bool SensorBasicDataChannel::GetSensorStatus() const
 
 void SensorBasicDataChannel::SetSensorStatus(bool isActive)
 {
-    SEN_HILOGD("isActive_ : %{public}d", isActive);
+    SEN_HILOGD("isActive_:%{public}d", isActive);
     std::unique_lock<std::mutex> lock(statusLock_);
     isActive_ = isActive;
     return;

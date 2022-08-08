@@ -35,7 +35,7 @@ int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
         SEN_HILOGE("client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
-    SEN_HILOGD("begin, cmd : %{public}u", code);
+    SEN_HILOGD("begin, cmd:%{public}u", code);
     return NO_ERROR;
 }
 }  // namespace Sensors

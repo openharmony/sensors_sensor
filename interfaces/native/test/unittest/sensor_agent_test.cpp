@@ -58,8 +58,8 @@ void SensorDataCallbackImpl(SensorEvent *event)
         return;
     }
     float *sensorData = (float *)event[0].data;
-    SEN_HILOGI("SensorId: %{public}d, version: %{public}d, dataLen: %{public}d,"
-        "data: %{public}f\n", event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
+    SEN_HILOGI("SensorId:%{public}d, version:%{public}d,dataLen:%{public}d,data:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
 
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)

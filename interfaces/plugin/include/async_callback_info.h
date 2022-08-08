@@ -116,7 +116,7 @@ public:
         }
         for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
             if (callback[i] != nullptr) {
-                SEN_HILOGD("Delete reference, i: %{public}d", i);
+                SEN_HILOGD("Delete reference, i:%{public}d", i);
                 napi_delete_reference(env, callback[i]);
             }
         }
