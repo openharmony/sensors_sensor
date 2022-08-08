@@ -148,6 +148,7 @@ int32_t CompatibleConnection::SensorDataCallback(const SensorEvents *event)
     }
     CHKPR(reportDataCallback_, ERR_NO_INIT);
     CHKPR(reportDataCb_, ERR_NO_INIT);
+    std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*reportDataCb_)(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;

@@ -50,6 +50,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
     for (int32_t i = 0; i < static_cast<int32_t>(dataSize); i++) {
         sensorEvent.data[i] = event.data[i];
     }
+    std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorEvent, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
