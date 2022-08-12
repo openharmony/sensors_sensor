@@ -141,8 +141,8 @@ void SensorManager::StartDataReportThread()
     CALL_LOG_ENTER;
     if (!dataThread_.joinable()) {
         SEN_HILOGW("dataThread_ started");
-        std::thread senocdDataThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
-        dataThread_ = std::move(senocdDataThread);
+        std::thread secondDataThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
+        dataThread_ = std::move(secondDataThread);
     }
 }
 
