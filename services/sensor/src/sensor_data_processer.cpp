@@ -192,11 +192,11 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<uint32_t, S
     }
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     auto sensor = sensorMap_.find(sensorId);
-    sensor->second.SetFlags(event.mode);
     if (sensor == sensorMap_.end()) {
         SEN_HILOGE("data's sensorId is not supported");
         return false;
     }
+    sensor->second.SetFlags(event.mode);
     if (((SENSOR_ON_CHANGE & sensor->second.GetFlags()) == SENSOR_ON_CHANGE) ||
         ((SENSOR_ONE_SHOT & sensor->second.GetFlags()) == SENSOR_ONE_SHOT)) {
         std::vector<SensorEvent> sendEvents;
