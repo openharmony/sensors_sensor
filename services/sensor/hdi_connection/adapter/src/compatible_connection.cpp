@@ -62,6 +62,8 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
         sensor.SetVendorName(vendorName.c_str());
         sensor.SetResolution(sensorInfos[i].accuracy);
         sensor.SetPower(sensorInfos[i].power);
+        sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
+        sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
         sensorList.push_back(sensor);
     }
     return ERR_OK;

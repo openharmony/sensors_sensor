@@ -319,6 +319,8 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         (sensorInfos_ + i)->maxRange = sensorList[i].GetMaxRange();
         (sensorInfos_ + i)->precision = sensorList[i].GetResolution();
         (sensorInfos_ + i)->power = sensorList[i].GetPower();
+        (sensorInfos_ + i)->minSamplePeriod = sensorList[i].GetMinSamplePeriodNs();
+        (sensorInfos_ + i)->maxSamplePeriod = sensorList[i].GetMaxSamplePeriodNs();
     }
     sensorInfoCount_ = static_cast<int32_t>(count);
     return SUCCESS;
