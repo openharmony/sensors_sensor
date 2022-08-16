@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <cinttypes>
 #include <gtest/gtest.h>
 #include <thread>
 
@@ -307,6 +308,28 @@ HWTEST_F(SensorAgentTest, GetProcCpuUsageTest_001, TestSize.Level1)
     auto usage = cpuInfo.GetProcCpuUsage(process_name);
     SEN_HILOGD("The CPU usage of the %{public}s process is %{public}.2f", process_name.c_str(), usage);
     ASSERT_TRUE(usage < SYSTEM_INFO::CPU_USAGE_LOAD && usage != SYSTEM_INFO::CPU_USAGE_UNKONW);
+}
+
+/*
+ * Feature: sensor
+ * Function: GetAllSensors
+ * FunctionPoints: Check the interface function
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the senser service framework process.
+ */
+HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("SensorListTest_001 in");
+
+    SensorInfo *sensorInfo = nullptr;
+    int32_t count = 0;
+    int32_t ret = GetAllSensors(&sensorInfo, &count);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    for (int32_t i = 0; i < count; ++i) {
+        SEN_HILOGD("sensorName: %{public}s, sensorId: %{public}d, minSamplePeriod: %{public}" PRId64
+            " ns, maxSamplePeriod: %{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
+            sensorInfo[i].minSamplePeriod, sensorInfo[i].maxSamplePeriod);
+    }
 }
 }  // namespace Sensors
 }  // namespace OHOS
