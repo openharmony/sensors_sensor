@@ -511,16 +511,36 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
          * count of the smart pointer is guaranteed to be 1.
          */
         asyncCallbackInfo->DecStrongRef(nullptr);
+        napi_handle_scope scope = nullptr;
+        napi_open_handle_scope(asyncCallbackInfo->env, &scope);
+        if (scope == nullptr) {
+            SEN_HILOGE("napi_handle_scope is nullptr");
+            return;
+        }
         napi_env env = asyncCallbackInfo->env;
         napi_value callback = nullptr;
-        CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback),
-            "napi_get_reference_value");
+        if (napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback) != napi_ok) {
+            SEN_HILOGE("napi_get_reference_value fail");
+            napi_throw_error(env, nullptr, "napi_get_reference_value fail");
+            napi_close_handle_scope(asyncCallbackInfo->env, scope);
+            return;
+        }
         napi_value callResult = nullptr;
         napi_value result[2] = {0};
-        CHKNCV(env, (g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
-            "Asynccallback Type invalid in uv work");
+        if (!(g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end())) {
+            SEN_HILOGE("asyncCallbackInfo type is invalid");
+            napi_throw_error(env, nullptr, "asyncCallbackInfo type is invalid");
+            napi_close_handle_scope(asyncCallbackInfo->env, scope);
+            return;
+        }
         g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
-        CHKNRV(env, napi_call_function(env, nullptr, callback, 1, &result[1], &callResult), "napi_call_function");
+        if (napi_call_function(env, nullptr, callback, 1, &result[1], &callResult) != napi_ok) {
+            SEN_HILOGE("napi_call_function callback fail");
+            napi_throw_error(env, nullptr, "napi_call_function callback fail");
+            napi_close_handle_scope(asyncCallbackInfo->env, scope);
+            return;
+        }
+        napi_close_handle_scope(asyncCallbackInfo->env, scope);
         asyncCallbackInfo->work = nullptr;
         freeWork(work);
     });
