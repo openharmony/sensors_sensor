@@ -30,6 +30,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDump" };
+constexpr int32_t MAX_DUMP_PARAMETERS = 32;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t MS_NS = 1000000;
 constexpr uint32_t ACCELEROMETER = 1;
@@ -97,6 +98,22 @@ std::unordered_map<uint32_t, std::string> SensorDump::sensorMap_ = {
 void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
     ClientInfo &clientInfo)
 {
+    int32_t count = 0;
+    for (const auto &str : args) {
+        if (str.find("--") == 0) {
+            ++count;
+            continue;
+        }
+        if (str.find("-") == 0) {
+            count += str.size() - 1;
+            continue;
+        }
+    }
+    if (count > MAX_DUMP_PARAMETERS) {
+        SEN_HILOGE("cmd param number not more than 32");
+        dprintf(fd, "cmd param number not more than 32\n");
+        return;
+    }
     int32_t optionIndex = 0;
     struct option dumpOptions[] = {
         {"channel", no_argument, 0, 'c'},
@@ -197,10 +214,10 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
     for (const auto &channel : channelInfo) {
         auto sensorId = channel.GetSensorId();
         dprintf(fd,
-                "uid:%d | packageName:%s | sensorId:%8u | sensorType:%s | samplingPeriodNs:%d "
+                "uid:%d | packageName:%s | sensorId:%8u | sensorType:%s | samplingPeriodNs:%" PRId64 ""
                 "| fifoCount:%u\n",
                 channel.GetUid(), channel.GetPackageName().c_str(), sensorId, sensorMap_[sensorId].c_str(),
-                int32_t { channel.GetSamplingPeriodNs() }, channel.GetFifoCount());
+                channel.GetSamplingPeriodNs(), channel.GetFifoCount());
     }
     return true;
 }

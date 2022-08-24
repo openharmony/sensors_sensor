@@ -15,6 +15,8 @@
 
 #include "sensor_manager.h"
 
+#include <cinttypes>
+
 #include "iservice_registry.h"
 #include "sensor.h"
 #include "sensors_errors.h"
@@ -66,7 +68,7 @@ bool SensorManager::SetBestSensorParams(uint32_t sensorId, int64_t samplingPerio
     }
     bestSamplingPeriodNs = (samplingPeriodNs < bestSamplingPeriodNs) ? samplingPeriodNs : bestSamplingPeriodNs;
     bestReportDelayNs = (maxReportDelayNs < bestReportDelayNs) ? maxReportDelayNs : bestReportDelayNs;
-    SEN_HILOGD("bestSamplingPeriodNs : %{public}d", int32_t { bestSamplingPeriodNs });
+    SEN_HILOGD("bestSamplingPeriodNs : %{public}" PRId64, bestSamplingPeriodNs);
     auto ret = sensorHdiConnection_.SetBatch(sensorId, bestSamplingPeriodNs, bestReportDelayNs);
     if (ret != ERR_OK) {
         SEN_HILOGE("SetBatch is failed");

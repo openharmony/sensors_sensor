@@ -38,7 +38,6 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
-constexpr int32_t MAX_DUMP_PARAMETERS = 32;
 enum {
     FLUSH = 0,
     SET_MODE,
@@ -424,8 +423,8 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
 int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 {
     CALL_LOG_ENTER;
-    if (fd < 0 || args.size() > MAX_DUMP_PARAMETERS) {
-        SEN_HILOGE("fd is invalid or wrong number of parameters");
+    if (fd < 0) {
+        SEN_HILOGE("Invalid fd");
         return DUMP_PARAM_ERR;
     }
     SensorDump &sensorDump = SensorDump::GetInstance();
