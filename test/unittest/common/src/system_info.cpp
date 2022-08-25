@@ -23,6 +23,7 @@
 #include <string>
 #include <thread>
 
+#include "securec.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -75,7 +76,7 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
         }
         while (std::getline(filePath, strLine)) {
             if ((strLine.find("Pid")) != std::string::npos) {
-                (void)::sscanf(strLine.c_str(), "%*s%d", &pid);
+                (void)::sscanf_s(strLine.c_str(), "%*s%d", &pid);
                 break;
             }
         }
