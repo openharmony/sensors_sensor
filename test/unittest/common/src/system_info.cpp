@@ -76,7 +76,9 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
         }
         while (std::getline(filePath, strLine)) {
             if ((strLine.find("Pid")) != std::string::npos) {
-                (void)::sscanf_s(strLine.c_str(), "%*s%d", &pid);
+                if (sscanf_s(strLine.c_str(), "%*s%d", &pid) != 1) {
+                    SEN_HILOGE("sscanf_s failed");
+                }
                 break;
             }
         }
