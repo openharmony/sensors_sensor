@@ -35,7 +35,6 @@ constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SYST
 constexpr int32_t LOCATION = 14;
 constexpr int32_t TIME_WAIT_FOR_OP = 1000;
 constexpr int32_t DEFAULT_PID = -1;
-constexpr int32_t ERROR_CODE = -1;
 } // namespace
 
 inline double CHK_RATE(double rate)
@@ -77,7 +76,7 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
         }
         while (std::getline(filePath, strLine)) {
             if ((strLine.find("Pid")) != std::string::npos) {
-                if (sscanf_s(strLine.c_str(), "%*s%d", &pid) == ERROR_CODE) {
+                if (sscanf_s(strLine.c_str(), "%*s%d", &pid) == -1) {
                     SEN_HILOGE("sscanf_s failed");
                 }
                 break;
