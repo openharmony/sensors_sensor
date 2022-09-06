@@ -36,11 +36,8 @@ ohos_shared_library("libsensor_utils") {
     "access_token:libprivacy_sdk",
     "c_utils:utils",
     "hisysevent_native:libhisysevent",
-    "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
   part_name = "sensor"
   subsystem_name = "sensors"
