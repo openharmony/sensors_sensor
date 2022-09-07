@@ -30,6 +30,7 @@ config("sensor_private_config") {
     "$SUBSYSTEM_DIR/utils/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
+    "//base/notification/eventhandler/interfaces/inner_api",
   ]
 }
 
@@ -51,12 +52,10 @@ ohos_shared_library("sensor_interface_native") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor:libsensor_native",
     "$SUBSYSTEM_DIR/interfaces/native:libsensor_ndk",
-    "$SUBSYSTEM_DIR/utils:libsensor_utils",
   ]
 
   external_deps = [
     "c_utils:utils",
-    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
   ]
   part_name = "sensor"
