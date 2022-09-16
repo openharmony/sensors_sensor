@@ -352,7 +352,6 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
 
 SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
 {
-    SEN_HILOGD("begin, sensorId:%{public}u", sensorId);
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
     SensorBasicInfo sensorInfo;
@@ -467,7 +466,6 @@ void ClientInfo::StoreEvent(const SensorEvent &event)
     }
     for (size_t i = 0; i < sensors.size(); i++) {
         if ((int32_t)(sensors[i].GetSensorId()) == storedEvent.sensorTypeId) {
-            SEN_HILOGD("sensorFlags:%{public}u", sensors[i].GetFlags());
             foundSensor = true;
             break;
         }
