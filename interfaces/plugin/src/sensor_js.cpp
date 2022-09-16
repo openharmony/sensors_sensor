@@ -999,6 +999,7 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getGeomagneticDip", GetGeomagneticDip),
         DECLARE_NAPI_FUNCTION("createRotationMatrix", CreateRotationMatrix),
         DECLARE_NAPI_FUNCTION("getSensorList", GetSensorList),
+        DECLARE_NAPI_FUNCTION("getSensorLists", GetSensorList),
         DECLARE_NAPI_FUNCTION("getSingleSensor", GetSingleSensor),
         DECLARE_NAPI_FUNCTION("subscribeAccelerometer", SubscribeAccelerometer),
         DECLARE_NAPI_FUNCTION("unsubscribeAccelerometer", UnsubscribeAccelerometer),
