@@ -236,20 +236,6 @@ HWTEST_F(SensorAgentTest, UnsubscribeSensorTest_003, TestSize.Level1)
     ASSERT_EQ(ret, OHOS::Sensors::ERROR);
 }
 
-HWTEST_F(SensorAgentTest, SetModeTest_001, TestSize.Level1)
-{
-    SEN_HILOGI("SetModeTest_001 in");
-    SensorUser user;
-    user.callback = SensorDataCallbackImpl;
-    int32_t ret = SubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    int32_t mode { 0 };
-    ret = SetMode(sensorId, &user, mode);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = UnsubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
-}
-
 HWTEST_F(SensorAgentTest, SetModeTest_002, TestSize.Level1)
 {
     SEN_HILOGI("SetModeTest_002 in");
@@ -265,39 +251,6 @@ HWTEST_F(SensorAgentTest, SetModeTest_003, TestSize.Level1)
     int32_t mode { 0 };
     int32_t ret = SetMode(sensorId, nullptr, mode);
     ASSERT_EQ(ret, OHOS::Sensors::ERROR);
-}
-
-/*
- * Feature: sensor
- * Function: SubscribeSensor
- * FunctionPoints: Check the interface function
- * EnvConditions: mobile that can run ohos test framework
- * CaseDescription: Verify the senser service framework process.
- */
-HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level1)
-{
-    SEN_HILOGI("SensorNativeApiTest_001 in");
-
-    SensorUser user;
-    user.callback = SensorDataCallbackImpl;
-
-    int32_t ret = SubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = SetBatch(sensorId, &user, 100000000, 100000000);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = ActivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = DeactivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = UnsubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, GetProcCpuUsageTest_001, TestSize.Level1)
