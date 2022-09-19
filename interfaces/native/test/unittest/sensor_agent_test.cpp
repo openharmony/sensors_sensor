@@ -17,6 +17,10 @@
 #include <gtest/gtest.h>
 #include <thread>
 
+#include "accesstoken_kit.h"
+#include "nativetoken_kit.h"
+#include "token_setproc.h"
+
 #include "sensor_agent.h"
 #include "sensors_errors.h"
 #include "system_info.h"
@@ -25,11 +29,46 @@ namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
+using namespace Security::AccessToken;
+using Security::AccessToken::AccessTokenID;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorAgentTest" };
-constexpr int32_t sensorId { 0 };
+constexpr int32_t sensorId { 1 };
 constexpr int32_t invalidValue { -1 };
+
+PermissionDef infoManagerTestPermDef_ = {
+    .permissionName = "ohos.permission.ACCELEROMETER",
+    .bundleName = "accesstoken_test",
+    .grantMode = 1,
+    .label = "label",
+    .labelId = 1,
+    .description = "test sensor agent",
+    .descriptionId = 1,
+    .availableLevel = APL_NORMAL
+};
+
+PermissionStateFull infoManagerTestState_ = {
+    .grantFlags = {1},
+    .grantStatus = {PermissionState::PERMISSION_GRANTED},
+    .isGeneral = true,
+    .permissionName = "ohos.permission.ACCELEROMETER",
+    .resDeviceID = {"local"}
+};
+
+HapPolicyParams infoManagerTestPolicyPrams_ = {
+    .apl = APL_NORMAL,
+    .domain = "test.domain",
+    .permList = {infoManagerTestPermDef_},
+    .permStateList = {infoManagerTestState_}
+};
+
+HapInfoParams infoManagerTestInfoParms_ = {
+    .bundleName = "sensoragent_test",
+    .userID = 1,
+    .instIndex = 0,
+    .appIDDesc = "sensorAgentTest"
+};
 }  // namespace
 
 class SensorAgentTest : public testing::Test {
@@ -38,13 +77,28 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+private:
+    static AccessTokenID tokenID_;
 };
 
+AccessTokenID SensorAgentTest::tokenID_ = 0;
+
 void SensorAgentTest::SetUpTestCase()
-{}
+{
+    AccessTokenIDEx tokenIdEx = {0};
+    tokenIdEx = AccessTokenKit::AllocHapToken(infoManagerTestInfoParms_, infoManagerTestPolicyPrams_);
+    tokenID_ = tokenIdEx.tokenIdExStruct.tokenID;
+    ASSERT_NE(0, tokenID_);
+    ASSERT_EQ(0, SetSelfTokenID(tokenID_));
+}
 
 void SensorAgentTest::TearDownTestCase()
-{}
+{
+    int32_t ret = AccessTokenKit::DeleteToken(tokenID_);
+    if (tokenID_ != 0) {
+        ASSERT_EQ(RET_SUCCESS, ret);
+    }
+}
 
 void SensorAgentTest::SetUp()
 {}
