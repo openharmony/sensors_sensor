@@ -28,8 +28,8 @@ std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>(
 }
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
 {
-    ZReportDataCb reportDataCb_ = HdiConnection_->getReportDataCb();
-    sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->getReportDataCallback();
+    ReportDataCb reportDataCb_ = HdiConnection_->GetReportDataCb();
+    sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->GetReportDataCallback();
     CHKPR(reportDataCb_, ERR_NO_INIT);
     CHKPR(reportDataCallback_, ERR_NO_INIT);
     int32_t dataSize = static_cast<int32_t>(event.data.size());

@@ -33,13 +33,13 @@ public:
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
     int32_t SetOption(int32_t sensorId, int32_t option) override;
     int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params) override;
-    int32_t RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
+    int32_t RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(CompatibleConnection);
     static int32_t SensorDataCallback(const SensorEvents *event);
-    static ZReportDataCb reportDataCb_;
+    static ReportDataCb reportDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
     HdiServiceImpl &hdiServiceImpl_ = HdiServiceImpl::GetInstance();
 };

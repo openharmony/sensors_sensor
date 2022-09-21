@@ -24,7 +24,7 @@ using OHOS::HiviewDFX::HiLogLabel;
 
 static constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorAlgorithmAPI"};
 
-int32_t SensorAlgorithm::createQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion)
+int32_t SensorAlgorithm::CreateQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion)
 {
     if (static_cast<int32_t>(rotationVector.size()) < ROTATION_VECTOR_LENGTH
         || static_cast<int32_t>(rotationVector.size()) > QUATERNION_LENGTH) {
@@ -48,7 +48,7 @@ int32_t SensorAlgorithm::createQuaternion(std::vector<float> rotationVector, std
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::transformCoordinateSystemImpl(std::vector<float> inRotationMatrix, int32_t axisX,
+int32_t SensorAlgorithm::TransformCoordinateSystemImpl(std::vector<float> inRotationMatrix, int32_t axisX,
     int32_t axisY, std::vector<float> &outRotationMatrix)
 {
     if ((axisX & 0x7C) != 0 || (axisX & 0x3) == 0) {
@@ -91,7 +91,7 @@ int32_t SensorAlgorithm::transformCoordinateSystemImpl(std::vector<float> inRota
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::transformCoordinateSystem(std::vector<float> inRotationMatrix, int32_t axisX, int32_t axisY,
+int32_t SensorAlgorithm::TransformCoordinateSystem(std::vector<float> inRotationMatrix, int32_t axisX, int32_t axisY,
     std::vector<float> &outRotationMatrix)
 {
     int32_t inRotationMatrixLength = static_cast<int32_t>(inRotationMatrix.size());
@@ -102,8 +102,8 @@ int32_t SensorAlgorithm::transformCoordinateSystem(std::vector<float> inRotation
     }
     if (inRotationMatrix == outRotationMatrix) {
         std::vector<float> tempRotationMatrix(inRotationMatrixLength);
-        if (transformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, tempRotationMatrix) != OHOS::Sensors::SUCCESS) {
-            SEN_HILOGE("transformCoordinateSystemImpl failed");
+        if (TransformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, tempRotationMatrix) != OHOS::Sensors::SUCCESS) {
+            SEN_HILOGE("TransformCoordinateSystemImpl failed");
             return OHOS::Sensors::ERROR;
         }
         for (int32_t i = 0; i < inRotationMatrixLength; i++) {
@@ -111,10 +111,10 @@ int32_t SensorAlgorithm::transformCoordinateSystem(std::vector<float> inRotation
         }
         return OHOS::Sensors::SUCCESS;
     }
-    return transformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, outRotationMatrix);
+    return TransformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, outRotationMatrix);
 }
 
-int32_t SensorAlgorithm::getAltitude(float seaPressure, float currentPressure, float *altitude)
+int32_t SensorAlgorithm::GetAltitude(float seaPressure, float currentPressure, float *altitude)
 {
     if (altitude == nullptr) {
         SEN_HILOGE("invalid parameter");
@@ -127,7 +127,7 @@ int32_t SensorAlgorithm::getAltitude(float seaPressure, float currentPressure, f
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::getGeomagneticDip(std::vector<float> inclinationMatrix, float *geomagneticDip)
+int32_t SensorAlgorithm::GetGeomagneticDip(std::vector<float> inclinationMatrix, float *geomagneticDip)
 {
     if (geomagneticDip == nullptr) {
         SEN_HILOGE("invalid parameter");
@@ -146,7 +146,7 @@ int32_t SensorAlgorithm::getGeomagneticDip(std::vector<float> inclinationMatrix,
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::getAngleModify(std::vector<float> curRotationMatrix, std::vector<float> preRotationMatrix,
+int32_t SensorAlgorithm::GetAngleModify(std::vector<float> curRotationMatrix, std::vector<float> preRotationMatrix,
     std::vector<float> &angleChange)
 {
     if (static_cast<int32_t>(angleChange.size()) < ROTATION_VECTOR_LENGTH) {
@@ -189,7 +189,7 @@ int32_t SensorAlgorithm::getAngleModify(std::vector<float> curRotationMatrix, st
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::getDirection(std::vector<float> rotationMatrix, std::vector<float> &rotationAngle)
+int32_t SensorAlgorithm::GetDirection(std::vector<float> rotationMatrix, std::vector<float> &rotationAngle)
 {
     if (static_cast<int32_t>(rotationAngle.size()) < ROTATION_VECTOR_LENGTH) {
         SEN_HILOGE("invalid parameter");
@@ -212,7 +212,7 @@ int32_t SensorAlgorithm::getDirection(std::vector<float> rotationMatrix, std::ve
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::createRotationMatrix(std::vector<float> rotationVector, std::vector<float> &rotationMatrix)
+int32_t SensorAlgorithm::CreateRotationMatrix(std::vector<float> rotationVector, std::vector<float> &rotationMatrix)
 {
     int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
     if ((static_cast<int32_t>(rotationVector.size()) < ROTATION_VECTOR_LENGTH)
@@ -222,7 +222,7 @@ int32_t SensorAlgorithm::createRotationMatrix(std::vector<float> rotationVector,
         return OHOS::Sensors::ERROR;
     }
     std::vector<float> quaternion(4);
-    int32_t ret = createQuaternion(rotationVector, quaternion);
+    int32_t ret = CreateQuaternion(rotationVector, quaternion);
     if (ret != OHOS::Sensors::SUCCESS) {
         SEN_HILOGE("create quaternion failed");
         return OHOS::Sensors::ERROR;
@@ -261,7 +261,7 @@ int32_t SensorAlgorithm::createRotationMatrix(std::vector<float> rotationVector,
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAlgorithm::createRotationAndInclination(std::vector<float> gravity, std::vector<float> geomagnetic,
+int32_t SensorAlgorithm::CreateRotationAndInclination(std::vector<float> gravity, std::vector<float> geomagnetic,
     std::vector<float> &rotationMatrix, std::vector<float> &inclinationMatrix)
 {
     if (static_cast<int32_t>(gravity.size()) < ROTATION_VECTOR_LENGTH

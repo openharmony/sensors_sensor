@@ -437,7 +437,7 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     CHKPP(asyncCallbackInfo);
     std::vector<float> outRotationVector(length);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.transformCoordinateSystem(inRotationVector, axisX, axisY, outRotationVector);
+    int32_t ret = sensorAlgorithm.TransformCoordinateSystem(inRotationVector, axisX, axisY, outRotationVector);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Transform coordinate system fail");
         asyncCallbackInfo->type = FAIL;
@@ -481,7 +481,7 @@ static napi_value GetAngleModify(napi_env env, napi_callback_info info)
 
     std::vector<float> angleChange(ROTATION_VECTOR_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.getAngleModify(curRotationVector, preRotationVector, angleChange);
+    int32_t ret = sensorAlgorithm.GetAngleModify(curRotationVector, preRotationVector, angleChange);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Get angle modify fail");
         asyncCallbackInfo->type = FAIL;
@@ -523,7 +523,7 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
     CHKNCP(env, GetFloatArray(env, args[0], rotationMatrix), "Wrong argument type, get rotationMatrix fail");
     std::vector<float> rotationAngle(ROTATION_VECTOR_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.getDirection(rotationMatrix, rotationAngle);
+    int32_t ret = sensorAlgorithm.GetDirection(rotationMatrix, rotationAngle);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Get direction fail");
         asyncCallbackInfo->type = FAIL;
@@ -565,7 +565,7 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
         "Wrong argument type, get rotationVector fail");
     std::vector<float> quaternion(QUATERNION_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.createQuaternion(rotationVector, quaternion);
+    int32_t ret = sensorAlgorithm.CreateQuaternion(rotationVector, quaternion);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Create quaternin fail");
         asyncCallbackInfo->type = FAIL;
@@ -609,7 +609,7 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
     CHKNCP(env, GetCppFloat(env, args[1], currentPressure), "Wrong argument type, get currentPressure fail");
     float altitude = 0;
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.getAltitude(seaPressure, currentPressure, &altitude);
+    int32_t ret = sensorAlgorithm.GetAltitude(seaPressure, currentPressure, &altitude);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Get altitude fail");
         asyncCallbackInfo->type = FAIL;
@@ -648,7 +648,7 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
         "Wrong argument type, get inclinationMatrix fail");
     float geomagneticDip = 0;
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.getGeomagneticDip(inclinationMatrix, &geomagneticDip);
+    int32_t ret = sensorAlgorithm.GetGeomagneticDip(inclinationMatrix, &geomagneticDip);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Get geomagnetic dip fail");
         asyncCallbackInfo->type = FAIL;
@@ -670,7 +670,7 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
-static napi_value createRotationAndInclination(const napi_env &env, napi_value args[], size_t argc)
+static napi_value CreateRotationAndInclination(const napi_env &env, napi_value args[], size_t argc)
 {
     CALL_LOG_ENTER;
     CHKNCP(env, ((argc == 2) || (argc == 3)), "The number of parameters is not valid");
@@ -684,7 +684,7 @@ static napi_value createRotationAndInclination(const napi_env &env, napi_value a
         new (std::nothrow) AsyncCallbackInfo(env, ROTATION_INCLINATION_MATRIX);
     CHKPP(asyncCallbackInfo);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.createRotationAndInclination(gravity, geomagnetic, rotation, inclination);
+    int32_t ret = sensorAlgorithm.CreateRotationAndInclination(gravity, geomagnetic, rotation, inclination);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Create rotation and inclination matrix fail");
         asyncCallbackInfo->type = FAIL;
@@ -724,7 +724,7 @@ static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size
     CHKPP(asyncCallbackInfo);
     std::vector<float> rotationMatrix(THREE_DIMENSIONAL_MATRIX_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.createRotationMatrix(rotationVector, rotationMatrix);
+    int32_t ret = sensorAlgorithm.CreateRotationMatrix(rotationVector, rotationMatrix);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Create rotation matrix fail");
         asyncCallbackInfo->type = FAIL;
@@ -761,7 +761,7 @@ static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
     if (argc == 1 || (argc == 2 && IsMatchType(env, args[1], napi_function))) {
         return GetRotationMatrix(env, args, argc);
     } else if (IsMatchArrayType(env, args[1])) {
-        return createRotationAndInclination(env, args, argc);
+        return CreateRotationAndInclination(env, args, argc);
     }
     return nullptr;
 }

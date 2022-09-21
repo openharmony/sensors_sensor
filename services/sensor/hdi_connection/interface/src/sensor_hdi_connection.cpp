@@ -30,11 +30,11 @@ int32_t SensorHdiConnection::ConnectHdi()
 {
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
     CHKPR(iSensorHdiConnection_, ERROR);
-    int32_t ret = connectHdiService();
+    int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
         SEN_HILOGE("connect hdi service failed, try to connect compatible connection");
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
-        ret = connectHdiService();
+        ret = ConnectHdiService();
     }
     if (ret != ERR_OK) {
         SEN_HILOGE("connect hdi failed");
@@ -42,7 +42,7 @@ int32_t SensorHdiConnection::ConnectHdi()
     return ERR_OK;
 }
 
-int32_t SensorHdiConnection::connectHdiService()
+int32_t SensorHdiConnection::ConnectHdiService()
 {
     int32_t ret = iSensorHdiConnection_->ConnectHdi();
     if (ret != 0) {
@@ -135,7 +135,7 @@ int32_t SensorHdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t p
     return ret;
 }
 
-int32_t SensorHdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t SensorHdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     StartTrace(HITRACE_TAG_SENSORS, "RegisteDataReport");
     int32_t ret = iSensorHdiConnection_->RegisteDataReport(cb, reportDataCallback);

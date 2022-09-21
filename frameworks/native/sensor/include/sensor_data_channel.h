@@ -40,7 +40,7 @@ public:
     void *privateData_ = nullptr;
 
 private:
-    static void threadProcessTask(SensorDataChannel *sensorChannel);
+    static void ThreadProcessTask(SensorDataChannel *sensorChannel);
     int32_t InnerSensorDataChannel();
     std::mutex eventRunnerMutex_;
     static std::shared_ptr<SensorEventHandler> eventHandler_;
