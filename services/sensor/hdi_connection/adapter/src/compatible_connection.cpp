@@ -27,7 +27,7 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "CompatibleConnection" };
 }
 
-ZReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
+ReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
 sptr<ReportDataCallback> CompatibleConnection::reportDataCallback_ = nullptr;
 std::mutex ISensorHdiConnection::dataMutex_;
 std::condition_variable ISensorHdiConnection::dataCondition_;
@@ -156,7 +156,7 @@ int32_t CompatibleConnection::SensorDataCallback(const SensorEvents *event)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t CompatibleConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CHKPR(reportDataCallback, ERR_INVALID_VALUE);
     int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);

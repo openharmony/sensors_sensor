@@ -103,7 +103,7 @@ bool SensorService::InitDataCallback()
 {
     reportDataCallback_ = new (std::nothrow) ReportDataCallback();
     CHKPF(reportDataCallback_);
-    ZReportDataCb cb = &ReportDataCallback::ReportEventCallback;
+    ReportDataCb cb = &ReportDataCallback::ReportEventCallback;
     auto ret = sensorHdiConnection_.RegisteDataReport(cb, reportDataCallback_);
     if (ret != ERR_OK) {
         SEN_HILOGE("RegisterDataReport failed");

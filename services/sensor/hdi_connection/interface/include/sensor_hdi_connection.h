@@ -33,14 +33,14 @@ public:
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
     int32_t SetOption(int32_t sensorId, int32_t option) override;
     int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params) override;
-    int32_t RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
+    int32_t RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorHdiConnection);
     std::unique_ptr<ISensorHdiConnection> iSensorHdiConnection_;
     std::vector<Sensor> sensorList_;
-    int32_t connectHdiService();
+    int32_t ConnectHdiService();
 };
 }  // namespace Sensors
 }  // namespace OHOS

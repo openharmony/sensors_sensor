@@ -40,7 +40,7 @@ public:
     CircularEventBuf eventsBuf_;
 };
 
-using ZReportDataCb = int32_t (ReportDataCallback::*)(SensorEvent *event, sptr<ReportDataCallback> cb);
+using ReportDataCb = int32_t (ReportDataCallback::*)(SensorEvent *event, sptr<ReportDataCallback> cb);
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // REPORT_DATA_CALLBACK_H

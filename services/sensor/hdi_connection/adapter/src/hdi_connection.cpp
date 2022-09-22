@@ -40,7 +40,7 @@ constexpr int32_t GET_HDI_SERVICE_COUNT = 30;
 constexpr uint32_t WAIT_MS = 200;
 }
 
-ZReportDataCb HdiConnection::reportDataCb_ = nullptr;
+ReportDataCb HdiConnection::reportDataCb_ = nullptr;
 sptr<ReportDataCallback> HdiConnection::reportDataCallback_ = nullptr;
 
 int32_t HdiConnection::ConnectHdi()
@@ -106,7 +106,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
         SEN_HILOGE("connect v1_0 hdi failed");
         return ret;
     }
-    setSensorBasicInfoState(sensorId, true);
+    SetSensorBasicInfoState(sensorId, true);
     return ERR_OK;
 }
 
@@ -120,7 +120,7 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
         SEN_HILOGE("Disable is failed");
         return ret;
     }
-    deleteSensorBasicInfoState(sensorId);
+    DeleteSensorBasicInfoState(sensorId);
     return ERR_OK;
 }
 
@@ -134,7 +134,7 @@ int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int6
         SEN_HILOGE("SetBatch is failed");
         return ret;
     }
-    updateSensorBasicInfo(sensorId, samplingInterval, reportInterval);
+    UpdateSensorBasicInfo(sensorId, samplingInterval, reportInterval);
     return ERR_OK;
 }
 
@@ -166,7 +166,7 @@ int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
     return ERR_OK;
 }
 
-int32_t HdiConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t HdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CALL_LOG_ENTER;
     CHKPR(reportDataCallback, ERR_NO_INIT);
@@ -204,7 +204,7 @@ int32_t HdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
     return 0;
 }
 
-ZReportDataCb HdiConnection::getReportDataCb()
+ReportDataCb HdiConnection::GetReportDataCb()
 {
     if (reportDataCb_ == nullptr) {
         SEN_HILOGE("reportDataCb_ cannot be null");
@@ -212,7 +212,7 @@ ZReportDataCb HdiConnection::getReportDataCb()
     return reportDataCb_;
 }
 
-sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
+sptr<ReportDataCallback> HdiConnection::GetReportDataCallback()
 {
     if (reportDataCallback_ == nullptr) {
         SEN_HILOGE("reportDataCallback_ cannot be null");
@@ -220,7 +220,7 @@ sptr<ReportDataCallback> HdiConnection::getReportDataCallback()
     return reportDataCallback_;
 }
 
-void HdiConnection::updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+void HdiConnection::UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     SensorBasicInfo sensorBasicInfo;
@@ -229,7 +229,7 @@ void HdiConnection::updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
     sensorBasicInfoMap_[sensorId] = sensorBasicInfo;
 }
 
-void HdiConnection::setSensorBasicInfoState(int32_t sensorId, bool state)
+void HdiConnection::SetSensorBasicInfoState(int32_t sensorId, bool state)
 {
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     auto it = sensorBasicInfoMap_.find(sensorId);
@@ -240,7 +240,7 @@ void HdiConnection::setSensorBasicInfoState(int32_t sensorId, bool state)
     sensorBasicInfoMap_[sensorId].SetSensorState(state);
 }
 
-void HdiConnection::deleteSensorBasicInfoState(int32_t sensorId)
+void HdiConnection::DeleteSensorBasicInfoState(int32_t sensorId)
 {
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     auto it = sensorBasicInfoMap_.find(sensorId);
@@ -273,10 +273,10 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     CHKPV(hdiService);
     hdiService->RemoveDeathRecipient(hdiDeathObserver_);
     eventCallback_ = nullptr;
-    reconnect();
+    Reconnect();
 }
 
-void HdiConnection::reconnect()
+void HdiConnection::Reconnect()
 {
     CALL_LOG_ENTER;
     int32_t ret = ConnectHdi();

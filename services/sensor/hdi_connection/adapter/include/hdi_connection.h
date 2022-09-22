@@ -34,23 +34,23 @@ public:
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
     int32_t SetOption(int32_t sensorId, int32_t option) override;
     int32_t RunCommand(int32_t sensorId, int32_t cmd, int32_t params) override;
-    int32_t RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
+    int32_t RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
-    ZReportDataCb getReportDataCb();
-    sptr<ReportDataCallback> getReportDataCallback();
+    ReportDataCb GetReportDataCb();
+    sptr<ReportDataCallback> GetReportDataCallback();
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
 
 private:
     DISALLOW_COPY_AND_MOVE(HdiConnection);
-    static ZReportDataCb reportDataCb_;
+    static ReportDataCb reportDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
     sptr<IRemoteObject::DeathRecipient> hdiDeathObserver_;
     void RegisterHdiDeathRecipient();
     void UnregisterHdiDeathRecipient();
-    void reconnect();
-    void updateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    void setSensorBasicInfoState(int32_t sensorId, bool state);
-    void deleteSensorBasicInfoState(int32_t sensorId);
+    void Reconnect();
+    void UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    void SetSensorBasicInfoState(int32_t sensorId, bool state);
+    void DeleteSensorBasicInfoState(int32_t sensorId);
 };
 }  // namespace Sensors
 }  // namespace OHOS
