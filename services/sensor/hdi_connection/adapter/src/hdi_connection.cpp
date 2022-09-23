@@ -82,11 +82,11 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         Sensor sensor;
         sensor.SetSensorId(sensorInfos[i].sensorId);
         sensor.SetSensorTypeId(sensorInfos[i].sensorId);
-        sensor.SetFirmwareVersion(sensorInfos[i].firmwareVersion.c_str());
-        sensor.SetHardwareVersion(sensorInfos[i].hardwareVersion.c_str());
+        sensor.SetFirmwareVersion(sensorInfos[i].firmwareVersion);
+        sensor.SetHardwareVersion(sensorInfos[i].hardwareVersion);
         sensor.SetMaxRange(sensorInfos[i].maxRange);
-        sensor.SetSensorName(sensorInfos[i].sensorName.c_str());
-        sensor.SetVendorName(sensorInfos[i].vendorName.c_str());
+        sensor.SetSensorName(sensorInfos[i].sensorName);
+        sensor.SetVendorName(sensorInfos[i].vendorName);
         sensor.SetResolution(sensorInfos[i].accuracy);
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);

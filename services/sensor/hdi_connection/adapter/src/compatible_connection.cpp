@@ -55,11 +55,11 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
         Sensor sensor;
         sensor.SetSensorId(sensorId);
         sensor.SetSensorTypeId(sensorId);
-        sensor.SetFirmwareVersion(firmwareVersion.c_str());
-        sensor.SetHardwareVersion(hardwareVersion.c_str());
+        sensor.SetFirmwareVersion(firmwareVersion);
+        sensor.SetHardwareVersion(hardwareVersion);
         sensor.SetMaxRange(maxRange);
-        sensor.SetSensorName(sensorName.c_str());
-        sensor.SetVendorName(vendorName.c_str());
+        sensor.SetSensorName(sensorName);
+        sensor.SetVendorName(vendorName);
         sensor.SetResolution(sensorInfos[i].accuracy);
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
