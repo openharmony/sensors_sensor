@@ -70,6 +70,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
     callbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
     callbackInfo->data.sensorData.dataLength = event->dataLen;
     callbackInfo->data.sensorData.timestamp = event->timestamp;
+    CHKPF(event->data);
     auto data = reinterpret_cast<float *>(event->data);
     if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && callbackInfo->type == SUBSCRIBE_CALLBACK) {
         std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
@@ -78,7 +79,6 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
             (fabs(g_bodyState - BODY_STATE_EXCEPT) < THREESHOLD) ? true : false;
         return true;
     }
-    CHKPF(data);
     if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");
         return false;
