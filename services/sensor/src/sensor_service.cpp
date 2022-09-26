@@ -157,7 +157,6 @@ void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t
     sensorManager_.GetPackageName(tokenId, packageName);
     const int logLevel = 4;
     int32_t uid = clientInfo_.GetUidByPid(pid);
-    std::string message;
     if (enable) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
