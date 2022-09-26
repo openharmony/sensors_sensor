@@ -168,7 +168,7 @@ void SensorSuspendPolicy::DoActive(const std::shared_ptr<ResourceSchedule::Suspe
             }
             auto ret = EnableSensor(sensorId, appInfo.pid, samplePeriod, maxReportDelay);
             if (ret != ERR_OK) {
-                SEN_HILOGE("sensorId:%{public}u,pid:%{public}d,ret:%{public}d"), sensorId, appInfo.pid, ret);
+                SEN_HILOGE("sensorId:%{public}u,pid:%{public}d,ret:%{public}d", sensorId, appInfo.pid, ret);
             }
         }
     }

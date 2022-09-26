@@ -174,9 +174,6 @@ int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
     do {
         length = recv(receiveFd_, vaddr, size, MSG_DONTWAIT);
     } while (errno == EINTR);
-    if (length < 0) {
-        return 0;
-    }
     return length;
 }
 
