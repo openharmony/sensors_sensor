@@ -19,6 +19,7 @@
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "refbase.h"
+
 #include "sensor_agent_type.h"
 #include "sensor_log.h"
 #include "sensors_errors.h"
@@ -89,7 +90,7 @@ union CallbackData {
 };
 
 struct BusinessError {
-    int32_t code;
+    int32_t code { 0 };
     string message;
     string name;
     string stack;

@@ -17,8 +17,10 @@
 
 #include <iostream>
 
-#include "async_callback_info.h"
 #include "refbase.h"
+
+#include "async_callback_info.h"
+
 namespace OHOS {
 namespace Sensors {
 using std::vector;
@@ -29,21 +31,18 @@ using ConvertDataFunc = bool(*)(const napi_env &env, sptr<AsyncCallbackInfo> asy
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs);
 bool IsMatchType(const napi_env &env, const napi_value &value, const napi_valuetype &type);
 bool IsMatchArrayType(const napi_env &env, const napi_value &value);
-bool GetCppInt32(const napi_env &env, const napi_value &value, int32_t &number);
-bool GetCppDouble(const napi_env &env, const napi_value &value, double &number);
-bool GetCppBool(const napi_env &env, const napi_value &value);
+bool GetNativeInt32(const napi_env &env, const napi_value &value, int32_t &number);
+bool GetNativeDouble(const napi_env &env, const napi_value &value, double &number);
 bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &array);
-bool GetCppInt64(const napi_env &env, const napi_value &value, int64_t &number);
+bool GetNativeInt64(const napi_env &env, const napi_value &value, int64_t &number);
 bool RegisterNapiCallback(const napi_env &env, const napi_value &value, napi_ref &callback);
 napi_value GetNamedProperty(const napi_env &env, const napi_value &object, string name);
-bool GetCppFloat(const napi_env &env, const napi_value &value, float &number);
+bool GetNativeFloat(const napi_env &env, const napi_value &value, float &number);
 napi_value GetNapiInt32(const napi_env &env, int32_t number);
 bool GetStringValue(const napi_env &env, const napi_value &value, string &result);
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
-napi_value GreateBusinessError(const napi_env &env, int32_t errCode, string errMessage,
-    string errName, string errStack);
 bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToGeomagneticData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToNumber(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
@@ -59,77 +58,11 @@ bool CreateFailMessage(CallbackDataType type, int32_t code, string message,
 bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 
-#define GET_AND_THROW_NAPI_ERROR(env, message) \
-    do { \
-        const napi_extended_error_info* errorInfo = nullptr; \
-        napi_get_last_error_info((env), &errorInfo); \
-        bool isPending = false; \
-        napi_is_exception_pending((env), &isPending); \
-        if (!isPending && errorInfo != nullptr) { \
-            std::string errDesc = std::string(__FUNCTION__) + ": " + #message + " fail. "; \
-            std::string errorMessage = \
-                errorInfo->error_message != nullptr ? errorInfo->error_message : "empty error message"; \
-            errDesc += errorMessage; \
-            napi_throw_error((env), nullptr, errDesc.c_str()); \
-        } \
-    } while (0)
-
-#define CHKNCR(env, cond, message, retVal) \
-    do { \
-        if (!(cond)) { \
-            SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
-            napi_throw_error(env, nullptr, errDesc.c_str()); \
-            return retVal; \
-        } \
-    } while (0)
-
-#define CHKNCP(env, cond, message) \
-    do { \
-        if (!(cond)) { \
-            SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
-            napi_throw_error(env, nullptr, errDesc.c_str()); \
-            return nullptr; \
-        } \
-    } while (0)
-
 #define CHKNCF(env, cond, message) \
     do { \
         if (!(cond)) { \
             SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
-            napi_throw_error(env, nullptr, errDesc.c_str()); \
             return false; \
-        } \
-    } while (0)
-
-#define CHKNCV(env, cond, message) \
-    do { \
-        if (!(cond)) { \
-            SEN_HILOGE("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
-            napi_throw_error(env, nullptr, errDesc.c_str()); \
-            return; \
-        } \
-    } while (0)
-
-#define CHKNCC(env, cond, message) \
-    { \
-        if (!(cond)) { \
-            SEN_HILOGW("(%{public}s)", #message); \
-            auto errDesc = std::string(__FUNCTION__) + ": " + #message; \
-            napi_throw_error(env, nullptr, errDesc.c_str()); \
-            continue; \
-        } \
-    }
-
-#define CHKNRR(env, state, message, retVal) \
-    do { \
-        if ((state) != napi_ok) { \
-            SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
-            return retVal; \
         } \
     } while (0)
 
@@ -137,7 +70,6 @@ bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallback
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             return nullptr; \
         } \
     } while (0)
@@ -146,28 +78,17 @@ bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallback
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
             return false; \
         } \
     } while (0)
 
-#define CHKNRV(env, state, message) \
+#define CHKNRF(env, state, message) \
     do { \
         if ((state) != napi_ok) { \
             SEN_HILOGE("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
-            return; \
+            return false; \
         } \
     } while (0)
-
-#define CHKNRC(env, state, message) \
-    { \
-        if ((state) != napi_ok) { \
-            SEN_HILOGW("(%{public}s) fail", #message); \
-            GET_AND_THROW_NAPI_ERROR((env), (message)); \
-            continue; \
-        } \
-    }
 }  // namespace Sensors
 }  // namespace OHOS
 #endif // SENSOR_NAPI_UTILS_H

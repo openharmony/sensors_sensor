@@ -19,6 +19,8 @@
 #include <string>
 #include <vector>
 
+#include "sensor_napi_error.h"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
@@ -58,7 +60,7 @@ bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &
         CHKNRF(env, napi_get_element(env, value, i, &element), "napi_get_element");
         CHKNCF(env, IsMatchType(env, element, napi_number), "Wrong argument type. Number or function expected");
         double value = 0;
-        CHKNCF(env, GetCppDouble(env, element, value), "Wrong argument type. get double fail");
+        CHKNCF(env, GetNativeDouble(env, element, value), "Wrong argument type. get double fail");
         array.push_back(static_cast<float>(value));
     }
     return true;
@@ -79,37 +81,37 @@ napi_value GetNamedProperty(const napi_env &env, const napi_value &object, strin
     return value;
 }
 
-bool GetCppDouble(const napi_env &env, const napi_value &value, double &number)
+bool GetNativeDouble(const napi_env &env, const napi_value &value, double &number)
 {
     CALL_LOG_ENTER;
     CHKNRF(env, napi_get_value_double(env, value, &number), "napi_get_value_double");
     return true;
 }
 
-bool GetCppFloat(const napi_env &env, const napi_value &value, float &number)
+bool GetNativeFloat(const napi_env &env, const napi_value &value, float &number)
 {
     CALL_LOG_ENTER;
     double result = 0;
-    CHKNCF(env, GetCppDouble(env, value, result), "Get cpp double fail");
+    CHKNCF(env, GetNativeDouble(env, value, result), "Get cpp double fail");
     number = static_cast<float>(result);
     return true;
 }
 
-bool GetCppInt32(const napi_env &env, const napi_value &value, int32_t &number)
+bool GetNativeInt32(const napi_env &env, const napi_value &value, int32_t &number)
 {
     CALL_LOG_ENTER;
     CHKNRF(env, napi_get_value_int32(env, value, &number), "napi_get_value_int32");
     return true;
 }
 
-bool GetCppInt64(const napi_env &env, const napi_value &value, int64_t &number)
+bool GetNativeInt64(const napi_env &env, const napi_value &value, int64_t &number)
 {
     CALL_LOG_ENTER;
     CHKNRF(env, napi_get_value_int64(env, value, &number), "napi_get_value_int64");
     return true;
 }
 
-bool GetCppBool(const napi_env &env, const napi_value &value)
+bool GetNativeBool(const napi_env &env, const napi_value &value)
 {
     CALL_LOG_ENTER;
     bool number = false;
@@ -291,8 +293,7 @@ bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbac
 {
     CALL_LOG_ENTER;
     CHKPF(asyncCallbackInfo);
-    result[0] = GreateBusinessError(env, asyncCallbackInfo->error.code, asyncCallbackInfo->error.message,
-        asyncCallbackInfo->error.name, asyncCallbackInfo->error.stack);
+    result[0] = CreateBusinessError(env, asyncCallbackInfo->error.code, asyncCallbackInfo->error.message);
     CHKPF(result[0]);
     return true;
 }
@@ -395,30 +396,6 @@ bool ConvertToRotationMatrix(const napi_env &env, sptr<AsyncCallbackInfo> asyncC
     return true;
 }
 
-napi_value GreateBusinessError(const napi_env &env, int32_t errCode, string errMessage,
-    string errName, string errStack)
-{
-    CALL_LOG_ENTER;
-    napi_value result = nullptr;
-    CHKNRP(env, napi_create_object(env, &result), "napi_create_object");
-    napi_value value = nullptr;
-    CHKNRP(env, napi_create_int32(env, errCode, &value), "napi_create_int32");
-    CHKNRP(env, napi_set_named_property(env, result, "code", value), "napi_set_named_property");
-    value = nullptr;
-    CHKNRP(env, napi_create_string_utf8(env, errMessage.data(), NAPI_AUTO_LENGTH, &value),
-        "napi_create_string_utf8");
-    CHKNRP(env, napi_set_named_property(env, result, "message", value), "napi_set_named_property");
-    value = nullptr;
-    CHKNRP(env, napi_create_string_utf8(env, errName.data(), NAPI_AUTO_LENGTH, &value),
-        "napi_create_string_utf8");
-    CHKNRP(env, napi_set_named_property(env, result, "name", value), "napi_set_named_property");
-    value = nullptr;
-    CHKNRP(env, napi_create_string_utf8(env, errStack.data(), NAPI_AUTO_LENGTH, &value),
-        "napi_create_string_utf8");
-    CHKNRP(env, napi_set_named_property(env, result, "stack", value), "napi_set_named_property");
-    return result;
-}
-
 bool CreateNapiArray(const napi_env &env, float data[], int32_t dataLength, napi_value &result)
 {
     CHKNRF(env, napi_create_array(env, &result), "napi_create_array");
@@ -435,10 +412,11 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CALL_LOG_ENTER;
     CHKPV(asyncCallbackInfo);
     napi_value resourceName = nullptr;
-    CHKNRV(asyncCallbackInfo->env, napi_create_string_utf8(asyncCallbackInfo->env, "AsyncCallback",
-        NAPI_AUTO_LENGTH, &resourceName), "napi_create_string_utf8");
+    napi_env env = asyncCallbackInfo->env;
+    napi_status ret = napi_create_string_latin1(env, "AsyncCallback", NAPI_AUTO_LENGTH, &resourceName);
+    CHKCV((ret == napi_ok), "napi_create_string_latin1 fail");
     asyncCallbackInfo->IncStrongRef(nullptr);
-    napi_status status = napi_create_async_work(asyncCallbackInfo->env, nullptr, resourceName,
+    napi_status status = napi_create_async_work(env, nullptr, resourceName,
         [](napi_env env, void* data) {},
         [](napi_env env, napi_status status, void* data) {
             CALL_LOG_ENTER;
@@ -455,23 +433,24 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             napi_value callResult = nullptr;
             napi_value result[2] = {0};
             if (asyncCallbackInfo->type == SUBSCRIBE_FAIL) {
-                CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[1], &callback),
-                    "napi_get_reference_value");
-                CHKNRV(env, napi_create_string_utf8(env, asyncCallbackInfo->error.message.c_str(),
-                    NAPI_AUTO_LENGTH, &result[0]), "napi_create_string_utf8");
-                CHKNRV(env, napi_create_int32(env, asyncCallbackInfo->error.code, &result[1]), "napi_create_int32");
-                CHKNRV(env, napi_call_function(env, nullptr, callback, 2, result, &callResult),
-                    "napi_call_function");
+                CHKCV((napi_get_reference_value(env, asyncCallbackInfo->callback[1], &callback) == napi_ok),
+                    "napi_get_reference_value fail");
+                CHKCV((napi_create_string_utf8(env, asyncCallbackInfo->error.message.c_str(),
+                    NAPI_AUTO_LENGTH, &result[0]) == napi_ok), "napi_create_string_utf8 fail");
+                CHKCV((napi_create_int32(env, asyncCallbackInfo->error.code, &result[1]) == napi_ok),
+                    "napi_create_int32 fail");
+                CHKCV((napi_call_function(env, nullptr, callback, 2, result, &callResult) == napi_ok),
+                    "napi_call_function fail");
                 return;
             }
-            CHKNRV(env, napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback),
-                "napi_get_reference_value");
-            CHKNCV(env, (g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
+            CHKCV((napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback) == napi_ok),
+                "napi_get_reference_value fail");
+            CHKCV((g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
                 "Callback type invalid in async work");
             bool ret = g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
-            CHKNCV(env, ret, "Create napi data fail in async work");
-            CHKNRV(env, napi_call_function(env, nullptr, callback, 2, result, &callResult),
-                "napi_call_function");
+            CHKCV(ret, "Create napi data fail in async work");
+            CHKCV((napi_call_function(env, nullptr, callback, 2, result, &callResult) == napi_ok),
+                "napi_call_function fail");
         },
         asyncCallbackInfo.GetRefPtr(), &asyncCallbackInfo->asyncWork);
     if (status != napi_ok
@@ -492,8 +471,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 {
     CHKPV(asyncCallbackInfo);
     uv_loop_s *loop(nullptr);
-    CHKNRV(asyncCallbackInfo->env, napi_get_uv_event_loop(asyncCallbackInfo->env, &loop),
-        "napi_get_uv_event_loop");
+    CHKCV((napi_get_uv_event_loop(asyncCallbackInfo->env, &loop) == napi_ok), "napi_get_uv_event_loop fail");
     CHKPV(loop);
     uv_work_t *work = new(std::nothrow) uv_work_t;
     CHKPV(work);
@@ -557,10 +535,11 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CALL_LOG_ENTER;
     CHKPV(asyncCallbackInfo);
     napi_value resourceName = nullptr;
-    CHKNRV(asyncCallbackInfo->env, napi_create_string_latin1(asyncCallbackInfo->env, "Promise",
-        NAPI_AUTO_LENGTH, &resourceName), "napi_create_string_latin1");
+    napi_env env = asyncCallbackInfo->env;
+    napi_status ret = napi_create_string_latin1(env, "Promise", NAPI_AUTO_LENGTH, &resourceName);
+    CHKCV((ret == napi_ok), "napi_create_string_latin1 fail");
     asyncCallbackInfo->IncStrongRef(nullptr);
-    napi_status status = napi_create_async_work(asyncCallbackInfo->env, nullptr, resourceName,
+    napi_status status = napi_create_async_work(env, nullptr, resourceName,
         [](napi_env env, void* data) {},
         [](napi_env env, napi_status status, void* data) {
             CALL_LOG_ENTER;
@@ -574,16 +553,16 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
              */
             asyncCallbackInfo->DecStrongRef(nullptr);
             napi_value result[2] = {0};
-            CHKNCV(env, (g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
+            CHKCV((g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end()),
                 "Callback type invalid in promise");
             bool ret = g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
-            CHKNCV(env, ret, "Create napi data fail in promise");
+            CHKCV(ret, "Callback type invalid in promise");
             if (asyncCallbackInfo->type == FAIL) {
-                CHKNRV(env, napi_reject_deferred(env, asyncCallbackInfo->deferred, result[0]),
-                    "napi_reject_deferred");
+                CHKCV((napi_reject_deferred(env, asyncCallbackInfo->deferred, result[0]) == napi_ok),
+                    "napi_reject_deferred fail");
             } else {
-                CHKNRV(env, napi_resolve_deferred(env, asyncCallbackInfo->deferred, result[1]),
-                    "napi_resolve_deferred");
+                CHKCV((napi_resolve_deferred(env, asyncCallbackInfo->deferred, result[1]) == napi_ok),
+                    "napi_resolve_deferred fail");
             }
         },
         asyncCallbackInfo.GetRefPtr(), &asyncCallbackInfo->asyncWork);

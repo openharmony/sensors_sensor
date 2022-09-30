@@ -12,23 +12,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef SENSOR_JS_H
-#define SENSOR_JS_H
+#ifndef SENSOR_NAPI_ERROR_H
+#define SENSOR_NAPI_ERROR_H
+
+#include <map>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 
-#include "async_callback_info.h"
-#include "sensor_agent.h"
+#include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
-int32_t UnsubscribeSensor(int32_t sensorTypeId);
-void DataCallbackImpl(SensorEvent *event);
-int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback);
-napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
-napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
-napi_value GetBodyState(napi_env env, napi_callback_info info);
+const std::map<int32_t, std::string> ERROR_MESSAGES = {
+    {SERVICE_EXCEPTION,  "Service exception."},
+    {PERMISSION_DENIED,  "Permission denied."},
+    {PARAMETER_ERROR,  "The parameter invalid."},
+};
+
+napi_value CreateBusinessError(const napi_env &env, const int32_t errCode, const std::string &errMessage);
+void ThrowErr(const napi_env &env, const int32_t errCode, const std::string &printMsg);
 }  // namespace Sensors
 }  // namespace OHOS
-#endif // SENSOR_JS_H
+#endif // SENSOR_NAPI_ERROR_H
