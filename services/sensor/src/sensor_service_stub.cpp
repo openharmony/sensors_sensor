@@ -84,7 +84,7 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
-        return ERR_PERMISSION_DENIED;
+        return PERMISSION_DENIED;
     }
     return EnableSensor(sensorId, data.ReadInt64(), data.ReadInt64());
 }
@@ -99,7 +99,7 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
-        return ERR_PERMISSION_DENIED;
+        return PERMISSION_DENIED;
     }
     return DisableSensor(sensorId);
 }
@@ -114,7 +114,7 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "GetSensorStateInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId:%{public}u grant failed, result:%{public}d", sensorId, ret);
-        return ERR_PERMISSION_DENIED;
+        return PERMISSION_DENIED;
     }
     return GetSensorState(sensorId);
 }
@@ -129,7 +129,7 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "RunCommandInner", "ERROR_CODE", ret);
         SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
-        return ERR_PERMISSION_DENIED;
+        return PERMISSION_DENIED;
     }
     return RunCommand(sensorId, data.ReadUint32(), data.ReadUint32());
 }
