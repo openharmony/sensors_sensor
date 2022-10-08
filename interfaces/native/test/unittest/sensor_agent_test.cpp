@@ -132,7 +132,7 @@ HWTEST_F(SensorAgentTest, GetAllSensorsTest_002, TestSize.Level1)
     SEN_HILOGI("GetAllSensorsTest_002 in");
     int32_t count = 0;
     int32_t ret = GetAllSensors(nullptr, &count);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ASSERT_EQ(count, 0);
 }
 
@@ -141,7 +141,7 @@ HWTEST_F(SensorAgentTest, GetAllSensorsTest_003, TestSize.Level1)
     SEN_HILOGI("GetAllSensorsTest_003 in");
     SensorInfo *sensorInfos { nullptr };
     int32_t ret = GetAllSensors(&sensorInfos, nullptr);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, ActivateSensorTest_001, TestSize.Level1)
@@ -150,15 +150,15 @@ HWTEST_F(SensorAgentTest, ActivateSensorTest_001, TestSize.Level1)
     SensorUser user;
     user.callback = nullptr;
     int32_t ret = SubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ret = SetBatch(sensorId, &user, 100000000, 100000000);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ret = ActivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ret = DeactivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ret = UnsubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, ActivateSensorTest_002, TestSize.Level1)
@@ -167,14 +167,14 @@ HWTEST_F(SensorAgentTest, ActivateSensorTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = ActivateSensor(invalidValue, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, ActivateSensorTest_003, TestSize.Level1)
 {
     SEN_HILOGI("ActivateSensorTest_003 in");
     int32_t ret = ActivateSensor(sensorId, nullptr);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, DeactivateSensorTest_001, TestSize.Level1)
@@ -183,7 +183,7 @@ HWTEST_F(SensorAgentTest, DeactivateSensorTest_001, TestSize.Level1)
     SensorUser user;
     user.callback = nullptr;
     int32_t ret = DeactivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, DeactivateSensorTest_002, TestSize.Level1)
@@ -192,14 +192,14 @@ HWTEST_F(SensorAgentTest, DeactivateSensorTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = DeactivateSensor(invalidValue, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, DeactivateSensorTest_003, TestSize.Level1)
 {
     SEN_HILOGI("DeactivateSensorTest_003 in");
     int32_t ret = DeactivateSensor(sensorId, nullptr);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, DeactivateSensorTest_004, TestSize.Level1)
@@ -208,7 +208,7 @@ HWTEST_F(SensorAgentTest, DeactivateSensorTest_004, TestSize.Level1)
     SensorUser user;
     user.callback = nullptr;
     int32_t ret = DeactivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetBatchTest_001, TestSize.Level1)
@@ -217,9 +217,9 @@ HWTEST_F(SensorAgentTest, SetBatchTest_001, TestSize.Level1)
     SensorUser user;
     user.callback = nullptr;
     int32_t ret = SubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret,  OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ret = SetBatch(sensorId, &user, 100000000, 100000000);
-    ASSERT_EQ(ret,  OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetBatchTest_002, TestSize.Level1)
@@ -228,14 +228,14 @@ HWTEST_F(SensorAgentTest, SetBatchTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SetBatch(invalidValue, &user, 100000000, 100000000);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetBatchTest_003, TestSize.Level1)
 {
     SEN_HILOGI("SetBatchTest_003 in");
     int32_t ret = SetBatch(sensorId, nullptr, invalidValue, invalidValue);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SubscribeSensorTest_001, TestSize.Level1)
@@ -244,7 +244,7 @@ HWTEST_F(SensorAgentTest, SubscribeSensorTest_001, TestSize.Level1)
     SensorUser user;
     user.callback = nullptr;
     int32_t ret = SubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SubscribeSensorTest_002, TestSize.Level1)
@@ -253,14 +253,14 @@ HWTEST_F(SensorAgentTest, SubscribeSensorTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SubscribeSensor(invalidValue, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SubscribeSensorTest_003, TestSize.Level1)
 {
     SEN_HILOGI("SubscribeSensorTest_003 in");
     int32_t ret = SubscribeSensor(sensorId, nullptr);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, UnsubscribeSensorTest_001, TestSize.Level1)
@@ -269,9 +269,9 @@ HWTEST_F(SensorAgentTest, UnsubscribeSensorTest_001, TestSize.Level1)
     SensorUser user;
     user.callback = nullptr;
     int32_t ret = SubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     ret = UnsubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, UnsubscribeSensorTest_002, TestSize.Level1)
@@ -280,14 +280,14 @@ HWTEST_F(SensorAgentTest, UnsubscribeSensorTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = UnsubscribeSensor(invalidValue, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, UnsubscribeSensorTest_003, TestSize.Level1)
 {
     SEN_HILOGI("UnsubscribeSensorTest_003 in");
     int32_t ret = UnsubscribeSensor(sensorId, nullptr);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetModeTest_001, TestSize.Level1)
@@ -301,7 +301,7 @@ HWTEST_F(SensorAgentTest, SetModeTest_001, TestSize.Level1)
     ret = SetMode(sensorId, &user, mode);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     ret = UnsubscribeSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetModeTest_002, TestSize.Level1)
@@ -310,7 +310,7 @@ HWTEST_F(SensorAgentTest, SetModeTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SetMode(invalidValue, &user, invalidValue);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetModeTest_003, TestSize.Level1)
@@ -318,7 +318,7 @@ HWTEST_F(SensorAgentTest, SetModeTest_003, TestSize.Level1)
     SEN_HILOGI("SetModeTest_003 in");
     int32_t mode { 0 };
     int32_t ret = SetMode(sensorId, nullptr, mode);
-    ASSERT_EQ(ret, OHOS::Sensors::ERROR);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 /*
