@@ -553,9 +553,8 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.TransformCoordinateSystem(inRotationVector, axisX, axisY, outRotationVector);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Transform coordinate system fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Transform coordinate system fail");
+        return nullptr;
     } else {
         for (size_t i = 0; i < length; ++i) {
             asyncCallbackInfo->data.reserveData.reserve[i] = outRotationVector[i];
@@ -621,9 +620,8 @@ static napi_value GetAngleModify(napi_env env, napi_callback_info info)
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.GetAngleModify(curRotationVector, preRotationVector, angleChange);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get angle modify fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Get angle modify fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.length = ROTATION_VECTOR_LENGTH;
         for (int32_t i = 0; i < ROTATION_VECTOR_LENGTH; ++i) {
@@ -680,9 +678,8 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.GetDirection(rotationMatrix, rotationAngle);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get direction fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Get direction fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.length = ROTATION_VECTOR_LENGTH;
         for (int32_t i = 0; i < ROTATION_VECTOR_LENGTH; ++i) {
@@ -739,9 +736,8 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.CreateQuaternion(rotationVector, quaternion);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Create quaternin fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "CreateQuaternion fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.length = QUATERNION_LENGTH;
         for (int32_t i = 0; i < QUATERNION_LENGTH; ++i) {
@@ -803,9 +799,8 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.GetAltitude(seaPressure, currentPressure, &altitude);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get altitude fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Get altitude fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.reserve[0] = altitude;
     }
@@ -859,9 +854,8 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.GetGeomagneticDip(inclinationMatrix, &geomagneticDip);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get geomagnetic dip fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Get geomagnetic dip fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.reserve[0] = geomagneticDip;
     }
@@ -913,9 +907,8 @@ static napi_value CreateRotationAndInclination(const napi_env &env, napi_value a
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.CreateRotationAndInclination(gravity, geomagnetic, rotation, inclination);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Create rotation and inclination matrix fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Create rotation and inclination matrix fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.length = THREE_DIMENSIONAL_MATRIX_LENGTH;
         for (int32_t i = 0; i < THREE_DIMENSIONAL_MATRIX_LENGTH; ++i) {
@@ -968,9 +961,8 @@ static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size
     SensorAlgorithm sensorAlgorithm;
     int32_t ret = sensorAlgorithm.CreateRotationMatrix(rotationVector, rotationMatrix);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Create rotation matrix fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
+        ThrowErr(env, ret, "Create rotation matrix fail");
+        return nullptr;
     } else {
         asyncCallbackInfo->data.reserveData.length = THREE_DIMENSIONAL_MATRIX_LENGTH;
         for (int32_t i = 0; i < THREE_DIMENSIONAL_MATRIX_LENGTH; ++i) {

@@ -293,9 +293,14 @@ bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbac
 {
     CALL_LOG_ENTER;
     CHKPF(asyncCallbackInfo);
-    result[0] = CreateBusinessError(env, asyncCallbackInfo->error.code, asyncCallbackInfo->error.message);
-    CHKPF(result[0]);
-    return true;
+    int32_t code = asyncCallbackInfo->error.code;
+    auto msg = GetNapiError(code);
+    if (!msg) {
+        SEN_HILOGE("errCode: %{public}d is invalid", code);
+        return false;
+    }
+    result[0] = CreateBusinessError(env, code, msg.value());
+    return (result[0] != nullptr);
 }
 
 bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2])
