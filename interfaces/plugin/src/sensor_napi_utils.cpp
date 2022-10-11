@@ -254,8 +254,8 @@ bool ConvertToSensorInfo(const napi_env &env, SensorInfo sensorInfo, napi_value 
         "napi_create_string_latin1");
     CHKNRF(env, napi_set_named_property(env, result, "hardwareVersion", value), "napi_set_named_property");
     value = nullptr;
-    CHKNRF(env, napi_create_double(env, sensorInfo.sensorTypeId, &value), "napi_create_double");
-    CHKNRF(env, napi_set_named_property(env, result, "sensorTypeId", value), "napi_set_named_property");
+    CHKNRF(env, napi_create_double(env, sensorInfo.sensorId, &value), "napi_create_double");
+    CHKNRF(env, napi_set_named_property(env, result, "sensorId", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.maxRange, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "maxRange", value), "napi_set_named_property");
@@ -265,6 +265,12 @@ bool ConvertToSensorInfo(const napi_env &env, SensorInfo sensorInfo, napi_value 
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.power, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "power", value), "napi_set_named_property");
+    value = nullptr;
+    CHKNRF(env, napi_create_int64(env, sensorInfo.minSamplePeriod, &value), "napi_create_int64");
+    CHKNRF(env, napi_set_named_property(env, result, "minSamplePeriod", value), "napi_set_named_property");
+    value = nullptr;
+    CHKNRF(env, napi_create_int64(env, sensorInfo.maxSamplePeriod, &value), "napi_create_int64");
+    CHKNRF(env, napi_set_named_property(env, result, "maxSamplePeriod", value), "napi_set_named_property");
     return true;
 }
 
