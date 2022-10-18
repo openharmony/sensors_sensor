@@ -57,6 +57,7 @@ int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     }
     int32_t ret = proxy->GetAllSensors(sensorInfo, count);
     if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("GetAllSensors failed");
         return NormalizeErrCode(ret);
     }
     return ret;
@@ -71,6 +72,7 @@ int32_t ActivateSensor(int32_t sensorId, const SensorUser *user)
     }
     int32_t ret = proxy->ActivateSensor(sensorId, user);
     if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("ActivateSensor failed");
         return NormalizeErrCode(ret);
     }
     return ret;
@@ -85,6 +87,7 @@ int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user)
     }
     int32_t ret = proxy->DeactivateSensor(sensorId, user);
     if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("DeactivateSensor failed");
         return NormalizeErrCode(ret);
     }
     return ret;

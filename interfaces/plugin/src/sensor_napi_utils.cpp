@@ -59,9 +59,9 @@ bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &
         napi_value element = nullptr;
         CHKNRF(env, napi_get_element(env, value, i, &element), "napi_get_element");
         CHKNCF(env, IsMatchType(env, element, napi_number), "Wrong argument type. Number or function expected");
-        double value = 0;
-        CHKNCF(env, GetNativeDouble(env, element, value), "Wrong argument type. get double fail");
-        array.push_back(static_cast<float>(value));
+        double number = 0;
+        CHKNCF(env, GetNativeDouble(env, element, number), "Wrong argument type. get double fail");
+        array.push_back(static_cast<float>(number));
     }
     return true;
 }
