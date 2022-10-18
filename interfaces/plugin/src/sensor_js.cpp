@@ -1164,8 +1164,8 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
         return nullptr;
     }
     std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
-    bool ret = SubscribeSensor(sensorTypeId, g_samplingPeriod[interval], DataCallbackImpl);
-    if (!ret) {
+    int32_t ret = SubscribeSensor(sensorTypeId, g_samplingPeriod[interval], DataCallbackImpl);
+    if (ret != OHOS::ERR_OK) {
         CHKCP((napiFail != nullptr), "subscribe fail");
         CreateFailMessage(SUBSCRIBE_FAIL, SENSOR_SUBSCRIBE_FAILURE, "subscribe fail", asyncCallbackInfo);
         EmitAsyncCallbackWork(asyncCallbackInfo);
@@ -1189,7 +1189,10 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
         SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
         return nullptr;
     }
-    CHKCP(UnsubscribeSensor(sensorTypeId), "UnsubscribeSensor failed");
+    if (UnsubscribeSensor(sensorTypeId) != OHOS::ERR_OK) {
+        SEN_HILOGW("UnsubscribeSensor failed");
+        return nullptr;
+    }
     return nullptr;
 }
 
