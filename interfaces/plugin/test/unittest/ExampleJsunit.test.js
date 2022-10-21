@@ -3870,4 +3870,150 @@ describe("SensorJsTest", function () {
             done();
         }
     })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_001
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_001", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_001---------------------------');
+        sensor.subscribeAccelerometer({
+            interval: 'normal',
+            success: function(data) {
+              expect(typeof(data.x)).assertEqual("number");
+              expect(typeof(data.y)).assertEqual("number");
+              expect(typeof(data.z)).assertEqual("number");
+              console.info("SensorJsTest001 success" + JSON.stringify(data));
+            },
+            fail: function(data, code) {
+              expect(false).assertTrue();
+              console.error('Subscription failed. Code: ' + code + '; Data: ' + data);
+            },
+        });
+        setTimeout(()=>{
+            try {
+                sensor.unsubscribeAccelerometer();
+            } catch (error) {
+                console.info('SensorJsTest001 unsubscribe failed' + error);
+                expect(false).assertTrue();
+            }
+            setTimeout(()=>{
+                expect(true).assertTrue();
+                done();
+            }, 500);
+        }, 1000);
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_002
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_002", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_002---------------------------');
+        sensor.subscribeAccelerometer({
+            interval: 'xxx',
+            success: function(data) {
+              expect(false).assertTrue();
+              console.info("Sensor_SubscribeAccelerometer_002 success" + JSON.stringify(data));
+              done();
+            },
+            fail: function(data, code) {
+              expect(true).assertTrue();
+              console.error('Sensor_SubscribeAccelerometer_002 Subscription failed. Code: ' + code + '; Data: ' + data);
+              done();
+            },
+        });
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_003
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_003", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_003---------------------------');
+        try {
+            sensor.subscribeAccelerometer({
+                interval: 'xxx',
+                success: function(data) {
+                  expect(false).assertTrue();
+                  console.info("Sensor_SubscribeAccelerometer_003 success" + JSON.stringify(data));
+                }
+            });
+        } catch (error) {
+            console.info('Sensor_SubscribeAccelerometer_003 Subscription failed' + error);
+            expect(false).assertTrue();
+        }
+        setTimeout(()=>{
+            expect(true).assertTrue();
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_004
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_004", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_004---------------------------');
+        try {
+            sensor.subscribeAccelerometer({
+                interval: 'normal',
+            });
+        } catch (error) {
+            console.info('Sensor_SubscribeAccelerometer_004 Subscription failed' + error);
+            expect(false).assertTrue();
+        }
+        setTimeout(()=>{
+            expect(true).assertTrue();
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:Sensor_UnsubscribeAccelerometer_001
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_UnsubscribeAccelerometer_001", 0, async function (done) {
+        console.info('----------------------Sensor_UnsubscribeAccelerometer_001---------------------------');
+        try {
+            sensor.unsubscribeAccelerometer();
+        } catch (error) {
+            console.info(error);
+            expect(false).assertTrue();
+        }
+        setTimeout(()=>{
+            expect(true).assertTrue();
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:Sensor_UnsubscribeAccelerometer_002
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_UnsubscribeAccelerometer_002", 0, async function (done) {
+        console.info('----------------------Sensor_UnsubscribeAccelerometer_002---------------------------');
+        try {
+            sensor.unsubscribeAccelerometer('xxx');
+        } catch (error) {
+            console.info(error);
+            expect(false).assertTrue();
+        }
+        setTimeout(()=>{
+            expect(true).assertTrue();
+            done();
+        }, 500);
+    })
 })
