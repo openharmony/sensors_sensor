@@ -19,6 +19,7 @@
 #include <memory>
 #include <cstdint>
 
+#include "sensor_agent_type.h"
 #include "sensor_event_handler.h"
 #include "sensor_basic_data_channel.h"
 

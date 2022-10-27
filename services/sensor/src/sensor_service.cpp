@@ -178,15 +178,15 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
         SEN_HILOGW("it is not onchange data, no need to report");
         return;
     }
-    SensorEvent event;
-    auto ret = clientInfo_.GetStoreEvent(sensorId, event);
+    SensorData sensorData;
+    auto ret = clientInfo_.GetStoreEvent(sensorId, sensorData);
     if (ret != ERR_OK) {
         SEN_HILOGE("there is no data to be reported");
         return;
     }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(GetCallingPid());
     CHKPV(channel);
-    auto sendRet = channel->SendData(&event, sizeof(event));
+    auto sendRet = channel->SendData(&sensorData, sizeof(sensorData));
     if (sendRet != ERR_OK) {
         SEN_HILOGE("send data failed");
         return;

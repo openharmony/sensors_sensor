@@ -17,7 +17,7 @@
 #define REPORT_DATA_CALLBACK_H
 
 #include "refbase.h"
-#include "sensor_agent_type.h"
+#include "sensor_data_event.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -25,7 +25,7 @@ constexpr int32_t CIRCULAR_BUF_LEN = 1024;
 constexpr int32_t SENSOR_DATA_LENGHT = 64;
 
 struct CircularEventBuf {
-    struct  SensorEvent *circularBuf;
+    struct  SensorData *circularBuf;
     int32_t readPos;
     int32_t writePosition;
     int32_t eventNum;
@@ -35,12 +35,12 @@ class ReportDataCallback : public RefBase {
 public:
     ReportDataCallback();
     ~ReportDataCallback();
-    int32_t ReportEventCallback(SensorEvent *event, sptr<ReportDataCallback> cb);
+    int32_t ReportEventCallback(SensorData *sensorData, sptr<ReportDataCallback> cb);
     CircularEventBuf &GetEventData();
     CircularEventBuf eventsBuf_;
 };
 
-using ReportDataCb = int32_t (ReportDataCallback::*)(SensorEvent *event, sptr<ReportDataCallback> cb);
+using ReportDataCb = int32_t (ReportDataCallback::*)(SensorData *sensorData, sptr<ReportDataCallback> cb);
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // REPORT_DATA_CALLBACK_H

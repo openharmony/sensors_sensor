@@ -33,7 +33,7 @@ SensorFileDescriptorListener::SensorFileDescriptorListener()
 {
     channel_ = nullptr;
     receiveDataBuff_ =
-        new (std::nothrow) TransferSensorEvents[sizeof(TransferSensorEvents) * RECEIVE_DATA_SIZE];
+        new (std::nothrow) SensorData[sizeof(SensorData) * RECEIVE_DATA_SIZE];
     CHKPL(receiveDataBuff_);
 }
 
@@ -57,8 +57,8 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         return;
     }
     int32_t len =
-        recv(fileDescriptor, receiveDataBuff_, sizeof(TransferSensorEvents) * RECEIVE_DATA_SIZE, 0);
-    int32_t eventSize = static_cast<int32_t>(sizeof(TransferSensorEvents));
+        recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
+    int32_t eventSize = static_cast<int32_t>(sizeof(SensorData));
     while (len > 0) {
         int32_t num = len / eventSize;
         for (int i = 0; i < num; i++) {
@@ -73,7 +73,7 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
             };
             channel_->dataCB_(&event, 1, channel_->privateData_);
         }
-        len = recv(fileDescriptor, receiveDataBuff_, sizeof(TransferSensorEvents) * RECEIVE_DATA_SIZE, 0);
+        len = recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
     }
 }
 

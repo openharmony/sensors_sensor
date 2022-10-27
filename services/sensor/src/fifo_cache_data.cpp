@@ -41,12 +41,12 @@ uint64_t FifoCacheData::GetPeriodCount() const
     return periodCount_;
 }
 
-void FifoCacheData::SetFifoCacheData(const std::vector<SensorEvent> &fifoCacheData)
+void FifoCacheData::SetFifoCacheData(const std::vector<SensorData> &fifoCacheData)
 {
     fifoCacheData_ = fifoCacheData;
 }
 
-std::vector<SensorEvent> FifoCacheData::GetFifoCacheData() const
+std::vector<SensorData> FifoCacheData::GetFifoCacheData() const
 {
     return fifoCacheData_;
 }

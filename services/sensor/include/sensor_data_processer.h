@@ -29,7 +29,7 @@
 #include "report_data_callback.h"
 #include "sensor.h"
 #include "sensor_hdi_connection.h"
-#include "sensor_agent_type.h"
+#include "sensor_data_event.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -38,22 +38,22 @@ public:
     explicit SensorDataProcesser(const std::unordered_map<uint32_t, Sensor> &sensorMap);
     virtual ~SensorDataProcesser();
     int32_t ProcessEvents(sptr<ReportDataCallback> dataCallback);
-    int32_t SendEvents(sptr<SensorBasicDataChannel> &channel, SensorEvent &event);
+    int32_t SendEvents(sptr<SensorBasicDataChannel> &channel, SensorData &data);
     static int DataThread(sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback);
-    int32_t CacheSensorEvent(const SensorEvent &event, sptr<SensorBasicDataChannel> &channel);
+    int32_t CacheSensorEvent(const SensorData &data, sptr<SensorBasicDataChannel> &channel);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorDataProcesser);
-    void ReportData(sptr<SensorBasicDataChannel> &channel, SensorEvent &event);
-    bool ReportNotContinuousData(std::unordered_map<uint32_t, SensorEvent> &cacheBuf,
-                                 sptr<SensorBasicDataChannel> &channel, SensorEvent &event);
-    void SendNoneFifoCacheData(std::unordered_map<uint32_t, SensorEvent> &cacheBuf,
-                               sptr<SensorBasicDataChannel> &channel, SensorEvent &event, uint64_t periodCount);
-    void SendFifoCacheData(std::unordered_map<uint32_t, SensorEvent> &cacheBuf,
-                           sptr<SensorBasicDataChannel> &channel, SensorEvent &event, uint64_t periodCount,
+    void ReportData(sptr<SensorBasicDataChannel> &channel, SensorData &data);
+    bool ReportNotContinuousData(std::unordered_map<uint32_t, SensorData> &cacheBuf,
+                                 sptr<SensorBasicDataChannel> &channel, SensorData &data);
+    void SendNoneFifoCacheData(std::unordered_map<uint32_t, SensorData> &cacheBuf,
+                               sptr<SensorBasicDataChannel> &channel, SensorData &data, uint64_t periodCount);
+    void SendFifoCacheData(std::unordered_map<uint32_t, SensorData> &cacheBuf,
+                           sptr<SensorBasicDataChannel> &channel, SensorData &data, uint64_t periodCount,
                            uint64_t fifoCount);
-    void SendRawData(std::unordered_map<uint32_t, SensorEvent> &cacheBuf, sptr<SensorBasicDataChannel> channel,
-                     std::vector<SensorEvent> event);
+    void SendRawData(std::unordered_map<uint32_t, SensorData> &cacheBuf, sptr<SensorBasicDataChannel> channel,
+                     std::vector<SensorData> events);
     void EventFilter(CircularEventBuf &eventsBuf);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();

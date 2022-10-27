@@ -25,7 +25,7 @@ constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "ReportDataCallback"}
 }  // namespace
 ReportDataCallback::ReportDataCallback()
 {
-    eventsBuf_.circularBuf = new (std::nothrow) SensorEvent[CIRCULAR_BUF_LEN];
+    eventsBuf_.circularBuf = new (std::nothrow) SensorData[CIRCULAR_BUF_LEN];
     CHKPL(eventsBuf_.circularBuf);
     eventsBuf_.readPos = 0;
     eventsBuf_.writePosition = 0;
@@ -44,32 +44,24 @@ ReportDataCallback::~ReportDataCallback()
     eventsBuf_.eventNum = 0;
 }
 
-int32_t ReportDataCallback::ReportEventCallback(SensorEvent* event, sptr<ReportDataCallback> cb)
+int32_t ReportDataCallback::ReportEventCallback(SensorData* sensorData, sptr<ReportDataCallback> cb)
 {
-    CHKPR(event, ERROR);
+    CHKPR(sensorData, ERROR);
     if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
         SEN_HILOGE("callback or circularBuf or event cannot be null");
-        if (event->data != nullptr) {
-            delete[] event->data;
-            event->data = nullptr;
-        }
         return ERROR;
     }
     int32_t leftSize = CIRCULAR_BUF_LEN - cb->eventsBuf_.eventNum;
     int32_t toEndLen = CIRCULAR_BUF_LEN - cb->eventsBuf_.writePosition;
     if (leftSize < 0 || toEndLen < 0) {
         SEN_HILOGE("Leftsize and toendlen cannot be less than zero");
-        if (event->data != nullptr) {
-            delete[] event->data;
-            event->data = nullptr;
-        }
         return ERROR;
     }
     if (toEndLen == 0) {
-            cb->eventsBuf_.circularBuf[0] = *event;
-            cb->eventsBuf_.writePosition = 1 - toEndLen;
+            cb->eventsBuf_.circularBuf[0] = *sensorData;
+            cb->eventsBuf_.writePosition = 1;
     } else {
-            cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *event;
+            cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *sensorData;
             cb->eventsBuf_.writePosition += 1;
     }
     if (leftSize < 1) {

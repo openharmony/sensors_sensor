@@ -28,7 +28,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorBasicChannel" };
-constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(SensorEvent) * 100;
+constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(SensorData) * 100;
 constexpr int32_t DEFAULT_CHANNEL_SIZE = 2 * 1024;
 constexpr int32_t SOCKET_PAIR_SIZE = 2;
 }  // namespace
@@ -202,7 +202,7 @@ int32_t SensorBasicDataChannel::DestroySensorBasicChannel()
     return ERR_OK;
 }
 
-const std::unordered_map<uint32_t, SensorEvent> &SensorBasicDataChannel::GetDataCacheBuf() const
+const std::unordered_map<uint32_t, SensorData> &SensorBasicDataChannel::GetDataCacheBuf() const
 {
     return dataCacheBuf_;
 }

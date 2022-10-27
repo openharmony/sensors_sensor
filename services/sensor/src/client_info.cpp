@@ -427,12 +427,12 @@ uint64_t ClientInfo::ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDat
     return (ret <= 0L) ? 0UL : ret;
 }
 
-int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorEvent &event)
+int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorData &data)
 {
     std::lock_guard<std::mutex> lock(eventMutex_);
     auto storedEvent = storedEvent_.find(sensorId);
     if (storedEvent != storedEvent_.end()) {
-        errno_t ret = memcpy_s(&event, sizeof(SensorEvent), &storedEvent->second, sizeof(SensorEvent));
+        errno_t ret = memcpy_s(&data, sizeof(SensorData), &storedEvent->second, sizeof(SensorData));
         if (ret != EOK) {
             SEN_HILOGE("memcpy_s failed, sensorId:%{public}d", sensorId);
             return ret;
@@ -444,10 +444,10 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorEvent &event)
     return NO_STROE_EVENT;
 }
 
-void ClientInfo::StoreEvent(const SensorEvent &event)
+void ClientInfo::StoreEvent(const SensorData &data)
 {
     bool foundSensor = false;
-    SensorEvent storedEvent;
+    SensorData storedEvent;
     auto sensorHdiConnection = &SensorHdiConnection::GetInstance();
     if (sensorHdiConnection == nullptr) {
         SEN_HILOGE("sensorHdiConnection cannot be null");
@@ -459,7 +459,7 @@ void ClientInfo::StoreEvent(const SensorEvent &event)
         SEN_HILOGE("GetSensorList is failed");
         return;
     }
-    errno_t retVal = memcpy_s(&storedEvent, sizeof(storedEvent), &event, sizeof(event));
+    errno_t retVal = memcpy_s(&storedEvent, sizeof(storedEvent), &data, sizeof(data));
     if (retVal != EOK) {
         SEN_HILOGE("memcpy_s is failed");
         return;
@@ -653,38 +653,26 @@ std::vector<int32_t> ClientInfo::GetCmdList(uint32_t sensorId, int32_t uid)
     return uidIt->second;
 }
 
-void ClientInfo::UpdateDataQueue(int32_t sensorId, SensorEvent &event)
+void ClientInfo::UpdateDataQueue(int32_t sensorId, SensorData &data)
 {
     if (sensorId == HEART_RATE_SENSOR_ID) {
         return;
     }
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
-    TransferSensorEvents  transferEvent = {
-        .sensorTypeId = event.sensorTypeId,
-        .version = event.version,
-        .timestamp = event.timestamp,
-        .option = event.option,
-        .mode = event.mode,
-        .dataLen = event.dataLen
-    };
-    if (memcpy_s(transferEvent.data, event.dataLen, event.data, event.dataLen) != EOK) {
-        SEN_HILOGE("Copy data failed");
-        return;
-    }
     auto it = dumpQueue_.find(sensorId);
     if (it == dumpQueue_.end()) {
-        std::queue<TransferSensorEvents> q;
-        q.push(transferEvent);
+        std::queue<SensorData> q;
+        q.push(data);
         dumpQueue_.insert(std::make_pair(sensorId, q));
         return;
     }
-    it->second.push(transferEvent);
+    it->second.push(data);
     if (it->second.size() > MAX_DUMP_DATA_SIZE) {
         it->second.pop();
     }
 }
 
-std::unordered_map<uint32_t, std::queue<TransferSensorEvents>> ClientInfo::GetDumpQueue()
+std::unordered_map<uint32_t, std::queue<SensorData>> ClientInfo::GetDumpQueue()
 {
     return dumpQueue_;
 }

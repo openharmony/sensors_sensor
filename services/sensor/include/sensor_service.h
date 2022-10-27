@@ -25,7 +25,7 @@
 
 #include "client_info.h"
 #include "death_recipient_template.h"
-#include "sensor_agent_type.h"
+#include "sensor_data_event.h"
 #include "sensor_hdi_connection.h"
 #include "sensor_manager.h"
 #include "sensor_service_stub.h"

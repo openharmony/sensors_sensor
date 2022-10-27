@@ -19,6 +19,7 @@
 
 #include "iservice_registry.h"
 #include "sensor.h"
+#include "sensor_data_event.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -168,12 +169,12 @@ ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
     CALL_LOG_ENTER;
     clientInfo_.ClearSensorInfo(sensorId);
     if (sensorId == PROXIMITY_SENSOR_ID) {
-        SensorEvent event;
-        auto ret = clientInfo_.GetStoreEvent(sensorId, event);
+        SensorData sensorData;
+        auto ret = clientInfo_.GetStoreEvent(sensorId, sensorData);
         if (ret == ERR_OK) {
             SEN_HILOGD("change the default state is far");
-            event.data[0] = PROXIMITY_FAR;
-            clientInfo_.StoreEvent(event);
+            sensorData.data[0] = PROXIMITY_FAR;
+            clientInfo_.StoreEvent(sensorData);
         }
     }
     return ERR_OK;
