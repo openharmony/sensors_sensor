@@ -106,6 +106,7 @@ static void EmitSubscribeCallback(SensorEvent *event)
     }
     std::lock_guard<std::mutex> subscribeLock(mutex_);
     auto callback = g_subscribeCallbacks[sensorTypeId];
+    CHKPV(callback);
     CHKCV(copySensorData(callback, event), "Copy sensor data failed");
     EmitUvEventLoop(callback);
 }
@@ -120,6 +121,7 @@ static void EmitOnCallback(SensorEvent *event)
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
     auto onCallbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto &onCallbackInfo : onCallbackInfos) {
+        CHKPC(onCallbackInfo);
         if (!copySensorData(onCallbackInfo, event)) {
             SEN_HILOGE("Copy sensor data failed");
             continue;
@@ -138,6 +140,7 @@ static void EmitOnceCallback(SensorEvent *event)
         return;
     }
     for (auto &onceCallbackInfo : iter->second) {
+        CHKPC(onceCallbackInfo);
         if (!copySensorData(onceCallbackInfo, event)) {
             SEN_HILOGE("Copy sensor data failed");
             continue;
@@ -277,6 +280,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
             continue;
         }
         napi_value sensorCallback = nullptr;
+        CHKPC(callbackInfo->callback[0]);
         CHKNRF(env, napi_get_reference_value(env, callbackInfo->callback[0], &sensorCallback),
             "napi_get_reference_value");
         if (IsSameValue(env, callback, sensorCallback)) {
@@ -365,6 +369,7 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end(); ++iter) {
         CHKPC(*iter);
         napi_value sensorCallback = nullptr;
+        CHKPC((*iter)->callback[0]);
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
             continue;
