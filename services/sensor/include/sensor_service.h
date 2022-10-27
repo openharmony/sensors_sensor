@@ -78,11 +78,11 @@ private:
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
-    sptr<SensorDataProcesser> sensorDataProcesser_;
-    sptr<ReportDataCallback> reportDataCallback_;
+    sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
+    sptr<ReportDataCallback> reportDataCallback_ = nullptr;
     std::mutex uidLock_;
     // death recipient of sensor client
-    sptr<IRemoteObject::DeathRecipient> clientDeathObserver_;
+    sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     ErrCode SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
 };
 }  // namespace Sensors
