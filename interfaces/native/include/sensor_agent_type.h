@@ -126,7 +126,7 @@ typedef struct SensorEvent {
     int64_t timestamp;     /**< Time when sensor data was reported */
     uint32_t option;       /**< Sensor data options, including the measurement range and accuracy */
     int32_t mode;          /**< Sensor data reporting mode (described in {@link SensorMode}) */
-    uint8_t *data;         /**< Sensor data */
+    uint8_t *data = nullptr;         /**< Sensor data */
     uint32_t dataLen;      /**< Sensor data length */
 } SensorEvent;
 
@@ -154,7 +154,7 @@ typedef struct UserData {
 typedef struct SensorUser {
     char name[NAME_MAX_LEN];  /**< Name of the sensor data subscriber */
     RecordSensorCallback callback;   /**< Callback for reporting sensor data */
-    UserData *userData;              /**< Reserved field for the sensor data subscriber */
+    UserData *userData = nullptr;              /**< Reserved field for the sensor data subscriber */
 } SensorUser;
 
 /**
