@@ -492,6 +492,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     int32_t ret = uv_queue_work(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
         CHKPV(work);
         sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(work->data));
+        freeWork(work);
         /**
          * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced
          * to 0 destructions, so you need to add 1 to the asyncCallbackInfo reference count when the
@@ -531,7 +532,6 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         }
         napi_close_handle_scope(asyncCallbackInfo->env, scope);
         asyncCallbackInfo->work = nullptr;
-        freeWork(work);
     });
     if (ret != 0) {
         SEN_HILOGE("uv_queue_work fail");
