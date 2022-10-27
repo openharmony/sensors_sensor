@@ -173,6 +173,9 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     }
     RELEASE_RES:
     for (size_t i = 0; i < args.size(); ++i) {
+        if (argv[i] == nullptr) {
+            continue;
+        }
         delete[] argv[i];
     }
     delete[] argv;
