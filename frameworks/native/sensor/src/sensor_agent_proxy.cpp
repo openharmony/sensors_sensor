@@ -300,9 +300,8 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
     }
     sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
     CHKPR(sensorInfos_, ERROR);
-    SensorInfo *sensorInfo = sensorInfos_;
     for (size_t i = 0; i < count; ++i) {
-        sensorInfo += i;
+        SensorInfo *sensorInfo = sensorInfos_ + i;
         errno_t ret = strcpy_s(sensorInfo->sensorName, NAME_MAX_LEN,
             sensorList[i].GetSensorName().c_str());
         CHKCR(ret == EOK, ERROR);
