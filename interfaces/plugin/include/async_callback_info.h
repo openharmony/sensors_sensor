@@ -121,10 +121,6 @@ public:
                 napi_delete_reference(env, callback[i]);
             }
         }
-        if (work != nullptr) {
-            delete work;
-            work = nullptr;
-        }
     }
 
 private:
