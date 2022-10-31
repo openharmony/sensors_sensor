@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "sensor_event_callback.h"
 
 #include "hdi_connection.h"
-#include "sensor_agent_type.h"
+#include "sensor_data_event.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -37,7 +36,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
         SEN_HILOGI("data is empty");
         return ERR_INVALID_VALUE;
     }
-    SensorEvent sensorEvent = {
+    SensorData sensorData = {
         .sensorTypeId = event.sensorId,
         .version = event.version,
         .timestamp = event.timestamp,
@@ -45,13 +44,12 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
         .mode = event.mode,
         .dataLen = event.dataLen
     };
-    sensorEvent.data = new (std::nothrow) uint8_t[SENSOR_DATA_LENGHT];
-    CHKPR(sensorEvent.data, ERR_NO_INIT);
+    CHKPR(sensorData.data, ERR_NO_INIT);
     for (int32_t i = 0; i < static_cast<int32_t>(dataSize); i++) {
-        sensorEvent.data[i] = event.data[i];
+        sensorData.data[i] = event.data[i];
     }
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
-    (void)(reportDataCallback_->*(reportDataCb_))(&sensorEvent, reportDataCallback_);
+    (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }

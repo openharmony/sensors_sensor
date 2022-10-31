@@ -22,20 +22,10 @@
 #include "message_parcel.h"
 #include "refbase.h"
 
-#include "sensor_agent_type.h"
+#include "sensor_data_event.h"
 
 namespace OHOS {
 namespace Sensors {
-constexpr int32_t SENSOR_MAX_LENGTH = 64;
-struct TransferSensorEvents {
-    uint32_t sensorTypeId;
-    int32_t version;
-    int64_t timestamp;
-    int32_t option;
-    int32_t mode;
-    uint32_t dataLen;
-    uint8_t data[SENSOR_MAX_LENGTH];
-};
 class SensorBasicDataChannel : public RefBase {
 public:
     SensorBasicDataChannel();
@@ -51,14 +41,14 @@ public:
     int32_t ReceiveData(void *vaddr, size_t size);
     bool GetSensorStatus() const;
     void SetSensorStatus(bool isActive);
-    const std::unordered_map<uint32_t, SensorEvent> &GetDataCacheBuf() const;
+    const std::unordered_map<uint32_t, SensorData> &GetDataCacheBuf() const;
 
 private:
     int32_t sendFd_;
     int32_t receiveFd_;
     bool isActive_;
     std::mutex statusLock_;
-    std::unordered_map<uint32_t, SensorEvent> dataCacheBuf_;
+    std::unordered_map<uint32_t, SensorData> dataCacheBuf_;
 };
 }  // namespace Sensors
 }  // namespace OHOS
