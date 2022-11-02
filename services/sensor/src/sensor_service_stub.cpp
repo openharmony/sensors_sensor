@@ -77,7 +77,11 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
 ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
-    uint32_t sensorId = data.ReadUint32();
+    uint32_t sensorId;
+    if (!data.ReadUint32(sensorId)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
@@ -86,13 +90,23 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
         SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
-    return EnableSensor(sensorId, data.ReadInt64(), data.ReadInt64());
+    int64_t samplingPeriodNs;
+    int64_t maxReportDelayNs;
+    if ((!data.ReadInt64(samplingPeriodNs)) || (!data.ReadInt64(maxReportDelayNs))) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
+    return EnableSensor(sensorId, samplingPeriodNs, maxReportDelayNs);
 }
 
 ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
-    uint32_t sensorId = data.ReadUint32();
+    uint32_t sensorId;
+    if (!data.ReadUint32(sensorId)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
@@ -107,7 +121,11 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
 ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
-    uint32_t sensorId = data.ReadUint32();
+    uint32_t sensorId;
+    if (!data.ReadUint32(sensorId)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
@@ -122,7 +140,11 @@ ErrCode SensorServiceStub::GetSensorStateInner(MessageParcel &data, MessageParce
 ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
-    uint32_t sensorId = data.ReadUint32();
+    uint32_t sensorId;
+    if (!data.ReadUint32(sensorId)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
@@ -131,7 +153,13 @@ ErrCode SensorServiceStub::RunCommandInner(MessageParcel &data, MessageParcel &r
         SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
-    return RunCommand(sensorId, data.ReadUint32(), data.ReadUint32());
+    uint32_t cmdType;
+    uint32_t params;
+    if ((!data.ReadUint32(cmdType)) || (!data.ReadUint32(params))) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
+    return RunCommand(sensorId, cmdType, params);
 }
 
 ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel &reply)
