@@ -62,7 +62,6 @@ private:
     int32_t GetSystemCpuStatInfo(Total_Cpu_Occupy& info);
     int64_t GetSystemTotalOccupy();
     double GetCpuUsage(const Total_Cpu_Occupy& first, const Total_Cpu_Occupy& second);
-
 };
 } // namespace SYSTEM_INFO
 } // namespace Sensors
