@@ -67,6 +67,7 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
         std::string strLine;
         if (!std::getline(filePath, strLine)) {
             SEN_HILOGE("getline fail");
+            filePath.close();
             continue;
         }
         if (strLine.empty()) {
