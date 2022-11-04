@@ -209,7 +209,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     CALL_LOG_ENTER;
     (void)object;
     CHKPV(dataChannel_);
-    // STEP1 : Destroy revious data channel
+    // STEP1 : Destroy previous data channel
     dataChannel_->DestroySensorDataChannel();
     // STEP2 : Restore data channel
     dataChannel_->RestoreSensorDataChannel();

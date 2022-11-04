@@ -145,7 +145,7 @@ The sensor JS APIs listen for sensor data changes. If an API is called multiple 
 1.  Import the sensor package.
 2.  Subscribe to and listen for data changes of an acceleration sensor.
 3.  Unsubscribe from data changes of the acceleration sensor.
-4.  Subscribe to and listen for a data change of a acceleration sensor.
+4.  Subscribe to and listen for a data change of an acceleration sensor.
 
 Example:
 

@@ -326,7 +326,7 @@ HWTEST_F(SensorAgentTest, SetModeTest_003, TestSize.Level1)
  * Function: SubscribeSensor
  * FunctionPoints: Check the interface function
  * EnvConditions: mobile that can run ohos test framework
- * CaseDescription: Verify the senser service framework process.
+ * CaseDescription: Verify the sensor service framework process.
  */
 HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level1)
 {
@@ -361,7 +361,7 @@ HWTEST_F(SensorAgentTest, GetProcCpuUsageTest_001, TestSize.Level1)
     const std::string process_name = "sensors";
     auto usage = cpuInfo.GetProcCpuUsage(process_name);
     SEN_HILOGD("The CPU usage of the %{public}s process is %{public}.2f", process_name.c_str(), usage);
-    ASSERT_TRUE(usage < SYSTEM_INFO::CPU_USAGE_LOAD && usage != SYSTEM_INFO::CPU_USAGE_UNKONW);
+    ASSERT_TRUE(usage < SYSTEM_INFO::CPU_USAGE_LOAD && usage != SYSTEM_INFO::CPU_USAGE_UNKNOWN);
 }
 
 /*
@@ -369,7 +369,7 @@ HWTEST_F(SensorAgentTest, GetProcCpuUsageTest_001, TestSize.Level1)
  * Function: GetAllSensors
  * FunctionPoints: Check the interface function
  * EnvConditions: mobile that can run ohos test framework
- * CaseDescription: Verify the senser service framework process.
+ * CaseDescription: Verify the sensor service framework process.
  */
 HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
 {

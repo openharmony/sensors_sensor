@@ -2052,7 +2052,7 @@ describe("SensorJsTest", function () {
         ]
     /*
     * @tc.name: Sensor_CreateRotationMatrix_012
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -2076,7 +2076,7 @@ describe("SensorJsTest", function () {
 
     /*
     * tc.name: Sensor_CreateRotationMatrix_013
-    * tc.desc: Verfication results of the incorrect parameters of test interface.
+    * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: SR000GH2A2
     * @tc.author:
     */
@@ -2098,7 +2098,7 @@ describe("SensorJsTest", function () {
 
     /*
     * tc.name: Sensor_CreateRotationMatrix_014
-    * tc.desc: Verfication results of the incorrect parameters of test interface.
+    * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: I5SWJI
     * @tc.author:
     */
@@ -2758,17 +2758,17 @@ describe("SensorJsTest", function () {
     ]
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_001
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_001
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_001', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_001 start')
+    it('Sensor_CreateQuaternion_001', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_001 start')
         sensor.getQuaternion([0.52, -0.336, -0.251], (error, data) =>{
-            console.info('Sensor_CreateQuaterniont_001' + 'lengh:' + data.length);
+            console.info('Sensor_CreateQuaternion_001' + 'length:' + data.length);
             if (error) {
-                console.info('Sensor_CreateQuaterniont_001 failed');
+                console.info('Sensor_CreateQuaternion_001 failed');
                 expect(false).assertTrue();
             } else {
                 for (var i = 0; i < data.length; i++) {
@@ -2781,16 +2781,16 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_002
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_002
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_002', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_002 start')
+    it('Sensor_CreateQuaternion_002', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_002 start')
         sensor.getQuaternion([3.40282e+38, 3.40282e+38, 3.40282e+38], (error, data) =>{
             if (error) {
-                console.info('Sensor_CreateQuaterniont_002 failed');
+                console.info('Sensor_CreateQuaternion_002 failed');
                 expect(false).assertTrue();
             } else {
                 for (var i = 0; i < data.length; i++) {
@@ -2803,16 +2803,16 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_003
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_003
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_003', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_003 start')
+    it('Sensor_CreateQuaternion_003', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_003 start')
         sensor.getQuaternion([0, 0, 0], (error, data) =>{
             if (error) {
-                console.info('Sensor_CreateQuaterniont_003 failed');
+                console.info('Sensor_CreateQuaternion_003 failed');
                 expect(false).assertTrue();
             } else {
                 for (var i = 0; i < data.length; i++) {
@@ -2822,20 +2822,20 @@ describe("SensorJsTest", function () {
             }
             done()
         })
-        console.info("Sensor_CreateQuaterniont_003 end")
+        console.info("Sensor_CreateQuaternion_003 end")
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_004
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_004
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_004', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_004 start')
+    it('Sensor_CreateQuaternion_004', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_004 start')
         sensor.getQuaternion([-0.325, -0.562, -0.25], (error, data) =>{
             if (error) {
-                console.info('Sensor_CreateQuaterniont_004 failed');
+                console.info('Sensor_CreateQuaternion_004 failed');
                 expect(false).assertTrue();
             } else {
                 for (var i = 0; i < data.length; i++) {
@@ -2845,17 +2845,17 @@ describe("SensorJsTest", function () {
             }
             done()
         })
-        console.info("Sensor_CreateQuaterniont_004 end")
+        console.info("Sensor_CreateQuaternion_004 end")
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_005
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_005
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_005', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_005 start')
+    it('Sensor_CreateQuaternion_005', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_005 start')
         try {
             sensor.getQuaternion([0.25, 0.14], (error, data) =>{
                 if (error) {
@@ -2870,19 +2870,19 @@ describe("SensorJsTest", function () {
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
             done()
         }
-        console.info("Sensor_CreateQuaterniont_005 end")
+        console.info("Sensor_CreateQuaternion_005 end")
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_006
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_006
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_006', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_006 start')
+    it('Sensor_CreateQuaternion_006', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_006 start')
         sensor.getQuaternion([0.52, -0.336, -0.251]).then((data) => {
-            console.info('Sensor_CreateQuaterniont_006');
+            console.info('Sensor_CreateQuaternion_006');
             for (var i = 0; i < data.length; i++) {
                 console.info("data[" + i + "]: " + data[i]);
                 expect(data[i]).assertEqual(result[0][i])
@@ -2893,20 +2893,20 @@ describe("SensorJsTest", function () {
             console.info('promise failed')
             done()
         })
-        console.info("Sensor_CreateQuaterniont_006 end")
+        console.info("Sensor_CreateQuaternion_006 end")
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_007
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_007
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_007', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_007 start')
+    it('Sensor_CreateQuaternion_007', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_007 start')
         try {
             sensor.getQuaternion([0, 0]).then((data) => {
-                console.info('Sensor_CreateQuaterniont_007');
+                console.info('Sensor_CreateQuaternion_007');
                 expect(false).assertTrue();
                 done()
             }, (error) => {
@@ -2919,19 +2919,19 @@ describe("SensorJsTest", function () {
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
             done()
         }
-        console.info("Sensor_CreateQuaterniont_007 end")
+        console.info("Sensor_CreateQuaternion_007 end")
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_008
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_008
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_008', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_008 start')
+    it('Sensor_CreateQuaternion_008', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_008 start')
         sensor.getQuaternion([0, 0, 0]).then((data) => {
-            console.info('Sensor_CreateQuaterniont_008');
+            console.info('Sensor_CreateQuaternion_008');
             for (var i = 0; i < data.length; i++) {
                 console.info("data[" + i + "]: " + data[i]);
                 expect(data[i]).assertEqual(result[2][i])
@@ -2942,19 +2942,19 @@ describe("SensorJsTest", function () {
             console.info('promise failed')
             done()
         })
-        console.info("Sensor_CreateQuaterniont_008 end")
+        console.info("Sensor_CreateQuaternion_008 end")
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_009
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_009
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_009', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_009 start')
+    it('Sensor_CreateQuaternion_009', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_009 start')
         sensor.getQuaternion([-0.325, -0.562, -0.25]).then((data) => {
-            console.info('Sensor_CreateQuaterniont_009');
+            console.info('Sensor_CreateQuaternion_009');
             for (var i = 0; i < data.length; i++) {
                 console.info("data[" + i + "]: " + data[i]);
                 expect(data[i]).assertEqual(result[3][i])
@@ -2968,16 +2968,16 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaterniont_010
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.name: Sensor_CreateQuaternion_010
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaterniont_010', 0,async function (done) {
-        console.info('Sensor_CreateQuaterniont_010 start')
+    it('Sensor_CreateQuaternion_010', 0,async function (done) {
+        console.info('Sensor_CreateQuaternion_010 start')
         try {
             sensor.getQuaternion([0.25, 0.14]).then((data) => {
-                console.info('Sensor_CreateQuaterniont_010');
+                console.info('Sensor_CreateQuaternion_010');
                 expect(false).assertTrue();
                 done()
             },(error) => {
@@ -2995,12 +2995,12 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaterniont_011
+     * @tc.name: Sensor_CreateQuaternion_011
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaterniont_011', 0, async function (done) {
+     it('Sensor_CreateQuaternion_011', 0, async function (done) {
         try {
             sensor.createQuaternion()
         } catch (err) {
@@ -3013,12 +3013,12 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaterniont_012
+     * @tc.name: Sensor_CreateQuaternion_012
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaterniont_012', 0, async function (done) {
+     it('Sensor_CreateQuaternion_012', 0, async function (done) {
         try {
             sensor.createQuaternion(-1)
         } catch (err) {
@@ -3031,12 +3031,12 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaterniont_013
+     * @tc.name: Sensor_CreateQuaternion_013
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaterniont_013', 0, async function (done) {
+     it('Sensor_CreateQuaternion_013', 0, async function (done) {
         try {
             sensor.createQuaternion([0.52, -0.336, -0.251], -1)
         } catch (err) {
@@ -3049,12 +3049,12 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaterniont_014
+     * @tc.name: Sensor_CreateQuaternion_014
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaterniont_014', 0, async function (done) {
+     it('Sensor_CreateQuaternion_014', 0, async function (done) {
         try {
             sensor.createQuaternion().then((data) => {
                 expect(true).assertfalse()
@@ -3073,12 +3073,12 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaterniont_015
+     * @tc.name: Sensor_CreateQuaternion_015
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
      */
-    it('Sensor_CreateQuaterniont_015', 0, async function (done) {
+    it('Sensor_CreateQuaternion_015', 0, async function (done) {
         try {
             sensor.createQuaternion(-1).then((data) => {
                 expect(true).assertfalse()
@@ -3097,12 +3097,12 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaterniont_016
+     * @tc.name: Sensor_CreateQuaternion_016
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaterniont_016', 0, async function (done) {
+     it('Sensor_CreateQuaternion_016', 0, async function (done) {
         try {
             sensor.createQuaternion([0.52, -0.336, -0.251], -1).then((data) => {
                 expect(true).assertfalse()
@@ -3122,7 +3122,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_001
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
     */
@@ -3137,14 +3137,14 @@ describe("SensorJsTest", function () {
                expect(data).assertEqual(getGeomagneticDipResult[0])
             }
             done()
-            console.info('Sensor_GetGeomagneticDip_001' + 'lengh:' + data.length);
+            console.info('Sensor_GetGeomagneticDip_001' + 'length:' + data.length);
         })
         console.info("Sensor_GetGeomagneticDip_001 end")
     })
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_002
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
     */
@@ -3169,7 +3169,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_003
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3188,7 +3188,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_004
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3204,7 +3204,7 @@ describe("SensorJsTest", function () {
                    expect(data).assertEqual(getGeomagneticDipResult[0])
                 }
                 done()
-                console.info('Sensor_GetGeomagneticDip_004' + 'lengh:' + data.length);
+                console.info('Sensor_GetGeomagneticDip_004' + 'length:' + data.length);
             })
         } catch(error) {
             console.info(error);
@@ -3217,7 +3217,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_005
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3243,7 +3243,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_006
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3269,7 +3269,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_001
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
     */
@@ -3290,7 +3290,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_002
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
     */
@@ -3311,7 +3311,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_003
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
     */
@@ -3329,7 +3329,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_004
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
     */
@@ -3347,7 +3347,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_005
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3366,7 +3366,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_006
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3382,7 +3382,7 @@ describe("SensorJsTest", function () {
                    expect(data).assertEqual(getGeomagneticDipResult[0])
                 }
                 done()
-                console.info('Sensor_GetAltitude_006' + 'lengh:' + data.length);
+                console.info('Sensor_GetAltitude_006' + 'length:' + data.length);
             })
         } catch(error) {
             console.info(error);
@@ -3395,7 +3395,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_007
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3421,7 +3421,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetAltitude_008
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3454,7 +3454,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_001
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3474,7 +3474,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_002
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3494,7 +3494,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_003
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3515,7 +3515,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_004
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3536,7 +3536,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_005
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3555,7 +3555,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_006
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3583,7 +3583,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_007
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3609,7 +3609,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_008
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3635,7 +3635,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_009
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3661,7 +3661,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_TransformCoordinateSystem_010
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
     */
@@ -3689,7 +3689,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSensorList_001
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3711,7 +3711,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSensorList_002
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3734,7 +3734,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSensorList_003
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3752,7 +3752,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSensorList_004
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3779,7 +3779,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSingleSensor_001
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3800,7 +3800,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSingleSensor_002
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3828,7 +3828,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSingleSensor_003
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
@@ -3847,7 +3847,7 @@ describe("SensorJsTest", function () {
 
     /*
     * @tc.name: Sensor_GetSingleSensor_004
-    * @tc.desc: Verfication results of the incorrect parameters of test interface.
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
     */

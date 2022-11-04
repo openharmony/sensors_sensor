@@ -93,7 +93,7 @@ enum {
     REGIST_CALLBACK_ERR = SET_SENSOR_OPTION_ERR + 1,
 };
 
-// Error code for Sensor uitls
+// Error code for Sensor utils
 constexpr ErrCode SENSOR_UTILS_ERR_OFFSET = ErrCodeOffset(SUBSYS_SENSORS, MODULE_SENSORS_UTILS);
 enum {
     SENSOR_CHANNEL_SOCKET_CREATE_ERR = SENSOR_UTILS_ERR_OFFSET,

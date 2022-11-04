@@ -40,7 +40,7 @@ constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t SENSOR_SUBSCRIBE_FAILURE = 1001;
 constexpr int32_t INPUT_ERROR = 202;
 constexpr float BODY_STATE_EXCEPT = 1.0f;
-constexpr float THREESHOLD = 0.000001f;
+constexpr float THRESHOLD = 0.000001f;
 }
 static std::map<std::string, int64_t> g_samplingPeriod = {
     {"normal", 200000000},
@@ -77,7 +77,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
         std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
         g_bodyState = *data;
         callbackInfo->data.sensorData.data[0] =
-            (fabs(g_bodyState - BODY_STATE_EXCEPT) < THREESHOLD) ? true : false;
+            (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
         return true;
     }
     if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
@@ -1212,7 +1212,7 @@ napi_value GetBodyState(napi_env env, napi_callback_info info)
         "register success callback fail");
     std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
     asyncCallbackInfo->data.sensorData.data[0] =
-        (fabs(g_bodyState - BODY_STATE_EXCEPT) < THREESHOLD) ? true : false;
+        (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
     EmitUvEventLoop(asyncCallbackInfo);
     return nullptr;
 }

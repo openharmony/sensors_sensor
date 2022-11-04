@@ -112,7 +112,7 @@ typedef struct SensorInfo {
     float precision;       /**< Sensor accuracy */
     float power;           /**< Sensor power */
     int64_t minSamplePeriod; /**< Minimum sample period allowed, in ns */
-    int64_t maxSamplePeriod; /**< Maxmum sample period allowed, in ns */
+    int64_t maxSamplePeriod; /**< Maximum sample period allowed, in ns */
 } SensorInfo;
 
 /**

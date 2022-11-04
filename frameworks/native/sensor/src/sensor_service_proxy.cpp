@@ -65,7 +65,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
     int32_t ret = remote->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "EnaleSensor", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
         SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
