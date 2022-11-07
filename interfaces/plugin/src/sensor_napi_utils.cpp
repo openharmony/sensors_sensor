@@ -187,7 +187,7 @@ std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
     {ONCE_CALLBACK, ConvertToSensorData},
     {GET_GEOMAGNETIC_FIELD, ConvertToGeomagneticData},
     {GET_ALTITUDE, ConvertToNumber},
-    {GET_GEOMAGNITIC_DIP, ConvertToNumber},
+    {GET_GEOMAGNETIC_DIP, ConvertToNumber},
     {GET_ANGLE_MODIFY, ConvertToArray},
     {CREATE_ROTATION_MATRIX, ConvertToArray},
     {TRANSFORM_COORDINATE_SYSTEM, ConvertToArray},

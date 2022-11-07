@@ -843,7 +843,7 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
         return nullptr;
     }
     sptr<AsyncCallbackInfo> asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfo(env, GET_GEOMAGNITIC_DIP);
+        new (std::nothrow) AsyncCallbackInfo(env, GET_GEOMAGNETIC_DIP);
     CHKPP(asyncCallbackInfo);
     std::vector<float> inclinationMatrix;
     if (!GetFloatArray(env, args[0], inclinationMatrix)) {

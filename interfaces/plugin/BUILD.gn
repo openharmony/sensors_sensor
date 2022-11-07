@@ -25,7 +25,7 @@ ohos_shared_library("libsensor") {
     "//foundation/arkui/napi/interfaces/inner_api/napi",
   ]
   defines = [
-    "APP_LOG_TAG = \"sensroJs\"",
+    "APP_LOG_TAG = \"sensorJs\"",
     "LOG_DOMAIN = 0xD002700",
   ]
   sources = [

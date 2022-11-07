@@ -33,7 +33,7 @@ constexpr uint32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int32_t INVALID_UID = -1;
 constexpr int32_t MIN_MAP_SIZE = 0;
-constexpr uint32_t NO_STROE_EVENT = -2;
+constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t HEART_RATE_SENSOR_ID = 83886336;
@@ -441,7 +441,7 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorData &data)
     }
 
     SEN_HILOGE("can't get store event, sensorId:%{public}u", sensorId);
-    return NO_STROE_EVENT;
+    return NO_STORE_EVENT;
 }
 
 void ClientInfo::StoreEvent(const SensorData &data)

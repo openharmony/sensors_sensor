@@ -98,8 +98,8 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
     }
     ret = SenClient.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
-        auto destoryRet = dataChannel_->DestroySensorDataChannel();
-        SEN_HILOGE("transfer data channel failed, ret:%{public}d,destoryRet:%{public}d", ret, destoryRet);
+        auto destroyRet = dataChannel_->DestroySensorDataChannel();
+        SEN_HILOGE("transfer data channel failed, ret:%{public}d,destroyRet:%{public}d", ret, destroyRet);
         return ret;
     }
     g_isChannelCreated = true;
@@ -117,12 +117,12 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
     CHKPR(dataChannel_, INVALID_POINTER);
     int32_t ret = dataChannel_->DestroySensorDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destory data channel failed, ret:%{public}d", ret);
+        SEN_HILOGE("destroy data channel failed, ret:%{public}d", ret);
         return ret;
     }
     ret = SenClient.DestroyDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destory service data channel fail, ret:%{public}d", ret);
+        SEN_HILOGE("destroy service data channel fail, ret:%{public}d", ret);
         return ret;
     }
     g_isChannelCreated = false;
@@ -135,7 +135,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
-        SEN_HILOGE("samplingPeroid or g_reportInterval is invalid");
+        SEN_HILOGE("samplingPeriod or g_reportInterval is invalid");
         return ERROR;
     }
     if (!SenClient.IsValid(sensorId)) {
@@ -238,7 +238,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     if (g_subscribeMap.empty()) {
         int32_t ret = DestroySensorDataChannel();
         if (ret != ERR_OK) {
-            SEN_HILOGE("destory data channel fail, ret:%{public}d", ret);
+            SEN_HILOGE("destroy data channel fail, ret:%{public}d", ret);
             return ret;
         }
     }
