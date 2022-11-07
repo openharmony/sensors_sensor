@@ -57,7 +57,6 @@ private:
         int32_t cstime { 0 };
     };
     int32_t GetTaskPidFile(const std::string& process_name);
-    int32_t GetTaskPidCmd(const std::string& process_name, int32_t flag = 0, std::string user = "");
     int32_t GetProcOccupy(int32_t pid);
 
     int32_t GetSystemCpuStatInfo(Total_Cpu_Occupy& info);
