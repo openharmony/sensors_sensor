@@ -432,7 +432,7 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorData &data)
     std::lock_guard<std::mutex> lock(eventMutex_);
     auto storedEvent = storedEvent_.find(sensorId);
     if (storedEvent != storedEvent_.end()) {
-        errno_t ret = memcpy_s(&data, sizeof(SensorData), &storedEvent->second, sizeof(SensorData));
+        errno_t ret = memcpy_s(&data, sizeof(data), &storedEvent->second, sizeof(storedEvent->second));
         if (ret != EOK) {
             SEN_HILOGE("memcpy_s failed, sensorId:%{public}d", sensorId);
             return ret;

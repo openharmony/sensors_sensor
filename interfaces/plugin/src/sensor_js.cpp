@@ -80,7 +80,8 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
             (fabs(g_bodyState - BODY_STATE_EXCEPT) < THREESHOLD) ? true : false;
         return true;
     }
-    if (memcpy_s(callbackInfo->data.sensorData.data, event->dataLen, data, event->dataLen) != EOK) {
+    if (memcpy_s(callbackInfo->data.sensorData.data, sizeof(callbackInfo->data.sensorData.data),
+        data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");
         return false;
     }
