@@ -301,25 +301,26 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
     sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
     CHKPR(sensorInfos_, ERROR);
     for (size_t i = 0; i < count; ++i) {
-        errno_t ret = strcpy_s((sensorInfos_ + i)->sensorName, NAME_MAX_LEN,
+        SensorInfo *sensorInfo = sensorInfos_ + i;
+        errno_t ret = strcpy_s(sensorInfo->sensorName, NAME_MAX_LEN,
             sensorList[i].GetSensorName().c_str());
         CHKCR(ret == EOK, ERROR);
-        ret = strcpy_s((sensorInfos_ + i)->vendorName, NAME_MAX_LEN,
+        ret = strcpy_s(sensorInfo->vendorName, NAME_MAX_LEN,
             sensorList[i].GetVendorName().c_str());
         CHKCR(ret == EOK, ERROR);
-        ret = strcpy_s((sensorInfos_ + i)->hardwareVersion, VERSION_MAX_LEN,
+        ret = strcpy_s(sensorInfo->hardwareVersion, VERSION_MAX_LEN,
             sensorList[i].GetHardwareVersion().c_str());
         CHKCR(ret == EOK, ERROR);
-        ret = strcpy_s((sensorInfos_ + i)->firmwareVersion, VERSION_MAX_LEN,
+        ret = strcpy_s(sensorInfo->firmwareVersion, VERSION_MAX_LEN,
             sensorList[i].GetFirmwareVersion().c_str());
         CHKCR(ret == EOK, ERROR);
-        (sensorInfos_ + i)->sensorId = static_cast<int32_t>(sensorList[i].GetSensorId());
-        (sensorInfos_ + i)->sensorTypeId = static_cast<int32_t>(sensorList[i].GetSensorTypeId());
-        (sensorInfos_ + i)->maxRange = sensorList[i].GetMaxRange();
-        (sensorInfos_ + i)->precision = sensorList[i].GetResolution();
-        (sensorInfos_ + i)->power = sensorList[i].GetPower();
-        (sensorInfos_ + i)->minSamplePeriod = sensorList[i].GetMinSamplePeriodNs();
-        (sensorInfos_ + i)->maxSamplePeriod = sensorList[i].GetMaxSamplePeriodNs();
+        sensorInfo->sensorId = static_cast<int32_t>(sensorList[i].GetSensorId());
+        sensorInfo->sensorTypeId = static_cast<int32_t>(sensorList[i].GetSensorTypeId());
+        sensorInfo->maxRange = sensorList[i].GetMaxRange();
+        sensorInfo->precision = sensorList[i].GetResolution();
+        sensorInfo->power = sensorList[i].GetPower();
+        sensorInfo->minSamplePeriod = sensorList[i].GetMinSamplePeriodNs();
+        sensorInfo->maxSamplePeriod = sensorList[i].GetMaxSamplePeriodNs();
     }
     sensorInfoCount_ = static_cast<int32_t>(count);
     return SUCCESS;
