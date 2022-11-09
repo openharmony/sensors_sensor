@@ -21,7 +21,7 @@
 namespace OHOS {
 namespace Sensors {
 namespace SYSTEM_INFO {
-static constexpr double CPU_USAGE_UNKONW = -1.0;
+static constexpr double CPU_USAGE_UNKNOWN = -1.0;
 static constexpr double CPU_USAGE_LOAD = 20.0;
 static constexpr double CPU_USAGE_MAX = 100.0;
 class SystemInfo {
@@ -57,7 +57,6 @@ private:
         int32_t cstime { 0 };
     };
     int32_t GetTaskPidFile(const std::string& process_name);
-    int32_t GetTaskPidCmd(const std::string& process_name, int32_t flag = 0, std::string user = "");
     int32_t GetProcOccupy(int32_t pid);
 
     int32_t GetSystemCpuStatInfo(Total_Cpu_Occupy& info);

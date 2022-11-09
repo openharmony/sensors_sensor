@@ -65,7 +65,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
     int32_t ret = remote->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "EnaleSensor", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
         SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -177,7 +177,11 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         SEN_HILOGE("failed, ret:%{public}d", ret);
         return sensors;
     }
-    int32_t sensorCount = reply.ReadInt32();
+    int32_t sensorCount;
+    if (!reply.ReadInt32(sensorCount)) {
+        SEN_HILOGE("Parcel read failed");
+        return sensors;
+    }
     SEN_HILOGD("sensorCount:%{public}d", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;

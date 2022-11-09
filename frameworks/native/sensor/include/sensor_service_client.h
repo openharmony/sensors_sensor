@@ -36,7 +36,7 @@ namespace Sensors {
 class SensorServiceClient : public Singleton<SensorServiceClient> {
 public:
     std::vector<Sensor> GetSensorList();
-    int32_t EnableSensor(uint32_t sensorId, int64_t samplingPeroid, int64_t maxReportDelay);
+    int32_t EnableSensor(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
     int32_t DisableSensor(uint32_t sensorId);
     int32_t RunCommand(uint32_t sensorId, int32_t cmdType, int32_t parms);
     int32_t TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel);
@@ -46,7 +46,7 @@ public:
 
 private:
     int32_t InitServiceClient();
-    void UpdateSensorInfoMap(uint32_t sensorId, int64_t samplingPeroid, int64_t maxReportDelay);
+    void UpdateSensorInfoMap(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
     void DeleteSensorInfoItem(uint32_t sensorId);
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_;

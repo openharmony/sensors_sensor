@@ -44,7 +44,7 @@ private:
     DISALLOW_COPY_AND_MOVE(SensorDump);
     void DumpCurrentTime(int32_t fd);
     int32_t DataSizeBySensorId(uint32_t sensorId);
-    std::string GetDataBySensorId(uint32_t sensorId, TransferSensorEvents &sensorData);
+    std::string GetDataBySensorId(uint32_t sensorId, SensorData &sensorData);
     static std::unordered_map<uint32_t, std::string> sensorMap_;
 };
 }  // namespace Sensors

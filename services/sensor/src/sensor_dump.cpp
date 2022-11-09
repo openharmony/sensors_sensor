@@ -139,7 +139,6 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         if (strcpy_s(argv[i], args[i].size() + 1, args[i].c_str()) != EOK) {
             SEN_HILOGE("strcpy_s error");
             goto RELEASE_RES;
-            return;
         }
     }
     optind = 1;
@@ -174,7 +173,9 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     }
     RELEASE_RES:
     for (size_t i = 0; i < args.size(); ++i) {
-        delete[] argv[i];
+        if (argv[i] != nullptr) {
+            delete[] argv[i];
+        }
     }
     delete[] argv;
 }
@@ -195,6 +196,9 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
     dprintf(fd, "Total sensor:%d, Sensor list:\n", int32_t { sensors.size() });
     for (const auto &sensor : sensors) {
         auto sensorId = sensor.GetSensorId();
+        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+            continue;
+        }
         dprintf(fd,
                 "sensorId:%8u | sensorType:%s | sensorName:%s | vendorName:%s | maxRange:%f"
                 "| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 " | maxSamplePeriodNs:%" PRId64 "\n",
@@ -213,6 +217,9 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
     clientInfo.GetSensorChannelInfo(channelInfo);
     for (const auto &channel : channelInfo) {
         auto sensorId = channel.GetSensorId();
+        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+            continue;
+        }
         dprintf(fd,
                 "uid:%d | packageName:%s | sensorId:%8u | sensorType:%s | samplingPeriodNs:%" PRId64 ""
                 "| fifoCount:%u\n",
@@ -228,6 +235,9 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     dprintf(fd, "Opening sensors:\n");
     for (const auto &sensor : sensors) {
         uint32_t sensorId = sensor.GetSensorId();
+        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+            continue;
+        }
         if (clientInfo.GetSensorState(sensorId)) {
             dprintf(fd, "sensorId: %8u | sensorType: %s | channelSize: %lu\n",
                 sensorId, sensorMap_[sensorId].c_str(), clientInfo.GetSensorChannel(sensorId).size());
@@ -243,6 +253,9 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
     int32_t j = 0;
     for (auto &sensorData : dataMap) {
         uint32_t sensorId = sensorData.first;
+        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+            continue;
+        }
         dprintf(fd, "sensorId: %8u | sensorType: %s:\n", sensorId, sensorMap_[sensorId].c_str());
         for (uint32_t i = 0; i < MAX_DUMP_DATA_SIZE && (!sensorData.second.empty()); i++) {
             auto data = sensorData.second.front();
@@ -296,7 +309,7 @@ int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
     }
 }
 
-std::string SensorDump::GetDataBySensorId(uint32_t sensorId, TransferSensorEvents &sensorData)
+std::string SensorDump::GetDataBySensorId(uint32_t sensorId, SensorData &sensorData)
 {
     SEN_HILOGD("sensorId:%{public}u", sensorId);
     std::string str;

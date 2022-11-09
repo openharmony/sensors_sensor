@@ -27,7 +27,7 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "CompatibleConnection" };
 }
 
-ZReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
+ReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
 sptr<ReportDataCallback> CompatibleConnection::reportDataCallback_ = nullptr;
 std::mutex ISensorHdiConnection::dataMutex_;
 std::condition_variable ISensorHdiConnection::dataCondition_;
@@ -55,11 +55,11 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
         Sensor sensor;
         sensor.SetSensorId(sensorId);
         sensor.SetSensorTypeId(sensorId);
-        sensor.SetFirmwareVersion(firmwareVersion.c_str());
-        sensor.SetHardwareVersion(hardwareVersion.c_str());
+        sensor.SetFirmwareVersion(firmwareVersion);
+        sensor.SetHardwareVersion(hardwareVersion);
         sensor.SetMaxRange(maxRange);
-        sensor.SetSensorName(sensorName.c_str());
-        sensor.SetVendorName(vendorName.c_str());
+        sensor.SetSensorName(sensorName);
+        sensor.SetVendorName(vendorName);
         sensor.SetResolution(sensorInfos[i].accuracy);
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
@@ -132,7 +132,7 @@ int32_t CompatibleConnection::SensorDataCallback(const SensorEvents *event)
         return ERR_INVALID_VALUE;
     }
 
-    SensorEvent sensorEvent = {
+    SensorData sensorData = {
         .sensorTypeId = event->sensorId,
         .version = event->version,
         .timestamp = event->timestamp,
@@ -140,23 +140,21 @@ int32_t CompatibleConnection::SensorDataCallback(const SensorEvents *event)
         .mode = event->mode,
         .dataLen = event->dataLen
     };
-    sensorEvent.data = new (std::nothrow) uint8_t[SENSOR_DATA_LENGHT];
-    CHKPR(sensorEvent.data, ERR_INVALID_VALUE);
-    errno_t ret = memcpy_s(sensorEvent.data, event->dataLen, event->data, event->dataLen);
+    CHKPR(sensorData.data, ERR_INVALID_VALUE);
+    errno_t ret = memcpy_s(sensorData.data, sizeof(sensorData.data), event->data, event->dataLen);
     if (ret != EOK) {
         SEN_HILOGE("copy data failed");
-        delete[] sensorEvent.data;
         return COPY_ERR;
     }
     CHKPR(reportDataCallback_, ERR_NO_INIT);
     CHKPR(reportDataCb_, ERR_NO_INIT);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
-    (void)(reportDataCallback_->*reportDataCb_)(&sensorEvent, reportDataCallback_);
+    (void)(reportDataCallback_->*reportDataCb_)(&sensorData, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::RegisteDataReport(ZReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t CompatibleConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CHKPR(reportDataCallback, ERR_INVALID_VALUE);
     int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);

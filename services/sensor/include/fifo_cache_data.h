@@ -20,7 +20,7 @@
 
 #include "nocopyable.h"
 #include "refbase.h"
-#include "sensor_agent_type.h"
+#include "sensor_data_event.h"
 #include "sensor_basic_data_channel.h"
 
 namespace OHOS {
@@ -31,8 +31,8 @@ public:
     virtual ~FifoCacheData();
     void SetPeriodCount(uint64_t periodCount);
     uint64_t GetPeriodCount() const;
-    void SetFifoCacheData(const std::vector<SensorEvent> &fifoCacheData);
-    std::vector<SensorEvent> GetFifoCacheData() const;
+    void SetFifoCacheData(const std::vector<SensorData> &fifoCacheData);
+    std::vector<SensorData> GetFifoCacheData() const;
     void SetChannel(const sptr<SensorBasicDataChannel> &channel);
     sptr<SensorBasicDataChannel> GetChannel() const;
     void InitFifoCache();
@@ -41,7 +41,7 @@ private:
     DISALLOW_COPY_AND_MOVE(FifoCacheData);
     uint64_t periodCount_;
     sptr<SensorBasicDataChannel> channel_;
-    std::vector<SensorEvent> fifoCacheData_;
+    std::vector<SensorData> fifoCacheData_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

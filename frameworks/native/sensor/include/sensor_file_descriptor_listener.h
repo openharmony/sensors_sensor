@@ -35,7 +35,7 @@ public:
 
 private:
     SensorDataChannel* channel_;
-    TransferSensorEvents *receiveDataBuff_ = nullptr;
+    SensorData *receiveDataBuff_ = nullptr;
 };
 }  // namespace Sensors
 }  // namespace OHOS

@@ -23,6 +23,13 @@
 
 namespace OHOS {
 namespace Sensors {
+// Error code for user
+enum ErrorCode : int32_t {
+    PERMISSION_DENIED = 201, // Use this error code when permission is denied.
+    PARAMETER_ERROR = 401, // Use this error code when the input parameter type or range does not match.
+    SERVICE_EXCEPTION = 14500101 // Use this error code when the service is exception.
+};
+
 enum {
     MODULE_COMMON = 0x00,
     MODULE_SENSORS_DEVICE = 0x01,
@@ -86,7 +93,7 @@ enum {
     REGIST_CALLBACK_ERR = SET_SENSOR_OPTION_ERR + 1,
 };
 
-// Error code for Sensor uitls
+// Error code for Sensor utils
 constexpr ErrCode SENSOR_UTILS_ERR_OFFSET = ErrCodeOffset(SUBSYS_SENSORS, MODULE_SENSORS_UTILS);
 enum {
     SENSOR_CHANNEL_SOCKET_CREATE_ERR = SENSOR_UTILS_ERR_OFFSET,
@@ -253,6 +260,14 @@ private:
         if (!(cond)) { \
             SEN_HILOGE("CK(%{public}s), %{public}s", #cond, message); \
             return false; \
+        } \
+    } while (0)
+
+#define CHKCP(cond, message) \
+    do { \
+        if (!(cond)) { \
+            SEN_HILOGE("(%{public}s)", #message); \
+            return nullptr; \
         } \
     } while (0)
 

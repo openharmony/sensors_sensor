@@ -65,7 +65,11 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
             continue;
         }
         std::string strLine;
-        std::getline(filePath, strLine);
+        if (!std::getline(filePath, strLine)) {
+            SEN_HILOGE("getline fail");
+            filePath.close();
+            continue;
+        }
         if (strLine.empty()) {
             filePath.close();
             continue;
@@ -76,7 +80,7 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
         }
         while (std::getline(filePath, strLine)) {
             if ((strLine.find("Pid")) != std::string::npos) {
-                if (sscanf_s(strLine.c_str(), "%*s%d", &pid) == -1) {
+                if (::sscanf_s(strLine.c_str(), "%*s%d", &pid, sizeof(pid)) != 1) {
                     SEN_HILOGE("sscanf_s failed");
                 }
                 break;
@@ -90,34 +94,6 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
     return pid;
 }
 
-int32_t CpuInfo::GetTaskPidCmd(const std::string& process_name, int32_t flag, std::string user)
-{
-    std::string command;
-    if (flag) {
-        if (user.empty()) {
-            user = ::getlogin();
-        }
-        command = "pgrep " + process_name + " -u " + user;
-    } else {
-        command = "pidof -s " + process_name;
-    }
-    ::FILE *fp = nullptr;
-    if ((fp = ::popen(command.c_str(), "r")) == nullptr) {
-        SEN_HILOGE("Failed to open, cmd:%{public}s", command.c_str());
-        fp = nullptr;
-        return DEFAULT_PID;
-    }
-    char buf[100] = { 0 };
-    if (::fgets(buf, sizeof(buf), fp) == nullptr) {
-        SEN_HILOGE("Failed to read content");
-        ::pclose(fp);
-        fp = nullptr;
-        return DEFAULT_PID;
-    }
-    ::pclose(fp);
-    return ::atoi(buf);
-}
-
 int32_t CpuInfo::GetProcOccupy(int32_t pid)
 {
     Proc_Cpu_Occupy info;
@@ -129,7 +105,11 @@ int32_t CpuInfo::GetProcOccupy(int32_t pid)
     }
 
     std::string strLine;
-    std::getline(file, strLine);
+    if (!std::getline(file, strLine)) {
+        SEN_HILOGE("getline fail");
+        file.close();
+        return OHOS::Sensors::ERROR;
+    }
     if (strLine.empty()) {
         SEN_HILOGE("Failed to read content");
         file.close();
@@ -170,7 +150,11 @@ int32_t CpuInfo::GetSystemCpuStatInfo(Total_Cpu_Occupy& info)
         return FILE_OPEN_FAIL;
     }
     std::string strLine;
-    std::getline(statFile, strLine);
+    if (!std::getline(statFile, strLine)) {
+        SEN_HILOGE("getline fail");
+        statFile.close();
+        return STREAM_BUF_READ_FAIL;
+    }
     if (strLine.empty()) {
         SEN_HILOGE("No valid content was read");
         statFile.close();
@@ -195,14 +179,14 @@ double CpuInfo::GetSystemCpuUsage()
     int32_t ret = GetSystemCpuStatInfo(first);
     if (ret != OHOS::Sensors::SUCCESS) {
         SEN_HILOGE("Failed to obtain CPU information, errcode:%{public}d", ret);
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(TIME_WAIT_FOR_OP));
     Total_Cpu_Occupy second {};
     ret = GetSystemCpuStatInfo(second);
     if (ret != OHOS::Sensors::SUCCESS) {
         SEN_HILOGE("Failed to obtain CPU information, errcode:%{public}d", ret);
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
 
     return GetCpuUsage(first, second);
@@ -229,22 +213,22 @@ double CpuInfo::GetProcCpuUsage(const std::string& process_name)
 
     if ((totalTime1 = GetSystemTotalOccupy()) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain CPU occupy");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
     if ((procTime1 = GetProcOccupy(pid)) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain process CPU information");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(TIME_WAIT_FOR_OP));
 
     if ((totalTime2 = GetSystemTotalOccupy()) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain CPU occupy");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
     if ((procTime2 = GetProcOccupy(pid)) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain process CPU information");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
 
     return CHK_RATE(CPU_USAGE_MAX * (procTime2 - procTime1) / (totalTime2 - totalTime1));

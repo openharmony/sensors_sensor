@@ -103,7 +103,7 @@ bool SensorService::InitDataCallback()
 {
     reportDataCallback_ = new (std::nothrow) ReportDataCallback();
     CHKPF(reportDataCallback_);
-    ZReportDataCb cb = &ReportDataCallback::ReportEventCallback;
+    ReportDataCb cb = &ReportDataCallback::ReportEventCallback;
     auto ret = sensorHdiConnection_.RegisteDataReport(cb, reportDataCallback_);
     if (ret != ERR_OK) {
         SEN_HILOGE("RegisterDataReport failed");
@@ -157,7 +157,6 @@ void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t
     sensorManager_.GetPackageName(tokenId, packageName);
     const int logLevel = 4;
     int32_t uid = clientInfo_.GetUidByPid(pid);
-    std::string message;
     if (enable) {
         HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
@@ -179,15 +178,15 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
         SEN_HILOGW("it is not onchange data, no need to report");
         return;
     }
-    SensorEvent event;
-    auto ret = clientInfo_.GetStoreEvent(sensorId, event);
+    SensorData sensorData;
+    auto ret = clientInfo_.GetStoreEvent(sensorId, sensorData);
     if (ret != ERR_OK) {
         SEN_HILOGE("there is no data to be reported");
         return;
     }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(GetCallingPid());
     CHKPV(channel);
-    auto sendRet = channel->SendData(&event, sizeof(event));
+    auto sendRet = channel->SendData(&sensorData, sizeof(sensorData));
     if (sendRet != ERR_OK) {
         SEN_HILOGE("send data failed");
         return;
@@ -367,8 +366,8 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
         return CLIENT_PID_INVALID_ERR;
     }
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
-    bool destoryRet = clientInfo_.DestroySensorChannel(clientPid);
-    if (!destoryRet) {
+    bool destroyRet = clientInfo_.DestroySensorChannel(clientPid);
+    if (!destroyRet) {
         SEN_HILOGE("DestroySensorChannel is failed");
         return DESTROY_SENSOR_CHANNEL_ERR;
     }
@@ -387,12 +386,12 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
         SEN_HILOGE("pid is -1");
         return;
     }
-    SEN_HILOGI("pid is %{pubilc}d", pid);
+    SEN_HILOGI("pid is %{public}d", pid);
     std::vector<uint32_t> activeSensors = clientInfo_.GetSensorIdByPid(pid);
     for (size_t i = 0; i < activeSensors.size(); ++i) {
         int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {
-            SEN_HILOGE("disablesensor failed, ret:%{pubilc}d", ret);
+            SEN_HILOGE("disablesensor failed, ret:%{public}d", ret);
         }
     }
     clientInfo_.DestroySensorChannel(pid);

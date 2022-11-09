@@ -21,6 +21,7 @@ namespace Sensors {
 constexpr int32_t RESERVED_DATA_LEN = 3;
 constexpr int32_t EXTRA_INFO_DATA_LEN = 14;
 constexpr int32_t DEFAULT_SENSOR_DATA_DIMS = 16;
+constexpr int32_t SENSOR_MAX_LENGTH = 64;
 
 enum {
     WAKE_UP_SENSOR = 1u,
@@ -30,8 +31,13 @@ enum {
 };
 
 struct SensorData {
-    float data[DEFAULT_SENSOR_DATA_DIMS];
-    uint32_t reserved[RESERVED_DATA_LEN];
+    int32_t sensorTypeId;  /**< Sensor type ID */
+    int32_t version;       /**< Sensor algorithm version */
+    int64_t timestamp;     /**< Time when sensor data was reported */
+    uint32_t option;       /**< Sensor data options, including the measurement range and accuracy */
+    int32_t mode;          /**< Sensor data reporting mode (described in {@link SensorMode}) */
+    uint8_t data[SENSOR_MAX_LENGTH];         /**< Sensor data */
+    uint32_t dataLen;      /**< Sensor data length */
 };
 
 struct ExtraInfo {

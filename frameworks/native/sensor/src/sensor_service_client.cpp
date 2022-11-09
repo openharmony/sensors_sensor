@@ -97,7 +97,7 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
     CALL_LOG_ENTER;
     if (!IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
-        return SENSOR_NATIVE_SAM_ERR;
+        return PARAMETER_ERROR;
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -119,7 +119,7 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
     CALL_LOG_ENTER;
     if (!IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
-        return SENSOR_NATIVE_SAM_ERR;
+        return PARAMETER_ERROR;
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -141,7 +141,7 @@ int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int3
     CALL_LOG_ENTER;
     if (!IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
-        return SENSOR_NATIVE_SAM_ERR;
+        return PARAMETER_ERROR;
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -209,7 +209,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     CALL_LOG_ENTER;
     (void)object;
     CHKPV(dataChannel_);
-    // STEP1 : Destroy revious data channel
+    // STEP1 : Destroy previous data channel
     dataChannel_->DestroySensorDataChannel();
     // STEP2 : Restore data channel
     dataChannel_->RestoreSensorDataChannel();

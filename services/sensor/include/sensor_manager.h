@@ -24,7 +24,7 @@
 #include "flush_info_record.h"
 #include "sensor_data_processer.h"
 #include "sensor_hdi_connection.h"
-#include "sensor_agent_type.h"
+
 namespace OHOS {
 namespace Sensors {
 using namespace Security::AccessToken;

@@ -82,7 +82,7 @@ enum GroupBody {
 };
 
 struct SensorCombination {
-    SensorGroup sensorCatagory;
+    SensorGroup sensorCategory;
     uint8_t sensorType;
     uint8_t sensorIndex;
 };

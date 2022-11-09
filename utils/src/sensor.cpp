@@ -241,19 +241,21 @@ std::unique_ptr<Sensor> Sensor::Unmarshalling(Parcel &parcel)
 
 bool Sensor::ReadFromParcel(Parcel &parcel)
 {
-    sensorId_ = parcel.ReadUint32();
-    sensorTypeId_ = parcel.ReadUint32();
-    sensorName_ = parcel.ReadString();
-    vendorName_ = parcel.ReadString();
-    firmwareVersion_ = parcel.ReadString();
-    hardwareVersion_ = parcel.ReadString();
-    power_ = parcel.ReadFloat();
-    maxRange_ = parcel.ReadFloat();
-    resolution_ = parcel.ReadFloat();
-    flags_ = parcel.ReadUint32();
-    fifoMaxEventCount_ = parcel.ReadInt32();
-    minSamplePeriodNs_ = parcel.ReadInt64();
-    maxSamplePeriodNs_ = parcel.ReadInt64();
+    if ((!parcel.ReadUint32(sensorId_)) ||
+        (!parcel.ReadUint32(sensorTypeId_)) ||
+        (!parcel.ReadString(sensorName_)) ||
+        (!parcel.ReadString(vendorName_)) ||
+        (!parcel.ReadString(firmwareVersion_)) ||
+        (!parcel.ReadString(hardwareVersion_)) ||
+        (!parcel.ReadFloat(power_)) ||
+        (!parcel.ReadFloat(maxRange_)) ||
+        (!parcel.ReadFloat(resolution_)) ||
+        (!parcel.ReadUint32(flags_)) ||
+        (!parcel.ReadInt32(fifoMaxEventCount_)) ||
+        (!parcel.ReadInt64(minSamplePeriodNs_)) ||
+        (!parcel.ReadInt64(maxSamplePeriodNs_))) {
+        return false;
+    }
     return true;
 }
 }  // namespace Sensors

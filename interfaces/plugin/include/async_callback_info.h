@@ -19,6 +19,7 @@
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "refbase.h"
+
 #include "sensor_agent_type.h"
 #include "sensor_log.h"
 #include "sensors_errors.h"
@@ -40,7 +41,7 @@ enum CallbackDataType {
     ONCE_CALLBACK = 2,
     GET_GEOMAGNETIC_FIELD = 3,
     GET_ALTITUDE = 4,
-    GET_GEOMAGNITIC_DIP = 5,
+    GET_GEOMAGNETIC_DIP = 5,
     GET_ANGLE_MODIFY = 6,
     CREATE_ROTATION_MATRIX = 7,
     TRANSFORM_COORDINATE_SYSTEM = 8,
@@ -89,7 +90,7 @@ union CallbackData {
 };
 
 struct BusinessError {
-    int32_t code;
+    int32_t code { 0 };
     string message;
     string name;
     string stack;
@@ -119,10 +120,6 @@ public:
                 SEN_HILOGD("Delete reference, i:%{public}d", i);
                 napi_delete_reference(env, callback[i]);
             }
-        }
-        if (work != nullptr) {
-            delete work;
-            work = nullptr;
         }
     }
 
