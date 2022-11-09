@@ -29,7 +29,6 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorHdiConnection
 int32_t SensorHdiConnection::ConnectHdi()
 {
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
-    CHKPR(iSensorHdiConnection_, ERROR);
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
         SEN_HILOGE("connect hdi service failed, try to connect compatible connection");
