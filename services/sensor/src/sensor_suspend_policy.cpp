@@ -27,10 +27,10 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorSuspendPolicy" };
 constexpr uint32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
-constexpr int64_t DEFAULT_SAMPLEING_RATE = 200000000;
+constexpr int64_t DEFAULT_SAMPLING_RATE = 200000000;
 constexpr int64_t DEFAULT_REPORT_DELAY = 0;
 constexpr uint32_t STEP_COUNTER_ID = 524544;
-constexpr uint32_t STEP_DETECOTR_ID = 590080;
+constexpr uint32_t STEP_DETECTOR_ID = 590080;
 }  // namespace
 
 SensorSuspendPolicy::~SensorSuspendPolicy()
@@ -38,7 +38,7 @@ SensorSuspendPolicy::~SensorSuspendPolicy()
 
 bool SensorSuspendPolicy::CheckFreezingSensor(uint32_t sensorId)
 {
-    return ((sensorId == STEP_COUNTER_ID) || (sensorId == STEP_DETECOTR_ID));
+    return ((sensorId == STEP_COUNTER_ID) || (sensorId == STEP_DETECTOR_ID));
 }
 
 ErrCode SensorSuspendPolicy::DisableSensor(uint32_t sensorId, int32_t pid)
@@ -150,7 +150,7 @@ std::vector<uint32_t> SensorSuspendPolicy::GetSensorIdByPid(int32_t pid)
 void SensorSuspendPolicy::DoActive(const std::shared_ptr<ResourceSchedule::SuspendAppInfo> &info)
 {
     CALL_LOG_ENTER;
-    int64_t samplePeriod = DEFAULT_SAMPLEING_RATE;
+    int64_t samplePeriod = DEFAULT_SAMPLING_RATE;
     int64_t maxReportDelay = DEFAULT_REPORT_DELAY;
     std::vector<uint32_t> sensorIdList;
     std::lock_guard<std::mutex> suspendLock(suspendMutex_);

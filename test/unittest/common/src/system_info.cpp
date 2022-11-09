@@ -179,14 +179,14 @@ double CpuInfo::GetSystemCpuUsage()
     int32_t ret = GetSystemCpuStatInfo(first);
     if (ret != OHOS::Sensors::SUCCESS) {
         SEN_HILOGE("Failed to obtain CPU information, errcode:%{public}d", ret);
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(TIME_WAIT_FOR_OP));
     Total_Cpu_Occupy second {};
     ret = GetSystemCpuStatInfo(second);
     if (ret != OHOS::Sensors::SUCCESS) {
         SEN_HILOGE("Failed to obtain CPU information, errcode:%{public}d", ret);
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
 
     return GetCpuUsage(first, second);
@@ -213,22 +213,22 @@ double CpuInfo::GetProcCpuUsage(const std::string& process_name)
 
     if ((totalTime1 = GetSystemTotalOccupy()) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain CPU occupy");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
     if ((procTime1 = GetProcOccupy(pid)) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain process CPU information");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(TIME_WAIT_FOR_OP));
 
     if ((totalTime2 = GetSystemTotalOccupy()) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain CPU occupy");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
     if ((procTime2 = GetProcOccupy(pid)) == OHOS::Sensors::ERROR) {
         SEN_HILOGE("Failed to obtain process CPU information");
-        return CPU_USAGE_UNKONW;
+        return CPU_USAGE_UNKNOWN;
     }
 
     return CHK_RATE(CPU_USAGE_MAX * (procTime2 - procTime1) / (totalTime2 - totalTime1));

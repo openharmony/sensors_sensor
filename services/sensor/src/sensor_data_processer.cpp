@@ -41,9 +41,9 @@ enum {
 
 constexpr uint32_t SENSOR_INDEX_SHIFT = 8;
 constexpr uint32_t SENSOR_TYPE_SHIFT = 16;
-constexpr uint32_t SENSOR_CATAGORY_SHIFT = 24;
+constexpr uint32_t SENSOR_CATEGORY_SHIFT = 24;
 
-constexpr uint32_t FLUSH_COMPLETE_ID = ((uint32_t)OTHER << SENSOR_CATAGORY_SHIFT) |
+constexpr uint32_t FLUSH_COMPLETE_ID = ((uint32_t)OTHER << SENSOR_CATEGORY_SHIFT) |
                                        ((uint32_t)SENSOR_TYPE_FLUSH << SENSOR_TYPE_SHIFT) |
                                        ((uint32_t)FIRST_INDEX << SENSOR_INDEX_SHIFT);
 }  // namespace
