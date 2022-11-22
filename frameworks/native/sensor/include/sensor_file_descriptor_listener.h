@@ -25,17 +25,13 @@ namespace OHOS {
 namespace Sensors {
 class SensorFileDescriptorListener : public AppExecFwk::FileDescriptorListener {
 public:
-    explicit SensorFileDescriptorListener();
-    ~SensorFileDescriptorListener();
     void OnReadable(int32_t fileDescriptor) override;
-    void OnWritable(int32_t fileDescriptor) override;
     void OnShutdown(int32_t fileDescriptor) override;
     void OnException(int32_t fileDescriptor) override;
     void SetChannel(SensorDataChannel* channel);
 
 private:
-    SensorDataChannel* channel_;
-    SensorData *receiveDataBuff_ = nullptr;
+    SensorDataChannel* channel_ = nullptr;
 };
 }  // namespace Sensors
 }  // namespace OHOS
