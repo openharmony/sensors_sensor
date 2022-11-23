@@ -31,9 +31,7 @@ constexpr int32_t RECEIVE_DATA_SIZE = 100;
 
 SensorFileDescriptorListener::SensorFileDescriptorListener()
 {
-    channel_ = nullptr;
-    receiveDataBuff_ =
-        new (std::nothrow) TransferSensorEvents[sizeof(TransferSensorEvents) * RECEIVE_DATA_SIZE];
+    receiveDataBuff_ = new (std::nothrow) TransferSensorEvents[RECEIVE_DATA_SIZE];
     CHKPL(receiveDataBuff_);
 }
 
@@ -52,8 +50,9 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         SEN_HILOGE("fileDescriptor:%{public}d", fileDescriptor);
         return;
     }
-    FileDescriptorListener::OnReadable(fileDescriptor);
+    CHKPV(channel_);
     if (receiveDataBuff_ == nullptr) {
+        SEN_HILOGE("Receive data buff_ is null");
         return;
     }
     int32_t len =
@@ -77,8 +76,6 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
     }
 }
 
-void SensorFileDescriptorListener::OnWritable(int32_t fileDescriptor) {}
-
 void SensorFileDescriptorListener::SetChannel(SensorDataChannel* channel)
 {
     channel_ = channel;
@@ -87,26 +84,27 @@ void SensorFileDescriptorListener::SetChannel(SensorDataChannel* channel)
 void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("param is error:%{public}d", fileDescriptor);
+        SEN_HILOGE("Invalid fd:%{public}d", fileDescriptor);
     }
-    FileDescriptorListener::OnShutdown(fileDescriptor);
     if (receiveDataBuff_ != nullptr) {
         delete[] receiveDataBuff_;
         receiveDataBuff_ = nullptr;
     }
+    CHKPV(channel_);
+    channel_->DestroySensorDataChannel();
 }
 
 void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("param is error:%{public}d", fileDescriptor);
-        return;
+        SEN_HILOGE("Invalid fd::%{public}d", fileDescriptor);
     }
-    FileDescriptorListener::OnException(fileDescriptor);
     if (receiveDataBuff_ != nullptr) {
         delete[] receiveDataBuff_;
         receiveDataBuff_ = nullptr;
     }
+    CHKPV(channel_);
+    channel_->DestroySensorDataChannel();
 }
 }  // namespace Sensors
 }  // namespace OHOS
