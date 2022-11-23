@@ -29,6 +29,21 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorFileDescripto
 constexpr int32_t RECEIVE_DATA_SIZE = 100;
 }  // namespace
 
+SensorFileDescriptorListener::SensorFileDescriptorListener()
+{
+    receiveDataBuff_ = new (std::nothrow) SensorData[RECEIVE_DATA_SIZE];
+    CHKPL(receiveDataBuff_);
+}
+
+SensorFileDescriptorListener::~SensorFileDescriptorListener()
+{
+    CALL_LOG_ENTER;
+    if (receiveDataBuff_ != nullptr) {
+        delete[] receiveDataBuff_;
+        receiveDataBuff_ = nullptr;
+    }
+}
+
 void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
@@ -36,25 +51,28 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         return;
     }
     CHKPV(channel_);
-    SensorData receiveDataBuff[RECEIVE_DATA_SIZE] = {};
-    ssize_t len =
-        recv(fileDescriptor, receiveDataBuff, sizeof(SensorData) * RECEIVE_DATA_SIZE, MSG_DONTWAIT);
+    if (receiveDataBuff_ == nullptr) {
+        SEN_HILOGE("Receive data buff_ is null");
+        return;
+    }
+    int32_t len =
+        recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
     int32_t eventSize = static_cast<int32_t>(sizeof(SensorData));
     while (len > 0) {
         int32_t num = len / eventSize;
         for (int i = 0; i < num; i++) {
             SensorEvent event = {
-                .sensorTypeId = receiveDataBuff[i].sensorTypeId,
-                .version = receiveDataBuff[i].version,
-                .timestamp = receiveDataBuff[i].timestamp,
-                .option = receiveDataBuff[i].option,
-                .mode = receiveDataBuff[i].mode,
-                .data = receiveDataBuff[i].data,
-                .dataLen = receiveDataBuff[i].dataLen
+                .sensorTypeId = receiveDataBuff_[i].sensorTypeId,
+                .version = receiveDataBuff_[i].version,
+                .timestamp = receiveDataBuff_[i].timestamp,
+                .option = receiveDataBuff_[i].option,
+                .mode = receiveDataBuff_[i].mode,
+                .data = receiveDataBuff_[i].data,
+                .dataLen = receiveDataBuff_[i].dataLen
             };
             channel_->dataCB_(&event, 1, channel_->privateData_);
         }
-        len = recv(fileDescriptor, receiveDataBuff, sizeof(SensorData) * RECEIVE_DATA_SIZE, MSG_DONTWAIT);
+        len = recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
     }
 }
 
@@ -66,7 +84,11 @@ void SensorFileDescriptorListener::SetChannel(SensorDataChannel* channel)
 void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("param is error:%{public}d", fileDescriptor);
+        SEN_HILOGE("Invalid fd:%{public}d", fileDescriptor);
+    }
+    if (receiveDataBuff_ != nullptr) {
+        delete[] receiveDataBuff_;
+        receiveDataBuff_ = nullptr;
     }
     CHKPV(channel_);
     channel_->DestroySensorDataChannel();
@@ -75,7 +97,11 @@ void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("param is error:%{public}d", fileDescriptor);
+        SEN_HILOGE("Invalid fd::%{public}d", fileDescriptor);
+    }
+    if (receiveDataBuff_ != nullptr) {
+        delete[] receiveDataBuff_;
+        receiveDataBuff_ = nullptr;
     }
     CHKPV(channel_);
     channel_->DestroySensorDataChannel();
