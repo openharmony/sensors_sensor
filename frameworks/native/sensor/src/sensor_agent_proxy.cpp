@@ -73,12 +73,15 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *
     SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        if (g_subscribeMap.find(eventStream.sensorTypeId) == g_subscribeMap.end()) {
-            SEN_HILOGE("sensorTypeId not in g_subscribeMap");
+        std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
+        auto iter = g_subscribeMap.find(eventStream.sensorTypeId);
+        if (iter == g_subscribeMap.end()) {
+            SEN_HILOGE("sensor:%{public}d is not subscribed", iter->first);
             return;
         }
-        CHKPV(g_subscribeMap[eventStream.sensorTypeId]);
-        g_subscribeMap[eventStream.sensorTypeId]->callback(&eventStream);
+        const SensorUser *user = iter->second;
+        CHKPV(user);
+        user->callback(&eventStream);
     }
 }
 
