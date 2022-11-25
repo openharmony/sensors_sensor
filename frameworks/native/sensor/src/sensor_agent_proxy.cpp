@@ -73,7 +73,6 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *
     SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        std::lock_guard<std::mutex> subscribeLock(subscribeMutex_);
         auto iter = g_subscribeMap.find(eventStream.sensorTypeId);
         if (iter == g_subscribeMap.end()) {
             SEN_HILOGE("sensor:%{public}d is not subscribed", iter->first);
