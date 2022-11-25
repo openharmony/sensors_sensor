@@ -147,7 +147,7 @@ static void EmitOnceCallback(SensorEvent *event)
             SEN_HILOGE("Copy sensor data failed");
             continue;
         }
-        EmitUvEventLoop(onceCallbackInfo);
+        EmitUvEventLoop(std::move(onceCallbackInfo));
     }
     g_onceCallbackInfos.erase(sensorTypeId);
 
