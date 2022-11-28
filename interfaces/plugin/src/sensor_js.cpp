@@ -137,14 +137,17 @@ static void EmitOnceCallback(SensorEvent *event)
     if (iter == g_onceCallbackInfos.end()) {
         return;
     }
-    for (auto &onceCallbackInfo : iter->second) {
+    auto& onceCallbackInfos = iter->second;
+    while (!onceCallbackInfos.empty()) {
+        auto onceCallbackInfo = onceCallbackInfos.front();
+        auto beginIter = onceCallbackInfos.begin();
+        onceCallbackInfos.erase(beginIter);
         if (!copySensorData(onceCallbackInfo, event)) {
             SEN_HILOGE("Copy sensor data failed");
             continue;
         }
-        EmitUvEventLoop(onceCallbackInfo);
+        EmitUvEventLoop(std::move(onceCallbackInfo));
     }
-    g_onceCallbackInfos[sensorTypeId].clear();
     g_onceCallbackInfos.erase(sensorTypeId);
 
     CHKCV((!CheckSubscribe(sensorTypeId)), "Has client subscribe, not need cancel subscribe");
