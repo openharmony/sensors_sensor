@@ -51,7 +51,7 @@ private:
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
     static OHOS::sptr<SensorAgentProxy> sensorObj_;
-    static std::mutex subscribeMutex_;
+    static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_;
     static bool g_isChannelCreated;
