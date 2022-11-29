@@ -76,7 +76,7 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *
         std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
         auto iter = g_subscribeMap.find(eventStream.sensorTypeId);
         if (iter == g_subscribeMap.end()) {
-            SEN_HILOGE("sensor:%{public}d is not subscribed", iter->first);
+            SEN_HILOGE("sensor is not subscribed");
             return;
         }
         const SensorUser *user = iter->second;
