@@ -48,8 +48,36 @@ ohos_unittest("SensorAgentTest") {
   ]
 }
 
+ohos_unittest("SensorAlgorithmTest") {
+  module_out_path = module_output_path
+
+  sources = [ "unittest/sensor_algorithm_test.cpp" ]
+
+  include_dirs = [
+    "//commonlibrary/c_utils/base/include",
+    "$SUBSYSTEM_DIR/sensor/utils/include",
+    "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
+    "$SUBSYSTEM_DIR/sensor/test/unittest/common/include",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/sensor/interfaces/native:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/sensor/utils:libsensor_utils",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
 ###########################end###########################
 group("unittest") {
   testonly = true
-  deps = [ ":SensorAgentTest" ]
+  deps = [
+    ":SensorAgentTest",
+    ":SensorAlgorithmTest",
+  ]
 }
