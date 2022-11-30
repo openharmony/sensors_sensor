@@ -382,6 +382,9 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end(); ++iter) {
         CHKPC(*iter);
+        if ((*iter)->env != env) {
+            continue;
+        }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
