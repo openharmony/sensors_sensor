@@ -352,12 +352,26 @@ static napi_value On(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
-static void RemoveAllCallback(napi_env env, int32_t sensorTypeId)
+static int32_t RemoveAllCallback(napi_env env, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
-    g_onCallbackInfos[sensorTypeId].clear();
-    g_onCallbackInfos.erase(sensorTypeId);
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
+    for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
+        CHKPC(*iter);
+        if ((*iter)->env != env) {
+            ++iter;
+            continue;
+        }
+        iter = callbackInfos.erase(iter);
+    }
+    if (callbackInfos.empty()) {
+        SEN_HILOGD("No subscription to change sensor data");
+        g_onCallbackInfos.erase(sensorTypeId);
+        return 0;
+    }
+    g_onCallbackInfos[sensorTypeId] = callbackInfos;
+    return callbackInfos.size();
 }
 
 static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
@@ -367,6 +381,9 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end(); ++iter) {
         CHKPC(*iter);
+        if ((*iter)->env != env) {
+            continue;
+        }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
@@ -403,17 +420,17 @@ static napi_value Off(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type or get number fail");
         return nullptr;
     }
+    int32_t subscribeSize = -1;
     if (argc == 1) {
-        RemoveAllCallback(env, sensorTypeId);
+        subscribeSize = RemoveAllCallback(env, sensorTypeId);
     } else {
         if (!IsMatchType(env, args[1], napi_function)) {
             ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
             return nullptr;
         }
-        CHKCP((RemoveCallback(env, sensorTypeId, args[1]) == 0),
-            "There are other client subscribe as well, not need unsubscribe");
+        subscribeSize = RemoveCallback(env, sensorTypeId, args[1]);
     }
-    if (CheckSystemSubscribe(sensorTypeId)) {
+    if (CheckSystemSubscribe(sensorTypeId) || (subscribeSize > 0)) {
         SEN_HILOGW("There are other client subscribe system js api as well, not need unsubscribe");
         return nullptr;
     }
