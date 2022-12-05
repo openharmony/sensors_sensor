@@ -95,66 +95,6 @@ ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
     return static_cast<ErrCode>(ret);
 }
 
-int32_t SensorServiceProxy::GetSensorState(uint32_t sensorId)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
-        return WRITE_MSG_ERR;
-    }
-    if (!data.WriteUint32(sensorId)) {
-        SEN_HILOGE("write sensorId failed");
-        return WRITE_MSG_ERR;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::GET_SENSOR_STATE, data, reply, option);
-    if (ret != NO_ERROR) {
-        HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorState", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
-    }
-    return static_cast<ErrCode>(ret);
-}
-
-ErrCode SensorServiceProxy::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params)
-{
-    if (cmdType > RESERVED) {
-        SEN_HILOGE("failed, cmdType:%{public}u", cmdType);
-        return CMD_TYPE_ERR;
-    }
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
-        return WRITE_MSG_ERR;
-    }
-    if (!data.WriteUint32(sensorId)) {
-        SEN_HILOGE("write sensorId failed");
-        return WRITE_MSG_ERR;
-    }
-    if (!data.WriteUint32(cmdType)) {
-        SEN_HILOGE("write cmdType failed");
-        return WRITE_MSG_ERR;
-    }
-    if (!data.WriteUint32(params)) {
-        SEN_HILOGE("write params failed");
-        return WRITE_MSG_ERR;
-    }
-    sptr<IRemoteObject> remote = Remote();
-    CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::RUN_COMMAND, data, reply, option);
-    if (ret != NO_ERROR) {
-        HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "RunCommand", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
-    }
-    return static_cast<ErrCode>(ret);
-}
-
 std::vector<Sensor> SensorServiceProxy::GetSensorList()
 {
     MessageParcel data;

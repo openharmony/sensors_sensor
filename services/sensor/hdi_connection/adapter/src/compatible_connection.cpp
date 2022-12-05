@@ -109,21 +109,6 @@ int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
-{
-    return ERR_OK;
-}
-
-int32_t CompatibleConnection::SetOption(int32_t sensorId, int32_t option)
-{
-    int32_t ret = hdiServiceImpl_.SetOption(sensorId, option);
-    if (ret != 0) {
-        SEN_HILOGI("set option failed, sensorId:%{public}d", sensorId);
-        return ret;
-    }
-    return ERR_OK;
-}
-
 int32_t CompatibleConnection::SensorDataCallback(const SensorEvents *event)
 {
     CHKPR(event, ERR_INVALID_VALUE);
