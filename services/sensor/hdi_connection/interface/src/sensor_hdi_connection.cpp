@@ -110,30 +110,6 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
     return ret;
 }
 
-int32_t SensorHdiConnection::SetOption(int32_t sensorId, int32_t option)
-{
-    StartTrace(HITRACE_TAG_SENSORS, "SetOption");
-    int32_t ret = iSensorHdiConnection_->SetOption(sensorId, option);
-    FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
-        SEN_HILOGI("set option failed, sensorId:%{public}d", sensorId);
-        return SET_SENSOR_OPTION_ERR;
-    }
-    return ret;
-}
-
-int32_t SensorHdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
-{
-    StartTrace(HITRACE_TAG_SENSORS, "RunCommand");
-    int32_t ret = iSensorHdiConnection_->RunCommand(sensorId, cmd, params);
-    FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
-        SEN_HILOGI("run command failed, sensorId:%{public}d", sensorId);
-        return RUN_COMMAND_ERR;
-    }
-    return ret;
-}
-
 int32_t SensorHdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     StartTrace(HITRACE_TAG_SENSORS, "RegisteDataReport");

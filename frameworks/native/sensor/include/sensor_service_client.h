@@ -38,7 +38,6 @@ public:
     std::vector<Sensor> GetSensorList();
     int32_t EnableSensor(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
     int32_t DisableSensor(uint32_t sensorId);
-    int32_t RunCommand(uint32_t sensorId, int32_t cmdType, int32_t parms);
     int32_t TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel);
     int32_t DestroyDataChannel();
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
