@@ -117,6 +117,17 @@ void SensorDataCallbackImpl(SensorEvent *event)
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
 
+void SensorDataCallbackImpl2(SensorEvent *event)
+{
+    if (event == nullptr) {
+        SEN_HILOGE("SensorEvent is null");
+        return;
+    }
+    float *sensorData = (float *)event[0].data;
+    SEN_HILOGI("SensorId:%{public}d, version:%{public}d,dataLen:%{public}d,data:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
+}
+
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)
 {
     SEN_HILOGI("GetAllSensorsTest_001 in");
@@ -384,6 +395,68 @@ HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
             " ns, maxSamplePeriod: %{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
             sensorInfo[i].minSamplePeriod, sensorInfo[i].maxSamplePeriod);
     }
+}
+
+/*
+ * Feature: sensor
+ * Function: SubscribeSensor
+ * FunctionPoints: Check the interface function
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor service framework process.
+ */
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_002 in");
+
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+
+    int32_t ret = SubscribeSensor(sensorId, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = SetBatch(sensorId, &user, 100000000, 100000000);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = ActivateSensor(sensorId, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    SensorUser user2;
+    user2.callback = SensorDataCallbackImpl2;
+
+    ret = SubscribeSensor(sensorId, &user2);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = SetBatch(sensorId, &user2, 200000000, 100000000);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = ActivateSensor(sensorId, &user2);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    ret = DeactivateSensor(sensorId, &user2);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = UnsubscribeSensor(sensorId, &user2);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_003, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_003 in");
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+    int32_t ret = DeactivateSensor(sensorId, &user);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_004, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_004 in");
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+    int32_t ret = SetMode(sensorId, &user, SENSOR_DEFAULT_MODE);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 }  // namespace Sensors
 }  // namespace OHOS
