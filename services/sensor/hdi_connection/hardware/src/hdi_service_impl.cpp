@@ -129,16 +129,6 @@ int32_t HdiServiceImpl::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
-{
-    return ERR_OK;
-}
-
-int32_t HdiServiceImpl::SetOption(int32_t sensorId, int32_t option)
-{
-    return ERR_OK;
-}
-
 int32_t HdiServiceImpl::Register(RecordDataCallback cb)
 {
     CHKPR(cb, ERROR);

@@ -91,14 +91,9 @@ int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<FlushInfo> &flus
 ErrCode FlushInfoRecord::FlushProcess(const uint32_t sensorId, const uint32_t flag, const int32_t pid,
                                       const bool isEnableFlush)
 {
-    auto ret = sensorHdiConnection_.RunCommand(sensorId, FLUSH, 0);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("flush command failed");
-        return ret;
-    }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(pid);
     CHKPR(channel, ERROR);
-    ret = SetFlushInfo(sensorId, channel, false);
+    int32_t ret = SetFlushInfo(sensorId, channel, false);
     if (ret != ERR_OK) {
         SEN_HILOGE("set flush info failed");
         return ret;
