@@ -158,10 +158,10 @@ void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t
     const int logLevel = 4;
     int32_t uid = clientInfo_.GetUidByPid(pid);
     if (enable) {
-        HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
     } else {
-        HiSysEvent::Write(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
     }
 }
