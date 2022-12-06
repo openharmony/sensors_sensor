@@ -95,10 +95,6 @@ bool SensorServiceClient::IsValid(uint32_t sensorId)
 int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
 {
     CALL_LOG_ENTER;
-    if (!IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid");
-        return PARAMETER_ERROR;
-    }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
@@ -117,10 +113,6 @@ int32_t SensorServiceClient::EnableSensor(uint32_t sensorId, int64_t samplingPer
 int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
 {
     CALL_LOG_ENTER;
-    if (!IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid");
-        return PARAMETER_ERROR;
-    }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
@@ -132,29 +124,6 @@ int32_t SensorServiceClient::DisableSensor(uint32_t sensorId)
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret == ERR_OK) {
         DeleteSensorInfoItem(sensorId);
-    }
-    return ret;
-}
-
-int32_t SensorServiceClient::RunCommand(uint32_t sensorId, int32_t cmdType, int32_t params)
-{
-    CALL_LOG_ENTER;
-    if (!IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid");
-        return PARAMETER_ERROR;
-    }
-    int32_t ret = InitServiceClient();
-    if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
-        return ret;
-    }
-    CHKPR(sensorServer_, ERROR);
-    StartTrace(HITRACE_TAG_SENSORS, "RunCommand");
-    ret = sensorServer_->RunCommand(sensorId, cmdType, params);
-    FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("RunCommand failed");
-        return ret;
     }
     return ret;
 }

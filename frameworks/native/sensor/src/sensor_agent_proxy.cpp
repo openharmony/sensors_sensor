@@ -265,22 +265,6 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::SetOption(int32_t sensorId, const SensorUser *user, int32_t option) const
-{
-    CHKPR(user, OHOS::Sensors::ERROR);
-    CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SenClient.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
-        return ERROR;
-    }
-    std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
-        SEN_HILOGE("subscribe sensorId first");
-        return OHOS::Sensors::ERROR;
-    }
-    return OHOS::Sensors::SUCCESS;
-}
-
 void SensorAgentProxy::ClearSensorInfos() const
 {
     CHKPV(sensorInfos_);

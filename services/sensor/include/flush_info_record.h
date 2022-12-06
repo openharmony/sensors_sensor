@@ -57,7 +57,6 @@ public:
 
 private:
     DISALLOW_COPY_AND_MOVE(FlushInfoRecord);
-    SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     // sensorId, channel pointer for pending flush.
     std::unordered_map<uint32_t, std::vector<FlushInfo>> flushInfo_;

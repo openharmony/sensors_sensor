@@ -152,20 +152,6 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiConnection::SetOption(int32_t sensorId, int32_t option)
-{
-    CALL_LOG_ENTER;
-    CHKPR(sensorInterface_, ERR_NO_INIT);
-    int32_t ret = sensorInterface_->SetOption(sensorId, option);
-    if (ret != 0) {
-        HiSysEvent::Write(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "SetOption", "ERROR_CODE", ret);
-        SEN_HILOGE("SetOption is failed");
-        return ret;
-    }
-    return ERR_OK;
-}
-
 int32_t HdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CALL_LOG_ENTER;
@@ -197,11 +183,6 @@ int32_t HdiConnection::DestroyHdiConnection()
     eventCallback_ = nullptr;
     UnregisterHdiDeathRecipient();
     return ERR_OK;
-}
-
-int32_t HdiConnection::RunCommand(int32_t sensorId, int32_t cmd, int32_t params)
-{
-    return 0;
 }
 
 ReportDataCb HdiConnection::GetReportDataCb()

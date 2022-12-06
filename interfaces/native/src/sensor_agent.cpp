@@ -147,13 +147,3 @@ int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
     }
     return proxy->SetMode(sensorId, user, mode);
 }
-
-int32_t SetOption(int32_t sensorId, const SensorUser *user, int32_t option)
-{
-    const SensorAgentProxy *proxy = GetInstance();
-    if (proxy == nullptr) {
-        SEN_HILOGE("proxy is nullptr");
-        return SERVICE_EXCEPTION;
-    }
-    return proxy->SetOption(sensorId, user, option);
-}

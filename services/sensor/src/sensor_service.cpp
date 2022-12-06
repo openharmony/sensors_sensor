@@ -284,43 +284,6 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId)
     return DisableSensor(sensorId, GetCallingPid());
 }
 
-int32_t SensorService::GetSensorState(uint32_t sensorId)
-{
-    if (sensorId == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is 0");
-        return ERR_NO_INIT;
-    }
-    auto state = clientInfo_.GetSensorState(sensorId);
-    return static_cast<int32_t>(state);
-}
-
-ErrCode SensorService::RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params)
-{
-    CALL_LOG_ENTER;
-    if (sensorId == INVALID_SENSOR_ID || ((cmdType != FLUSH) && (cmdType != SET_MODE))) {
-        SEN_HILOGE("sensorId or cmd is invalid");
-        return ERR_NO_INIT;
-    }
-    std::lock_guard<std::mutex> serviceLock(serviceLock_);
-    uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
-    if (cmdType == FLUSH) {
-        int32_t pid = this->GetCallingPid();
-        SEN_HILOGI("sensorId:%{public}u,flag:%{public}u", sensorId, flag);
-        auto retFlush = flushInfo_.FlushProcess(sensorId, flag, pid, false);
-        if (retFlush != ERR_OK) {
-            SEN_HILOGE("ret:%{public}d", retFlush);
-        }
-        return retFlush;
-    }
-    if (sensorHdiConnection_.RunCommand(sensorId, cmdType, params) != ERR_OK) {
-        SEN_HILOGE("RunCommand is failed");
-        return RUN_COMMAND_ERR;
-    }
-    auto uid = GetCallingUid();
-    clientInfo_.UpdateCmd(sensorId, uid, cmdType);
-    return ERR_OK;
-}
-
 std::vector<Sensor> SensorService::GetSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);

@@ -36,8 +36,6 @@ private:
     using SensorBaseFunc = ErrCode (SensorServiceStub::*)(MessageParcel &data, MessageParcel &reply);
     ErrCode SensorEnableInner(MessageParcel &data, MessageParcel &reply);
     ErrCode SensorDisableInner(MessageParcel &data, MessageParcel &reply);
-    ErrCode GetSensorStateInner(MessageParcel &data, MessageParcel &reply);
-    ErrCode RunCommandInner(MessageParcel &data, MessageParcel &reply);
     ErrCode GetAllSensorsInner(MessageParcel &data, MessageParcel &reply);
     ErrCode CreateDataChannelInner(MessageParcel &data, MessageParcel &reply);
     ErrCode DestroyDataChannelInner(MessageParcel &data, MessageParcel &reply);

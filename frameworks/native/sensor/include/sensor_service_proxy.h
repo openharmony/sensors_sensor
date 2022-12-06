@@ -31,8 +31,6 @@ public:
     virtual ~SensorServiceProxy() = default;
     ErrCode EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
     ErrCode DisableSensor(uint32_t sensorId) override;
-    int32_t GetSensorState(uint32_t sensorId) override;
-    ErrCode RunCommand(uint32_t sensorId, uint32_t cmdType, uint32_t params) override;
     std::vector<Sensor> GetSensorList() override;
     ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                 const sptr<IRemoteObject> &sensorClient) override;
