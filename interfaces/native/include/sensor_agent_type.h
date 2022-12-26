@@ -47,7 +47,7 @@ extern "C" {
 
 /** Maximum length of the sensor name */
 #ifndef NAME_MAX_LEN
-#define NAME_MAX_LEN 48
+#define NAME_MAX_LEN 128
 #endif /* NAME_MAX_LEN */
 /** Size of sensor data */
 #ifndef SENSOR_USER_DATA_SIZE
