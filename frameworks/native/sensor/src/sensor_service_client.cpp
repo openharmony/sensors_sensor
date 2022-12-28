@@ -67,7 +67,7 @@ int32_t SensorServiceClient::InitServiceClient()
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }
-    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_EXCEPTION",
+    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
     SEN_HILOGE("get service failed");
     return SENSOR_NATIVE_GET_SERVICE_ERR;
