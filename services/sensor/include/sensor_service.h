@@ -47,8 +47,8 @@ public:
     void OnStart() override;
     void OnStop() override;
     int Dump(int fd, const std::vector<std::u16string> &args) override;
-    ErrCode EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
-    ErrCode DisableSensor(uint32_t sensorId) override;
+    ErrCode EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
+    ErrCode DisableSensor(int32_t sensorId) override;
     std::vector<Sensor> GetSensorList() override;
     ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                 const sptr<IRemoteObject> &sensorClient) override;
@@ -63,15 +63,15 @@ private:
     bool InitDataCallback();
     bool InitSensorList();
     bool InitSensorPolicy();
-    void ReportOnChangeData(uint32_t sensorId);
-    void ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t pid);
-    ErrCode DisableSensor(uint32_t sensorId, int32_t pid);
+    void ReportOnChangeData(int32_t sensorId);
+    void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid);
+    ErrCode DisableSensor(int32_t sensorId, int32_t pid);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
-    std::unordered_map<uint32_t, Sensor> sensorMap_;
+    std::unordered_map<int32_t, Sensor> sensorMap_;
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
@@ -81,7 +81,7 @@ private:
     std::mutex uidLock_;
     // death recipient of sensor client
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
-    ErrCode SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
 };
 }  // namespace Sensors
 }  // namespace OHOS

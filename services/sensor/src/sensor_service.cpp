@@ -35,7 +35,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
-constexpr uint32_t INVALID_SENSOR_ID = -1;
+constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 enum {
@@ -150,7 +150,7 @@ void SensorService::OnStop()
     }
 }
 
-void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t pid)
+void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid)
 {
     std::string packageName("");
     AccessTokenID tokenId = clientInfo_.GetTokenIdByPid(pid);
@@ -166,7 +166,7 @@ void SensorService::ReportSensorSysEvent(uint32_t sensorId, bool enable, int32_t
     }
 }
 
-void SensorService::ReportOnChangeData(uint32_t sensorId)
+void SensorService::ReportOnChangeData(int32_t sensorId)
 {
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
     auto it = sensorMap_.find(sensorId);
@@ -193,7 +193,7 @@ void SensorService::ReportOnChangeData(uint32_t sensorId)
     }
 }
 
-ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     auto ret = sensorManager_.SaveSubscriber(sensorId, GetCallingPid(), samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
@@ -209,7 +209,7 @@ ErrCode SensorService::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodN
     return ret;
 }
 
-ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) ||
@@ -251,7 +251,7 @@ ErrCode SensorService::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
     return ret;
 }
 
-ErrCode SensorService::DisableSensor(uint32_t sensorId, int32_t pid)
+ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
@@ -278,7 +278,7 @@ ErrCode SensorService::DisableSensor(uint32_t sensorId, int32_t pid)
     return sensorManager_.AfterDisableSensor(sensorId);
 }
 
-ErrCode SensorService::DisableSensor(uint32_t sensorId)
+ErrCode SensorService::DisableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     return DisableSensor(sensorId, GetCallingPid());
@@ -350,7 +350,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
         return;
     }
     SEN_HILOGI("pid is %{public}d", pid);
-    std::vector<uint32_t> activeSensors = clientInfo_.GetSensorIdByPid(pid);
+    std::vector<int32_t> activeSensors = clientInfo_.GetSensorIdByPid(pid);
     for (size_t i = 0; i < activeSensors.size(); ++i) {
         int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {

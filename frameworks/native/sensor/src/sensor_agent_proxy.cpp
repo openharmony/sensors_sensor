@@ -18,7 +18,6 @@
 #include <cstring>
 
 #include "securec.h"
-#include "sensor_catalog.h"
 #include "sensor_service_client.h"
 #include "sensors_errors.h"
 

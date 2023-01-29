@@ -23,6 +23,7 @@
 #include <queue>
 
 #include "securec.h"
+#include "sensor_agent_type.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -33,30 +34,6 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDump" };
 constexpr int32_t MAX_DUMP_PARAMETERS = 32;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 constexpr uint32_t MS_NS = 1000000;
-constexpr uint32_t ACCELEROMETER = 1;
-constexpr uint32_t GYROSCOPE = 2;
-constexpr uint32_t AMBIENT_LIGHT = 5;
-constexpr uint32_t MAGNETIC_FIELD = 6;
-constexpr uint32_t BAROMETER = 8;
-constexpr uint32_t HALL = 10;
-constexpr uint32_t PROXIMITY = 12;
-constexpr uint32_t HUMIDITY = 13;
-constexpr uint32_t ORIENTATION = 256;
-constexpr uint32_t GRAVITY = 257;
-constexpr uint32_t LINEAR_ACCELERATION = 258;
-constexpr uint32_t ROTATION_VECTOR = 259;
-constexpr uint32_t AMBIENT_TEMPERATURE = 260;
-constexpr uint32_t MAGNETIC_FIELD_UNCALIBRATED = 261;
-constexpr uint32_t GAME_ROTATION_VECTOR = 262;
-constexpr uint32_t GYROSCOPE_UNCALIBRATED = 263;
-constexpr uint32_t SIGNIFICANT_MOTION = 264;
-constexpr uint32_t PEDOMETER_DETECTION = 265;
-constexpr uint32_t PEDOMETER = 266;
-constexpr uint32_t GEOMAGNETIC_ROTATION_VECTOR = 277;
-constexpr uint32_t HEART_RATE = 278;
-constexpr uint32_t DEVICE_ORIENTATION = 279;
-constexpr uint32_t WEAR_DETECTION = 280;
-constexpr uint32_t ACCELEROMETER_UNCALIBRATED = 281;
 
 enum {
     SOLITARIES_DIMENSION = 1,
@@ -68,31 +45,34 @@ enum {
 };
 }  // namespace
 
-std::unordered_map<uint32_t, std::string> SensorDump::sensorMap_ = {
-    { ACCELEROMETER, "ACCELEROMETER" },
-    { ACCELEROMETER_UNCALIBRATED, "ACCELEROMETER UNCALIBRATED" },
-    { LINEAR_ACCELERATION, "LINEAR ACCELERATION" },
-    { GRAVITY, "GRAVITY" },
-    { GYROSCOPE, "GYROSCOPE" },
-    { GYROSCOPE_UNCALIBRATED, "GYROSCOPE UNCALIBRATED" },
-    { SIGNIFICANT_MOTION, "SIGNIFICANT MOTION" },
-    { PEDOMETER_DETECTION, "PEDOMETER DETECTION" },
-    { PEDOMETER, "PEDOMETER" },
-    { AMBIENT_TEMPERATURE, "AMBIENT TEMPERATURE" },
-    { MAGNETIC_FIELD, "MAGNETIC FIELD" },
-    { MAGNETIC_FIELD_UNCALIBRATED, "MAGNETIC FIELD UNCALIBRATED" },
-    { HUMIDITY, "HUMIDITY" },
-    { BAROMETER, "BAROMETER" },
-    { DEVICE_ORIENTATION, "DEVICE ORIENTATION" },
-    { ORIENTATION, "ORIENTATION" },
-    { ROTATION_VECTOR, "ROTATION VECTOR" },
-    { GAME_ROTATION_VECTOR, "GAME ROTATION VECTOR" },
-    { GEOMAGNETIC_ROTATION_VECTOR, "GEOMAGNETIC ROTATION VECTOR" },
-    { PROXIMITY, "PROXIMITY" },
-    { AMBIENT_LIGHT, "AMBIENT LIGHT" },
-    { HALL, "HALL" },
-    { HEART_RATE, "HEART RATE" },
-    { WEAR_DETECTION, "WEAR DETECTION" },
+std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
+    { SENSOR_TYPE_ID_ACCELEROMETER, "ACCELEROMETER" },
+    { SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, "ACCELEROMETER UNCALIBRATED" },
+    { SENSOR_TYPE_ID_LINEAR_ACCELERATION, "LINEAR ACCELERATION" },
+    { SENSOR_TYPE_ID_GRAVITY, "GRAVITY" },
+    { SENSOR_TYPE_ID_GYROSCOPE, "GYROSCOPE" },
+    { SENSOR_TYPE_ID_CAPACITIVE, "CAPACITIVE"},
+    { SENSOR_TYPE_ID_TEMPERATURE, "TEMPERATURE"},
+    { SENSOR_TYPE_ID_GESTURE, "GESTURE"},
+    { SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, "GYROSCOPE UNCALIBRATED" },
+    { SENSOR_TYPE_ID_SIGNIFICANT_MOTION, "SIGNIFICANT MOTION" },
+    { SENSOR_TYPE_ID_PEDOMETER_DETECTION, "PEDOMETER DETECTION" },
+    { SENSOR_TYPE_ID_PEDOMETER, "PEDOMETER" },
+    { SENSOR_TYPE_ID_AMBIENT_TEMPERATURE, "AMBIENT TEMPERATURE" },
+    { SENSOR_TYPE_ID_MAGNETIC_FIELD, "MAGNETIC FIELD" },
+    { SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED, "MAGNETIC FIELD UNCALIBRATED" },
+    { SENSOR_TYPE_ID_HUMIDITY, "HUMIDITY" },
+    { SENSOR_TYPE_ID_BAROMETER, "BAROMETER" },
+    { SENSOR_TYPE_ID_DEVICE_ORIENTATION, "DEVICE ORIENTATION" },
+    { SENSOR_TYPE_ID_ORIENTATION, "ORIENTATION" },
+    { SENSOR_TYPE_ID_ROTATION_VECTOR, "ROTATION VECTOR" },
+    { SENSOR_TYPE_ID_GAME_ROTATION_VECTOR, "GAME ROTATION VECTOR" },
+    { SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR, "GEOMAGNETIC ROTATION VECTOR" },
+    { SENSOR_TYPE_ID_PROXIMITY, "PROXIMITY" },
+    { SENSOR_TYPE_ID_AMBIENT_LIGHT, "AMBIENT LIGHT" },
+    { SENSOR_TYPE_ID_HALL, "HALL" },
+    { SENSOR_TYPE_ID_HEART_RATE, "HEART RATE" },
+    { SENSOR_TYPE_ID_WEAR_DETECTION, "WEAR DETECTION" },
 };
 
 void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
@@ -234,7 +214,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     DumpCurrentTime(fd);
     dprintf(fd, "Opening sensors:\n");
     for (const auto &sensor : sensors) {
-        uint32_t sensorId = sensor.GetSensorId();
+        int32_t sensorId = sensor.GetSensorId();
         if (sensorMap_.find(sensorId) == sensorMap_.end()) {
             continue;
         }
@@ -252,7 +232,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
     auto dataMap = clientInfo.GetDumpQueue();
     int32_t j = 0;
     for (auto &sensorData : dataMap) {
-        uint32_t sensorId = sensorData.first;
+        int32_t sensorId = sensorData.first;
         if (sensorMap_.find(sensorId) == sensorMap_.end()) {
             continue;
         }
@@ -282,26 +262,26 @@ void SensorDump::DumpCurrentTime(int32_t fd)
             int32_t { (curTime.tv_nsec / MS_NS) });
 }
 
-int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
+int32_t SensorDump::GetDataDimension(int32_t sensorId)
 {
     switch (sensorId) {
-        case AMBIENT_LIGHT:
-        case BAROMETER:
-        case HALL:
-        case PROXIMITY:
-        case HUMIDITY:
-        case AMBIENT_TEMPERATURE:
-        case SIGNIFICANT_MOTION:
-        case PEDOMETER_DETECTION:
-        case PEDOMETER:
-        case HEART_RATE:
-        case WEAR_DETECTION:
+        case SENSOR_TYPE_ID_AMBIENT_LIGHT:
+        case SENSOR_TYPE_ID_BAROMETER:
+        case SENSOR_TYPE_ID_HALL:
+        case SENSOR_TYPE_ID_PROXIMITY:
+        case SENSOR_TYPE_ID_HUMIDITY:
+        case SENSOR_TYPE_ID_AMBIENT_TEMPERATURE:
+        case SENSOR_TYPE_ID_SIGNIFICANT_MOTION:
+        case SENSOR_TYPE_ID_PEDOMETER_DETECTION:
+        case SENSOR_TYPE_ID_PEDOMETER:
+        case SENSOR_TYPE_ID_HEART_RATE:
+        case SENSOR_TYPE_ID_WEAR_DETECTION:
             return SOLITARIES_DIMENSION;
-        case ROTATION_VECTOR:
+        case SENSOR_TYPE_ID_ROTATION_VECTOR:
             return VECTOR_DIMENSION;
-        case MAGNETIC_FIELD_UNCALIBRATED:
-        case GYROSCOPE_UNCALIBRATED:
-        case ACCELEROMETER_UNCALIBRATED:
+        case SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED:
+        case SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED:
+        case SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED:
             return UNCALIBRATED_DIMENSION;
         default:
             SEN_HILOGW("sensorId: %{public}u,size: %{public}d", sensorId, COMMON_DIMENSION);
@@ -309,11 +289,11 @@ int32_t SensorDump::DataSizeBySensorId(uint32_t sensorId)
     }
 }
 
-std::string SensorDump::GetDataBySensorId(uint32_t sensorId, SensorData &sensorData)
+std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorData)
 {
     SEN_HILOGD("sensorId:%{public}u", sensorId);
     std::string str;
-    int32_t dataLen = DataSizeBySensorId(sensorId);
+    int32_t dataLen = GetDataDimension(sensorId);
     auto data = reinterpret_cast<float *>(sensorData.data);
     for (int32_t i = 0; i < dataLen; ++i) {
         str.append(std::to_string(*data));

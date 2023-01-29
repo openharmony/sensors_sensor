@@ -32,9 +32,9 @@ public:
     ISensorService() = default;
     virtual ~ISensorService() = default;
     DECLARE_INTERFACE_DESCRIPTOR(u"ISensorService");
-    virtual ErrCode EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs,
+    virtual ErrCode EnableSensor(int32_t sensorId, int64_t samplingPeriodNs,
                                  int64_t maxReportDelayNs) = 0;
-    virtual ErrCode DisableSensor(uint32_t sensorId) = 0;
+    virtual ErrCode DisableSensor(int32_t sensorId) = 0;
     virtual std::vector<Sensor> GetSensorList() = 0;
     virtual ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                         const sptr<IRemoteObject> &sensorClient) = 0;

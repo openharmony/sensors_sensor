@@ -40,22 +40,22 @@ Sensor::Sensor()
       maxSamplePeriodNs_(0)
 {}
 
-uint32_t Sensor::GetSensorId() const
+int32_t Sensor::GetSensorId() const
 {
     return sensorId_;
 }
 
-void Sensor::SetSensorId(uint32_t sensorId)
+void Sensor::SetSensorId(int32_t sensorId)
 {
     sensorId_ = sensorId;
 }
 
-uint32_t Sensor::GetSensorTypeId() const
+int32_t Sensor::GetSensorTypeId() const
 {
     return sensorTypeId_;
 }
 
-void Sensor::SetSensorTypeId(uint32_t sensorTypeId)
+void Sensor::SetSensorTypeId(int32_t sensorTypeId)
 {
     sensorTypeId_ = sensorTypeId;
 }
@@ -239,8 +239,8 @@ std::unique_ptr<Sensor> Sensor::Unmarshalling(Parcel &parcel)
 
 bool Sensor::ReadFromParcel(Parcel &parcel)
 {
-    if ((!parcel.ReadUint32(sensorId_)) ||
-        (!parcel.ReadUint32(sensorTypeId_)) ||
+    if ((!parcel.ReadInt32(sensorId_)) ||
+        (!parcel.ReadInt32(sensorTypeId_)) ||
         (!parcel.ReadString(sensorName_)) ||
         (!parcel.ReadString(vendorName_)) ||
         (!parcel.ReadString(firmwareVersion_)) ||

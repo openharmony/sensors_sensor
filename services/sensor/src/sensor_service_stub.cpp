@@ -75,8 +75,8 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
 ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
-    uint32_t sensorId;
-    if (!data.ReadUint32(sensorId)) {
+    int32_t sensorId;
+    if (!data.ReadInt32(sensorId)) {
         SEN_HILOGE("Parcel read failed");
         return ERROR;
     }
@@ -100,8 +100,8 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
 ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
-    uint32_t sensorId;
-    if (!data.ReadUint32(sensorId)) {
+    int32_t sensorId;
+    if (!data.ReadInt32(sensorId)) {
         SEN_HILOGE("Parcel read failed");
         return ERROR;
     }

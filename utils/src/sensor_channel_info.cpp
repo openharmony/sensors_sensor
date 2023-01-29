@@ -40,12 +40,12 @@ void SensorChannelInfo::SetPackageName(const std::string &packageName)
     packageName_ = packageName;
 }
 
-uint32_t SensorChannelInfo::GetSensorId() const
+int32_t SensorChannelInfo::GetSensorId() const
 {
     return sensorId_;
 }
 
-void SensorChannelInfo::SetSensorId(uint32_t sensorId)
+void SensorChannelInfo::SetSensorId(int32_t sensorId)
 {
     sensorId_ = sensorId;
 }

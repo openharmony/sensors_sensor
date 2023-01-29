@@ -27,12 +27,12 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorManager" };
-constexpr uint32_t INVALID_SENSOR_ID = -1;
+constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;
 }  // namespace
 
-void SensorManager::InitSensorMap(std::unordered_map<uint32_t, Sensor> &sensorMap,
+void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap,
                                   sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
@@ -43,7 +43,7 @@ void SensorManager::InitSensorMap(std::unordered_map<uint32_t, Sensor> &sensorMa
     return;
 }
 
-uint32_t SensorManager::GetSensorFlag(uint32_t sensorId)
+uint32_t SensorManager::GetSensorFlag(int32_t sensorId)
 {
     uint32_t flag = SENSOR_ONE_SHOT;
     auto sensor = sensorMap_.find(sensorId);
@@ -53,7 +53,7 @@ uint32_t SensorManager::GetSensorFlag(uint32_t sensorId)
     return flag;
 }
 
-bool SensorManager::SetBestSensorParams(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+bool SensorManager::SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
@@ -78,7 +78,7 @@ bool SensorManager::SetBestSensorParams(uint32_t sensorId, int64_t samplingPerio
     return true;
 }
 
-bool SensorManager::ResetBestSensorParams(uint32_t sensorId)
+bool SensorManager::ResetBestSensorParams(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
@@ -95,7 +95,7 @@ bool SensorManager::ResetBestSensorParams(uint32_t sensorId)
     return true;
 }
 
-SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
     SensorBasicInfo sensorInfo;
@@ -127,7 +127,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(uint32_t sensorId, int64_t sampling
     return sensorInfo;
 }
 
-ErrCode SensorManager::SaveSubscriber(uint32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
+ErrCode SensorManager::SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     SensorBasicInfo sensorInfo = GetSensorInfo(sensorId, samplingPeriodNs, maxReportDelayNs);
@@ -149,7 +149,7 @@ void SensorManager::StartDataReportThread()
     }
 }
 
-bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPid)
+bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid)
 {
     CALL_LOG_ENTER;
     if (clientInfo_.OnlyCurPidSensorEnabled(sensorId, clientPid)) {
@@ -164,7 +164,7 @@ bool SensorManager::IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPi
     return true;
 }
 
-ErrCode SensorManager::AfterDisableSensor(uint32_t sensorId)
+ErrCode SensorManager::AfterDisableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     clientInfo_.ClearSensorInfo(sensorId);

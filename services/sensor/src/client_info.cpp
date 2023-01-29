@@ -29,17 +29,16 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "ClientInfo" };
-constexpr uint32_t INVALID_SENSOR_ID = -1;
+constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int32_t INVALID_UID = -1;
 constexpr int32_t MIN_MAP_SIZE = 0;
 constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
-constexpr uint32_t HEART_RATE_SENSOR_ID = 83886336;
 }  // namespace
 
-bool ClientInfo::GetSensorState(uint32_t sensorId)
+bool ClientInfo::GetSensorState(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
@@ -61,7 +60,7 @@ bool ClientInfo::GetSensorState(uint32_t sensorId)
     return false;
 }
 
-SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
+SensorBasicInfo ClientInfo::GetBestSensorInfo(int32_t sensorId)
 {
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
@@ -90,7 +89,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(uint32_t sensorId)
     return sensorInfo;
 }
 
-bool ClientInfo::OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid)
+bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
@@ -193,7 +192,7 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
     return channelIt->second;
 }
 
-std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t sensorId)
+std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t sensorId)
 {
     if (sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid");
@@ -217,7 +216,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(uint32_t 
     return sensorChannel;
 }
 
-bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
+bool ClientInfo::UpdateSensorInfo(int32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
@@ -241,7 +240,7 @@ bool ClientInfo::UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBa
     return true;
 }
 
-void ClientInfo::RemoveSubscriber(uint32_t sensorId, uint32_t pid)
+void ClientInfo::RemoveSubscriber(int32_t sensorId, uint32_t pid)
 {
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
@@ -278,7 +277,7 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     return true;
 }
 
-void ClientInfo::ClearSensorInfo(uint32_t sensorId)
+void ClientInfo::ClearSensorInfo(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
@@ -294,7 +293,7 @@ void ClientInfo::ClearSensorInfo(uint32_t sensorId)
     clientMap_.erase(it);
 }
 
-void ClientInfo::ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid)
+void ClientInfo::ClearCurPidSensorInfo(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
@@ -350,7 +349,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
     return true;
 }
 
-SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
+SensorBasicInfo ClientInfo::GetCurPidSensorInfo(int32_t sensorId, int32_t pid)
 {
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
@@ -377,7 +376,7 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(uint32_t sensorId, int32_t pid)
     return sensorInfo;
 }
 
-uint64_t ClientInfo::ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel)
+uint64_t ClientInfo::ComputeBestPeriodCount(int32_t sensorId, sptr<SensorBasicDataChannel> &channel)
 {
     if (sensorId == INVALID_SENSOR_ID || channel == nullptr) {
         SEN_HILOGE("sensorId is invalid or channel cannot be null");
@@ -402,7 +401,7 @@ uint64_t ClientInfo::ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicD
     return (ret <= 0L) ? 0UL : ret;
 }
 
-uint64_t ClientInfo::ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel)
+uint64_t ClientInfo::ComputeBestFifoCount(int32_t sensorId, sptr<SensorBasicDataChannel> &channel)
 {
     if (channel == nullptr || sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid or channel cannot be null");
@@ -523,10 +522,10 @@ void ClientInfo::ClearEvent()
     storedEvent_.clear();
 }
 
-std::vector<uint32_t> ClientInfo::GetSensorIdByPid(int32_t pid)
+std::vector<int32_t> ClientInfo::GetSensorIdByPid(int32_t pid)
 {
     CALL_LOG_ENTER;
-    std::vector<uint32_t> sensorIdVec;
+    std::vector<int32_t> sensorIdVec;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto &itClientMap : clientMap_) {
         auto it = itClientMap.second.find(pid);
@@ -609,7 +608,7 @@ AccessTokenID ClientInfo::GetTokenIdByPid(int32_t pid)
     return appThreadInfoIt->second.callerToken;
 }
 
-void ClientInfo::UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType)
+void ClientInfo::UpdateCmd(int32_t sensorId, int32_t uid, int32_t cmdType)
 {
     std::lock_guard<std::mutex> cmdLock(cmdMutex_);
     auto cmdIt = cmdMap_.find(sensorId);
@@ -639,7 +638,7 @@ void ClientInfo::DestroyCmd(int32_t uid)
     cmdMap_.erase(uid);
 }
 
-std::vector<int32_t> ClientInfo::GetCmdList(uint32_t sensorId, int32_t uid)
+std::vector<int32_t> ClientInfo::GetCmdList(int32_t sensorId, int32_t uid)
 {
     std::lock_guard<std::mutex> cmdLock(cmdMutex_);
     auto cmdIt = cmdMap_.find(sensorId);
@@ -655,7 +654,7 @@ std::vector<int32_t> ClientInfo::GetCmdList(uint32_t sensorId, int32_t uid)
 
 void ClientInfo::UpdateDataQueue(int32_t sensorId, SensorData &data)
 {
-    if (sensorId == HEART_RATE_SENSOR_ID) {
+    if (sensorId == SENSOR_TYPE_ID_HEART_RATE) {
         return;
     }
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
@@ -672,7 +671,7 @@ void ClientInfo::UpdateDataQueue(int32_t sensorId, SensorData &data)
     }
 }
 
-std::unordered_map<uint32_t, std::queue<SensorData>> ClientInfo::GetDumpQueue()
+std::unordered_map<int32_t, std::queue<SensorData>> ClientInfo::GetDumpQueue()
 {
     return dumpQueue_;
 }
