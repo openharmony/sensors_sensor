@@ -29,8 +29,8 @@ class SensorServiceProxy : public IRemoteProxy<ISensorService> {
 public:
     explicit SensorServiceProxy(const sptr<IRemoteObject> &impl);
     virtual ~SensorServiceProxy() = default;
-    ErrCode EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
-    ErrCode DisableSensor(uint32_t sensorId) override;
+    ErrCode EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
+    ErrCode DisableSensor(int32_t sensorId) override;
     std::vector<Sensor> GetSensorList() override;
     ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                 const sptr<IRemoteObject> &sensorClient) override;

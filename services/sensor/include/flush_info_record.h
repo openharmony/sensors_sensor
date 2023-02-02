@@ -46,20 +46,20 @@ public:
     {
         flushInfo_.clear();
     }
-    std::unordered_map<uint32_t, std::vector<FlushInfo>> GetFlushInfo();
-    void ClearFlushInfoItem(uint32_t sensorId);
-    ErrCode SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush);
+    std::unordered_map<int32_t, std::vector<FlushInfo>> GetFlushInfo();
+    void ClearFlushInfoItem(int32_t sensorId);
+    ErrCode SetFlushInfo(int32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush);
     bool IsFlushChannelValid(const std::vector<sptr<SensorBasicDataChannel>> &currChannelList,
                            const sptr<SensorBasicDataChannel> &flushChannel);
     int32_t GetFlushChannelIndex(const std::vector<FlushInfo> &flushInfoList,
                            const sptr<SensorBasicDataChannel> &channel);
-    ErrCode FlushProcess(const uint32_t sensorId, const uint32_t flag, const int32_t pid, const bool isEnableFlush);
+    ErrCode FlushProcess(const int32_t sensorId, const uint32_t flag, const int32_t pid, const bool isEnableFlush);
 
 private:
     DISALLOW_COPY_AND_MOVE(FlushInfoRecord);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     // sensorId, channel pointer for pending flush.
-    std::unordered_map<uint32_t, std::vector<FlushInfo>> flushInfo_;
+    std::unordered_map<int32_t, std::vector<FlushInfo>> flushInfo_;
     std::mutex flushInfoMutex_;
 };
 }  // namespace Sensors

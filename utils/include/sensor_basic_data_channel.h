@@ -41,14 +41,14 @@ public:
     int32_t ReceiveData(void *vaddr, size_t size);
     bool GetSensorStatus() const;
     void SetSensorStatus(bool isActive);
-    const std::unordered_map<uint32_t, SensorData> &GetDataCacheBuf() const;
+    const std::unordered_map<int32_t, SensorData> &GetDataCacheBuf() const;
 
 private:
     int32_t sendFd_;
     int32_t receiveFd_;
     bool isActive_;
     std::mutex statusLock_;
-    std::unordered_map<uint32_t, SensorData> dataCacheBuf_;
+    std::unordered_map<int32_t, SensorData> dataCacheBuf_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

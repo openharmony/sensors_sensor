@@ -32,7 +32,7 @@ const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION"
 const std::string READ_HEALTH_DATA_PERMISSION = "ohos.permission.READ_HEALTH_DATA";
 }  // namespace
 
-std::unordered_map<uint32_t, std::string> PermissionUtil::sensorPermissions_ = {
+std::unordered_map<int32_t, std::string> PermissionUtil::sensorPermissions_ = {
     { SENSOR_TYPE_ID_ACCELEROMETER, ACCELEROMETER_PERMISSION },
     { SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, ACCELEROMETER_PERMISSION },
     { SENSOR_TYPE_ID_LINEAR_ACCELERATION, ACCELEROMETER_PERMISSION },

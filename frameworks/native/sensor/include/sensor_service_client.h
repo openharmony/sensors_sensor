@@ -36,17 +36,17 @@ namespace Sensors {
 class SensorServiceClient : public Singleton<SensorServiceClient> {
 public:
     std::vector<Sensor> GetSensorList();
-    int32_t EnableSensor(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
-    int32_t DisableSensor(uint32_t sensorId);
+    int32_t EnableSensor(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
+    int32_t DisableSensor(int32_t sensorId);
     int32_t TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel);
     int32_t DestroyDataChannel();
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
-    bool IsValid(uint32_t sensorId);
+    bool IsValid(int32_t sensorId);
 
 private:
     int32_t InitServiceClient();
-    void UpdateSensorInfoMap(uint32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
-    void DeleteSensorInfoItem(uint32_t sensorId);
+    void UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
+    void DeleteSensorInfoItem(int32_t sensorId);
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_;
     sptr<ISensorService> sensorServer_;
@@ -54,7 +54,7 @@ private:
     sptr<SensorDataChannel> dataChannel_;
     sptr<SensorClientStub> sensorClientStub_;
     std::mutex mapMutex_;
-    std::map<uint32_t, SensorBasicInfo> sensorInfoMap_;
+    std::map<int32_t, SensorBasicInfo> sensorInfoMap_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

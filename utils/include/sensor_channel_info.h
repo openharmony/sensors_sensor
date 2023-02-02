@@ -30,8 +30,8 @@ public:
     void SetUid(int32_t uid);
     std::string GetPackageName() const;
     void SetPackageName(const std::string &packageName);
-    uint32_t GetSensorId() const;
-    void SetSensorId(uint32_t sensorId);
+    int32_t GetSensorId() const;
+    void SetSensorId(int32_t sensorId);
     int64_t GetSamplingPeriodNs() const;
     void SetSamplingPeriodNs(int64_t samplingPeriodNs);
     int32_t GetFifoCount() const;
@@ -42,7 +42,7 @@ public:
 private:
     int32_t uid_;
     std::string packageName_;
-    uint32_t sensorId_;
+    int32_t sensorId_;
     int64_t samplingPeriodNs_;
     uint32_t fifoCount_;
     std::vector<int32_t> cmdType_;

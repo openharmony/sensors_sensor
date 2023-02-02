@@ -39,7 +39,7 @@ enum {
 SensorServiceProxy::SensorServiceProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorService>(impl)
 {}
 
-ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -48,7 +48,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
         SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
-    if (!data.WriteUint32(sensorId)) {
+    if (!data.WriteInt32(sensorId)) {
         SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }
@@ -71,7 +71,7 @@ ErrCode SensorServiceProxy::EnableSensor(uint32_t sensorId, int64_t samplingPeri
     return static_cast<ErrCode>(ret);
 }
 
-ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
+ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
 {
     MessageParcel data;
     MessageParcel reply;
@@ -80,7 +80,7 @@ ErrCode SensorServiceProxy::DisableSensor(uint32_t sensorId)
         SEN_HILOGE("write descriptor failed");
         return WRITE_MSG_ERR;
     }
-    if (!data.WriteUint32(sensorId)) {
+    if (!data.WriteInt32(sensorId)) {
         SEN_HILOGE("write sensorId failed");
         return WRITE_MSG_ERR;
     }

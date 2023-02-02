@@ -16,6 +16,7 @@
 #include "sensor_suspend_policy.h"
 
 #include "sensor.h"
+#include "sensor_agent_type.h"
 #include "sensor_service.h"
 #include "system_ability_definition.h"
 
@@ -25,23 +26,21 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorSuspendPolicy" };
-constexpr uint32_t INVALID_SENSOR_ID = -1;
+constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 constexpr int64_t DEFAULT_SAMPLING_RATE = 200000000;
 constexpr int64_t DEFAULT_REPORT_DELAY = 0;
-constexpr uint32_t STEP_COUNTER_ID = 524544;
-constexpr uint32_t STEP_DETECTOR_ID = 590080;
 }  // namespace
 
 SensorSuspendPolicy::~SensorSuspendPolicy()
 {}
 
-bool SensorSuspendPolicy::CheckFreezingSensor(uint32_t sensorId)
+bool SensorSuspendPolicy::CheckFreezingSensor(int32_t sensorId)
 {
-    return ((sensorId == STEP_COUNTER_ID) || (sensorId == STEP_DETECTOR_ID));
+    return ((sensorId == SENSOR_TYPE_ID_PEDOMETER_DETECTION) || (sensorId == SENSOR_TYPE_ID_PEDOMETER));
 }
 
-ErrCode SensorSuspendPolicy::DisableSensor(uint32_t sensorId, int32_t pid)
+ErrCode SensorSuspendPolicy::DisableSensor(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
@@ -81,7 +80,7 @@ void SensorSuspendPolicy::DoSuspend(const std::shared_ptr<ResourceSchedule::Susp
     }
 }
 
-ErrCode SensorSuspendPolicy::SaveSubscriber(uint32_t sensorId, int64_t samplingPeriodNs,
+ErrCode SensorSuspendPolicy::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs, int32_t pid)
 {
     auto ret = sensorManager_.SaveSubscriber(sensorId, pid, samplingPeriodNs, maxReportDelayNs);
@@ -98,7 +97,7 @@ ErrCode SensorSuspendPolicy::SaveSubscriber(uint32_t sensorId, int64_t samplingP
     return ret;
 }
 
-ErrCode SensorSuspendPolicy::EnableSensor(uint32_t sensorId, int32_t pid, int64_t samplingPeriodNs,
+ErrCode SensorSuspendPolicy::EnableSensor(int32_t sensorId, int32_t pid, int64_t samplingPeriodNs,
                                           int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;

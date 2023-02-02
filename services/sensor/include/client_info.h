@@ -41,23 +41,23 @@ class ClientInfo : public Singleton<ClientInfo> {
 public:
     ClientInfo() = default;
     virtual ~ClientInfo() = default;
-    bool GetSensorState(uint32_t sensorId);
-    SensorBasicInfo GetBestSensorInfo(uint32_t sensorId);
-    bool OnlyCurPidSensorEnabled(uint32_t sensorId, int32_t pid);
-    std::vector<sptr<SensorBasicDataChannel>> GetSensorChannel(uint32_t sensorId);
+    bool GetSensorState(int32_t sensorId);
+    SensorBasicInfo GetBestSensorInfo(int32_t sensorId);
+    bool OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid);
+    std::vector<sptr<SensorBasicDataChannel>> GetSensorChannel(int32_t sensorId);
     std::vector<sptr<SensorBasicDataChannel>> GetSensorChannelByUid(int32_t uid);
     sptr<SensorBasicDataChannel> GetSensorChannelByPid(int32_t pid);
-    bool UpdateSensorInfo(uint32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo);
-    void RemoveSubscriber(uint32_t sensorId, uint32_t pid);
+    bool UpdateSensorInfo(int32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo);
+    void RemoveSubscriber(int32_t sensorId, uint32_t pid);
     bool UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel);
     bool UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken);
-    void ClearSensorInfo(uint32_t sensorId);
-    void ClearCurPidSensorInfo(uint32_t sensorId, int32_t pid);
+    void ClearSensorInfo(int32_t sensorId);
+    void ClearCurPidSensorInfo(int32_t sensorId, int32_t pid);
     bool DestroySensorChannel(int32_t pid);
     void DestroyAppThreadInfo(int32_t pid);
-    SensorBasicInfo GetCurPidSensorInfo(uint32_t sensorId, int32_t pid);
-    uint64_t ComputeBestPeriodCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel);
-    uint64_t ComputeBestFifoCount(uint32_t sensorId, sptr<SensorBasicDataChannel> &channel);
+    SensorBasicInfo GetCurPidSensorInfo(int32_t sensorId, int32_t pid);
+    uint64_t ComputeBestPeriodCount(int32_t sensorId, sptr<SensorBasicDataChannel> &channel);
+    uint64_t ComputeBestFifoCount(int32_t sensorId, sptr<SensorBasicDataChannel> &channel);
     int32_t GetStoreEvent(int32_t sensorId, SensorData &data);
     void StoreEvent(const SensorData &data);
     void ClearEvent();
@@ -65,19 +65,19 @@ public:
     bool SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t pid);
     int32_t FindClientPid(const sptr<IRemoteObject> &sensorClient);
     void DestroyClientPid(const sptr<IRemoteObject> &sensorClient);
-    std::vector<uint32_t> GetSensorIdByPid(int32_t pid);
+    std::vector<int32_t> GetSensorIdByPid(int32_t pid);
     void GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInfo);
-    void UpdateCmd(uint32_t sensorId, int32_t uid, int32_t cmdType);
+    void UpdateCmd(int32_t sensorId, int32_t uid, int32_t cmdType);
     void DestroyCmd(int32_t uid);
     void UpdateDataQueue(int32_t sensorId, SensorData &data);
-    std::unordered_map<uint32_t, std::queue<SensorData>> GetDumpQueue();
+    std::unordered_map<int32_t, std::queue<SensorData>> GetDumpQueue();
     void ClearDataQueue(int32_t sensorId);
     int32_t GetUidByPid(int32_t pid);
     AccessTokenID GetTokenIdByPid(int32_t pid);
 
 private:
     DISALLOW_COPY_AND_MOVE(ClientInfo);
-    std::vector<int32_t> GetCmdList(uint32_t sensorId, int32_t uid);
+    std::vector<int32_t> GetCmdList(int32_t sensorId, int32_t uid);
     std::mutex clientMutex_;
     std::mutex channelMutex_;
     std::mutex eventMutex_;
@@ -85,13 +85,13 @@ private:
     std::mutex clientPidMutex_;
     std::mutex cmdMutex_;
     std::mutex dataQueueMutex_;
-    std::unordered_map<uint32_t, std::unordered_map<int32_t, SensorBasicInfo>> clientMap_;
+    std::unordered_map<int32_t, std::unordered_map<int32_t, SensorBasicInfo>> clientMap_;
     std::unordered_map<int32_t, sptr<SensorBasicDataChannel>> channelMap_;
     std::unordered_map<int32_t, SensorData> storedEvent_;
     std::unordered_map<int32_t, AppThreadInfo> appThreadInfoMap_;
     std::map<sptr<IRemoteObject>, int32_t> clientPidMap_;
-    std::unordered_map<uint32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
-    std::unordered_map<uint32_t, std::queue<SensorData>> dumpQueue_;
+    std::unordered_map<int32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
+    std::unordered_map<int32_t, std::queue<SensorData>> dumpQueue_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

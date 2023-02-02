@@ -31,13 +31,13 @@ enum {
 };
 }  // namespace
 
-std::unordered_map<uint32_t, std::vector<FlushInfo>> FlushInfoRecord::GetFlushInfo()
+std::unordered_map<int32_t, std::vector<FlushInfo>> FlushInfoRecord::GetFlushInfo()
 {
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
     return flushInfo_;
 }
 
-void FlushInfoRecord::ClearFlushInfoItem(uint32_t sensorId)
+void FlushInfoRecord::ClearFlushInfoItem(int32_t sensorId)
 {
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
     auto it = flushInfo_.find(sensorId);
@@ -46,7 +46,7 @@ void FlushInfoRecord::ClearFlushInfoItem(uint32_t sensorId)
     }
 }
 
-ErrCode FlushInfoRecord::SetFlushInfo(uint32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush)
+ErrCode FlushInfoRecord::SetFlushInfo(int32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush)
 {
     SEN_HILOGD("sensorId:%{public}u", sensorId);
     CHKPR(channel, INVALID_POINTER);
@@ -88,7 +88,7 @@ int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<FlushInfo> &flus
     return CHANNEL_NO_FLUSH;
 }
 
-ErrCode FlushInfoRecord::FlushProcess(const uint32_t sensorId, const uint32_t flag, const int32_t pid,
+ErrCode FlushInfoRecord::FlushProcess(const int32_t sensorId, const uint32_t flag, const int32_t pid,
                                       const bool isEnableFlush)
 {
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(pid);

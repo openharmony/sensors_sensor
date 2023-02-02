@@ -27,10 +27,10 @@ class Sensor : public Parcelable {
 public:
     Sensor();
     virtual ~Sensor() = default;
-    uint32_t GetSensorId() const;
-    void SetSensorId(uint32_t sensorId);
-    uint32_t GetSensorTypeId() const;
-    void SetSensorTypeId(uint32_t sensorTypeId);
+    int32_t GetSensorId() const;
+    void SetSensorId(int32_t sensorId);
+    int32_t GetSensorTypeId() const;
+    void SetSensorTypeId(int32_t sensorTypeId);
     std::string GetSensorName() const;
     void SetSensorName(const std::string &sensorName);
     std::string GetVendorName() const;
@@ -58,8 +58,8 @@ public:
     virtual bool Marshalling(Parcel &parcel) const override;
 
 private:
-    uint32_t sensorId_;
-    uint32_t sensorTypeId_;
+    int32_t sensorId_;
+    int32_t sensorTypeId_;
     std::string sensorName_;
     std::string vendorName_;
     std::string firmwareVersion_;

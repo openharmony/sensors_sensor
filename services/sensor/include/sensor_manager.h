@@ -30,16 +30,16 @@ namespace Sensors {
 using namespace Security::AccessToken;
 class SensorManager : public Singleton<SensorManager> {
 public:
-    bool SetBestSensorParams(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    bool ResetBestSensorParams(uint32_t sensorId);
-    ErrCode SaveSubscriber(uint32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool ResetBestSensorParams(int32_t sensorId);
+    ErrCode SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     void StartDataReportThread();
-    SensorBasicInfo GetSensorInfo(uint32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    bool IsOtherClientUsingSensor(uint32_t sensorId, int32_t clientPid);
-    ErrCode AfterDisableSensor(uint32_t sensorId);
-    void InitSensorMap(std::unordered_map<uint32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
+    SensorBasicInfo GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid);
+    ErrCode AfterDisableSensor(int32_t sensorId);
+    void InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
                        sptr<ReportDataCallback> dataCallback);
-    uint32_t GetSensorFlag(uint32_t sensorId);
+    uint32_t GetSensorFlag(int32_t sensorId);
     void GetPackageName(AccessTokenID tokenId, std::string &packageName);
 
 private:
@@ -48,7 +48,7 @@ private:
     std::thread dataThread_;
     sptr<SensorDataProcesser> sensorDataProcesser_;
     sptr<ReportDataCallback> reportDataCallback_;
-    std::unordered_map<uint32_t, Sensor> sensorMap_;
+    std::unordered_map<int32_t, Sensor> sensorMap_;
     std::mutex sensorMapMutex_;
 };
 }  // namespace Sensors
