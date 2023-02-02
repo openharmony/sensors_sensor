@@ -102,7 +102,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
     if (sendFd_ < 0) {
         SEN_HILOGE("ReadFileDescriptor is failed");
         sendFd_ = -1;
-        return SENSOR_CHANNEL_DUP_ERR;
+        return SENSOR_CHANNEL_READ_DESCRIPTOR_ERR;
     }
     return ERR_OK;
 }
