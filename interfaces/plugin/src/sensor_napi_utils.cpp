@@ -418,6 +418,19 @@ bool CreateNapiArray(const napi_env &env, float data[], int32_t dataLength, napi
     return true;
 }
 
+void ReleaseCallback(sptr<AsyncCallbackInfo> asyncCallbackInfo)
+{
+    CHKPV(asyncCallbackInfo);
+    if (asyncCallbackInfo->type == ONCE_CALLBACK) {
+        napi_env env = asyncCallbackInfo->env;
+        CHKPV(env);
+        napi_ref callback = asyncCallbackInfo->callback[0];
+        if (callback != nullptr) {
+            napi_delete_reference(env, callback);
+        }
+    }
+}
+
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 {
     CALL_LOG_ENTER;
@@ -504,6 +517,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         napi_open_handle_scope(asyncCallbackInfo->env, &scope);
         if (scope == nullptr) {
             SEN_HILOGE("napi_handle_scope is nullptr");
+            ReleaseCallback(asyncCallbackInfo);
             return;
         }
         napi_env env = asyncCallbackInfo->env;
@@ -511,6 +525,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         if (napi_get_reference_value(env, asyncCallbackInfo->callback[0], &callback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
             napi_throw_error(env, nullptr, "napi_get_reference_value fail");
+            ReleaseCallback(asyncCallbackInfo);
             napi_close_handle_scope(asyncCallbackInfo->env, scope);
             return;
         }
@@ -519,6 +534,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         if (!(g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end())) {
             SEN_HILOGE("asyncCallbackInfo type is invalid");
             napi_throw_error(env, nullptr, "asyncCallbackInfo type is invalid");
+            ReleaseCallback(asyncCallbackInfo);
             napi_close_handle_scope(asyncCallbackInfo->env, scope);
             return;
         }
@@ -526,9 +542,11 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         if (napi_call_function(env, nullptr, callback, 1, &result[1], &callResult) != napi_ok) {
             SEN_HILOGE("napi_call_function callback fail");
             napi_throw_error(env, nullptr, "napi_call_function callback fail");
+            ReleaseCallback(asyncCallbackInfo);
             napi_close_handle_scope(asyncCallbackInfo->env, scope);
             return;
         }
+        ReleaseCallback(asyncCallbackInfo);
         napi_close_handle_scope(asyncCallbackInfo->env, scope);
     });
     if (ret != 0) {
