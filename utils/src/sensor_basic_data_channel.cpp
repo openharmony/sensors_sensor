@@ -98,15 +98,9 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
         SEN_HILOGD("already create socketpair");
         return ERR_OK;
     }
-    int32_t tmpFd = data.ReadFileDescriptor();
-    if (tmpFd < 0) {
-        SEN_HILOGE("ReadFileDescriptor is failed");
-        sendFd_ = -1;
-        return SENSOR_CHANNEL_DUP_ERR;
-    }
-    sendFd_ = dup(tmpFd);
+    sendFd_ = data.ReadFileDescriptor();
     if (sendFd_ < 0) {
-        SEN_HILOGE("dup FileDescriptor is failed");
+        SEN_HILOGE("ReadFileDescriptor is failed");
         sendFd_ = -1;
         return SENSOR_CHANNEL_DUP_ERR;
     }
