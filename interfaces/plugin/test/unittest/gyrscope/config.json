@@ -28,7 +28,8 @@
       "package": "com.example.myapplication",
       "name": ".myapplication",
       "deviceType": [
-        "phone"
+        "default",
+        "tablet"
       ],
       "distro": {
         "deliveryWithInstall": true,
