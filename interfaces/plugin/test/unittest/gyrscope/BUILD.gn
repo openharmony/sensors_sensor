@@ -17,6 +17,5 @@ module_output_path = "sensor/interfaces"
 ohos_js_unittest("GyrscopeJsTest") {
   module_out_path = module_output_path
   hap_profile = "./config.json"
-  certificate_profile =
-      "//test/testfwk/developer_test/signature/openharmony_sx.p7b"
+  certificate_profile = "./signature/openharmony_sx.p7b"
 }
