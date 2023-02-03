@@ -14,7 +14,7 @@
 import("//build/test.gni")
 
 module_output_path = "sensor/interfaces"
-ohos_js_unittest("GyrscopeJsTest") {
+ohos_js_unittest("GyroscopeJsTest") {
   module_out_path = module_output_path
   hap_profile = "./config.json"
   certificate_profile = "./signature/openharmony_sx.p7b"

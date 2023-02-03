@@ -17,7 +17,7 @@ import sensor from '@ohos.sensor'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
 
-describe("GyrscopeJsTest", function () {
+describe("GyroscopeJsTest", function () {
     var g_execute = false;
     function callback(data) {
         console.info("callback" + JSON.stringify(data));
@@ -70,13 +70,13 @@ describe("GyrscopeJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:GyrscopeJsTest_001
+     * @tc.name:GyroscopeJsTest_001
      * @tc.desc:verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("GyrscopeJsTest_001", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_001---------------------------');
+    it("GyroscopeJsTest_001", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_001---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback);
@@ -97,20 +97,20 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_002
+    * @tc.name:GyroscopeJsTest_002
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_002", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_002---------------------------');
+    it("GyroscopeJsTest_002", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_002---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval':100000000});
                 setTimeout(()=>{
-                    console.info('------------------GyrscopeJsTest_002 off in-----------------------');
+                    console.info('------------------GyroscopeJsTest_002 off in-----------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE);
-                    console.info('------------------GyrscopeJsTest_002 off end-----------------------');
+                    console.info('------------------GyroscopeJsTest_002 off end-----------------------');
                     done();
                 }, 500);
             } catch (error) {
@@ -126,25 +126,25 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_003
+    * @tc.name:GyroscopeJsTest_003
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_003", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_003---------------------------');
+    it("GyroscopeJsTest_003", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_003---------------------------');
         if(g_execute) {
             function onSensorCallback(data) {
-                console.info('GyrscopeJsTest_003  callback in');
+                console.info('GyroscopeJsTest_003  callback in');
                 expect(true).assertTrue();
                 done();
             }
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, onSensorCallback, {'interval': 100000000}, 5);
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_003 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_003 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE);
-                    console.info('----------------------GyrscopeJsTest_003 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_003 off end---------------------------');
                     done();
                 }, 500);
             } catch (error) {
@@ -160,19 +160,19 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_004
+    * @tc.name:GyroscopeJsTest_004
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_004", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_004---------------------------');
+    it("GyroscopeJsTest_004", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_004---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': -100000000});
-                console.info('----------------------GyrscopeJsTest_004 off in---------------------------');
+                console.info('----------------------GyroscopeJsTest_004 off in---------------------------');
                 sensor.off(sensor.SensorId.GYROSCOPE);
-                console.info('----------------------GyrscopeJsTest_004 off end---------------------------');
+                console.info('----------------------GyroscopeJsTest_004 off end---------------------------');
                 done();
             } catch (error) {
                 console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
@@ -188,13 +188,13 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_005
+    * @tc.name:GyroscopeJsTest_005
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_005", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_005---------------------------');
+    it("GyroscopeJsTest_005", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_005---------------------------');
         if(g_execute) {
             try {
                 sensor.once(sensor.SensorId.GYROSCOPE, callback);
@@ -215,13 +215,13 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_006
+    * @tc.name:GyroscopeJsTest_006
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_006", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_006---------------------------');
+    it("GyroscopeJsTest_006", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_006---------------------------');
         if(g_execute) {
             try{
                 sensor.once(sensor.SensorId.ACCELEROMETER, callback, 5);
@@ -238,13 +238,13 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_007
+    * @tc.name:GyroscopeJsTest_007
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_007", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_007---------------------------');
+    it("GyroscopeJsTest_007", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_007---------------------------');
         if(g_execute) {
             try{
                 sensor.once(sensor.SensorId.GYROSCOPE, 5);
@@ -262,13 +262,13 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_008
+    * @tc.name:GyroscopeJsTest_008
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_008", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_008---------------------------');
+    it("GyroscopeJsTest_008", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_008---------------------------');
         if(g_execute) {
             try {
                 sensor.off(-1, callback);
@@ -285,21 +285,21 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_009
+    * @tc.name:GyroscopeJsTest_009
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_009", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_009---------------------------');
+    it("GyroscopeJsTest_009", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_009---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback);
                 sensor.on(sensor.SensorId.GYROSCOPE, callback2);
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_009 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_009 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE);
-                    console.info('----------------------GyrscopeJsTest_009 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_009 off end---------------------------');
                     done();
                 }, 1000);
             } catch (error) {
@@ -315,26 +315,26 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_010
+    * @tc.name:GyroscopeJsTest_010
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_010", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_010---------------------------');
+    it("GyroscopeJsTest_010", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_010---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback);
                 sensor.on(sensor.SensorId.GYROSCOPE, callback2);
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_010 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_010 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE, callback);
-                    console.info('----------------------GyrscopeJsTest_010 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_010 off end---------------------------');
                 }, 500);
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_010 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_010 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE, callback2);
-                    console.info('----------------------GyrscopeJsTest_010 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_010 off end---------------------------');
                     done();
                 }, 1000);
             } catch (error) {
@@ -350,21 +350,21 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_011
+    * @tc.name:GyroscopeJsTest_011
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_011", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_011---------------------------');
+    it("GyroscopeJsTest_011", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_011---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
                 sensor.once(sensor.SensorId.GYROSCOPE, callback2);
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_011 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_011 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE);
-                    console.info('----------------------GyrscopeJsTest_011 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_011 off end---------------------------');
                     done();
                 }, 1000);
             } catch (error) {
@@ -380,26 +380,26 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_012
+    * @tc.name:GyroscopeJsTest_012
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_012", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_012---------------------------');
+    it("GyroscopeJsTest_012", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_012---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
                 sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_012 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_012 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE, callback);
-                    console.info('----------------------GyrscopeJsTest_012 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_012 off end---------------------------');
                 }, 500);
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_012 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_012 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE, callback2);
-                    console.info('----------------------GyrscopeJsTest_012 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_012 off end---------------------------');
                     done();
                 }, 1000);
             } catch (error) {
@@ -415,21 +415,21 @@ describe("GyrscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyrscopeJsTest_013
+    * @tc.name:GyroscopeJsTest_013
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyrscopeJsTest_013", 0, async function (done) {
-        console.info('----------------------GyrscopeJsTest_013---------------------------');
+    it("GyroscopeJsTest_013", 0, async function (done) {
+        console.info('----------------------GyroscopeJsTest_013---------------------------');
         if(g_execute) {
             try {
                 sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
                 sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
                 setTimeout(()=>{
-                    console.info('----------------------GyrscopeJsTest_013 off in---------------------------');
+                    console.info('----------------------GyroscopeJsTest_013 off in---------------------------');
                     sensor.off(sensor.SensorId.GYROSCOPE);
-                    console.info('----------------------GyrscopeJsTest_013 off end---------------------------');
+                    console.info('----------------------GyroscopeJsTest_013 off end---------------------------');
                     done();
                 }, 1000);
             } catch (error) {
