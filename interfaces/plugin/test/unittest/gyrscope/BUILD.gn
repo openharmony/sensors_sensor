@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Huawei Device Co., Ltd.
+# Copyright (C) 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,14 +14,9 @@
 import("//build/test.gni")
 
 module_output_path = "sensor/interfaces"
-ohos_js_unittest("SensorJsTest") {
+ohos_js_unittest("GyrscopeJsTest") {
   module_out_path = module_output_path
   hap_profile = "./config.json"
   certificate_profile =
       "//test/testfwk/developer_test/signature/openharmony_sx.p7b"
-}
-
-group("unittest") {
-  testonly = true
-  deps = [ ":SensorJsTest" ]
 }
