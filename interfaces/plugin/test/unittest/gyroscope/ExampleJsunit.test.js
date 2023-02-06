@@ -26,7 +26,7 @@ describe("GyroscopeJsTest", function () {
         expect(typeof(data.z)).assertEqual("number");
     }
 
-    function callback2() {
+    function callback2(data) {
         console.info("callback2" + JSON.stringify(data));
         expect(typeof(data.x)).assertEqual("number");
         expect(typeof(data.y)).assertEqual("number");
@@ -224,7 +224,11 @@ describe("GyroscopeJsTest", function () {
         console.info('----------------------GyroscopeJsTest_006---------------------------');
         if(g_execute) {
             try{
-                sensor.once(sensor.SensorId.ACCELEROMETER, callback, 5);
+                sensor.once(sensor.SensorId.GYROSCOPE, callback, 5);
+                setTimeout(()=>{
+                    expect(true).assertTrue();
+                    done();
+                }, 500);
             } catch (error) {
                 console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
                 expect(false).assertTrue();
