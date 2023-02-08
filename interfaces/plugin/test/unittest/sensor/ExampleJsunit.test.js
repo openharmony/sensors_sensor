@@ -3460,7 +3460,7 @@ describe("SensorJsTest", function () {
     */
      it('Sensor_TransformCoordinateSystem_001', 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_001----------------------------------");
-        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'axisX':1, 'axisY':2}, (error, data) => {
+        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, (error, data) => {
             if (error) {
                 console.info('Sensor_TransformCoordinateSystem_001 failed');
                 expect(false).assertTrue();
@@ -3480,7 +3480,7 @@ describe("SensorJsTest", function () {
     */
     it('Sensor_TransformCoordinateSystem_002', 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_002----------------------------------");
-        sensor.transformRotationMatrix([3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38], {'axisX':1, 'axisY':2}, (error, data) => {
+        sensor.transformRotationMatrix([3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38], {'x':1, 'y':2}, (error, data) => {
             if (error) {
                 console.info('Sensor_TransformCoordinateSystem_002 failed');
                 expect(false).assertTrue();
@@ -3500,7 +3500,7 @@ describe("SensorJsTest", function () {
     */
     it("Sensor_TransformCoordinateSystem_003", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_003----------------------------------");
-        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'axisX':1, 'axisY':2}).then((data) => {
+        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}).then((data) => {
             for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_TransformCoordinateSystem_003 data[ " + i + "] = " + data[i]);
                 expect(data[i]).assertEqual(transformCoordinateSystemResult[0][i]);
@@ -3521,7 +3521,7 @@ describe("SensorJsTest", function () {
     */
     it("Sensor_TransformCoordinateSystem_004", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_004----------------------------------");
-        sensor.transformRotationMatrix([3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39], {'axisX':1, 'axisY':3}).then((data) => {
+        sensor.transformRotationMatrix([3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39], {'x':1, 'y':3}).then((data) => {
             for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_TransformCoordinateSystem_004 data[ " + i + "] = " + data[i]);
                 expect(data[i]).assertEqual(transformCoordinateSystemResult[2][i]);
@@ -3642,7 +3642,7 @@ describe("SensorJsTest", function () {
     it('Sensor_TransformCoordinateSystem_009', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_008 start')
         try {
-            sensor.transformRotationMatrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], {'axisX':1, 'axisY':1}).then((data)=>{
+            sensor.transformRotationMatrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], {'x':1, 'y':1}).then((data)=>{
                 console.info("Sensor_TransformCoordinateSystem_009" + data)
                 expect(true).assertfalse()
                 done()
@@ -3668,7 +3668,7 @@ describe("SensorJsTest", function () {
     it('Sensor_TransformCoordinateSystem_010', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_010 start')
         try {
-            sensor.transformRotationMatrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], {'axisX':1, 'axisY':1}, (error, data) => {
+            sensor.transformRotationMatrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], {'x':1, 'y':1}, (error, data) => {
                 if (error) {
                     console.info('Sensor_TransformCoordinateSystem_010 failed');
                     expect(false).assertTrue();

@@ -528,6 +528,24 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
+static napi_value GetAxisX(napi_env env, napi_value value)
+{
+    napi_value napiAxisX = GetNamedProperty(env, value, "x");
+    if (napiAxisX == nullptr) {
+        napiAxisX = GetNamedProperty(env, value, "axisX");
+    }
+    return napiAxisX;
+}
+
+static napi_value GetAxisY(napi_env env, napi_value value)
+{
+    napi_value napiAxisY = GetNamedProperty(env, value, "y");
+    if (napiAxisY == nullptr) {
+        napiAxisY = GetNamedProperty(env, value, "axisY");
+    }
+    return napiAxisY;
+}
+
 static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -553,7 +571,7 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
         ThrowErr(env, PARAMETER_ERROR, "Wrong inRotationVector length");
         return nullptr;
     }
-    napi_value napiAxisX = GetNamedProperty(env, args[1], "axisX");
+    napi_value napiAxisX = GetAxisX(env, args[1]);
     if (napiAxisX == nullptr) {
         ThrowErr(env, PARAMETER_ERROR, "napiAxisX is null");
         return nullptr;
@@ -563,9 +581,9 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
         ThrowErr(env, PARAMETER_ERROR, "Get axisY fail");
         return nullptr;
     }
-    napi_value napiAxisY = GetNamedProperty(env, args[1], "axisY");
+    napi_value napiAxisY = GetAxisY(env, args[1]);
     if (napiAxisY == nullptr) {
-        ThrowErr(env, PARAMETER_ERROR, "napiAxisX is null");
+        ThrowErr(env, PARAMETER_ERROR, "napiAxisY is null");
         return nullptr;
     }
     int32_t axisY = 0;
