@@ -2477,7 +2477,7 @@ describe("SensorJsTest", function () {
     */
      it('SensorJsTest_107', 0, async function (done) {
         console.info("---------------------------SensorJsTest_107----------------------------------");
-        sensor.transformCoordinateSystem([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'axisX':1, 'axisY':2}, (error, data) => {
+        sensor.transformCoordinateSystem([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, (error, data) => {
             if (error) {
                 console.info('SensorJsTest_107 failed');
                 expect(false).assertTrue();
@@ -2497,7 +2497,7 @@ describe("SensorJsTest", function () {
     */
     it('SensorJsTest_108', 0, async function (done) {
         console.info("---------------------------SensorJsTest_108----------------------------------");
-        sensor.transformCoordinateSystem([3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38], {'axisX':1, 'axisY':2}, (error, data) => {
+        sensor.transformCoordinateSystem([3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38, 3.40282e+38], {'x':1, 'y':2}, (error, data) => {
             if (error) {
                 console.info('SensorJsTest_108 failed');
                 expect(false).assertTrue();
@@ -2517,7 +2517,7 @@ describe("SensorJsTest", function () {
     */
     it("SensorJsTest_109", 0, async function (done) {
         console.info("---------------------------SensorJsTest_109----------------------------------");
-        sensor.transformCoordinateSystem([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'axisX':1, 'axisY':2}).then((data) => {
+        sensor.transformCoordinateSystem([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}).then((data) => {
             for (var i = 0; i < data.length; i++) {
                 console.info("SensorJsTest_109 data[ " + i + "] = " + data[i]);
                 expect(data[i]).assertEqual(transformCoordinateSystemResult[0][i]);
@@ -2538,7 +2538,7 @@ describe("SensorJsTest", function () {
     */
     it("SensorJsTest_110", 0, async function (done) {
         console.info("---------------------------SensorJsTest_110----------------------------------");
-        sensor.transformCoordinateSystem([3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39], {'axisX':1, 'axisY':3}).then((data) => {
+        sensor.transformCoordinateSystem([3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39, 3.40282e+39], {'x':1, 'y':3}).then((data) => {
             for (var i = 0; i < data.length; i++) {
                 console.info("SensorJsTest_110 data[ " + i + "] = " + data[i]);
                 expect(data[i]).assertEqual(transformCoordinateSystemResult[2][i]);
