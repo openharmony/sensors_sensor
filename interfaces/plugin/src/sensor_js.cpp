@@ -424,11 +424,11 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
 
     std::vector<float> inRotationVector;
     CHKNCP(env, GetFloatArray(env, args[0], inRotationVector), "Wrong argument type, get inRotationVector fail");
-    napi_value napiAxisX = GetNamedProperty(env, args[1], "axisX");
+    napi_value napiAxisX = GetNamedProperty(env, args[1], "x");
     CHKNCP(env, (napiAxisX != nullptr), "napiAxisX is null");
     int32_t axisX = 0;
     CHKNCP(env, GetCppInt32(env, napiAxisX, axisX), "Get axisY fail");
-    napi_value napiAxisY = GetNamedProperty(env, args[1], "axisY");
+    napi_value napiAxisY = GetNamedProperty(env, args[1], "y");
     CHKNCP(env, (napiAxisY != nullptr), "napiAxisY is null");
     int32_t axisY = 0;
     CHKNCP(env, GetCppInt32(env, napiAxisY, axisY), "Get axisY fail");
