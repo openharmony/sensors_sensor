@@ -530,20 +530,12 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
 
 static napi_value GetAxisX(napi_env env, napi_value value)
 {
-    napi_value napiAxisX = GetNamedProperty(env, value, "x");
-    if (napiAxisX == nullptr) {
-        napiAxisX = GetNamedProperty(env, value, "axisX");
-    }
-    return napiAxisX;
+    return GetNamedProperty(env, value, "x");
 }
 
 static napi_value GetAxisY(napi_env env, napi_value value)
 {
-    napi_value napiAxisY = GetNamedProperty(env, value, "y");
-    if (napiAxisY == nullptr) {
-        napiAxisY = GetNamedProperty(env, value, "axisY");
-    }
-    return napiAxisY;
+    return GetNamedProperty(env, value, "y");
 }
 
 static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info info)
