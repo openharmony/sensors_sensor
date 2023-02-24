@@ -69,7 +69,6 @@ bool FlushInfoRecord::IsFlushChannelValid(const std::vector<sptr<SensorBasicData
 {
     SEN_HILOGD("channel list size:%{public}u", static_cast<uint32_t>(currChannelList.size()));
     for (const auto &channel : currChannelList) {
-        SEN_HILOGD("channel:%{public}p,flushchannel:%{public}p", channel.GetRefPtr(), flushChannel.GetRefPtr());
         if (channel == flushChannel) {
             return true;
         }
