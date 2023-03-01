@@ -14,8 +14,8 @@
 group("unittest") {
   testonly = true
   deps = [
-    "sensor:SensorJsTest",
     "barometer:BarometerJsTest",
     "gyroscope:GyroscopeJsTest",
+    "sensor:SensorJsTest",
   ]
 }
