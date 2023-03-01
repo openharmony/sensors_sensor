@@ -52,7 +52,7 @@
           "name": "com.example.myapplication.MainAbility",
           "icon": "$media:icon",
           "description": "$string:mainability_description",
-          "label": "MyApplication",
+          "label": "SensorJsTest",
           "type": "page",
           "launchType": "standard"
         }

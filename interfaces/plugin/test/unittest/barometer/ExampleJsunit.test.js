@@ -12,26 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import deviceInfo from '@ohos.deviceInfo'
 import sensor from '@ohos.sensor'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
 
-describe("GyroscopeJsTest", function () {
+describe("BarometerJsTest", function () {
     function callback(data) {
         console.info("callback" + JSON.stringify(data));
-        expect(typeof(data.x)).assertEqual("number");
-        expect(typeof(data.y)).assertEqual("number");
-        expect(typeof(data.z)).assertEqual("number");
+        expect(typeof(data.pressure)).assertEqual("number");
     }
 
     function callback2(data) {
         console.info("callback2" + JSON.stringify(data));
-        expect(typeof(data.x)).assertEqual("number");
-        expect(typeof(data.y)).assertEqual("number");
-        expect(typeof(data.z)).assertEqual("number");
+        expect(typeof(data.pressure)).assertEqual("number");
     }
-
+ 
     beforeAll(function() {
         /*
          * @tc.setup: setup invoked before all testcases
@@ -66,15 +61,15 @@ describe("GyroscopeJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:GyroscopeJsTest_001
+     * @tc.name:BarometerJsTest_001
      * @tc.desc:verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("GyroscopeJsTest_001", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_001---------------------------');
+    it("BarometerJsTest_001", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_001---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -83,9 +78,9 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback);
+                        sensor.on(sensor.SensorId.BAROMETER, callback);
                         setTimeout(()=>{
-                            sensor.off(sensor.SensorId.GYROSCOPE);
+                            sensor.off(sensor.SensorId.BAROMETER);
                             done();
                         }, 500);
                     } catch (error) {
@@ -108,15 +103,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_002
+    * @tc.name:BarometerJsTest_002
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_002", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_002---------------------------');
+    it("BarometerJsTest_002", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_002---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -125,11 +120,11 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval':100000000});
+                        sensor.on(sensor.SensorId.BAROMETER, callback, {'interval':100000000});
                         setTimeout(()=>{
-                            console.info('------------------GyroscopeJsTest_002 off in-----------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('------------------GyroscopeJsTest_002 off end-----------------------');
+                            console.info('------------------BarometerJsTest_002 off in-----------------------');
+                            sensor.off(sensor.SensorId.BAROMETER);
+                            console.info('------------------BarometerJsTest_002 off end-----------------------');
                             done();
                         }, 500);
                     } catch (error) {
@@ -152,15 +147,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_003
+    * @tc.name:BarometerJsTest_003
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_003", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_003---------------------------');
+    it("BarometerJsTest_003", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_003---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -168,17 +163,17 @@ describe("GyroscopeJsTest", function () {
                 }
                 expect(typeof(data)).assertEqual("object");
                 function onSensorCallback(data) {
-                    console.info('GyroscopeJsTest_003  callback in');
+                    console.info('BarometerJsTest_003  callback in');
                     expect(true).assertTrue();
                     done();
                 }
                 if(data) {
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, onSensorCallback, {'interval': 100000000}, 5);
+                        sensor.on(sensor.SensorId.BAROMETER, onSensorCallback, {'interval': 100000000}, 5);
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_003 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_003 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_003 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER);
+                            console.info('----------------------BarometerJsTest_003 off end---------------------------');
                             done();
                         }, 500);
                     } catch (error) {
@@ -201,15 +196,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_004
+    * @tc.name:BarometerJsTest_004
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_004", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_004---------------------------');
+    it("BarometerJsTest_004", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_004---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -218,10 +213,10 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': -100000000});
-                        console.info('----------------------GyroscopeJsTest_004 off in---------------------------');
-                        sensor.off(sensor.SensorId.GYROSCOPE);
-                        console.info('----------------------GyroscopeJsTest_004 off end---------------------------');
+                        sensor.on(sensor.SensorId.BAROMETER, callback, {'interval': -100000000});
+                        console.info('----------------------BarometerJsTest_004 off in---------------------------');
+                        sensor.off(sensor.SensorId.BAROMETER);
+                        console.info('----------------------BarometerJsTest_004 off end---------------------------');
                         done();
                     } catch (error) {
                         console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
@@ -244,15 +239,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_005
+    * @tc.name:BarometerJsTest_005
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_005", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_005---------------------------');
+    it("BarometerJsTest_005", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_005---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -261,7 +256,7 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try {
-                        sensor.once(sensor.SensorId.GYROSCOPE, callback);
+                        sensor.once(sensor.SensorId.BAROMETER, callback);
                         setTimeout(()=>{
                             expect(true).assertTrue();
                             done();
@@ -286,15 +281,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_006
+    * @tc.name:BarometerJsTest_006
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_006", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_006---------------------------');
+    it("BarometerJsTest_006", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_006---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -303,7 +298,7 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try{
-                        sensor.once(sensor.SensorId.GYROSCOPE, callback, 5);
+                        sensor.once(sensor.SensorId.BAROMETER, callback, 5);
                         setTimeout(()=>{
                             expect(true).assertTrue();
                             done();
@@ -328,15 +323,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_007
+    * @tc.name:BarometerJsTest_007
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_007", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_007---------------------------');
+    it("BarometerJsTest_007", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_007---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -345,7 +340,7 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try{
-                        sensor.once(sensor.SensorId.GYROSCOPE, 5);
+                        sensor.once(sensor.SensorId.BAROMETER, 5);
                     } catch (error) {
                         console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
                         expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
@@ -367,15 +362,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_008
+    * @tc.name:BarometerJsTest_008
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_008", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_008---------------------------');
+    it("BarometerJsTest_008", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_008---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -405,15 +400,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_009
+    * @tc.name:BarometerJsTest_009
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_009", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_009---------------------------');
+    it("BarometerJsTest_009", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_009---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -422,12 +417,12 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback);
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2);
+                        sensor.on(sensor.SensorId.BAROMETER, callback);
+                        sensor.on(sensor.SensorId.BAROMETER, callback2);
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_009 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_009 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_009 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER);
+                            console.info('----------------------BarometerJsTest_009 off end---------------------------');
                             done();
                         }, 1000);
                     } catch (error) {
@@ -450,15 +445,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_010
+    * @tc.name:BarometerJsTest_010
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_010", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_010---------------------------');
+    it("BarometerJsTest_010", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_010---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -467,17 +462,17 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback);
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2);
+                        sensor.on(sensor.SensorId.BAROMETER, callback);
+                        sensor.on(sensor.SensorId.BAROMETER, callback2);
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_010 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback);
-                            console.info('----------------------GyroscopeJsTest_010 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_010 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER, callback);
+                            console.info('----------------------BarometerJsTest_010 off end---------------------------');
                         }, 500);
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_010 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback2);
-                            console.info('----------------------GyroscopeJsTest_010 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_010 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER, callback2);
+                            console.info('----------------------BarometerJsTest_010 off end---------------------------');
                             done();
                         }, 1000);
                     } catch (error) {
@@ -500,15 +495,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_011
+    * @tc.name:BarometerJsTest_011
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_011", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_011---------------------------');
+    it("BarometerJsTest_011", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_011---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -517,12 +512,12 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
-                        sensor.once(sensor.SensorId.GYROSCOPE, callback2);
+                        sensor.on(sensor.SensorId.BAROMETER, callback, {'interval': 100000000});
+                        sensor.once(sensor.SensorId.BAROMETER, callback2);
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_011 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_011 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_011 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER);
+                            console.info('----------------------BarometerJsTest_011 off end---------------------------');
                             done();
                         }, 1000);
                     } catch (error) {
@@ -545,15 +540,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_012
+    * @tc.name:BarometerJsTest_012
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_012", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_012---------------------------');
+    it("BarometerJsTest_012", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_012---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -562,17 +557,17 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
+                        sensor.on(sensor.SensorId.BAROMETER, callback, {'interval': 100000000});
+                        sensor.on(sensor.SensorId.BAROMETER, callback2, {'interval': 100000000});
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_012 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback);
-                            console.info('----------------------GyroscopeJsTest_012 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_012 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER, callback);
+                            console.info('----------------------BarometerJsTest_012 off end---------------------------');
                         }, 500);
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_012 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback2);
-                            console.info('----------------------GyroscopeJsTest_012 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_012 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER, callback2);
+                            console.info('----------------------BarometerJsTest_012 off end---------------------------');
                             done();
                         }, 1000);
                     } catch (error) {
@@ -595,15 +590,15 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_013
+    * @tc.name:BarometerJsTest_013
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("GyroscopeJsTest_013", 0, async function (done) {
-        console.info('----------------------GyroscopeJsTest_013---------------------------');
+    it("BarometerJsTest_013", 0, async function (done) {
+        console.info('----------------------BarometerJsTest_013---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.BAROMETER, (err, data) => {
                 if(err) {
                     console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
@@ -612,12 +607,12 @@ describe("GyroscopeJsTest", function () {
                 expect(typeof(data)).assertEqual("object");
                 if(data) {            
                     try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
+                        sensor.on(sensor.SensorId.BAROMETER, callback, {'interval': 100000000});
+                        sensor.on(sensor.SensorId.BAROMETER, callback2, {'interval': 100000000});
                         setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_013 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_013 off end---------------------------');
+                            console.info('----------------------BarometerJsTest_013 off in---------------------------');
+                            sensor.off(sensor.SensorId.BAROMETER);
+                            console.info('----------------------BarometerJsTest_013 off end---------------------------');
                             done();
                         }, 1000);
                     } catch (error) {
