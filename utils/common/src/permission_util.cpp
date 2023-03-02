@@ -67,5 +67,15 @@ void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::strin
             permissionName.c_str(), successCount, failCount);
     }
 }
+
+bool PermissionUtil::IsNativeToken(AccessTokenID tokenID)
+{
+    int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenID);
+    if (tokenType != ATokenTypeEnum::TOKEN_NATIVE) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE, tokenType:%{public}d", tokenType);
+        return false;
+    }
+    return true;
+}
 }  // namespace Sensors
 }  // namespace OHOS
