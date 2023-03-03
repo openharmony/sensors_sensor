@@ -21,7 +21,7 @@ ohos_shared_library("libsensor") {
     "//third_party/libuv/include",
     "//commonlibrary/c_utils/base/include",
     "./include",
-    "//base/sensors/sensor/utils/common/include",
+    "./../../utils/common/include",
     "//foundation/arkui/napi/interfaces/inner_api/napi",
   ]
   defines = [

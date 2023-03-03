@@ -13,8 +13,6 @@
 
 import("//build/ohos.gni")
 
-SUBSYSTEM_DIR = "//base/sensors"
-
 ohos_shared_library("libsensor_utils") {
   sources = [
     "src/app_sensor.cpp",
@@ -28,10 +26,7 @@ ohos_shared_library("libsensor_utils") {
 
   include_dirs = [
     "include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
-    "//drivers/peripheral/sensor/interfaces/include",
-    "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
+    "./../../interfaces/native/include",
   ]
 
   external_deps = [
