@@ -34,13 +34,14 @@ public:
     void SetFifoCacheData(const std::vector<SensorData> &fifoCacheData);
     std::vector<SensorData> GetFifoCacheData() const;
     void SetChannel(const sptr<SensorBasicDataChannel> &channel);
-    sptr<SensorBasicDataChannel> GetChannel() const;
+    wptr<SensorBasicDataChannel> GetChannel() const;
+    bool IsSameChannel(const sptr<SensorBasicDataChannel> &channel) const;
     void InitFifoCache();
 
 private:
     DISALLOW_COPY_AND_MOVE(FifoCacheData);
     uint64_t periodCount_;
-    sptr<SensorBasicDataChannel> channel_;
+    wptr<SensorBasicDataChannel> channel_;
     std::vector<SensorData> fifoCacheData_;
 };
 }  // namespace Sensors
