@@ -64,11 +64,6 @@ void FifoCacheData::SetChannel(const sptr<SensorBasicDataChannel> &channel)
     channel_ = channel;
 }
 
-wptr<SensorBasicDataChannel> FifoCacheData::GetChannel() const
-{
-    return channel_;
-}
-
 bool FifoCacheData::IsSameChannel(const sptr<SensorBasicDataChannel> &channel) const
 {
     CHKPF(channel);
