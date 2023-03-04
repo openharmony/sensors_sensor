@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "app_sensor.h"
+#include "subscribe_info.h"
 
 #include "sensors_errors.h"
 
@@ -21,69 +21,69 @@ namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "AppSensor" };
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SubscribeInfo" };
 }
 
-AppSensor::AppSensor(int32_t pid, SensorStatus sensorStatus)
+SubscribeInfo::SubscribeInfo(SubscribeSensorInfo subscribeSensorInfo)
 {
-    pid_ = pid;
-    sensorId_ = sensorStatus.sensorId;
-    isActive_ = sensorStatus.isActive;
-    samplingPeriodNs_ = sensorStatus.samplingPeriodNs;
-    maxReportDelayNs_ = sensorStatus.maxReportDelayNs;
+    pid_ = subscribeSensorInfo.pid;
+    sensorId_ = subscribeSensorInfo.sensorId;
+    isActive_ = subscribeSensorInfo.isActive;
+    samplingPeriodNs_ = subscribeSensorInfo.samplingPeriodNs;
+    maxReportDelayNs_ = subscribeSensorInfo.maxReportDelayNs;
 }
 
-int32_t AppSensor::GetPid() const
+int32_t SubscribeInfo::GetPid() const
 {
     return pid_;
 }
 
-void AppSensor::SetPid(int32_t pid)
+void SubscribeInfo::SetPid(int32_t pid)
 {
     pid_ = pid;
 }
 
-int32_t AppSensor::GetSensorId() const
+int32_t SubscribeInfo::GetSensorId() const
 {
     return sensorId_;
 }
 
-void AppSensor::SetSensorId(int32_t sensorId)
+void SubscribeInfo::SetSensorId(int32_t sensorId)
 {
     sensorId_ = sensorId;
 }
 
-bool AppSensor::IsActive() const
+bool SubscribeInfo::IsActive() const
 {
     return isActive_;
 }
 
-void AppSensor::Enable(bool isActive)
+void SubscribeInfo::Enable(bool isActive)
 {
     isActive_ = isActive;
 }
 
-int64_t AppSensor::GetSamplingPeriodNs() const
+int64_t SubscribeInfo::GetSamplingPeriodNs() const
 {
     return samplingPeriodNs_;
 }
 
-void AppSensor::SetSamplingPeriodNs(int64_t samplingPeriodNs)
+void SubscribeInfo::SetSamplingPeriodNs(int64_t samplingPeriodNs)
 {
     samplingPeriodNs_ = samplingPeriodNs;
 }
 
-int64_t AppSensor::GetMaxReportDelayNs() const
+int64_t SubscribeInfo::GetMaxReportDelayNs() const
 {
     return maxReportDelayNs_;
 }
 
-void AppSensor::SetMaxReportDelayNs(int64_t maxReportDelayNs)
+void SubscribeInfo::SetMaxReportDelayNs(int64_t maxReportDelayNs)
 {
     maxReportDelayNs_ = maxReportDelayNs;
 }
 
-bool AppSensor::Marshalling(Parcel &parcel) const
+bool SubscribeInfo::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteInt32(pid_)) {
         SEN_HILOGE("Write pid failed");
@@ -108,7 +108,7 @@ bool AppSensor::Marshalling(Parcel &parcel) const
     return true;
 }
 
-std::unique_ptr<AppSensor> AppSensor::Unmarshalling(Parcel &parcel)
+std::unique_ptr<SubscribeInfo> SubscribeInfo::Unmarshalling(Parcel &parcel)
 {
     int32_t pid = -1;
     int32_t sensorId = -1;
@@ -120,13 +120,13 @@ std::unique_ptr<AppSensor> AppSensor::Unmarshalling(Parcel &parcel)
         SEN_HILOGE("ReadFromParcel is failed");
         return nullptr;
     }
-    auto appSensor = std::make_unique<AppSensor>();
-    appSensor->SetPid(pid);
-    appSensor->SetSensorId(sensorId);
-    appSensor->Enable(isActive);
-    appSensor->SetSamplingPeriodNs(samplingPeriodNs);
-    appSensor->SetMaxReportDelayNs(maxReportDelayNs);
-    return appSensor;
+    auto subscribeInfo = std::make_unique<SubscribeInfo>();
+    subscribeInfo->SetPid(pid);
+    subscribeInfo->SetSensorId(sensorId);
+    subscribeInfo->Enable(isActive);
+    subscribeInfo->SetSamplingPeriodNs(samplingPeriodNs);
+    subscribeInfo->SetMaxReportDelayNs(maxReportDelayNs);
+    return subscribeInfo;
 }
 }  // namespace Sensors
 }  // namespace OHOS

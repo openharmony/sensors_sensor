@@ -32,11 +32,12 @@ void NetPacket::MakeData(StreamBuffer &buf) const
 {
     PACKHEAD head = {msgId_, wPos_};
     buf << head;
-    if (wPos_ > 0) {
-        if (!buf.Write(&szBuff_[0], wPos_)) {
-            SEN_HILOGE("Write data to stream failed, errCode:%{public}d", PROTO_STREAM_BUF_WRITE_FAIL);
-            return;
-        }
+    if (wPos_ < 0) {
+        return;
+    }
+    if (!buf.Write(&szBuff_[0], wPos_)) {
+        SEN_HILOGE("Write data to stream failed, errCode:%{public}d", PROTO_STREAM_BUF_WRITE_FAIL);
+        return;
     }
 }
 

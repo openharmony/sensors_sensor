@@ -37,6 +37,7 @@ public:
     double GetSystemCpuUsage();
     double GetProcCpuUsage(const std::string& process_name);
     int32_t GetTaskPidFile(const std::string& process_name);
+
 private:
     struct Total_Cpu_Occupy {
         char name[20] { 0 };
