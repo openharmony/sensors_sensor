@@ -15,13 +15,13 @@ import("//build/ohos.gni")
 
 ohos_shared_library("libsensor_utils") {
   sources = [
+    "src/active_info.cpp",
     "src/permission_util.cpp",
     "src/report_data_callback.cpp",
     "src/sensor.cpp",
     "src/sensor_basic_data_channel.cpp",
     "src/sensor_basic_info.cpp",
     "src/sensor_channel_info.cpp",
-    "src/subscribe_info.cpp",
   ]
 
   include_dirs = [
