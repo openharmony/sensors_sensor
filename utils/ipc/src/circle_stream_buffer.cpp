@@ -44,7 +44,7 @@ bool CircleStreamBuffer::Write(const char *buf, size_t size)
 void CircleStreamBuffer::CopyDataToBegin()
 {
     int32_t unreadSize = UnreadSize();
-    if (unreadSize > 0 && rPos_ > 0 && sizeof(szBuff_) > wPos_) {
+    if (unreadSize > 0 && rPos_ > 0) {
         int32_t pos = 0;
         for (int32_t i = rPos_; i <= wPos_;) {
             szBuff_[pos++] = szBuff_[i++];
