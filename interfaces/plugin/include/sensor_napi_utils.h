@@ -57,6 +57,8 @@ bool CreateFailMessage(CallbackDataType type, int32_t code, string message,
     sptr<AsyncCallbackInfo> &asyncCallbackInfo);
 bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
+void ReleaseCallback(sptr<AsyncCallbackInfo> asyncCallbackInfo);
+
 
 #define CHKNCF(env, cond, message) \
     do { \

@@ -111,14 +111,16 @@ public:
     ~AsyncCallbackInfo()
     {
         CALL_LOG_ENTER;
-        if (asyncWork != nullptr) {
-            SEN_HILOGD("Delete async work");
-            napi_delete_async_work(env, asyncWork);
-        }
-        for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
-            if (callback[i] != nullptr) {
-                SEN_HILOGD("Delete reference, i:%{public}d", i);
-                napi_delete_reference(env, callback[i]);
+        if (type != ONCE_CALLBACK) {
+            if (asyncWork != nullptr) {
+                SEN_HILOGD("Delete async work");
+                napi_delete_async_work(env, asyncWork);
+            }
+            for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
+                if (callback[i] != nullptr) {
+                    SEN_HILOGD("Delete reference, i:%{public}d", i);
+                    napi_delete_reference(env, callback[i]);
+                }
             }
         }
         if (work != nullptr) {
