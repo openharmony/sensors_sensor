@@ -24,7 +24,7 @@ class ActiveInfo : public Parcelable {
 public:
     ActiveInfo() = default;
     ActiveInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    virtual ~ActiveInfo() = default;
+    ~ActiveInfo() = default;
     int32_t GetPid() const;
     void SetPid(int32_t pid);
     int32_t GetSensorId() const;

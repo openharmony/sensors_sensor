@@ -21,21 +21,20 @@ namespace OHOS {
 namespace Sensors {
 bool CircleStreamBuffer::CheckWrite(size_t size)
 {
-    int32_t bufferSize = static_cast<int32_t>(size);
-    int32_t availSize = GetAvailableBufSize();
-    if (bufferSize > availSize && rPos_ > 0) {
+    size_t availSize = GetAvailableBufSize();
+    if (size > availSize && rPos_ > 0) {
         CopyDataToBegin();
         availSize = GetAvailableBufSize();
     }
-    return (availSize >= bufferSize);
+    return (availSize >= size);
 }
 
 bool CircleStreamBuffer::Write(const char *buf, size_t size)
 {
     if (!CheckWrite(size)) {
-        SEN_HILOGE("Out of buffer memory, availableSize:%{public}d, size:%{public}zu,"
-            "unreadSize:%{public}d, rPos:%{public}d, wPos:%{public}d",
-            GetAvailableBufSize(), size, UnreadSize(), rPos_, wPos_);
+        SEN_HILOGE("Out of buffer memory, availableSize:%{public}zu, size:%{public}zu,"
+                   "unreadSize:%{public}zu, rPos:%{public}zu, wPos:%{public}zu",
+                   GetAvailableBufSize(), size, UnreadSize(), rPos_, wPos_);
         return false;
     }
     return StreamBuffer::Write(buf, size);
@@ -43,14 +42,14 @@ bool CircleStreamBuffer::Write(const char *buf, size_t size)
 
 void CircleStreamBuffer::CopyDataToBegin()
 {
-    int32_t unreadSize = UnreadSize();
+    size_t unreadSize = UnreadSize();
     if (unreadSize > 0 && rPos_ > 0) {
-        int32_t pos = 0;
-        for (int32_t i = rPos_; i <= wPos_;) {
+        size_t pos = 0;
+        for (size_t i = rPos_; i <= wPos_;) {
             szBuff_[pos++] = szBuff_[i++];
         }
     }
-    SEN_HILOGD("UnreadSize:%{public}d, rPos:%{public}d, wPos:%{public}d", unreadSize, rPos_, wPos_);
+    SEN_HILOGD("UnreadSize:%{public}zu, rPos:%{public}zu, wPos:%{public}zu", unreadSize, rPos_, wPos_);
     rPos_ = 0;
     wPos_ = unreadSize;
 }

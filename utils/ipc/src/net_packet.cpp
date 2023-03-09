@@ -19,7 +19,8 @@
 
 namespace OHOS {
 namespace Sensors {
-NetPacket::NetPacket(MessageId msgId) : msgId_(msgId) {}
+NetPacket::NetPacket(MessageId msgId) : msgId_(msgId)
+{}
 
 NetPacket::NetPacket(const NetPacket &pkt) : NetPacket(pkt.GetMsgId())
 {
@@ -34,7 +35,7 @@ void NetPacket::MakeData(StreamBuffer &buf) const
     buf << head;
     if (wPos_ > 0) {
         if (!buf.Write(&szBuff_[0], wPos_)) {
-            SEN_HILOGE("Write data to stream failed, errCode:%{public}d", PROTO_STREAM_BUF_WRITE_FAIL);
+            SEN_HILOGE("Write data to stream failed");
             return;
         }
     }
@@ -45,9 +46,9 @@ size_t NetPacket::GetSize() const
     return Size();
 }
 
-int32_t NetPacket::GetPacketLength() const
+size_t NetPacket::GetPacketLength() const
 {
-    return (static_cast<int32_t>(sizeof(PackHead)) + wPos_);
+    return sizeof(PackHead) + wPos_;
 }
 
 const char* NetPacket::GetData() const

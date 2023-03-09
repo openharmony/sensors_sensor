@@ -37,7 +37,7 @@ public:
     virtual ~NetPacket();
     virtual void MakeData(StreamBuffer &buf) const;
     size_t GetSize() const;
-    int32_t GetPacketLength() const;
+    size_t GetPacketLength() const;
     const char* GetData() const;
     MessageId GetMsgId() const;
     DISALLOW_MOVE(NetPacket);
