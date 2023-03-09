@@ -22,7 +22,7 @@
 #pragma pack(1)
 using PACKHEAD = struct PackHead {
     OHOS::Sensors::MessageId idMsg;
-    int32_t size;
+    size_t size;
 };
 
 #pragma pack()
@@ -34,8 +34,8 @@ public:
     explicit NetPacket(MessageId msgId);
     NetPacket(const NetPacket &pkt);
     NetPacket &operator = (const NetPacket &pkt);
-    virtual ~NetPacket();
-    virtual void MakeData(StreamBuffer &buf) const;
+    ~NetPacket() = default;
+    void MakeData(StreamBuffer &buf) const;
     size_t GetSize() const;
     size_t GetPacketLength() const;
     const char* GetData() const;

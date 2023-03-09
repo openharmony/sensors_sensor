@@ -32,7 +32,7 @@ bool CircleStreamBuffer::CheckWrite(size_t size)
 bool CircleStreamBuffer::Write(const char *buf, size_t size)
 {
     if (!CheckWrite(size)) {
-        SEN_HILOGE("Out of buffer memory, availableSize:%{public}zu, size:%{public}zu,"
+        SEN_HILOGE("Buffer is overflow, availableSize:%{public}zu, size:%{public}zu,"
                    "unreadSize:%{public}zu, rPos:%{public}zu, wPos:%{public}zu",
                    GetAvailableBufSize(), size, UnreadSize(), rPos_, wPos_);
         return false;
