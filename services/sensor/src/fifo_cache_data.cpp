@@ -19,11 +19,11 @@
 
 namespace OHOS {
 namespace Sensors {
-using namespace OHOS::HiviewDFX;
+// using namespace OHOS::HiviewDFX;
 
-namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FifoCacheData" };
-}  // namespace
+// namespace {
+// constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FifoCacheData" };
+// }  // namespace
 
 FifoCacheData::FifoCacheData() : periodCount_(0), channel_(nullptr)
 {}
@@ -64,12 +64,17 @@ void FifoCacheData::SetChannel(const sptr<SensorBasicDataChannel> &channel)
     channel_ = channel;
 }
 
-bool FifoCacheData::IsSameChannel(const sptr<SensorBasicDataChannel> &channel) const
+sptr<SensorBasicDataChannel> FifoCacheData::GetChannel() const
 {
-    CHKPF(channel);
-    sptr<SensorBasicDataChannel> promoteChannel = channel_.promote();
-    CHKPF(promoteChannel);
-    return (channel == promoteChannel);
+    return channel_.promote();
 }
+
+// bool FifoCacheData::IsSameChannel(const sptr<SensorBasicDataChannel> &channel) const
+// {
+//     CHKPF(channel);
+//     sptr<SensorBasicDataChannel> promoteChannel = channel_.promote();
+//     CHKPF(promoteChannel);
+//     return (channel == promoteChannel);
+// }
 }  // namespace Sensors
 }  // namespace OHOS

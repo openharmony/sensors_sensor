@@ -49,12 +49,14 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<int32_t, Sens
                                                 sptr<SensorBasicDataChannel> &channel, SensorData &data,
                                                 uint64_t periodCount)
 {
+    SEN_HILOGI("ZMH DEBUG: SendNoneFifoCacheData In");
     std::vector<SensorData> sendEvents;
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     sendEvents.push_back(data);
     int32_t sensorId = data.sensorTypeId;
     auto dataCountIt = dataCountMap_.find(sensorId);
     if (dataCountIt == dataCountMap_.end()) {
+        SEN_HILOGI("ZMH DEBUG: dataCountIt == dataCountMap_.end()");
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         CHKPV(fifoCacheData);
@@ -65,11 +67,23 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<int32_t, Sens
         return;
     }
     bool channelExist = false;
-    for (const auto &fifoCacheData : dataCountIt->second) {
-        if (!fifoCacheData->IsSameChannel(channel)) {
+    SEN_HILOGI("ZMH DEBUG: FifoCacheDataList size:%{public}zu", dataCountIt->second.size());
+    auto fifoIt = dataCountIt->second.begin();
+    for (; fifoIt != dataCountIt->second.end();) {
+        auto fifoCacheData = *fifoIt;
+        auto fifoChannel = fifoCacheData->GetChannel();
+        if (fifoChannel == nullptr) {
+            SEN_HILOGI("ZMH DEBUG: fifoChannel == nullptr");
+            fifoIt = dataCountIt->second.erase(fifoIt);
+            continue;
+        } 
+        fifoIt++;
+        if (fifoChannel != channel) {
+            SEN_HILOGI("ZMH DEBUG: fifoChannel != channel");
             continue;
         }
         channelExist = true;
+        SEN_HILOGI("ZMH DEBUG: channelExist = true");
         uint64_t curCount = fifoCacheData->GetPeriodCount();
         curCount++;
         fifoCacheData->SetPeriodCount(curCount);
@@ -78,9 +92,11 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<int32_t, Sens
         }
         SendRawData(cacheBuf, channel, sendEvents);
         fifoCacheData->SetPeriodCount(0);
+        SEN_HILOGI("ZMH DEBUG: SendRawData()");
         return;
     }
     if (!channelExist) {
+        SEN_HILOGI("ZMH DEBUG: channelExist = false");
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         CHKPV(fifoCacheData);
         fifoCacheData->SetChannel(channel);
@@ -93,11 +109,13 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
                                             sptr<SensorBasicDataChannel> &channel, SensorData &data,
                                             uint64_t periodCount, uint64_t fifoCount)
 {
+    SEN_HILOGI("ZMH DEBUG: SendFifoCacheData In");
     int32_t sensorId = data.sensorTypeId;
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     auto dataCountIt = dataCountMap_.find(sensorId);
     // there is no channelFifoList
     if (dataCountIt == dataCountMap_.end()) {
+        SEN_HILOGI("ZMH DEBUG: dataCountIt == dataCountMap_.end()");
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         CHKPV(fifoCacheData);
@@ -108,11 +126,23 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
     }
     // find channel in channelFifoList
     bool channelExist = false;
-    for (auto &fifoData : dataCountIt->second) {
-        if (!fifoData->IsSameChannel(channel)) {
+    SEN_HILOGI("ZMH DEBUG: FifoCacheDataList size:%{public}zu", dataCountIt->second.size());
+    auto fifoIt = dataCountIt->second.begin();
+    for (; fifoIt != dataCountIt->second.end();) {
+        auto fifoData = *fifoIt;
+        auto fifoChannel = fifoData->GetChannel();
+        if (fifoChannel == nullptr) {
+            SEN_HILOGI("ZMH DEBUG: fifoChannel == nullptr");
+            fifoIt = dataCountIt->second.erase(fifoIt);
+            continue;
+        } 
+        fifoIt++;
+        if (fifoChannel != channel) {
+            SEN_HILOGI("ZMH DEBUG: fifoChannel != channel");
             continue;
         }
         channelExist = true;
+        SEN_HILOGI("ZMH DEBUG: channelExist = true");
         uint64_t curCount = fifoData->GetPeriodCount();
         curCount++;
         fifoData->SetPeriodCount(curCount);
@@ -128,10 +158,12 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
         }
         SendRawData(cacheBuf, channel, fifoData->GetFifoCacheData());
         fifoData->InitFifoCache();
+        SEN_HILOGI("ZMH DEBUG: SendRawData()");
         return;
     }
     // cannot find channel in channelFifoList
     if (!channelExist) {
+        SEN_HILOGI("ZMH DEBUG: channelExist = false");
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         CHKPV(fifoCacheData);
         fifoCacheData->SetChannel(channel);
