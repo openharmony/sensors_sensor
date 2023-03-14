@@ -84,7 +84,7 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, Sen
     }
     bool channelExist = false;
     for (const auto &fifoCacheData : dataCountIt->second) {
-        if (fifoCacheData->GetChannel() != channel) {
+        if (!fifoCacheData->IsSameChannel(channel)) {
             continue;
         }
         channelExist = true;
@@ -130,7 +130,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, SensorE
     // find channel in channelFifoList
     bool channelExist = false;
     for (auto &fifoData : dataCountIt->second) {
-        if (fifoData->GetChannel() != channel) {
+        if (!fifoData->IsSameChannel(channel)) {
             continue;
         }
         channelExist = true;
