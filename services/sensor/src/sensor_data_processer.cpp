@@ -71,7 +71,7 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<int32_t, Sens
         if (fifoChannel == nullptr) {
             fifoIt = dataCountIt->second.erase(fifoIt);
             continue;
-        } 
+        }
         fifoIt++;
         if (fifoChannel != channel) {
             continue;
@@ -121,7 +121,7 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
         if (fifoChannel == nullptr) {
             fifoIt = dataCountIt->second.erase(fifoIt);
             continue;
-        } 
+        }
         fifoIt++;
         if (fifoChannel != channel) {
             continue;
