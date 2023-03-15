@@ -104,7 +104,6 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
     int32_t sensorId = data.sensorTypeId;
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     auto dataCountIt = dataCountMap_.find(sensorId);
-    // there is no channelFifoList
     if (dataCountIt == dataCountMap_.end()) {
         std::vector<sptr<FifoCacheData>> channelFifoList;
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
@@ -114,7 +113,6 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
         dataCountMap_.insert(std::make_pair(sensorId, channelFifoList));
         return;
     }
-    // find channel in channelFifoList
     bool channelExist = false;
     for (auto fifoIt = dataCountIt->second.begin(); fifoIt != dataCountIt->second.end();) {
         auto fifoData = *fifoIt;
@@ -146,7 +144,6 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<int32_t, SensorDa
         fifoData->InitFifoCache();
         return;
     }
-    // cannot find channel in channelFifoList
     if (!channelExist) {
         sptr<FifoCacheData> fifoCacheData = new (std::nothrow) FifoCacheData();
         CHKPV(fifoCacheData);
