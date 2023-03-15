@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +36,8 @@ class CpuInfo : public SystemInfo {
 public:
     double GetSystemCpuUsage();
     double GetProcCpuUsage(const std::string& process_name);
+    int32_t GetTaskPidFile(const std::string& process_name);
+
 private:
     struct Total_Cpu_Occupy {
         char name[20] { 0 };
@@ -56,7 +58,6 @@ private:
         int32_t cutime { 0 };
         int32_t cstime { 0 };
     };
-    int32_t GetTaskPidFile(const std::string& process_name);
     int32_t GetProcOccupy(int32_t pid);
 
     int32_t GetSystemCpuStatInfo(Total_Cpu_Occupy& info);

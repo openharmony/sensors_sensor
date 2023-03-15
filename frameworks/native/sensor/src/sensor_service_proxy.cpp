@@ -46,19 +46,19 @@ ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPerio
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
         SEN_HILOGE("write descriptor failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     if (!data.WriteInt32(sensorId)) {
         SEN_HILOGE("write sensorId failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     if (!data.WriteInt64(samplingPeriodNs)) {
         SEN_HILOGE("write samplingPeriodNs failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     if (!data.WriteInt64(maxReportDelayNs)) {
         SEN_HILOGE("write maxReportDelayNs failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
@@ -78,11 +78,11 @@ ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
         SEN_HILOGE("write descriptor failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     if (!data.WriteInt32(sensorId)) {
         SEN_HILOGE("write sensorId failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
@@ -147,12 +147,12 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
         SEN_HILOGE("write descriptor failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     sensorBasicDataChannel->SendToBinder(data);
     if (!data.WriteRemoteObject(sensorClient)) {
         SEN_HILOGE("sensorClient failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
@@ -174,11 +174,11 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
         SEN_HILOGE("write descriptor failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     if (!data.WriteRemoteObject(sensorClient)) {
         SEN_HILOGE("write sensorClient failed");
-        return WRITE_MSG_ERR;
+        return WRITE_PARCEL_ERR;
     }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
