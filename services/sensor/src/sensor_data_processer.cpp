@@ -312,7 +312,7 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
             flushVec = it->second;
             for (auto &channel : flushVec) {
                 if (flushInfo_.IsFlushChannelValid(channelList, channel.flushChannel.promote())) {
-                    SendEvents(channel.flushChannel, eventsBuf.circularBuf[eventsBuf.readPos]);
+                    SendEvents(channel.flushChannel.promote(), eventsBuf.circularBuf[eventsBuf.readPos]);
                     flushInfo_.ClearFlushInfoItem(realSensorId);
                     break;
                 } else {
