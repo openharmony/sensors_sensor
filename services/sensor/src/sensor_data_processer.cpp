@@ -311,8 +311,9 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
         if (it != flushInfo.end()) {
             flushVec = it->second;
             for (auto &channel : flushVec) {
-                if (flushInfo_.IsFlushChannelValid(channelList, channel.flushChannel.promote())) {
-                    SendEvents(channel.flushChannel.promote(), eventsBuf.circularBuf[eventsBuf.readPos]);
+                auto flushChannel = channel.flushChannel.promote();
+                if (flushInfo_.IsFlushChannelValid(channelList, flushChannel)) {
+                    SendEvents(flushChannel, eventsBuf.circularBuf[eventsBuf.readPos]);
                     flushInfo_.ClearFlushInfoItem(realSensorId);
                     break;
                 } else {
