@@ -227,7 +227,6 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
             return ret;
         }
         ReportSensorSysEvent(sensorId, true, pid);
-        uint32_t flag = sensorManager_.GetSensorFlag(sensorId);
         if (ret != ERR_OK) {
             SEN_HILOGE("ret : %{public}d", ret);
         }
