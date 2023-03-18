@@ -75,7 +75,6 @@ private:
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
-    FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
     sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
     std::mutex uidLock_;
