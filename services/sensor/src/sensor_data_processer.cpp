@@ -83,8 +83,16 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, Sen
         return;
     }
     bool channelExist = false;
-    for (const auto &fifoCacheData : dataCountIt->second) {
-        if (!fifoCacheData->IsSameChannel(channel)) {
+    for (auto fifoIt = dataCountIt->second.begin(); fifoIt != dataCountIt->second.end();) {
+        auto fifoCacheData = *fifoIt;
+        CHKPC(fifoCacheData);
+        auto fifoChannel = fifoCacheData->GetChannel();
+        if (fifoChannel == nullptr) {
+            fifoIt = dataCountIt->second.erase(fifoIt);
+            continue;
+        }
+        ++fifoIt;
+        if (fifoChannel != channel) {
             continue;
         }
         channelExist = true;
@@ -129,8 +137,16 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, SensorE
     }
     // find channel in channelFifoList
     bool channelExist = false;
-    for (auto &fifoData : dataCountIt->second) {
-        if (!fifoData->IsSameChannel(channel)) {
+    for (auto fifoIt = dataCountIt->second.begin(); fifoIt != dataCountIt->second.end();) {
+        auto fifoData = *fifoIt;
+        CHKPC(fifoData);
+        auto fifoChannel = fifoData->GetChannel();
+        if (fifoChannel == nullptr) {
+            fifoIt = dataCountIt->second.erase(fifoIt);
+            continue;
+        }
+        ++fifoIt;
+        if (fifoChannel != channel) {
             continue;
         }
         channelExist = true;

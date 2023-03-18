@@ -33,7 +33,7 @@
 namespace OHOS {
 namespace Sensors {
 struct FlushInfo {
-    sptr<SensorBasicDataChannel> flushChannel;
+    wptr<SensorBasicDataChannel> flushChannel;
     bool flushFromEnable;
     FlushInfo(const sptr<SensorBasicDataChannel> &channel, bool enableFlush)
         : flushChannel(channel), flushFromEnable(enableFlush){};
