@@ -24,8 +24,8 @@
 #include <unistd.h>
 
 #include "proto.h"
-#include "stream_socket.h"
 #include "sensors_errors.h"
+#include "stream_socket.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -57,7 +57,7 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
     size_t retryCount = 0;
     size_t remSize = size;
     while (remSize > 0 && retryCount < SEND_RETRY_LIMIT) {
-        retryCount += 1;
+        ++retryCount;
         auto count = send(fd_, &buf[idx], remSize, MSG_DONTWAIT | MSG_NOSIGNAL);
         if (count < 0) {
             if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK) {

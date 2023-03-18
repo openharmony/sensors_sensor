@@ -17,8 +17,8 @@
 #define STREAM_SOCKET_H
 
 #include <atomic>
-#include <string>
 #include <functional>
+#include <string>
 
 #include <fcntl.h>
 #include <sys/epoll.h>

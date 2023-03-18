@@ -89,7 +89,7 @@ int32_t StreamSocket::EpollWait(struct epoll_event &events, int32_t maxevents, i
 void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::PacketCallBackFun callbackFun)
 {
     constexpr size_t headSize = sizeof(PackHead);
-    for (size_t i = 0; i < ONCE_PROCESS_NETPACKET_LIMIT; i++) {
+    for (size_t i = 0; i < ONCE_PROCESS_NETPACKET_LIMIT; ++i) {
         const size_t unreadSize = circBuf.UnreadSize();
         if (unreadSize < headSize) {
             break;
