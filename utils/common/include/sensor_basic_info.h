@@ -30,11 +30,14 @@ public:
     void SetMaxReportDelayNs(int64_t maxReportDelayNs);
     bool GetSensorState() const;
     void SetSensorState(bool sensorState);
+    bool GetPermState() const;
+    void SetPermState(bool permState);
 
 private:
     int64_t samplingPeriodNs_;
     int64_t maxReportDelayNs_;
     bool sensorState_ = false;
+    bool permState_ = true;
 };
 }  // namespace Sensors
 }  // namespace OHOS

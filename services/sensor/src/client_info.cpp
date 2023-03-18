@@ -38,6 +38,11 @@ constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 }  // namespace
 
+std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
+    { ACTIVITY_MOTION_PERMISSION, { SENSOR_TYPE_ID_PEDOMETER_DETECTION, SENSOR_TYPE_ID_PEDOMETER } },
+    { READ_HEALTH_DATA_PERMISSION, { SENSOR_TYPE_ID_HEART_RATE } }
+};
+
 bool ClientInfo::GetSensorState(int32_t sensorId)
 {
     CALL_LOG_ENTER;
@@ -48,7 +53,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
         return false;
     }
     for (const auto &pidIt : it->second) {
@@ -56,7 +61,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
             return true;
         }
     }
-    SEN_HILOGE("cannot find sensorinfo, sensorId:%{public}u", sensorId);
+    SEN_HILOGE("cannot find sensorInfo, sensorId:%{public}d", sensorId);
     return false;
 }
 
@@ -75,7 +80,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(int32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
         return sensorInfo;
     }
     for (const auto &pidIt : it->second) {
@@ -99,7 +104,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
         return false;
     }
     bool ret = false;
@@ -127,7 +132,7 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
     auto appThreadInfoItr = appThreadInfoMap_.find(pid);
     if (appThreadInfoItr == appThreadInfoMap_.end()) {
         if (appThreadInfoMap_.size() == MAX_SUPPORT_CHANNEL) {
-            SEN_HILOGE("max support channel size is %{public}u", MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("max support channel size is %{public}d", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = appThreadInfoMap_.insert(std::make_pair(pid, appThreadInfo));
@@ -201,7 +206,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t s
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto clientIt = clientMap_.find(sensorId);
     if (clientIt == clientMap_.end()) {
-        SEN_HILOGD("there is no channel belong to sensorId:%{public}u", sensorId);
+        SEN_HILOGD("there is no channel belong to sensorId:%{public}d", sensorId);
         return {};
     }
     std::vector<sptr<SensorBasicDataChannel>> sensorChannel;
@@ -209,6 +214,9 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t s
         std::lock_guard<std::mutex> channelLock(channelMutex_);
         auto channelIt = channelMap_.find(sensorInfoIt.first);
         if (channelIt == channelMap_.end()) {
+            continue;
+        }
+        if (!sensorInfoIt.second.GetPermState()) {
             continue;
         }
         sensorChannel.push_back(channelIt->second);
@@ -266,7 +274,7 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
         if (channelMap_.size() == MAX_SUPPORT_CHANNEL) {
-            SEN_HILOGE("max support channel size:%{public}u", MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("max support channel size:%{public}d", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = channelMap_.insert(std::make_pair(pid, channel));
@@ -363,7 +371,7 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(int32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}u", sensorId);
+        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
         return sensorInfo;
     }
     auto pidIt = it->second.find(pid);
@@ -439,7 +447,7 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorData &data)
         return ERR_OK;
     }
 
-    SEN_HILOGE("can't get store event, sensorId:%{public}u", sensorId);
+    SEN_HILOGE("can't get store event, sensorId:%{public}d", sensorId);
     return NO_STORE_EVENT;
 }
 
@@ -682,6 +690,50 @@ void ClientInfo::ClearDataQueue(int32_t sensorId)
     auto it = dumpQueue_.find(sensorId);
     if (it != dumpQueue_.end()) {
         dumpQueue_.erase(it);
+    }
+}
+
+int32_t ClientInfo::GetPidByTokenId(AccessTokenID tokenId)
+{
+    std::lock_guard<std::mutex> uidLock(uidMutex_);
+    int32_t pid = INVALID_PID;
+    for (const auto &it : appThreadInfoMap_) {
+        if (it.second.callerToken == tokenId) {
+            pid = it.second.pid;
+            break;
+        }
+    }
+    return pid;
+}
+
+void ClientInfo::UpdatePermState(int32_t pid, int32_t sensorId, bool state)
+{
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    auto it = clientMap_.find(sensorId);
+    if (it == clientMap_.end()) {
+        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
+        return;
+    }
+    auto clientInfo = it->second.find(pid);
+    if (clientInfo != it->second.end()) {
+        clientInfo->second.SetPermState(state);
+    }
+}
+
+void ClientInfo::ChangeSensorPerm(AccessTokenID tokenId, const std::string &permName, bool state)
+{
+    int32_t pid = GetPidByTokenId(tokenId);
+    if (pid < INVALID_PID) {
+        SEN_HILOGE("Invalid pid:%{public}d", pid);
+        return;
+    }
+    auto it = userGrantPermMap_.find(permName);
+    if (it == userGrantPermMap_.end()) {
+        SEN_HILOGE("Invalid permission name:%{public}s", permName.c_str());
+        return;
+    }
+    for (int32_t sensorId : it->second) {
+        UpdatePermState(pid, sensorId, state);
     }
 }
 }  // namespace Sensors

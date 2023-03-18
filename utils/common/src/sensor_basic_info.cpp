@@ -49,5 +49,15 @@ void SensorBasicInfo::SetSensorState(bool sensorState)
 {
     sensorState_ = sensorState;
 }
+
+bool SensorBasicInfo::GetPermState() const
+{
+    return permState_;
+}
+
+void SensorBasicInfo::SetPermState(bool permState)
+{
+    permState_ = permState;
+}
 }  // namespace Sensors
 }  // namespace OHOS
