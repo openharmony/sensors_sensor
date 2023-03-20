@@ -34,7 +34,7 @@ public:
     void SetFifoCacheData(const std::vector<SensorEvent> &fifoCacheData);
     std::vector<SensorEvent> GetFifoCacheData() const;
     void SetChannel(const sptr<SensorBasicDataChannel> &channel);
-    bool IsSameChannel(const sptr<SensorBasicDataChannel> &channel) const;
+    sptr<SensorBasicDataChannel> GetChannel() const;
     void InitFifoCache();
 
 private:

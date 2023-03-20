@@ -80,7 +80,7 @@ int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<FlushInfo> &flus
                                               const sptr<SensorBasicDataChannel> &channel)
 {
     for (size_t i = 0; i < flushInfoList.size(); i++) {
-        if (flushInfoList[i].flushChannel == channel) {
+        if (flushInfoList[i].flushChannel.promote() == channel) {
             return i;
         }
     }
