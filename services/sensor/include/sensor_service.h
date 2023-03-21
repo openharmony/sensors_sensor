@@ -57,6 +57,17 @@ public:
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
+
+    class PermStateChangeCb : public Security::AccessToken::PermStateChangeCallbackCustomize {
+    public:
+        PermStateChangeCb(const Security::AccessToken::PermStateChangeScope &scope,
+            sptr<SensorService> server) : PermStateChangeCallbackCustomize(scope), server_(server) {}
+        void PermStateChangeCallback(PermStateChangeInfo& result) override;
+
+    private:
+        sptr<SensorService> server_;
+    };
+
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);
     void UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient);
     bool InitInterface();
@@ -66,6 +77,8 @@ private:
     void ReportOnChangeData(int32_t sensorId);
     void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid);
     ErrCode DisableSensor(int32_t sensorId, int32_t pid);
+    bool RegisterPermCallback();
+    void UnregisterPermCallback();
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
@@ -80,6 +93,7 @@ private:
     std::mutex uidLock_;
     // death recipient of sensor client
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
+    std::shared_ptr<PermStateChangeCb> permStateChangeCb_;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
 };
 }  // namespace Sensors

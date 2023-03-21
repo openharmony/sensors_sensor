@@ -18,6 +18,7 @@
 
 #include <map>
 #include <queue>
+#include <set>
 #include <unordered_map>
 #include <vector>
 
@@ -74,6 +75,9 @@ public:
     void ClearDataQueue(int32_t sensorId);
     int32_t GetUidByPid(int32_t pid);
     AccessTokenID GetTokenIdByPid(int32_t pid);
+    int32_t GetPidByTokenId(AccessTokenID tokenId);
+    void UpdatePermState(int32_t pid, int32_t sensorId, bool state);
+    void ChangeSensorPerm(AccessTokenID tokenId, const std::string &permName, bool state);
 
 private:
     DISALLOW_COPY_AND_MOVE(ClientInfo);
@@ -92,6 +96,7 @@ private:
     std::map<sptr<IRemoteObject>, int32_t> clientPidMap_;
     std::unordered_map<int32_t, std::unordered_map<int32_t, std::vector<int32_t>>> cmdMap_;
     std::unordered_map<int32_t, std::queue<SensorData>> dumpQueue_;
+    static std::unordered_map<std::string, std::set<int32_t>> userGrantPermMap_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

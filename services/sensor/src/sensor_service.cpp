@@ -80,7 +80,9 @@ void SensorService::OnStart()
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
     }
-
+    if (!RegisterPermCallback()) {
+        SEN_HILOGE("RegisterPermCallback fail");
+    }
     if (!SystemAbility::Publish(this)) {
         SEN_HILOGE("publish SensorService error");
         return;
@@ -148,6 +150,7 @@ void SensorService::OnStop()
     if (ret != ERR_OK) {
         SEN_HILOGE("destroy hdi connect fail");
     }
+    UnregisterPermCallback();
 }
 
 void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid)
@@ -401,6 +404,38 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
     });
     sensorDump.ParseCommand(fd, argList, sensors_, clientInfo_);
     return ERR_OK;
+}
+
+bool SensorService::RegisterPermCallback()
+{
+    Security::AccessToken::PermStateChangeScope scope = {
+        .permList = { ACTIVITY_MOTION_PERMISSION, READ_HEALTH_DATA_PERMISSION }
+    };
+    permStateChangeCb_ = std::make_shared<PermStateChangeCb>(scope, this);
+    int32_t ret = Security::AccessToken::AccessTokenKit::RegisterPermStateChangeCallback(permStateChangeCb_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("RegisterPermStateChangeCallback fail");
+        return false;
+    }
+    return true;
+}
+
+void SensorService::UnregisterPermCallback()
+{
+    CHKPV(permStateChangeCb_);
+    int32_t ret = Security::AccessToken::AccessTokenKit::UnRegisterPermStateChangeCallback(permStateChangeCb_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("UnregisterPermStateChangeCallback fail");
+    }
+    permStateChangeCb_ = nullptr;
+}
+
+void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessToken::PermStateChangeInfo &result)
+{
+    CALL_LOG_ENTER;
+    CHKPV(server_);
+    server_->clientInfo_.ChangeSensorPerm(result.tokenID, result.permissionName,
+        (result.permStateChangeType != 0));
 }
 }  // namespace Sensors
 }  // namespace OHOS
