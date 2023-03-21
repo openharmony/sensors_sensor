@@ -24,10 +24,10 @@
 
 namespace OHOS {
 namespace Sensors {
-const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
-const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
-const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
-const std::string READ_HEALTH_DATA_PERMISSION = "ohos.permission.READ_HEALTH_DATA";
+const std::string SENSOR_ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
+const std::string SENSOR_GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
+const std::string SENSOR_ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
+const std::string SENSOR_READ_HEALTH_DATA_PERMISSION = "ohos.permission.READ_HEALTH_DATA";
 
 using namespace Security::AccessToken;
 class PermissionUtil : public Singleton<PermissionUtil> {

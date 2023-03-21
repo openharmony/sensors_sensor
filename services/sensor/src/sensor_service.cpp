@@ -409,7 +409,7 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 bool SensorService::RegisterPermCallback()
 {
     Security::AccessToken::PermStateChangeScope scope = {
-        .permList = { ACTIVITY_MOTION_PERMISSION, READ_HEALTH_DATA_PERMISSION }
+        .permList = { SENSOR_ACTIVITY_MOTION_PERMISSION, SENSOR_READ_HEALTH_DATA_PERMISSION }
     };
     permStateChangeCb_ = std::make_shared<PermStateChangeCb>(scope, this);
     int32_t ret = Security::AccessToken::AccessTokenKit::RegisterPermStateChangeCallback(permStateChangeCb_);

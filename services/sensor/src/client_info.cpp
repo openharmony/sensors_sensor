@@ -39,8 +39,9 @@ constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
 }  // namespace
 
 std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
-    { ACTIVITY_MOTION_PERMISSION, { SENSOR_TYPE_ID_PEDOMETER_DETECTION, SENSOR_TYPE_ID_PEDOMETER } },
-    { READ_HEALTH_DATA_PERMISSION, { SENSOR_TYPE_ID_HEART_RATE } }
+    { SENSOR_ACTIVITY_MOTION_PERMISSION,
+        { SENSOR_TYPE_ID_PEDOMETER_DETECTION, SENSOR_TYPE_ID_PEDOMETER } },
+    { SENSOR_READ_HEALTH_DATA_PERMISSION, { SENSOR_TYPE_ID_HEART_RATE } }
 };
 
 bool ClientInfo::GetSensorState(int32_t sensorId)
