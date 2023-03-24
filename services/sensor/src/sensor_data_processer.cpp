@@ -32,20 +32,6 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataProcesser" };
-
-enum {
-    FIRST_INDEX = 1,
-    SECOND_INDEX = 2,
-    THIRD_INDEX = 3,
-};
-
-constexpr uint32_t SENSOR_INDEX_SHIFT = 8;
-constexpr uint32_t SENSOR_TYPE_SHIFT = 16;
-constexpr uint32_t SENSOR_CATAGORY_SHIFT = 24;
-
-constexpr uint32_t FLUSH_COMPLETE_ID = ((uint32_t)OTHER << SENSOR_CATAGORY_SHIFT) |
-                                       ((uint32_t)SENSOR_TYPE_FLUSH << SENSOR_TYPE_SHIFT) |
-                                       ((uint32_t)FIRST_INDEX << SENSOR_INDEX_SHIFT);
 }  // namespace
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<uint32_t, Sensor> &sensorMap)
@@ -68,9 +54,6 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, Sen
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     sendEvents.push_back(event);
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     auto dataCountIt = dataCountMap_.find(sensorId);
     if (dataCountIt == dataCountMap_.end()) {
         std::vector<sptr<FifoCacheData>> channelFifoList;
@@ -120,9 +103,6 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, SensorE
                                             uint64_t periodCount, uint64_t fifoCount)
 {
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     auto dataCountIt = dataCountMap_.find(sensorId);
     // there is no channelFifoList
@@ -180,9 +160,6 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, Sens
 {
     CHKPV(channel);
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     auto &cacheBuf = const_cast<std::unordered_map<uint32_t, SensorEvent> &>(channel->GetDataCacheBuf());
     if (ReportNotContinuousData(cacheBuf, channel, event)) {
         return;
@@ -203,9 +180,6 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<uint32_t, S
                                                   sptr<SensorBasicDataChannel> &channel, SensorEvent &event)
 {
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     auto sensor = sensorMap_.find(sensorId);
     if (sensor == sensorMap_.end()) {
@@ -252,9 +226,6 @@ void SensorDataProcesser::SendRawData(std::unordered_map<uint32_t, SensorEvent> 
     if (ret != ERR_OK) {
         SEN_HILOGE("send data failed, ret:%{public}d", ret);
         uint32_t sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
-        if (sensorId == FLUSH_COMPLETE_ID) {
-            sensorId = static_cast<uint32_t>(event[eventSize - 1].sensorTypeId);
-        }
         cacheBuf[sensorId] = event[eventSize - 1];
     }
 }
@@ -265,9 +236,6 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorEvent &event, sptr<Sen
     int32_t ret = ERR_OK;
     auto &cacheBuf = const_cast<std::unordered_map<uint32_t, SensorEvent> &>(channel->GetDataCacheBuf());
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     auto cacheEvent = cacheBuf.find(sensorId);
     if (cacheEvent != cacheBuf.end()) {
         // Try to send the last failed value, if it still fails, replace the previous cache directly
@@ -294,49 +262,11 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorEvent &event, sptr<Sen
 
 void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
-    uint32_t realSensorId = 0;
     uint32_t sensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId);
-    std::vector<sptr<SensorBasicDataChannel>> channelList;
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        realSensorId = static_cast<uint32_t>(eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId);
-        channelList = clientInfo_.GetSensorChannel(realSensorId);
-    } else {
-        channelList = clientInfo_.GetSensorChannel(sensorId);
-    }
-    auto flushInfo = flushInfo_.GetFlushInfo();
-    std::vector<FlushInfo> flushVec;
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        SEN_HILOGD("sensorId:%{public}u", sensorId);
-        auto it = flushInfo.find(realSensorId);
-        if (it != flushInfo.end()) {
-            flushVec = it->second;
-            for (auto &channel : flushVec) {
-                auto flushChannel = channel.flushChannel.promote();
-                if (flushInfo_.IsFlushChannelValid(channelList, flushChannel)) {
-                    SendEvents(flushChannel, eventsBuf.circularBuf[eventsBuf.readPos]);
-                    flushInfo_.ClearFlushInfoItem(realSensorId);
-                    break;
-                } else {
-                    // The channel that store in the flushVec has invalid, so erase this channel directly
-                    SEN_HILOGD("clear flush info");
-                    flushInfo_.ClearFlushInfoItem(realSensorId);
-                }
-            }
-        }
-    } else {
-        for (auto &channel : channelList) {
-            int32_t index = flushInfo_.GetFlushChannelIndex(flushVec, channel);
-            if (index >= 0) {
-                if (flushVec[index].flushFromEnable) {
-                    SEN_HILOGI("flushFromEnable");
-                    continue;
-                }
-            }
-            /* if has some suspend flush, but this flush come from the flush function rather than enable,
-               so we need to calling GetSensorStatus to decided whether send this event. */
-            if (channel->GetSensorStatus()) {
-                SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
-            }
+    std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
+    for (auto &channel : channelList) {
+        if (channel->GetSensorStatus()) {
+            SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
         }
     }
 }
