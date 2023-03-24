@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import deviceInfo from '@ohos.deviceInfo'
 import sensor from '@ohos.sensor'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
@@ -36,28 +35,28 @@ describe("GyroscopeJsTest", function () {
         /*
          * @tc.setup: setup invoked before all testcases
          */
-         console.info('beforeAll caled')
+         console.info('beforeAll called')
     })
 
     afterAll(function() {
         /*
          * @tc.teardown: teardown invoked after all testcases
          */
-         console.info('afterAll caled')
+         console.info('afterAll called')
     })
 
     beforeEach(function() {
         /*
          * @tc.setup: setup invoked before each testcases
          */
-         console.info('beforeEach caled')
+         console.info('beforeEach called')
     })
 
     afterEach(function() {
         /*
          * @tc.teardown: teardown invoked after each testcases
          */
-         console.info('afterEach caled')
+         console.info('afterEach called')
     })
 
     const PARAMETER_ERROR_CODE = 401
@@ -74,27 +73,20 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_001", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_001---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback);
-                        setTimeout(()=>{
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            done();
-                        }, 500);
-                    } catch (error) {
-                        console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
-                    }
-                } else {
-                    console.info('Program run failed');
+                    }, 500);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
@@ -116,30 +108,21 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_002", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_002---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval':100000000});
-                        setTimeout(()=>{
-                            console.info('------------------GyroscopeJsTest_002 off in-----------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('------------------GyroscopeJsTest_002 off end-----------------------');
-                            done();
-                        }, 500);
-                    } catch (error) {
-                        console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval':100000000});
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 500);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
@@ -160,35 +143,26 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_003", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_003---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
                 function onSensorCallback(data) {
-                    console.info('GyroscopeJsTest_003  callback in');
+                    console.error('GyroscopeJsTest_003  callback in');
                     expect(true).assertTrue();
                     done();
                 }
-                if(data) {
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, onSensorCallback, {'interval': 100000000}, 5);
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_003 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_003 off end---------------------------');
-                            done();
-                        }, 500);
-                    } catch (error) {
-                        console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, onSensorCallback, {'interval': 100000000}, 5);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 500);
+                } catch (error) {
+                    console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
@@ -209,29 +183,20 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_004", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_004---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': -100000000});
-                        console.info('----------------------GyroscopeJsTest_004 off in---------------------------');
-                        sensor.off(sensor.SensorId.GYROSCOPE);
-                        console.info('----------------------GyroscopeJsTest_004 off end---------------------------');
-                        done();
-                    } catch (error) {
-                        console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(error.code).assertEqual(SERVICE_EXCEPTION_CODE);
-                        expect(error.message).assertEqual(SERVICE_EXCEPTION_MSG);
-                        done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': -100000000});
+                    sensor.off(sensor.SensorId.GYROSCOPE);
+                    done();
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(error.code).assertEqual(SERVICE_EXCEPTION_CODE);
+                    expect(error.message).assertEqual(SERVICE_EXCEPTION_MSG);
                     done();
                 }
             });
@@ -252,33 +217,26 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_005", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_005---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.once(sensor.SensorId.GYROSCOPE, callback);
-                        setTimeout(()=>{
-                            expect(true).assertTrue();
-                            done();
-                        }, 500);
-                    } catch (error) {
-                        console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.once(sensor.SensorId.GYROSCOPE, callback);
+                    setTimeout(() => {
+                        expect(true).assertTrue();
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 500);
+                } catch (error) {
+                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -294,33 +252,26 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_006", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_006---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try{
-                        sensor.once(sensor.SensorId.GYROSCOPE, callback, 5);
-                        setTimeout(()=>{
-                            expect(true).assertTrue();
-                            done();
-                        }, 500);
-                    } catch (error) {
-                        console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try{
+                    sensor.once(sensor.SensorId.GYROSCOPE, callback, 5);
+                    setTimeout(() => {
+                        expect(true).assertTrue();
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 500);
+                } catch (error) {
+                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -336,30 +287,23 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_007", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_007---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try{
-                        sensor.once(sensor.SensorId.GYROSCOPE, 5);
-                    } catch (error) {
-                        console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-                        expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-                        done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                try{
+                    sensor.once(sensor.SensorId.GYROSCOPE, 5);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
+                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -375,29 +319,22 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_008", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_008---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.off(-1, callback);
-                    } catch (error) {
-                        expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-                        expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
-                        done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                try {
+                    sensor.off(-1, callback);
+                } catch (error) {
+                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
+                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -413,36 +350,27 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_009", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_009---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback);
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2);
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_009 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_009 off end---------------------------');
-                            done();
-                        }, 1000);
-                    } catch (error) {
-                        console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback);
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback2);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -458,41 +386,30 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_010", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_010---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback);
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2);
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_010 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback);
-                            console.info('----------------------GyroscopeJsTest_010 off end---------------------------');
-                        }, 500);
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_010 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback2);
-                            console.info('----------------------GyroscopeJsTest_010 off end---------------------------');
-                            done();
-                        }, 1000);
-                    } catch (error) {
-                        console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback);
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback2);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE, callback);
+                    }, 500);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE, callback2);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -508,36 +425,27 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_011", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_011---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
-                        sensor.once(sensor.SensorId.GYROSCOPE, callback2);
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_011 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_011 off end---------------------------');
-                            done();
-                        }, 1000);
-                    } catch (error) {
-                        console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
+                    sensor.once(sensor.SensorId.GYROSCOPE, callback2);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -553,41 +461,30 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_012", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_012---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_012 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback);
-                            console.info('----------------------GyroscopeJsTest_012 off end---------------------------');
-                        }, 500);
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_012 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE, callback2);
-                            console.info('----------------------GyroscopeJsTest_012 off end---------------------------');
-                            done();
-                        }, 1000);
-                    } catch (error) {
-                        console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE, callback);
+                    }, 500);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE, callback2);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
@@ -603,36 +500,27 @@ describe("GyroscopeJsTest", function () {
     it("GyroscopeJsTest_013", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_013---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (err, data) => {
-                if(err) {
-                    console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            sensor.getSingleSensor(sensor.SensorId.GYROSCOPE, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(false).assertTrue();
                     done();
                 }
-                expect(typeof(data)).assertEqual("object");
-                if(data) {            
-                    try {
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
-                        sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
-                        setTimeout(()=>{
-                            console.info('----------------------GyroscopeJsTest_013 off in---------------------------');
-                            sensor.off(sensor.SensorId.GYROSCOPE);
-                            console.info('----------------------GyroscopeJsTest_013 off end---------------------------');
-                            done();
-                        }, 1000);
-                    } catch (error) {
-                        console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                        expect(false).assertTrue();
+                try {
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback2, {'interval': 100000000});
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
-                    }
-                } else {
-                    console.info('Non-mobile devices cannot be excluded');
-                    expect(true).assertTrue();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
                     done();
                 }
             });
         } catch (error) {
-            console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();

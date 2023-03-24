@@ -16,6 +16,7 @@ group("unittest") {
   deps = [
     "barometer:BarometerJsTest",
     "gyroscope:GyroscopeJsTest",
+    "pedometer_detection:PedometerDetectionJsTest",
     "sensor:SensorJsTest",
   ]
 }
