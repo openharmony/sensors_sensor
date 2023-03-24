@@ -53,8 +53,8 @@ describe("PedometerDetectionJsTest", function () {
             let userId = await accountManager.getOsAccountLocalIdFromProcess();
             let appInfo = await bundle.getApplicationInfo('com.example.myapplication', 0, userId);
             tokenID = appInfo.accessTokenId;
-            console.log('AccessTokenId accessTokenId:' + appInfo.accessTokenId + ', name:' + appInfo.name
-                + ' ,bundleName:' + appInfo.bundleName)
+            console.log('AccessTokenId accessTokenId:' + appInfo.accessTokenId + ', name:' + appInfo.name +
+                ' ,bundleName:' + appInfo.bundleName)
          } catch(err) {
             console.error('exception in, msg:' + JSON.stringify(err))
          }
