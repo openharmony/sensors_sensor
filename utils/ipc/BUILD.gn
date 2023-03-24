@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,9 +11,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-group("sensor_utils_target") {
-  deps = [
-    "common:libsensor_utils",
-    "ipc:libsensor_ipc",
+import("//build/ohos.gni")
+
+ohos_shared_library("libsensor_ipc") {
+  sources = [
+    "src/circle_stream_buffer.cpp",
+    "src/net_packet.cpp",
+    "src/stream_buffer.cpp",
+    "src/stream_session.cpp",
+    "src/stream_socket.cpp",
   ]
+
+  include_dirs = [
+    "include",
+    "./../common/include",
+  ]
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+
+  part_name = "sensor"
+  subsystem_name = "sensors"
 }
