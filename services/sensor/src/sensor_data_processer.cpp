@@ -68,9 +68,6 @@ void SensorDataProcesser::SendNoneFifoCacheData(std::unordered_map<uint32_t, Sen
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     sendEvents.push_back(event);
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     auto dataCountIt = dataCountMap_.find(sensorId);
     if (dataCountIt == dataCountMap_.end()) {
         std::vector<sptr<FifoCacheData>> channelFifoList;
@@ -120,9 +117,6 @@ void SensorDataProcesser::SendFifoCacheData(std::unordered_map<uint32_t, SensorE
                                             uint64_t periodCount, uint64_t fifoCount)
 {
     uint32_t sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    if (sensorId == FLUSH_COMPLETE_ID) {
-        sensorId = static_cast<uint32_t>(event.sensorTypeId);
-    }
     std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
     auto dataCountIt = dataCountMap_.find(sensorId);
     // there is no channelFifoList
