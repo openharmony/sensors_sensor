@@ -693,6 +693,52 @@ void ClientInfo::ClearDataQueue(int32_t sensorId)
     }
 }
 
+int32_t ClientInfo::AddActiveInfoCBPid(int32_t pid)
+{
+    std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
+    auto pairRet = activeInfoCBPidSet_.insert(pid);
+    if (!pairRet.second) {
+        SEN_HILOGE("ActiveInfoCBPidSet insert pid fail");
+        return ERROR;
+    }
+    return ERR_OK;
+}
+
+int32_t ClientInfo::DelActiveInfoCBPid(int32_t pid)
+{
+    std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
+    auto it = activeInfoCBPidSet_.find(pid);
+    if (it == activeInfoCBPidSet_.end()) {
+        SEN_HILOGE("ActiveInfoCBPidSet not find pid");
+        return ERROR;
+    }
+    activeInfoCBPidSet_.erase(it);
+    return ERR_OK;
+}
+
+std::unordered_set<int32_t> ClientInfo::GetActiveInfoCBPid()
+{
+    return activeInfoCBPidSet_;
+}
+
+bool ClientInfo::IsUnregisterClientDeathRecipient(int32_t pid)
+{
+    std::lock_guard<std::mutex> channelLock(channelMutex_);
+    auto channelIt = channelMap_.find(pid);
+    if (channelIt != channelMap_.end()) {
+        SEN_HILOGD("Pid exist in channelMap");
+        return false;
+    }
+    std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
+    auto pidIt = activeInfoCBPidSet_.find(pid);
+    if (pidIt != activeInfoCBPidSet_.end()) {
+        SEN_HILOGD("Pid exist in activeInfoCBPidSet");
+        return false;
+    }
+    return true;
+}
+
+
 int32_t ClientInfo::GetPidByTokenId(AccessTokenID tokenId)
 {
     std::lock_guard<std::mutex> uidLock(uidMutex_);
