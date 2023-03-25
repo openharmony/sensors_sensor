@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +30,6 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" };
 }  // namespace
@@ -43,6 +42,13 @@ SensorServiceStub::SensorServiceStub()
     baseFuncs_[GET_SENSOR_LIST] = &SensorServiceStub::GetAllSensorsInner;
     baseFuncs_[TRANSFER_DATA_CHANNEL] = &SensorServiceStub::CreateDataChannelInner;
     baseFuncs_[DESTROY_SENSOR_CHANNEL] = &SensorServiceStub::DestroyDataChannelInner;
+    baseFuncs_[SUSPEND_SENSORS] = &SensorServiceStub::SuspendSensorsInner;
+    baseFuncs_[RESUME_SENSORS] = &SensorServiceStub::ResumeSensorsInner;
+    baseFuncs_[GET_ACTIVE_INFO_LIST] = &SensorServiceStub::GetActiveInfoListInner;
+    baseFuncs_[CREATE_SOCKET_CHANNEL] = &SensorServiceStub::CreateSocketChannelInner;
+    baseFuncs_[DESTROY_SOCKET_CHANNEL] = &SensorServiceStub::DestroySocketChannelInner;
+    baseFuncs_[ENABLE_ACTIVE_INFO_CB] = &SensorServiceStub::EnableActiveInfoCBInner;
+    baseFuncs_[DISABLE_ACTIVE_INFO_CB] = &SensorServiceStub::DisableActiveInfoCBInner;
 }
 
 SensorServiceStub::~SensorServiceStub()
@@ -152,6 +158,117 @@ ErrCode SensorServiceStub::DestroyDataChannelInner(MessageParcel &data, MessageP
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     CHKPR(sensorClient, OBJECT_NULL);
     return DestroySensorChannel(sensorClient);
+}
+
+ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParcel &reply)
+{
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    (void)reply;
+    int32_t pid;
+    if (!data.ReadInt32(pid)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
+    return SuspendSensors(pid);
+}
+
+ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel &reply)
+{
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    (void)reply;
+    int32_t pid;
+    if (!data.ReadInt32(pid)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
+    return ResumeSensors(pid);
+}
+
+ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessageParcel &reply)
+{
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t pid;
+    if (!data.ReadInt32(pid)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
+    std::vector<ActiveInfo> activeInfoList;
+    GetActiveInfoList(pid, activeInfoList);
+    int32_t activeInfoCount = int32_t { activeInfoList.size() };
+    reply.WriteInt32(activeInfoCount);
+    for (int32_t i = 0; i < activeInfoCount; i++) {
+        if (!activeInfoList[i].Marshalling(reply)) {
+            SEN_HILOGE("ActiveInfo %{public}d failed", i);
+            return ERROR;
+        }
+    }
+    return ERR_OK;
+}
+
+ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
+    CHKPR(sensorClient, OBJECT_NULL);
+    int32_t clientFd = -1;
+    int32_t ret = CreateSocketChannel(clientFd, sensorClient);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Create socket channel failed");
+        if (clientFd >= 0) {
+            close(clientFd);
+        }
+        return ret;
+    }
+    if (!reply.WriteFileDescriptor(clientFd)) {
+        SEN_HILOGE("Write file descriptor failed");
+        close(clientFd);
+        return ERROR;
+    }
+    close(clientFd);
+    return ERR_OK;
+}
+
+ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, MessageParcel &reply)
+{
+    sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
+    CHKPR(sensorClient, OBJECT_NULL);
+    int32_t ret = DestroySocketChannel(sensorClient);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("DestroySocketChannel failed");
+        return ret;
+    }
+    return ERR_OK;
+}
+
+ErrCode SensorServiceStub::EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
+{
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    return EnableActiveInfoCB();
+}
+
+ErrCode SensorServiceStub::DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
+{
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    return DisableActiveInfoCB();
 }
 }  // namespace Sensors
 }  // namespace OHOS
