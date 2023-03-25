@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,9 +28,7 @@
 #include "sensor_data_event.h"
 #include "sensor_hdi_connection.h"
 #include "sensor_manager.h"
-#include "sensor_power_policy.h"
 #include "sensor_service_stub.h"
-#include "stream_server.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -39,7 +37,7 @@ enum class SensorServiceState {
     STATE_RUNNING,
 };
 
-class SensorService : public SystemAbility, public StreamServer, public SensorServiceStub {
+class SensorService : public SystemAbility, public SensorServiceStub {
     DECLARE_SYSTEM_ABILITY(SensorService)
 
 public:
@@ -56,13 +54,6 @@ public:
                                 const sptr<IRemoteObject> &sensorClient) override;
     ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) override;
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
-    ErrCode SuspendSensors(int32_t pid) override;
-    ErrCode ResumeSensors(int32_t pid) override;
-    ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList) override;
-    ErrCode CreateSocketChannel(int32_t &clientFd, const sptr<IRemoteObject> &sensorClient) override;
-    ErrCode DestroySocketChannel(const sptr<IRemoteObject> &sensorClient) override;
-    ErrCode EnableActiveInfoCB() override;
-    ErrCode DisableActiveInfoCB() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
@@ -97,7 +88,6 @@ private:
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
-    SensorPowerPolicy &sensorPowerPolicy_ = SensorPowerPolicy::GetInstance();
     sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
     std::mutex uidLock_;
@@ -105,8 +95,6 @@ private:
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    std::atomic_bool isReportActiveInfo_ = false;
-    void ReportActiveInfo(int32_t sensorId, int32_t pid);
 };
 }  // namespace Sensors
 }  // namespace OHOS
