@@ -31,7 +31,7 @@
 
 namespace OHOS {
 namespace Sensors {
-class SensorPowerPolicy : public Singleton<SensorPowerPolicy>{
+class SensorPowerPolicy : public Singleton<SensorPowerPolicy> {
 public:
     ErrCode SuspendSensors(int32_t pid);
     ErrCode ResumeSensors(int32_t pid);
