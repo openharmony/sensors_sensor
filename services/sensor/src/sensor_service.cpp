@@ -455,28 +455,25 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
     return ERR_OK;
 }
 
-ErrCode SensorService::CreateSocketChannel(int32_t &clientFd, const sptr<IRemoteObject> &sensorClient)
+ErrCode SensorService::CreateSocketChannel(const sptr<IRemoteObject> &sensorClient, int32_t &clientFd)
 {
     CALL_LOG_ENTER;
-    int32_t uid = GetCallingUid();
-    int32_t pid = GetCallingPid();
-    int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID());
     int32_t serverFd = -1;
-    clientFd = -1;
-    int32_t ret = AddSocketPairInfo(uid, pid, tokenType, serverFd, std::ref(clientFd));
+    int32_t ret = AddSocketPairInfo(GetCallingUid(), GetCallingPid(),
+        AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()), 
+        serverFd, std::ref(clientFd));
     if (ret != ERR_OK) {
         SEN_HILOGE("Add socket pair info failed, ret:%{public}d", ret);
         return ret;
     }
-    RegisterClientDeathRecipient(sensorClient, pid);
+    RegisterClientDeathRecipient(sensorClient, GetCallingPid());
     return ERR_OK;
 }
 
 ErrCode SensorService::DestroySocketChannel(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
-    int32_t pid = GetCallingPid();
-    DelSession(pid);
+    DelSession(GetCallingPid());
     UnregisterClientDeathRecipient(sensorClient);
     return ERR_OK;
 }
@@ -485,16 +482,14 @@ ErrCode SensorService::EnableActiveInfoCB()
 {
     CALL_LOG_ENTER;
     isReportActiveInfo_ = true;
-    int32_t pid = GetCallingPid();
-    return clientInfo_.AddActiveInfoCBPid(pid);
+    return clientInfo_.AddActiveInfoCBPid(GetCallingPid());
 }
 
 ErrCode SensorService::DisableActiveInfoCB()
 {
     CALL_LOG_ENTER;
     isReportActiveInfo_ = false;
-    int32_t pid = GetCallingPid();
-    return clientInfo_.DelActiveInfoCBPid(pid);
+    return clientInfo_.DelActiveInfoCBPid(GetCallingPid());
 }
 
 void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
@@ -510,7 +505,7 @@ void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
     }
     SensorBasicInfo sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
     ActiveInfo activeInfo(pid, sensorId, sensorInfo.GetSamplingPeriodNs(),
-                          sensorInfo.GetMaxReportDelayNs());
+        sensorInfo.GetMaxReportDelayNs());
     sensorPowerPolicy_.ReportActiveInfo(activeInfo, sessionList);
 }
 

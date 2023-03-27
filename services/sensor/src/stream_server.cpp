@@ -106,7 +106,7 @@ SessionPtr StreamServer::GetSessionByPid(int32_t pid)
 }
 
 int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenType,
-                                        int32_t &serverFd, int32_t &clientFd)
+    int32_t &serverFd, int32_t &clientFd)
 {
     CALL_LOG_ENTER;
     std::string programName = "";
@@ -211,7 +211,7 @@ void StreamServer::DelSession(int32_t pid)
     }
     if (fd >= 0) {
         auto rf = close(fd);
-        if (rf > 0) {
+        if (rf != 0) {
             SEN_HILOGE("Socket fd close failed, rf:%{public}d", rf);
         }
     }

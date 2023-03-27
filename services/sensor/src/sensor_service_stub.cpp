@@ -205,7 +205,11 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
         return ERROR;
     }
     std::vector<ActiveInfo> activeInfoList;
-    GetActiveInfoList(pid, activeInfoList);
+    int32_t ret = GetActiveInfoList(pid, activeInfoList);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Get activeInfo list failed");
+        return ret;
+    }
     int32_t activeInfoCount = int32_t { activeInfoList.size() };
     reply.WriteInt32(activeInfoCount);
     for (int32_t i = 0; i < activeInfoCount; i++) {
@@ -222,12 +226,9 @@ ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, Message
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     CHKPR(sensorClient, OBJECT_NULL);
     int32_t clientFd = -1;
-    int32_t ret = CreateSocketChannel(clientFd, sensorClient);
+    int32_t ret = CreateSocketChannel(sensorClient, clientFd);
     if (ret != ERR_OK) {
         SEN_HILOGE("Create socket channel failed");
-        if (clientFd >= 0) {
-            close(clientFd);
-        }
         return ret;
     }
     if (!reply.WriteFileDescriptor(clientFd)) {

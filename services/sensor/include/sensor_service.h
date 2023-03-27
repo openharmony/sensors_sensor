@@ -59,7 +59,7 @@ public:
     ErrCode SuspendSensors(int32_t pid) override;
     ErrCode ResumeSensors(int32_t pid) override;
     ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList) override;
-    ErrCode CreateSocketChannel(int32_t &clientFd, const sptr<IRemoteObject> &sensorClient) override;
+    ErrCode CreateSocketChannel(const sptr<IRemoteObject> &sensorClient, int32_t &clientFd) override;
     ErrCode DestroySocketChannel(const sptr<IRemoteObject> &sensorClient) override;
     ErrCode EnableActiveInfoCB() override;
     ErrCode DisableActiveInfoCB() override;
@@ -88,6 +88,7 @@ private:
     ErrCode DisableSensor(int32_t sensorId, int32_t pid);
     bool RegisterPermCallback();
     void UnregisterPermCallback();
+    void ReportActiveInfo(int32_t sensorId, int32_t pid);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
@@ -106,7 +107,6 @@ private:
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
-    void ReportActiveInfo(int32_t sensorId, int32_t pid);
 };
 }  // namespace Sensors
 }  // namespace OHOS
