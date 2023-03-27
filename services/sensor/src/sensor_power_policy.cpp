@@ -37,29 +37,24 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
+    if (sensorIdList.empty()) {
+        SEN_HILOGW("SensorIdList is empty, pid not enable sensor or all sensor have bean suspend");
+        return ERR_OK;
+    }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt != pidSensorInfoMap_.end()) {
-        if (sensorIdList.empty()) {
-            SEN_HILOGD("Pid already suspend, all sensors suspend success, not need suspend again");
-            return ERR_OK;
-        } else {
-            SEN_HILOGD("Pid already suspend, some sensors suspend failed, suspend these sensors again");
-            std::unordered_map<int32_t, SensorBasicInfo> SensorInfoMap = pidSensorInfoIt->second;
-            if (!Suspend(SensorInfoMap, sensorIdList, pid)) {
-                SEN_HILOGE("Some sensor suspend failed");
-                return DISABLE_SENSOR_ERR;
-            }
-            return ERR_OK;
+        SEN_HILOGI("Pid already call suspend, but some sensors suspend failed, suspend these sensors again");
+        std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
+        if (!Suspend(pid, sensorIdList, sensorInfoMap)) {
+            SEN_HILOGE("Some sensor suspend failed");
+            return DISABLE_SENSOR_ERR;
         }
+        return ERR_OK;
     }
-    if (sensorIdList.empty()) {
-        SEN_HILOGE("Pid sensorId list is empty");
-        return ERROR;
-    }
-    std::unordered_map<int32_t, SensorBasicInfo> SensorInfoMap;
-    auto isAllSuspend = Suspend(SensorInfoMap, sensorIdList, pid);
-    pidSensorInfoMap_.insert(std::make_pair(pid, SensorInfoMap));
+    std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap;
+    auto isAllSuspend = Suspend(pid, sensorIdList, sensorInfoMap);
+    pidSensorInfoMap_.insert(std::make_pair(pid, sensorInfoMap));
     if (!isAllSuspend) {
         SEN_HILOGE("Some sensor suspend failed");
         return DISABLE_SENSOR_ERR;
@@ -67,8 +62,8 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     return ERR_OK;
 }
 
-bool SensorPowerPolicy::Suspend(std::unordered_map<int32_t, SensorBasicInfo> &SensorInfoMap,
-                                  std::vector<int32_t> &sensorIdList, int32_t pid)
+bool SensorPowerPolicy::Suspend(int32_t pid, std::vector<int32_t> &sensorIdList,
+    std::unordered_map<int32_t, SensorBasicInfo> &sensorInfoMap)
 {
     CALL_LOG_ENTER;
     bool isAllSuspend = true;
@@ -80,7 +75,7 @@ bool SensorPowerPolicy::Suspend(std::unordered_map<int32_t, SensorBasicInfo> &Se
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
         if (sensorManager_.IsOtherClientUsingSensor(sensorId, pid)) {
             SEN_HILOGD("Other client is using this sensor now, cannot suspend");
-            SensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
+            sensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
             continue;
         }
         if (sensorHdiConnection_.DisableSensor(sensorId) != ERR_OK) {
@@ -88,7 +83,7 @@ bool SensorPowerPolicy::Suspend(std::unordered_map<int32_t, SensorBasicInfo> &Se
             isAllSuspend = false;
             continue;
         }
-        SensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
+        sensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
         sensorManager_.AfterDisableSensor(sensorId);
     }
     return isAllSuspend;
@@ -104,8 +99,8 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
         return ERROR;
     }
     bool isAllResume = true;
-    std::unordered_map<int32_t, SensorBasicInfo> SensorInfoMap = pidSensorInfoIt->second;
-    for (auto sensorIt = SensorInfoMap.begin(); sensorIt != SensorInfoMap.end();) {
+    std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
+    for (auto sensorIt = sensorInfoMap.begin(); sensorIt != sensorInfoMap.end();) {
         int32_t sensorId = sensorIt->first;
         int64_t samplingPeriodNs = sensorIt->second.GetSamplingPeriodNs();
         int64_t maxReportDelayNs = sensorIt->second.GetMaxReportDelayNs();
@@ -114,7 +109,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
             isAllResume = false;
             ++sensorIt;
         } else {
-            sensorIt = SensorInfoMap.erase(sensorIt);
+            sensorIt = sensorInfoMap.erase(sensorIt);
         }
     }
     if (!isAllResume) {
@@ -126,16 +121,16 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
 }
 
 bool SensorPowerPolicy::Resume(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs,
-                                    int64_t maxReportDelayNs)
+    int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
-    if ((sensorId == INVALID_SENSOR_ID) || (samplingPeriodNs == 0) ||
+    if ((sensorId == INVALID_SENSOR_ID) || (samplingPeriodNs <= 0) ||
         ((samplingPeriodNs != 0L) && (maxReportDelayNs / samplingPeriodNs > MAX_EVENT_COUNT))) {
         SEN_HILOGE("SensorId is invalid or maxReportDelayNs exceed the maximum value");
         return false;
     }
     if (clientInfo_.GetSensorState(sensorId)) {
-        SEN_HILOGD("Sensor has been resume already, sensorId:%{public}d", sensorId);
+        SEN_HILOGD("Sensor is enable, sensorId:%{public}d", sensorId);
         auto ret = RestoreSensorInfo(pid, sensorId, samplingPeriodNs, maxReportDelayNs);
         if (ret != ERR_OK) {
             SEN_HILOGE("Restore sensor info failed, ret:%{public}d", ret);
@@ -158,7 +153,7 @@ bool SensorPowerPolicy::Resume(int32_t pid, int32_t sensorId, int64_t samplingPe
 }
 
 ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs,
-                                               int64_t maxReportDelayNs)
+    int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
     auto ret = sensorManager_.SaveSubscriber(sensorId, pid, samplingPeriodNs, maxReportDelayNs);
@@ -182,13 +177,13 @@ void SensorPowerPolicy::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &
     for (auto &sensorId : sensorIdList) {
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
         ActiveInfo activeInfo(pid, sensorId, sensorInfo.GetSamplingPeriodNs(),
-                              sensorInfo.GetMaxReportDelayNs());
+            sensorInfo.GetMaxReportDelayNs());
         activeInfoList.push_back(activeInfo);
     }
 }
 
 void SensorPowerPolicy::ReportActiveInfo(ActiveInfo activeInfo,
-                                           const std::vector<SessionPtr> &sessionList)
+    const std::vector<SessionPtr> &sessionList)
 {
     CALL_LOG_ENTER;
     NetPacket pkt(MessageId::ACTIVE_INFO);

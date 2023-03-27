@@ -40,8 +40,8 @@ public:
 
 private:
     bool CheckFreezingSensor(int32_t sensorId);
-    bool Suspend(std::unordered_map<int32_t, SensorBasicInfo> &SensorInfoMap,
-                 std::vector<int32_t> &sensorIdList, int32_t pid);
+    bool Suspend(int32_t pid, std::vector<int32_t> &sensorIdList,
+        std::unordered_map<int32_t, SensorBasicInfo> &SensorInfoMap);
     bool Resume(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     ErrCode RestoreSensorInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
