@@ -39,6 +39,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
 constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
+std::atomic_bool g_isRegister = false;
 enum {
     FLUSH = 0,
     SET_MODE,
@@ -80,9 +81,6 @@ void SensorService::OnStart()
     CHKPV(sensorDataProcesser_);
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
-    }
-    if (!RegisterPermCallback()) {
-        SEN_HILOGE("RegisterPermCallback fail");
     }
     if (!SystemAbility::Publish(this)) {
         SEN_HILOGE("publish SensorService error");
@@ -251,6 +249,9 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         SEN_HILOGE("EnableSensor failed");
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ENABLE_SENSOR_ERR;
+    }
+    if ((!g_isRegister) && (RegisterPermCallback(sensorId))) {
+        g_isRegister = true;
     }
     ReportSensorSysEvent(sensorId, true, pid);
     if (isReportActiveInfo_) {
@@ -509,8 +510,14 @@ void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
     sensorPowerPolicy_.ReportActiveInfo(activeInfo, sessionList);
 }
 
-bool SensorService::RegisterPermCallback()
+bool SensorService::RegisterPermCallback(int32_t sensorId)
 {
+    CALL_LOG_ENTER;
+    if ((sensorId != SENSOR_TYPE_ID_PEDOMETER) && (sensorId != SENSOR_TYPE_ID_PEDOMETER_DETECTION) &&
+        (sensorId != SENSOR_TYPE_ID_HEART_RATE)) {
+        SEN_HILOGD("No need listen for the sensor permission changes");
+        return false;
+    }
     Security::AccessToken::PermStateChangeScope scope = {
         .permList = { ACTIVITY_MOTION_PERMISSION, READ_HEALTH_DATA_PERMISSION }
     };
@@ -525,12 +532,14 @@ bool SensorService::RegisterPermCallback()
 
 void SensorService::UnregisterPermCallback()
 {
+    CALL_LOG_ENTER;
     CHKPV(permStateChangeCb_);
     int32_t ret = Security::AccessToken::AccessTokenKit::UnRegisterPermStateChangeCallback(permStateChangeCb_);
     if (ret != ERR_OK) {
         SEN_HILOGE("UnregisterPermStateChangeCallback fail");
+        return;
     }
-    permStateChangeCb_ = nullptr;
+    g_isRegister = false;
 }
 
 void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessToken::PermStateChangeInfo &result)
