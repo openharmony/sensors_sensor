@@ -77,7 +77,7 @@ private:
     void ReportOnChangeData(int32_t sensorId);
     void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid);
     ErrCode DisableSensor(int32_t sensorId, int32_t pid);
-    bool RegisterPermCallback();
+    bool RegisterPermCallback(int32_t sensorId);
     void UnregisterPermCallback();
     SensorServiceState state_;
     std::mutex serviceLock_;
