@@ -697,11 +697,13 @@ int32_t ClientInfo::GetPidByTokenId(AccessTokenID tokenId)
 {
     std::lock_guard<std::mutex> uidLock(uidMutex_);
     int32_t pid = INVALID_PID;
-    for (const auto &it : appThreadInfoMap_) {
-        if (it.second.callerToken == tokenId) {
-            pid = it.second.pid;
-            break;
+    auto iter = std::find_if(appThreadInfoMap_.begin(), appThreadInfoMap_.end(),
+        [tokenId] (auto appThreadInfo) {
+            return appThreadInfo.second.callerToken == tokenId;
         }
+    );
+    if (iter != appThreadInfoMap_.end()) {
+        pid = iter->second.pid;
     }
     return pid;
 }
