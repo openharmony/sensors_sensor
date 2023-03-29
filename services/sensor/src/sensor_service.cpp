@@ -434,8 +434,8 @@ void SensorService::UnregisterPermCallback()
     int32_t ret = Security::AccessToken::AccessTokenKit::UnRegisterPermStateChangeCallback(permStateChangeCb_);
     if (ret != ERR_OK) {
         SEN_HILOGE("UnregisterPermStateChangeCallback fail");
+        return;
     }
-    permStateChangeCb_ = nullptr;
     g_isRegister = false;
 }
 
