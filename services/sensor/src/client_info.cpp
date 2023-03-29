@@ -723,7 +723,7 @@ void ClientInfo::UpdatePermState(int32_t pid, int32_t sensorId, bool state)
 void ClientInfo::ChangeSensorPerm(AccessTokenID tokenId, const std::string &permName, bool state)
 {
     int32_t pid = GetPidByTokenId(tokenId);
-    if (pid < INVALID_PID) {
+    if (pid <= INVALID_PID) {
         SEN_HILOGE("Invalid pid:%{public}d", pid);
         return;
     }
