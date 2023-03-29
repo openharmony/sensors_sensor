@@ -44,9 +44,6 @@ private:
         std::unordered_map<int32_t, SensorBasicInfo> &SensorInfoMap);
     bool Resume(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     ErrCode RestoreSensorInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
-    ClientInfo &clientInfo_ = ClientInfo::GetInstance();
-    SensorManager &sensorManager_ = SensorManager::GetInstance();
     std::mutex pidSensorInfoMutex_;
     std::unordered_map<int32_t, std::unordered_map<int32_t, SensorBasicInfo>> pidSensorInfoMap_;
 };

@@ -26,6 +26,9 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorPowerPolicy" };
 constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
+ClientInfo &clientInfo_ = ClientInfo::GetInstance();
+SensorManager &sensorManager_ = SensorManager::GetInstance();
+SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
 }  // namespace
 
 bool SensorPowerPolicy::CheckFreezingSensor(int32_t sensorId)
@@ -47,7 +50,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
         SEN_HILOGI("Pid already call suspend, but some sensors suspend failed, suspend these sensors again");
         std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
         if (!Suspend(pid, sensorIdList, sensorInfoMap)) {
-            SEN_HILOGE("Some sensor suspend failed");
+            SEN_HILOGE("Suspend last failed sensors, but some failed");
             return DISABLE_SENSOR_ERR;
         }
         return ERR_OK;
@@ -56,7 +59,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     auto isAllSuspend = Suspend(pid, sensorIdList, sensorInfoMap);
     pidSensorInfoMap_.insert(std::make_pair(pid, sensorInfoMap));
     if (!isAllSuspend) {
-        SEN_HILOGE("Some sensor suspend failed");
+        SEN_HILOGE("Suspend all sensors, but some failed");
         return DISABLE_SENSOR_ERR;
     }
     return ERR_OK;
@@ -69,7 +72,7 @@ bool SensorPowerPolicy::Suspend(int32_t pid, std::vector<int32_t> &sensorIdList,
     bool isAllSuspend = true;
     for (auto &sensorId : sensorIdList) {
         if (CheckFreezingSensor(sensorId)) {
-            SEN_HILOGD("Current sensor is pedometer detectio or pedometer, can not suspend");
+            SEN_HILOGD("Current sensor is pedometer detection or pedometer, can not suspend");
             continue;
         }
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
