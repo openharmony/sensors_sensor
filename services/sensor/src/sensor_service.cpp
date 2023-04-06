@@ -456,7 +456,7 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
     return ERR_OK;
 }
 
-ErrCode SensorService::CreateSocketChannel(const sptr<IRemoteObject> &sensorClient, int32_t &clientFd)
+ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd)
 {
     CALL_LOG_ENTER;
     int32_t serverFd = -1;
@@ -471,7 +471,7 @@ ErrCode SensorService::CreateSocketChannel(const sptr<IRemoteObject> &sensorClie
     return ERR_OK;
 }
 
-ErrCode SensorService::DestroySocketChannel(const sptr<IRemoteObject> &sensorClient)
+ErrCode SensorService::DestroySocketChannel(sptr<IRemoteObject> sensorClient)
 {
     CALL_LOG_ENTER;
     DelSession(GetCallingPid());

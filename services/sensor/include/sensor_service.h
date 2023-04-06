@@ -59,8 +59,8 @@ public:
     ErrCode SuspendSensors(int32_t pid) override;
     ErrCode ResumeSensors(int32_t pid) override;
     ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList) override;
-    ErrCode CreateSocketChannel(const sptr<IRemoteObject> &sensorClient, int32_t &clientFd) override;
-    ErrCode DestroySocketChannel(const sptr<IRemoteObject> &sensorClient) override;
+    ErrCode CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd) override;
+    ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient) override;
     ErrCode EnableActiveInfoCB() override;
     ErrCode DisableActiveInfoCB() override;
 
