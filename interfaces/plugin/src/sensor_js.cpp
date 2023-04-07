@@ -106,7 +106,6 @@ static void EmitSubscribeCallback(SensorEvent *event)
         return;
     }
     std::lock_guard<std::mutex> subscribeLock(mutex_);
-    auto callback = g_subscribeCallbacks[sensorTypeId];
     auto callbacks = g_subscribeCallbacks[sensorTypeId];
     for (auto &callback : callbacks) {
         if (!copySensorData(callback, event)) {
