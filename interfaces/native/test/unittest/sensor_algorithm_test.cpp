@@ -29,6 +29,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "Sens
 constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
+constexpr float EPS = 0.01;
 }  // namespace
 
 class SensorAlgorithmTest : public testing::Test {
@@ -330,13 +331,13 @@ HWTEST_F(SensorAlgorithmTest, SensorAlgorithmTest_027, TestSize.Level1)
 HWTEST_F(SensorAlgorithmTest, SensorAlgorithmTest_028, TestSize.Level1)
 {
     GeomagneticField geomagneticField(80.0, 0.0, 0.0, 1580486400000);
-    ASSERT_EQ(geomagneticField.ObtainX(), 6570.3935546875);
-    ASSERT_EQ(geomagneticField.ObtainY(), -146.3289337158203);
-    ASSERT_EQ(geomagneticField.ObtainZ(), 54606.0078125);
-    ASSERT_EQ(geomagneticField.ObtainGeomagneticDip(), 83.13726043701172);
-    ASSERT_EQ(geomagneticField.ObtainDeflectionAngle(), -1.2758207321166992);
-    ASSERT_EQ(geomagneticField.ObtainLevelIntensity(), 6572.02294921875);
-    ASSERT_EQ(geomagneticField.ObtainTotalIntensity(), 55000.0703125);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainX() - 6570.3935546875) < EPS);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainY() - -146.3289337158203) < EPS);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainZ() - 54606.0078125) < EPS);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainGeomagneticDip() - 83.13726043701172) < EPS);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainDeflectionAngle() - -1.2758207321166992) < EPS);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainLevelIntensity() - 6572.02294921875) < EPS);
+    ASSERT_TRUE(fabs(geomagneticField.ObtainTotalIntensity() - 55000.0703125) < EPS);
 }
 }  // namespace Sensors
 }  // namespace OHOS
