@@ -104,7 +104,7 @@ void StreamSession::UpdateDescript()
     descript_ = oss.str().c_str();
 }
 
-bool StreamSession::SendMsg(NetPacket &pkt) const
+bool StreamSession::SendMsg(const NetPacket &pkt) const
 {
     if (pkt.ChkRWError()) {
         SEN_HILOGE("Read and write status failed");

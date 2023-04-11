@@ -173,9 +173,10 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
     return ERR_OK;
 }
 
-void SensorPowerPolicy::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
+std::vector<ActiveInfo> SensorPowerPolicy::GetActiveInfoList(int32_t pid)
 {
     CALL_LOG_ENTER;
+    std::vector<ActiveInfo> activeInfoList;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
     for (auto &sensorId : sensorIdList) {
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
@@ -183,9 +184,10 @@ void SensorPowerPolicy::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &
             sensorInfo.GetMaxReportDelayNs());
         activeInfoList.push_back(activeInfo);
     }
+    return activeInfoList;
 }
 
-void SensorPowerPolicy::ReportActiveInfo(ActiveInfo activeInfo,
+void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
     const std::vector<SessionPtr> &sessionList)
 {
     CALL_LOG_ENTER;

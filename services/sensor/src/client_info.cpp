@@ -716,9 +716,13 @@ int32_t ClientInfo::DelActiveInfoCBPid(int32_t pid)
     return ERR_OK;
 }
 
-std::unordered_set<int32_t> ClientInfo::GetActiveInfoCBPid()
+std::vector<int32_t> ClientInfo::GetActiveInfoCBPid()
 {
-    return activeInfoCBPidSet_;
+    std::vector<int32_t> activeInfoCBPids;
+    for (auto it = activeInfoCBPidSet_.begin(); it != activeInfoCBPidSet_.end(); ++it) {
+        activeInfoCBPids.push_back(*it);
+    }
+    return activeInfoCBPids;
 }
 
 bool ClientInfo::IsUnregisterClientDeathRecipient(int32_t pid)
@@ -726,15 +730,15 @@ bool ClientInfo::IsUnregisterClientDeathRecipient(int32_t pid)
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto channelIt = channelMap_.find(pid);
     if (channelIt != channelMap_.end()) {
-        SEN_HILOGD("Pid exist in channelMap");
         return false;
     }
+    SEN_HILOGD("Pid is not exists in channelMap");
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto pidIt = activeInfoCBPidSet_.find(pid);
     if (pidIt != activeInfoCBPidSet_.end()) {
-        SEN_HILOGD("Pid exist in activeInfoCBPidSet");
         return false;
     }
+    SEN_HILOGD("Pid is not exists in activeInfoCBPidSet");
     return true;
 }
 

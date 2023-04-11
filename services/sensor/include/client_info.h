@@ -78,7 +78,7 @@ public:
     AccessTokenID GetTokenIdByPid(int32_t pid);
     int32_t AddActiveInfoCBPid(int32_t pid);
     int32_t DelActiveInfoCBPid(int32_t pid);
-    std::unordered_set<int32_t> GetActiveInfoCBPid();
+    std::vector<int32_t> GetActiveInfoCBPid();
     bool IsUnregisterClientDeathRecipient(int32_t pid);
     int32_t GetPidByTokenId(AccessTokenID tokenId);
     void UpdatePermState(int32_t pid, int32_t sensorId, bool state);

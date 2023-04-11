@@ -35,8 +35,8 @@ class SensorPowerPolicy : public Singleton<SensorPowerPolicy> {
 public:
     ErrCode SuspendSensors(int32_t pid);
     ErrCode ResumeSensors(int32_t pid);
-    void GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList);
-    void ReportActiveInfo(ActiveInfo activeInfo, const std::vector<SessionPtr> &sessionList);
+    std::vector<ActiveInfo> GetActiveInfoList(int32_t pid);
+    void ReportActiveInfo(const ActiveInfo &activeInfo, const std::vector<SessionPtr> &sessionList);
 
 private:
     bool CheckFreezingSensor(int32_t sensorId);
