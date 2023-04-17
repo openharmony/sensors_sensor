@@ -27,6 +27,7 @@ ohos_shared_library("libsensor_service") {
     "src/sensor_data_processer.cpp",
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
+    "src/sensor_power_policy.cpp",
     "src/sensor_service.cpp",
     "src/sensor_service_stub.cpp",
   ]
@@ -38,6 +39,7 @@ ohos_shared_library("libsensor_service") {
     "//commonlibrary/c_utils/base/include",
     "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/sensor/utils/common/include",
+    "$SUBSYSTEM_DIR/sensor/utils/ipc/include",
     "$SUBSYSTEM_DIR/sensor/services/sensor/include",
     "//drivers/peripheral/sensor/interfaces/include",
     "hdi_connection/interface/include",
@@ -45,7 +47,10 @@ ohos_shared_library("libsensor_service") {
     "hdi_connection/hardware/include",
   ]
 
-  deps = [ "$SUBSYSTEM_DIR/sensor/utils/common:libsensor_utils" ]
+  deps = [
+    "$SUBSYSTEM_DIR/sensor/utils/common:libsensor_utils",
+    "$SUBSYSTEM_DIR/sensor/utils/ipc:libsensor_ipc",
+  ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",

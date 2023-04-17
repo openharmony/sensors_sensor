@@ -39,7 +39,7 @@ public:
     StreamSession(const std::string &programName, const int32_t fd, const int32_t uid, const int32_t pid);
     ~StreamSession() = default;
     bool SendMsg(const char *buf, size_t size) const;
-    bool SendMsg(NetPacket &pkt) const;
+    bool SendMsg(const NetPacket &pkt) const;
     void Close();
     int32_t GetUid() const;
     int32_t GetPid() const;
