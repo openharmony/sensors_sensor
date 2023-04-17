@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +39,13 @@ private:
     ErrCode GetAllSensorsInner(MessageParcel &data, MessageParcel &reply);
     ErrCode CreateDataChannelInner(MessageParcel &data, MessageParcel &reply);
     ErrCode DestroyDataChannelInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode SuspendSensorsInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode ResumeSensorsInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode GetActiveInfoListInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode CreateSocketChannelInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode DestroySocketChannelInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
     std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };
 }  // namespace Sensors

@@ -140,7 +140,7 @@ void StreamSocket::Close()
 {
     if (fd_ >= 0) {
         auto rf = close(fd_);
-        if (rf > 0) {
+        if (rf != 0) {
             SEN_HILOGE("Socket close failed, rf:%{public}d", rf);
         }
     }
