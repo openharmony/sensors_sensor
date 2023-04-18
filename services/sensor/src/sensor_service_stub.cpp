@@ -254,22 +254,12 @@ ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, Messag
 
 ErrCode SensorServiceStub::EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
 {
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
-        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
-        return PERMISSION_DENIED;
-    }
-    return EnableActiveInfoCB();
+    return SUCCESS;
 }
 
 ErrCode SensorServiceStub::DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
 {
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
-        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
-        return PERMISSION_DENIED;
-    }
-    return DisableActiveInfoCB();
+    return SUCCESS;
 }
 }  // namespace Sensors
 }  // namespace OHOS
