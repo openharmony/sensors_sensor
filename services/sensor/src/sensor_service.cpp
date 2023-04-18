@@ -40,11 +40,6 @@ constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
-enum {
-    FLUSH = 0,
-    SET_MODE,
-    RESERVED,
-};
 }  // namespace
 
 REGISTER_SYSTEM_ABILITY_BY_ID(SensorService, SENSOR_SERVICE_ABILITY_ID, true);

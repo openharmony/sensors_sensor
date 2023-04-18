@@ -24,11 +24,6 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FlushInfoRecord" };
 constexpr int32_t CHANNEL_NO_FLUSH = -1;
-enum {
-    FLUSH = 0,
-    SET_MODE,
-    RESERVED,
-};
 }  // namespace
 
 std::unordered_map<int32_t, std::vector<FlushInfo>> FlushInfoRecord::GetFlushInfo()
