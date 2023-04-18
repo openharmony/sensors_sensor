@@ -452,7 +452,7 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
-    sensorPowerPolicy_.GetActiveInfoList(pid, activeInfoList);
+    activeInfoList = sensorPowerPolicy_.GetActiveInfoList(pid);
     return ERR_OK;
 }
 
@@ -497,8 +497,8 @@ void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
     std::vector<SessionPtr> sessionList;
-    auto pidSet = clientInfo_.GetActiveInfoCBPid();
-    for (auto pid : pidSet) {
+    auto pidList = clientInfo_.GetActiveInfoCBPid();
+    for (auto pid : pidList) {
         auto sess = GetSessionByPid(pid);
         if (sess != nullptr) {
             sessionList.push_back(sess);

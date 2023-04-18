@@ -18,18 +18,16 @@
 #include <cinttypes>
 #include <sys/socket.h>
 
-#include "accesstoken_kit.h"
-
 #include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
 namespace {
-using namespace Security::AccessToken;
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamServer" };
 constexpr int32_t INVALID_PID = -1;
 constexpr int32_t INVALID_FD = -1;
 }  // namespace
+
 StreamServer::~StreamServer()
 {
     CALL_LOG_ENTER;
@@ -40,7 +38,7 @@ StreamServer::~StreamServer()
     sessionsMap_.clear();
 }
 
-bool StreamServer::SendMsg(int32_t fd, NetPacket& pkt)
+bool StreamServer::SendMsg(int32_t fd, const NetPacket& pkt)
 {
     CALL_LOG_ENTER;
     if (fd < 0) {
@@ -55,7 +53,7 @@ bool StreamServer::SendMsg(int32_t fd, NetPacket& pkt)
     return ses->SendMsg(pkt);
 }
 
-void StreamServer::Multicast(const std::vector<int32_t>& fdList, NetPacket& pkt)
+void StreamServer::Multicast(const std::vector<int32_t>& fdList, const NetPacket& pkt)
 {
     CALL_LOG_ENTER;
     for (const auto &item : fdList) {
@@ -109,7 +107,6 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     int32_t &serverFd, int32_t &clientFd)
 {
     CALL_LOG_ENTER;
-    std::string programName = "";
     int32_t sockFds[2] = { -1 };
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockFds) != 0) {
         SEN_HILOGE("Call socketpair failed, errno:%{public}d", errno);
@@ -122,7 +119,6 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
         return ERROR;
     }
     static constexpr size_t bufferSize = 32 * 1024;
-    static constexpr size_t nativeBufferSize = 64 * 1024;
     SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
         SEN_HILOGE("Setsockopt serverFd failed, errno: %{public}d", errno);
@@ -132,26 +128,15 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
         SEN_HILOGE("Setsockopt serverFd failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
-    if (tokenType == ATokenTypeEnum::TOKEN_NATIVE) {
-        if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &nativeBufferSize, sizeof(nativeBufferSize)) != 0) {
-            SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
-            goto CLOSE_SOCK;
-        }
-        if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &nativeBufferSize, sizeof(nativeBufferSize)) != 0) {
-            SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
-            goto CLOSE_SOCK;
-        }
-    } else {
-        if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-            SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
-            goto CLOSE_SOCK;
-        }
-        if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-            SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
-            goto CLOSE_SOCK;
-        }
+    if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
+        SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
+        goto CLOSE_SOCK;
     }
-    sess = std::make_shared<StreamSession>(programName, serverFd, uid, pid);
+    if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
+        SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
+        goto CLOSE_SOCK;
+    }
+    sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
     sess->SetTokenType(tokenType);
     if (!AddSession(sess)) {
         SEN_HILOGE("AddSession fail");
