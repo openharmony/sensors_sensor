@@ -30,6 +30,7 @@ ohos_shared_library("libsensor_service") {
     "src/sensor_power_policy.cpp",
     "src/sensor_service.cpp",
     "src/sensor_service_stub.cpp",
+    "src/stream_server.cpp",
   ]
 
   include_dirs = [

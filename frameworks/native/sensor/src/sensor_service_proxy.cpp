@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -189,6 +189,41 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
         SEN_HILOGE("failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
+}
+
+ErrCode SensorServiceProxy::SuspendSensors(int32_t pid)
+{
+    return SUCCESS;
+}
+
+ErrCode SensorServiceProxy::ResumeSensors(int32_t pid)
+{
+    return SUCCESS;
+}
+
+ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
+{
+    return SUCCESS;
+}
+
+ErrCode SensorServiceProxy::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd)
+{
+    return SUCCESS;
+}
+
+ErrCode SensorServiceProxy::DestroySocketChannel(sptr<IRemoteObject> sensorClient)
+{
+    return SUCCESS;
+}
+
+ErrCode SensorServiceProxy::EnableActiveInfoCB()
+{
+    return SUCCESS;
+}
+
+ErrCode SensorServiceProxy::DisableActiveInfoCB()
+{
+    return SUCCESS;
 }
 }  // namespace Sensors
 }  // namespace OHOS
