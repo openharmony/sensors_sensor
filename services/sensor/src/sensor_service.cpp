@@ -20,7 +20,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include "accesstoken_kit.h"
 #include "hisysevent.h"
 #include "iservice_registry.h"
 #include "permission_util.h"
@@ -33,7 +32,6 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-using namespace Security::AccessToken;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
 constexpr int32_t INVALID_SENSOR_ID = -1;
