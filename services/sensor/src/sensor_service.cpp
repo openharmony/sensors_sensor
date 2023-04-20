@@ -455,7 +455,7 @@ ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int
     CHKPR(sensorClient, INVALID_POINTER);
     int32_t serverFd = -1;
     int32_t ret = AddSocketPairInfo(GetCallingUid(), GetCallingPid(),
-        AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()), 
+        AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()),
         serverFd, std::ref(clientFd));
     if (ret != ERR_OK) {
         SEN_HILOGE("Add socket pair info failed, ret:%{public}d", ret);
