@@ -68,8 +68,8 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
             SEN_HILOGE("Send return failed,error:%{public}d fd:%{public}d", errno, fd_);
             return false;
         }
-        idx += count;
-        remSize -= count;
+        idx += static_cast<size_t>(count);
+        remSize -= static_cast<size_t>(count);
         if (remSize > 0) {
             usleep(SEND_RETRY_SLEEP_TIME);
         }
