@@ -170,8 +170,8 @@ ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParce
     (void)reply;
     int32_t pid;
     if (!data.ReadInt32(pid)) {
-        SEN_HILOGE("Parcel read failed");
-        return ERROR;
+        SEN_HILOGE("Parcel read pid failed");
+        return READ_PARCEL_ERR;
     }
     return SuspendSensors(pid);
 }
@@ -186,8 +186,8 @@ ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel
     (void)reply;
     int32_t pid;
     if (!data.ReadInt32(pid)) {
-        SEN_HILOGE("Parcel read failed");
-        return ERROR;
+        SEN_HILOGE("Parcel read pid failed");
+        return READ_PARCEL_ERR;
     }
     return ResumeSensors(pid);
 }
@@ -201,8 +201,8 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
     }
     int32_t pid;
     if (!data.ReadInt32(pid)) {
-        SEN_HILOGE("Parcel read failed");
-        return ERROR;
+        SEN_HILOGE("Parcel read pid failed");
+        return READ_PARCEL_ERR;
     }
     std::vector<ActiveInfo> activeInfoList;
     int32_t ret = GetActiveInfoList(pid, activeInfoList);
@@ -210,12 +210,15 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
         SEN_HILOGE("Get activeInfo list failed");
         return ret;
     }
-    int32_t activeInfoCount = int32_t { activeInfoList.size() };
-    reply.WriteInt32(activeInfoCount);
-    for (int32_t i = 0; i < activeInfoCount; i++) {
+    size_t activeInfoCount = activeInfoList.size();
+    if (!reply.WriteUint32(activeInfoCount)) {
+        SEN_HILOGE("Parcel write activeInfoCount failed");
+        return WRITE_PARCEL_ERR;
+    }
+    for (size_t i = 0; i < activeInfoCount; i++) {
         if (!activeInfoList[i].Marshalling(reply)) {
-            SEN_HILOGE("ActiveInfo %{public}d failed", i);
-            return ERROR;
+            SEN_HILOGE("ActiveInfo %{public}zu marshalling failed", i);
+            return WRITE_PARCEL_ERR;
         }
     }
     return ERR_OK;
@@ -224,7 +227,7 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
 ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
-    CHKPR(sensorClient, OBJECT_NULL);
+    CHKPR(sensorClient, INVALID_POINTER);
     int32_t clientFd = -1;
     int32_t ret = CreateSocketChannel(sensorClient, clientFd);
     if (ret != ERR_OK) {
@@ -232,9 +235,9 @@ ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, Message
         return ret;
     }
     if (!reply.WriteFileDescriptor(clientFd)) {
-        SEN_HILOGE("Write file descriptor failed");
+        SEN_HILOGE("Parcel write file descriptor failed");
         close(clientFd);
-        return ERROR;
+        return WRITE_PARCEL_ERR;
     }
     close(clientFd);
     return ERR_OK;
@@ -243,10 +246,10 @@ ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, Message
 ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
-    CHKPR(sensorClient, OBJECT_NULL);
+    CHKPR(sensorClient, INVALID_POINTER);
     int32_t ret = DestroySocketChannel(sensorClient);
     if (ret != ERR_OK) {
-        SEN_HILOGE("DestroySocketChannel failed");
+        SEN_HILOGE("Destroy socket channel failed");
         return ret;
     }
     return ERR_OK;
@@ -254,12 +257,22 @@ ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, Messag
 
 ErrCode SensorServiceStub::EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
 {
-    return SUCCESS;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    return EnableActiveInfoCB();
 }
 
 ErrCode SensorServiceStub::DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
 {
-    return SUCCESS;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if(!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    return DisableActiveInfoCB();
 }
 }  // namespace Sensors
 }  // namespace OHOS

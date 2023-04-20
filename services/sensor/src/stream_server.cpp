@@ -16,6 +16,7 @@
 #include "stream_server.h"
 
 #include <cinttypes>
+
 #include <sys/socket.h>
 
 #include "sensors_errors.h"
@@ -31,6 +32,7 @@ constexpr int32_t INVALID_FD = -1;
 StreamServer::~StreamServer()
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     idxPidMap_.clear();
     for (const auto &item : sessionsMap_) {
         item.second->Close();
@@ -63,7 +65,7 @@ void StreamServer::Multicast(const std::vector<int32_t>& fdList, const NetPacket
 
 int32_t StreamServer::GetClientFd(int32_t pid)
 {
-    std::lock_guard<std::mutex> idxPidLock(idxPidMutex_);
+    std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto it = idxPidMap_.find(pid);
     if (it == idxPidMap_.end()) {
         return INVALID_FD;
@@ -172,9 +174,8 @@ bool StreamServer::AddSession(SessionPtr ses)
         return false;
     }
     DelSession(pid);
-    std::lock_guard<std::mutex> idxPidLock(idxPidMutex_);
-    idxPidMap_[pid] = fd;
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
+    idxPidMap_[pid] = fd;
     sessionsMap_[fd] = ses;
     return true;
 }
@@ -182,14 +183,13 @@ bool StreamServer::AddSession(SessionPtr ses)
 void StreamServer::DelSession(int32_t pid)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> idxPidLock(idxPidMutex_);
+    std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto pidIt = idxPidMap_.find(pid);
     if (pidIt == idxPidMap_.end()) {
         return;
     }
     int32_t fd = pidIt->second;
     idxPidMap_.erase(pidIt);
-    std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto fdIt = sessionsMap_.find(fd);
     if (fdIt != sessionsMap_.end()) {
         sessionsMap_.erase(fdIt);

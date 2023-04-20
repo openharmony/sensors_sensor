@@ -725,7 +725,7 @@ std::vector<int32_t> ClientInfo::GetActiveInfoCBPid()
     return activeInfoCBPids;
 }
 
-bool ClientInfo::IsUnregisterClientDeathRecipient(int32_t pid)
+bool ClientInfo::CallingService(int32_t pid)
 {
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto channelIt = channelMap_.find(pid);

@@ -39,9 +39,8 @@ public:
 protected:
     bool AddSession(SessionPtr ses);
     void DelSession(int32_t pid);
-    std::mutex idxPidMutex_;
-    std::map<int32_t, int32_t> idxPidMap_;
     std::mutex sessionMutex_;
+    std::map<int32_t, int32_t> idxPidMap_;
     std::map<int32_t, SessionPtr> sessionsMap_;
 };
 }  // namespace Sensors

@@ -386,8 +386,8 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
         SEN_HILOGE("Pid is invalid");
         return;
     }
-    if (!clientInfo_.IsUnregisterClientDeathRecipient(pid)) {
-        SEN_HILOGD("Client call other service, can not unregister client death recipient");
+    if (!clientInfo_.CallingService(pid)) {
+        SEN_HILOGD("Cannot unregister client death recipient");
         return;
     }
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
@@ -454,6 +454,7 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
 ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd)
 {
     CALL_LOG_ENTER;
+    CHKPR(sensorClient, INVALID_POINTER);
     int32_t serverFd = -1;
     int32_t ret = AddSocketPairInfo(GetCallingUid(), GetCallingPid(),
         AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()), 
@@ -469,6 +470,7 @@ ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int
 ErrCode SensorService::DestroySocketChannel(sptr<IRemoteObject> sensorClient)
 {
     CALL_LOG_ENTER;
+    CHKPR(sensorClient, INVALID_POINTER);
     DelSession(GetCallingPid());
     UnregisterClientDeathRecipient(sensorClient);
     return ERR_OK;
@@ -493,7 +495,7 @@ void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
     CALL_LOG_ENTER;
     std::vector<SessionPtr> sessionList;
     auto pidList = clientInfo_.GetActiveInfoCBPid();
-    for (auto pid : pidList) {
+    for (const auto &pid : pidList) {
         auto sess = GetSessionByPid(pid);
         if (sess != nullptr) {
             sessionList.push_back(sess);
