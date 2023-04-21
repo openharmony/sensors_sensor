@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,12 +25,12 @@
 #include "message_parcel.h"
 #include "permission_util.h"
 #include "sensor_client_proxy.h"
-#include "sensor_parcel.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
+
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" };
 }  // namespace
@@ -76,19 +76,24 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
 {
     (void)reply;
     int32_t sensorId;
-    READINT32(data, sensorId, READ_PARCEL_ERR);
+    if (!data.ReadInt32(sensorId)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId:%{public}d grant failed, result:%{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
     int64_t samplingPeriodNs;
     int64_t maxReportDelayNs;
-    READINT64(data, samplingPeriodNs, READ_PARCEL_ERR);
-    READINT64(data, maxReportDelayNs, READ_PARCEL_ERR);
+    if ((!data.ReadInt64(samplingPeriodNs)) || (!data.ReadInt64(maxReportDelayNs))) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     return EnableSensor(sensorId, samplingPeriodNs, maxReportDelayNs);
 }
 
@@ -96,13 +101,16 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
 {
     (void)reply;
     int32_t sensorId;
-    READINT32(data, sensorId, READ_PARCEL_ERR);
+    if (!data.ReadInt32(sensorId)) {
+        SEN_HILOGE("Parcel read failed");
+        return ERROR;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId:%{public}d grant failed, result:%{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
     return DisableSensor(sensorId);
@@ -111,12 +119,13 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
 ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)data;
-    std::vector<Sensor> sensors = GetSensorList();
-    int32_t sensorCount = sensors.size();
-    WRITEINT32(reply, sensorCount, WRITE_PARCEL_ERR);
-    for (int32_t i = 0; i < sensorCount; ++i) {
-        if (!sensors[i].Marshalling(reply)) {
-            SEN_HILOGE("Sensor %{public}d marshalling failed", i);
+    std::vector<Sensor> sensors(GetSensorList());
+    int32_t sensorCount = int32_t { sensors.size() };
+    reply.WriteInt32(sensorCount);
+    for (int32_t i = 0; i < sensorCount; i++) {
+        bool flag = sensors[i].Marshalling(reply);
+        if (!flag) {
+            SEN_HILOGE("sensor %{public}d failed", i);
             return GET_SENSOR_LIST_ERR;
         }
     }
