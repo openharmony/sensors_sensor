@@ -56,8 +56,8 @@ public:
                                 const sptr<IRemoteObject> &sensorClient) override;
     ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) override;
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
-    ErrCode SuspendSensors(int32_t pid) override;
-    ErrCode ResumeSensors(int32_t pid) override;
+    ErrCode SuspendSensors(int32_t pid);
+    ErrCode ResumeSensors(int32_t pid);
     ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList);
     ErrCode CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd);
     ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient);

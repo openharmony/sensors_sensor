@@ -43,8 +43,6 @@ SensorServiceStub::SensorServiceStub()
     baseFuncs_[GET_SENSOR_LIST] = &SensorServiceStub::GetAllSensorsInner;
     baseFuncs_[TRANSFER_DATA_CHANNEL] = &SensorServiceStub::CreateDataChannelInner;
     baseFuncs_[DESTROY_SENSOR_CHANNEL] = &SensorServiceStub::DestroyDataChannelInner;
-    baseFuncs_[SUSPEND_SENSORS] = &SensorServiceStub::SuspendSensorsInner;
-    baseFuncs_[RESUME_SENSORS] = &SensorServiceStub::ResumeSensorsInner;
 }
 
 SensorServiceStub::~SensorServiceStub()
@@ -145,32 +143,6 @@ ErrCode SensorServiceStub::DestroyDataChannelInner(MessageParcel &data, MessageP
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     CHKPR(sensorClient, OBJECT_NULL);
     return DestroySensorChannel(sensorClient);
-}
-
-ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParcel &reply)
-{
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
-        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
-        return PERMISSION_DENIED;
-    }
-    (void)reply;
-    int32_t pid;
-    READINT32(data, pid, READ_PARCEL_ERR);
-    return SuspendSensors(pid);
-}
-
-ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel &reply)
-{
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
-        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
-        return PERMISSION_DENIED;
-    }
-    (void)reply;
-    int32_t pid;
-    READINT32(data, pid, READ_PARCEL_ERR);
-    return ResumeSensors(pid);
 }
 }  // namespace Sensors
 }  // namespace OHOS

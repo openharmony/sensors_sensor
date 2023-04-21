@@ -35,8 +35,6 @@ public:
     ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                 const sptr<IRemoteObject> &sensorClient) override;
     ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) override;
-    ErrCode SuspendSensors(int32_t pid) override;
-    ErrCode ResumeSensors(int32_t pid) override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorServiceProxy);

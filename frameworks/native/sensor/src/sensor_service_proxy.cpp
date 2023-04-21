@@ -168,47 +168,5 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     }
     return static_cast<ErrCode>(ret);
 }
-
-ErrCode SensorServiceProxy::SuspendSensors(int32_t pid)
-{
-    MessageParcel data;
-    if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("Parcel write descriptor failed");
-        return WRITE_PARCEL_ERR;
-    }
-    WRITEINT32(data, pid, WRITE_PARCEL_ERR);
-    sptr<IRemoteObject> remote = Remote();
-    CHKPR(remote, ERROR);
-    MessageParcel reply;
-    MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::SUSPEND_SENSORS, data, reply, option);
-    if (ret != NO_ERROR) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "SuspendSensors", "ERROR_CODE", ret);
-        SEN_HILOGE("Failed, ret:%{public}d", ret);
-    }
-    return static_cast<ErrCode>(ret);
-}
-
-ErrCode SensorServiceProxy::ResumeSensors(int32_t pid)
-{
-    MessageParcel data;
-    if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("Parcel write descriptor failed");
-        return WRITE_PARCEL_ERR;
-    }
-    WRITEINT32(data, pid, WRITE_PARCEL_ERR);
-    sptr<IRemoteObject> remote = Remote();
-    CHKPR(remote, ERROR);
-    MessageParcel reply;
-    MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::RESUME_SENSORS, data, reply, option);
-    if (ret != NO_ERROR) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "ResumeSensors", "ERROR_CODE", ret);
-        SEN_HILOGE("Failed, ret:%{public}d", ret);
-    }
-    return static_cast<ErrCode>(ret);
-}
 }  // namespace Sensors
 }  // namespace OHOS
