@@ -67,20 +67,14 @@ int32_t StreamServer::GetClientFd(int32_t pid)
 {
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto it = idxPidMap_.find(pid);
-    if (it == idxPidMap_.end()) {
-        return INVALID_FD;
-    }
-    return it->second;
+    return it == idxPidMap_.end() ? INVALID_FD : it->second;
 }
 
 int32_t StreamServer::GetClientPid(int32_t fd)
 {
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto it = sessionsMap_.find(fd);
-    if (it == sessionsMap_.end()) {
-        return INVALID_PID;
-    }
-    return it->second->GetPid();
+    return it == sessionsMap_.end() ? INVALID_PID : it->second->GetPid();
 }
 
 SessionPtr StreamServer::GetSession(int32_t fd)
@@ -197,7 +191,7 @@ void StreamServer::DelSession(int32_t pid)
     if (fd >= 0) {
         auto rf = close(fd);
         if (rf != 0) {
-            SEN_HILOGE("Socket fd close failed, rf:%{public}d", rf);
+            SEN_HILOGE("Socket fd close failed, rf:%{public}d, errno:%{public}d", rf, errno);
         }
     }
 }

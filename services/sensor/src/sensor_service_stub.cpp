@@ -25,6 +25,7 @@
 #include "message_parcel.h"
 #include "permission_util.h"
 #include "sensor_client_proxy.h"
+#include "sensor_parcel.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -44,9 +45,6 @@ SensorServiceStub::SensorServiceStub()
     baseFuncs_[DESTROY_SENSOR_CHANNEL] = &SensorServiceStub::DestroyDataChannelInner;
     baseFuncs_[SUSPEND_SENSORS] = &SensorServiceStub::SuspendSensorsInner;
     baseFuncs_[RESUME_SENSORS] = &SensorServiceStub::ResumeSensorsInner;
-    baseFuncs_[GET_ACTIVE_INFO_LIST] = &SensorServiceStub::GetActiveInfoListInner;
-    baseFuncs_[CREATE_SOCKET_CHANNEL] = &SensorServiceStub::CreateSocketChannelInner;
-    baseFuncs_[DESTROY_SOCKET_CHANNEL] = &SensorServiceStub::DestroySocketChannelInner;
 }
 
 SensorServiceStub::~SensorServiceStub()
@@ -80,24 +78,19 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
 {
     (void)reply;
     int32_t sensorId;
-    if (!data.ReadInt32(sensorId)) {
-        SEN_HILOGE("Parcel read failed");
-        return ERROR;
-    }
+    READINT32(data, sensorId, READ_PARCEL_ERR);
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}d grant failed, result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
     int64_t samplingPeriodNs;
     int64_t maxReportDelayNs;
-    if ((!data.ReadInt64(samplingPeriodNs)) || (!data.ReadInt64(maxReportDelayNs))) {
-        SEN_HILOGE("Parcel read failed");
-        return ERROR;
-    }
+    READINT64(data, samplingPeriodNs, READ_PARCEL_ERR);
+    READINT64(data, maxReportDelayNs, READ_PARCEL_ERR);
     return EnableSensor(sensorId, samplingPeriodNs, maxReportDelayNs);
 }
 
@@ -105,16 +98,13 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
 {
     (void)reply;
     int32_t sensorId;
-    if (!data.ReadInt32(sensorId)) {
-        SEN_HILOGE("Parcel read failed");
-        return ERROR;
-    }
+    READINT32(data, sensorId, READ_PARCEL_ERR);
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
-        SEN_HILOGE("sensorId:%{public}u grant failed,result:%{public}d", sensorId, ret);
+        SEN_HILOGE("sensorId:%{public}d grant failed, result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
     return DisableSensor(sensorId);
@@ -123,13 +113,12 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
 ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)data;
-    std::vector<Sensor> sensors(GetSensorList());
-    int32_t sensorCount = int32_t { sensors.size() };
-    reply.WriteInt32(sensorCount);
-    for (int32_t i = 0; i < sensorCount; i++) {
-        bool flag = sensors[i].Marshalling(reply);
-        if (!flag) {
-            SEN_HILOGE("sensor %{public}d failed", i);
+    std::vector<Sensor> sensors = GetSensorList();
+    int32_t sensorCount = sensors.size();
+    WRITEINT32(reply, sensorCount, WRITE_PARCEL_ERR);
+    for (int32_t i = 0; i < sensorCount; ++i) {
+        if (!sensors[i].Marshalling(reply)) {
+            SEN_HILOGE("Sensor %{public}d marshalling failed", i);
             return GET_SENSOR_LIST_ERR;
         }
     }
@@ -167,10 +156,7 @@ ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParce
     }
     (void)reply;
     int32_t pid;
-    if (!data.ReadInt32(pid)) {
-        SEN_HILOGE("Parcel read pid failed");
-        return READ_PARCEL_ERR;
-    }
+    READINT32(data, pid, READ_PARCEL_ERR);
     return SuspendSensors(pid);
 }
 
@@ -183,74 +169,8 @@ ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel
     }
     (void)reply;
     int32_t pid;
-    if (!data.ReadInt32(pid)) {
-        SEN_HILOGE("Parcel read pid failed");
-        return READ_PARCEL_ERR;
-    }
+    READINT32(data, pid, READ_PARCEL_ERR);
     return ResumeSensors(pid);
-}
-
-ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessageParcel &reply)
-{
-    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
-        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
-        return PERMISSION_DENIED;
-    }
-    int32_t pid;
-    if (!data.ReadInt32(pid)) {
-        SEN_HILOGE("Parcel read pid failed");
-        return READ_PARCEL_ERR;
-    }
-    std::vector<ActiveInfo> activeInfoList;
-    int32_t ret = GetActiveInfoList(pid, activeInfoList);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("Get activeInfo list failed");
-        return ret;
-    }
-    size_t activeInfoCount = activeInfoList.size();
-    if (!reply.WriteUint32(activeInfoCount)) {
-        SEN_HILOGE("Parcel write activeInfoCount failed");
-        return WRITE_PARCEL_ERR;
-    }
-    for (size_t i = 0; i < activeInfoCount; i++) {
-        if (!activeInfoList[i].Marshalling(reply)) {
-            SEN_HILOGE("ActiveInfo %{public}zu marshalling failed", i);
-            return WRITE_PARCEL_ERR;
-        }
-    }
-    return ERR_OK;
-}
-
-ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, MessageParcel &reply)
-{
-    sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
-    CHKPR(sensorClient, INVALID_POINTER);
-    int32_t clientFd = -1;
-    int32_t ret = CreateSocketChannel(sensorClient, clientFd);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("Create socket channel failed");
-        return ret;
-    }
-    if (!reply.WriteFileDescriptor(clientFd)) {
-        SEN_HILOGE("Parcel write file descriptor failed");
-        close(clientFd);
-        return WRITE_PARCEL_ERR;
-    }
-    close(clientFd);
-    return ERR_OK;
-}
-
-ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, MessageParcel &reply)
-{
-    sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
-    CHKPR(sensorClient, INVALID_POINTER);
-    int32_t ret = DestroySocketChannel(sensorClient);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("Destroy socket channel failed");
-        return ret;
-    }
-    return ERR_OK;
 }
 }  // namespace Sensors
 }  // namespace OHOS

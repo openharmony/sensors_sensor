@@ -42,11 +42,6 @@ public:
     virtual ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) = 0;
     virtual ErrCode SuspendSensors(int32_t pid) = 0;
     virtual ErrCode ResumeSensors(int32_t pid) = 0;
-    virtual ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList) = 0;
-    virtual ErrCode CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd) = 0;
-    virtual ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient) = 0;
-    virtual ErrCode EnableActiveInfoCB() = 0;
-    virtual ErrCode DisableActiveInfoCB() = 0;
     enum {
         ENABLE_SENSOR = 0,
         DISABLE_SENSOR,
@@ -57,11 +52,6 @@ public:
         DESTROY_SENSOR_CHANNEL,
         SUSPEND_SENSORS,
         RESUME_SENSORS,
-        GET_ACTIVE_INFO_LIST,
-        CREATE_SOCKET_CHANNEL,
-        DESTROY_SOCKET_CHANNEL,
-        ENABLE_ACTIVE_INFO_CB,
-        DISABLE_ACTIVE_INFO_CB,
     };
 };
 }  // namespace Sensors
