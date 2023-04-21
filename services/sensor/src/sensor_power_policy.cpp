@@ -194,7 +194,11 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
     NetPacket pkt(MessageId::ACTIVE_INFO);
     pkt << activeInfo.GetPid() << activeInfo.GetSensorId() <<
         activeInfo.GetSamplingPeriodNs() << activeInfo.GetMaxReportDelayNs();
+#ifdef OHOS_BUILD_ENABLE_RUST
+    if (chk_rwerror(&pkt.rustStreamBuffer_)) {
+#else
     if (pkt.ChkRWError()) {
+#endif // OHOS_BUILD_ENABLE_RUST
         SEN_HILOGE("Packet write data failed");
         return;
     }

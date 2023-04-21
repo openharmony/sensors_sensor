@@ -15,9 +15,6 @@
 
 #include "stream_buffer.h"
 
-#include <algorithm>
-#include <vector>
-
 namespace OHOS {
 namespace Sensors {
 StreamBuffer::StreamBuffer(const StreamBuffer &buf)
@@ -33,36 +30,43 @@ StreamBuffer &StreamBuffer::operator=(const StreamBuffer &other)
 
 void StreamBuffer::Reset()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    reset(&rustStreamBuffer_);
+#else
     rPos_ = 0;
     wPos_ = 0;
     rCount_ = 0;
     wCount_ = 0;
     rwErrorStatus_ = ErrorStatus::ERROR_STATUS_OK;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 void StreamBuffer::Clean()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    clean(&rustStreamBuffer_);
+#else
     Reset();
     errno_t ret = memset_sp(&szBuff_, sizeof(szBuff_), 0, sizeof(szBuff_));
     if (ret != EOK) {
         SEN_HILOGE("Call memset_s fail");
         return;
     }
-}
-
-bool StreamBuffer::SeekReadPos(size_t n)
-{
-    size_t pos = rPos_ + n;
-    if (pos > wPos_) {
-        SEN_HILOGE("The position in the calculation is not as expected. pos:%{public}zu, [0, %{public}zu]", pos, wPos_);
-        return false;
-    }
-    rPos_ = pos;
-    return true;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 bool StreamBuffer::Read(std::string &buf)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    if (rustStreamBuffer_.rPos_ == rustStreamBuffer_.wPos_) {
+        SEN_HILOGE("Not enough memory to read, errCode:%{public}d", STREAM_BUF_READ_FAIL);
+        rustStreamBuffer_.rwErrorStatus_ = ErrorStatus::ERROR_STATUS_Read;
+        return false;
+    }
+    buf = ReadBuf();
+    rustStreamBuffer_.rPos_ += static_cast<int32_t>(buf.length()) + 1;
+    return (buf.length() > 0);
+#else
     if (rPos_ == wPos_) {
         SEN_HILOGE("Not enough memory to read");
         rwErrorStatus_ = ErrorStatus::ERROR_STATUS_READ;
@@ -71,25 +75,37 @@ bool StreamBuffer::Read(std::string &buf)
     buf = ReadBuf();
     rPos_ += buf.length() + 1;
     return (buf.length() > 0);
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 bool StreamBuffer::Write(const std::string &buf)
 {
-    return Write(buf.c_str(), buf.length() + 1);
+    return Write(buf.c_str(), buf.length()+1);
 }
 
 bool StreamBuffer::Read(StreamBuffer &buf)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return read_streambuffer(&rustStreamBuffer_, &buf.rustStreamBuffer_);
+#else
     return buf.Write(Data(), Size());
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 bool StreamBuffer::Write(const StreamBuffer &buf)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return write_streambuffer(&rustStreamBuffer_, &buf.rustStreamBuffer_);
+#else
     return Write(buf.Data(), buf.Size());
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 bool StreamBuffer::Read(char *buf, size_t size)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return read_char_usize(&rustStreamBuffer_, buf, size);
+#else
     if (ChkRWError()) {
         return false;
     }
@@ -117,10 +133,15 @@ bool StreamBuffer::Read(char *buf, size_t size)
     rPos_ += size;
     ++rCount_;
     return true;
+#endif // OHOS_BUILD_ENABLE_RUST
+
 }
 
 bool StreamBuffer::Write(const char *buf, size_t size)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return write_char_usize(&rustStreamBuffer_, buf, size);
+#else
     if (ChkRWError()) {
         return false;
     }
@@ -149,11 +170,47 @@ bool StreamBuffer::Write(const char *buf, size_t size)
     wPos_ += size;
     ++wCount_;
     return true;
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+
+const char *StreamBuffer::ReadBuf() const
+{
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return read_buf(&rustStreamBuffer_);
+#else
+    return &szBuff_[rPos_];
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+
+bool StreamBuffer::Clone(const StreamBuffer &buf)
+{
+    Clean();
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return Write(data(&buf.rustStreamBuffer_), size(&buf.rustStreamBuffer_));
+#else
+    return Write(buf.Data(), buf.Size());
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+#ifndef OHOS_BUILD_ENABLE_RUST
+bool StreamBuffer::SeekReadPos(size_t n)
+{
+    size_t pos = rPos_ + n;
+    if (pos > wPos_) {
+        SEN_HILOGE("The position in the calculation is not as expected. pos:%{public}zu, [0, %{public}zu]", pos, wPos_);
+        return false;
+    }
+    rPos_ = pos;
+    return true;
 }
 
 bool StreamBuffer::IsEmpty() const
 {
     return (rPos_ == wPos_);
+}
+
+bool StreamBuffer::ChkRWError() const
+{
+    return (rwErrorStatus_ != ErrorStatus::ERROR_STATUS_OK);
 }
 
 size_t StreamBuffer::Size() const
@@ -169,11 +226,6 @@ size_t StreamBuffer::UnreadSize() const
 size_t StreamBuffer::GetAvailableBufSize() const
 {
     return ((wPos_ >= MAX_STREAM_BUF_SIZE) ? 0 : (MAX_STREAM_BUF_SIZE - wPos_));
-}
-
-bool StreamBuffer::ChkRWError() const
-{
-    return (rwErrorStatus_ != ErrorStatus::ERROR_STATUS_OK);
 }
 
 const std::string &StreamBuffer::GetErrorStatusRemark() const
@@ -195,20 +247,10 @@ const char *StreamBuffer::Data() const
     return &szBuff_[0];
 }
 
-const char *StreamBuffer::ReadBuf() const
-{
-    return &szBuff_[rPos_];
-}
-
 const char *StreamBuffer::WriteBuf() const
 {
     return &szBuff_[wPos_];
 }
-
-bool StreamBuffer::Clone(const StreamBuffer &buf)
-{
-    Clean();
-    return Write(buf.Data(), buf.Size());
-}
+#endif // OHOS_BUILD_ENABLE_RUST
 }  // namespace Sensors
 }  // namespace OHOS

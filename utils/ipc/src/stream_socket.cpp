@@ -21,20 +21,30 @@
 
 namespace OHOS {
 namespace Sensors {
+#ifndef OHOS_BUILD_ENABLE_RUST
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamSocket" };
 } // namespace
+#endif // OHOS_BUILD_ENABLE_RUST
 
 StreamSocket::StreamSocket() {}
 
 StreamSocket::~StreamSocket()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    rust_close(&rustStreamSocket_);
+    rust_epoll_close(&rustStreamSocket_);
+#else
     Close();
     EpollClose();
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 int32_t StreamSocket::EpollCreate(int32_t size)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return rust_epoll_create(&rustStreamSocket_, size);
+#else
     epollFd_ = epoll_create(size);
     if (epollFd_ < 0) {
         SEN_HILOGE("Epoll create, epollFd_:%{public}d", epollFd_);
@@ -42,10 +52,15 @@ int32_t StreamSocket::EpollCreate(int32_t size)
         SEN_HILOGI("Epoll already create, epollFd_:%{public}d", epollFd_);
     }
     return epollFd_;
+#endif // OHOS_BUILD_ENABLE_RUST
+
 }
 
 int32_t StreamSocket::EpollCtl(int32_t fd, int32_t op, struct epoll_event &event, int32_t epollFd)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return rust_epoll_ctl(&rustStreamSocket_, fd, op, &event, epollFd);
+#else
     if (fd < 0) {
         SEN_HILOGE("Invalid fd");
         return ERROR;
@@ -68,10 +83,14 @@ int32_t StreamSocket::EpollCtl(int32_t fd, int32_t op, struct epoll_event &event
             ret, epollFd, op, fd, errno);
     }
     return ret;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 int32_t StreamSocket::EpollWait(struct epoll_event &events, int32_t maxevents, int32_t timeout, int32_t epollFd)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return rust_epoll_wait(&rustStreamSocket_, &events, maxevents, timeout, epollFd);
+#else
     if (epollFd < 0) {
         epollFd = epollFd_;
     }
@@ -84,8 +103,54 @@ int32_t StreamSocket::EpollWait(struct epoll_event &events, int32_t maxevents, i
         SEN_HILOGE("Epoll_wait ret:%{public}d, errno:%{public}d", ret, errno);
     }
     return ret;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
+void StreamSocket::EpollClose()
+{
+#ifdef OHOS_BUILD_ENABLE_RUST
+    rust_epoll_close(&rustStreamSocket_);
+#else
+    if (epollFd_ >= 0) {
+        close(epollFd_);
+        epollFd_ = -1;
+    }
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+
+void StreamSocket::Close()
+{
+#ifdef OHOS_BUILD_ENABLE_RUST
+    rust_close(&rustStreamSocket_);
+#else
+    if (fd_ >= 0) {
+        auto rf = close(fd_);
+        if (rf != 0) {
+            SEN_HILOGE("Socket close failed, rf:%{public}d", rf);
+        }
+    }
+    fd_ = -1;
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+
+int32_t StreamSocket::GetFd() const
+{
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return get_fd(&rustStreamSocket_);
+#else
+    return fd_;
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+int32_t StreamSocket::GetEpollFd() const
+{
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return get_epoll_fd(&rustStreamSocket_);
+#else
+    return epollFd_;
+#endif // OHOS_BUILD_ENABLE_RUST
+}
+
+#ifndef OHOS_BUILD_ENABLE_RUST
 void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::PacketCallBackFun callbackFun)
 {
     constexpr size_t headSize = sizeof(PackHead);
@@ -127,33 +192,7 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
         }
     }
 }
+#endif  // OHOS_BUILD_ENABLE_RUST
 
-void StreamSocket::EpollClose()
-{
-    if (epollFd_ >= 0) {
-        close(epollFd_);
-        epollFd_ = -1;
-    }
-}
-
-void StreamSocket::Close()
-{
-    if (fd_ >= 0) {
-        auto rf = close(fd_);
-        if (rf != 0) {
-            SEN_HILOGE("Socket close failed, rf:%{public}d", rf);
-        }
-    }
-    fd_ = -1;
-}
-
-int32_t StreamSocket::GetFd() const
-{
-    return fd_;
-}
-int32_t StreamSocket::GetEpollFd() const
-{
-    return epollFd_;
-}
 }  // namespace Sensors
 }  // namespace OHOS

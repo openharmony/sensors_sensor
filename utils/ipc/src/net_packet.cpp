@@ -29,6 +29,16 @@ NetPacket::NetPacket(const NetPacket &pkt) : NetPacket(pkt.GetMsgId())
 
 void NetPacket::MakeData(StreamBuffer &buf) const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    PACKHEAD head = {msgId_, rustStreamBuffer_.wPos_};
+    buf << head;
+    if (rustStreamBuffer_.wPos_ > 0) {
+        if (!buf.Write(&rustStreamBuffer_.szBuff_[0], rustStreamBuffer_.wPos_)) {
+            SEN_HILOGE("Write data to stream failed");
+            return;
+        }
+    }
+#else
     PACKHEAD head = {msgId_, wPos_};
     buf << head;
     if (wPos_ > 0) {
@@ -37,21 +47,34 @@ void NetPacket::MakeData(StreamBuffer &buf) const
             return;
         }
     }
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 size_t NetPacket::GetSize() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return size(&rustStreamBuffer_);
+#else
     return Size();
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 size_t NetPacket::GetPacketLength() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return (static_cast<int32_t>(sizeof(PackHead)) + rustStreamBuffer_.wPos_);
+#else
     return sizeof(PackHead) + wPos_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 const char* NetPacket::GetData() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return data(&rustStreamBuffer_);
+#else
     return Data();
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 MessageId NetPacket::GetMsgId() const

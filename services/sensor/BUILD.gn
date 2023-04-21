@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/sensors/sensor/sensor.gni")
 import("//build/ohos.gni")
 
 SUBSYSTEM_DIR = "//base/sensors"
@@ -47,10 +48,16 @@ ohos_shared_library("libsensor_service") {
     "hdi_connection/hardware/include",
   ]
 
+  defines = sensor_default_defines
+
   deps = [
     "$SUBSYSTEM_DIR/sensor/utils/common:libsensor_utils",
     "$SUBSYSTEM_DIR/sensor/utils/ipc:libsensor_ipc",
   ]
+
+  if (rust_socket_ipc) {
+    deps += [ "$SUBSYSTEM_DIR/sensor/rust/utils/socket_ipc_rust_ffi:sensor_rust_util_ffi" ]
+  }
 
   external_deps = [
     "access_token:libaccesstoken_sdk",

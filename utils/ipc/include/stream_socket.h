@@ -31,6 +31,9 @@
 
 #include "circle_stream_buffer.h"
 #include "net_packet.h"
+#ifdef OHOS_BUILD_ENABLE_RUST 
+#include "rust_binding.h"
+#endif // OHOS_BUILD_ENABLE_RUST
 
 namespace OHOS {
 namespace Sensors {
@@ -42,17 +45,23 @@ public:
     int32_t EpollCreate(int32_t size);
     int32_t EpollCtl(int32_t fd, int32_t op, struct epoll_event &event, int32_t epollFd = -1);
     int32_t EpollWait(struct epoll_event &events, int32_t maxevents, int32_t timeout, int32_t epollFd = -1);
-    void OnReadPackets(CircleStreamBuffer &buf, PacketCallBackFun callbackFun);
     void EpollClose();
     void Close();
     int32_t GetFd() const;
     int32_t GetEpollFd() const;
-
+#ifndef OHOS_BUILD_ENABLE_RUST
+    void OnReadPackets(CircleStreamBuffer &buf, PacketCallBackFun callbackFun);
+#endif  // OHOS_BUILD_ENABLE_RUST
     DISALLOW_COPY_AND_MOVE(StreamSocket);
 
 protected:
+#ifdef OHOS_BUILD_ENABLE_RUST
+    struct RustStreamSocket rustStreamSocket_;
+#else
     int32_t fd_ { -1 };
     int32_t epollFd_ { -1 };
+#endif // OHOS_BUILD_ENABLE_RUST
+
 };
 }  // namespace Sensors
 }  // namespace OHOS
