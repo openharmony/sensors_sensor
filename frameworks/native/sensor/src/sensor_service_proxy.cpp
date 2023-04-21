@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,6 @@
 #include "hisysevent.h"
 #include "message_parcel.h"
 #include "sensor_client_proxy.h"
-#include "sensor_parcel.h"
 #include "sensors_errors.h"
 
 namespace OHOS {
@@ -30,6 +29,11 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceProxy" };
 constexpr int32_t MAX_SENSOR_COUNT = 200;
+enum {
+    FLUSH = 0,
+    SET_MODE,
+    RESERVED,
+};
 }  // namespace
 
 SensorServiceProxy::SensorServiceProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorService>(impl)
@@ -44,9 +48,18 @@ ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPerio
         SEN_HILOGE("write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
-    WRITEINT32(data, sensorId, WRITE_PARCEL_ERR);
-    WRITEINT64(data, samplingPeriodNs, WRITE_PARCEL_ERR);
-    WRITEINT64(data, maxReportDelayNs, WRITE_PARCEL_ERR);
+    if (!data.WriteInt32(sensorId)) {
+        SEN_HILOGE("write sensorId failed");
+        return WRITE_PARCEL_ERR;
+    }
+    if (!data.WriteInt64(samplingPeriodNs)) {
+        SEN_HILOGE("write samplingPeriodNs failed");
+        return WRITE_PARCEL_ERR;
+    }
+    if (!data.WriteInt64(maxReportDelayNs)) {
+        SEN_HILOGE("write maxReportDelayNs failed");
+        return WRITE_PARCEL_ERR;
+    }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
@@ -67,7 +80,10 @@ ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
         SEN_HILOGE("write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
-    WRITEINT32(data, sensorId, WRITE_PARCEL_ERR);
+    if (!data.WriteInt32(sensorId)) {
+        SEN_HILOGE("write sensorId failed");
+        return WRITE_PARCEL_ERR;
+    }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::DISABLE_SENSOR, data, reply, option);
@@ -134,7 +150,10 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
         return WRITE_PARCEL_ERR;
     }
     sensorBasicDataChannel->SendToBinder(data);
-    WRITEREMOTEOBJECT(data, sensorClient, WRITE_PARCEL_ERR);
+    if (!data.WriteRemoteObject(sensorClient)) {
+        SEN_HILOGE("sensorClient failed");
+        return WRITE_PARCEL_ERR;
+    }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::TRANSFER_DATA_CHANNEL, data, reply, option);
@@ -157,7 +176,10 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
         SEN_HILOGE("write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
-    WRITEREMOTEOBJECT(data, sensorClient, WRITE_PARCEL_ERR);
+    if (!data.WriteRemoteObject(sensorClient)) {
+        SEN_HILOGE("write sensorClient failed");
+        return WRITE_PARCEL_ERR;
+    }
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
     int32_t ret = remote->SendRequest(ISensorService::DESTROY_SENSOR_CHANNEL, data, reply, option);
