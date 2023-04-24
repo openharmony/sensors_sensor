@@ -111,25 +111,25 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     serverFd = sockFds[0];
     clientFd = sockFds[1];
     if (serverFd < 0 || clientFd < 0) {
-        SEN_HILOGE("Call fcntl failed, errno:%{public}d", errno);
+        SEN_HILOGE("Call socketpair failed, errno:%{public}d", errno);
         return ERROR;
     }
     static constexpr size_t bufferSize = 32 * 1024;
     SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt serverFd failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(serverFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt serverFd failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt clientFd failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
