@@ -33,7 +33,6 @@ ohos_shared_library("libsensor_service") {
   ]
 
   include_dirs = [
-
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/services/sensor/include",
@@ -53,12 +52,12 @@ ohos_shared_library("libsensor_service") {
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "drivers_interface_sensor:libsensor_proxy_1.0",
+    "drivers_peripheral_sensor:hdi_sensor",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
-    "drivers_peripheral_sensor:hdi_sensor",
   ]
 
   shlib_type = "sa"

@@ -19,7 +19,8 @@ import("./../../../../../sensor.gni")
 ohos_fuzztest("SensorAgentFuzzTest") {
   module_out_path = "sensors/sensor"
 
-  fuzz_config_file = "$SUBSYSTEM_DIR/interfaces/native/test/fuzztest/sensoragent_fuzzer"
+  fuzz_config_file =
+      "$SUBSYSTEM_DIR/interfaces/native/test/fuzztest/sensoragent_fuzzer"
 
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/native/include",
