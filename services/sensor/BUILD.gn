@@ -12,8 +12,8 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("./../../sensor.gni")
 
-SUBSYSTEM_DIR = "//base/sensors"
 ohos_shared_library("libsensor_service") {
   sources = [
     "hdi_connection/adapter/src/compatible_connection.cpp",
@@ -33,29 +33,26 @@ ohos_shared_library("libsensor_service") {
   ]
 
   include_dirs = [
-    "include",
-    "$SUBSYSTEM_DIR/sensor/frameworks/native/sensor/include",
-    "$SUBSYSTEM_DIR/sensor/interfaces/native/include",
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
-    "$SUBSYSTEM_DIR/sensor/utils/common/include",
-    "$SUBSYSTEM_DIR/sensor/utils/ipc/include",
-    "$SUBSYSTEM_DIR/sensor/services/sensor/include",
-    "//drivers/peripheral/sensor/interfaces/include",
-    "hdi_connection/interface/include",
-    "hdi_connection/adapter/include",
-    "hdi_connection/hardware/include",
+    "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
+    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/services/sensor/include",
+    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
+    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
+    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/sensor/utils/common:libsensor_utils",
-    "$SUBSYSTEM_DIR/sensor/utils/ipc:libsensor_ipc",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
     "drivers_interface_sensor:libsensor_proxy_1.0",
+    "drivers_peripheral_sensor:hdi_sensor",
     "hisysevent_native:libhisysevent",
     "hitrace_native:hitrace_meter",
     "hiviewdfx_hilog_native:libhilog",
