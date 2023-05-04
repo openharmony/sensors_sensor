@@ -27,23 +27,23 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
-std::vector<SensorInformation> g_sensorInfos = {
+std::vector<SensorInfo> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 0, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
 std::vector<int32_t> supportSensors = {0};
 float testData[] = {9.8};
-SensorEvents testEvent = {
-    .sensorId = 0,
+SensorEvent testEvent = {
+    .sensorTypeId = 0,
     .data = (uint8_t *)testData,
     .dataLen = 4
 };
 }
-RecordDataCallback HdiServiceImpl::g_callback;
+RecordSensorCallback HdiServiceImpl::g_callback;
 int64_t HdiServiceImpl::g_samplingInterval = -1;
 int64_t HdiServiceImpl::g_reportInterval = -1;
 std::atomic_bool HdiServiceImpl::g_isStop = false;
 
-int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInformation>& sensorList)
+int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
 {
     CALL_LOG_ENTER;
     sensorList.assign(g_sensorInfos.begin(), g_sensorInfos.end());
@@ -129,7 +129,7 @@ int32_t HdiServiceImpl::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::Register(RecordDataCallback cb)
+int32_t HdiServiceImpl::Register(RecordSensorCallback cb)
 {
     CHKPR(cb, ERROR);
     g_callback = cb;
