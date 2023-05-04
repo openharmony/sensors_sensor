@@ -11,30 +11,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#import("//build/config/ohos/rules.gni")
 import("//build/ohos.gni")
+import("./../../sensor.gni")
+
 ohos_shared_library("libsensor") {
   include_dirs = [
-    "//third_party/node/src",
-    "//native_engine",
-    "../native/include",
+    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/plugin/include",
+    "$SUBSYSTEM_DIR/utils/common/include",
     "//third_party/libuv/include",
-    "//commonlibrary/c_utils/base/include",
-    "./include",
-    "./../../utils/common/include",
-    "//foundation/arkui/napi/interfaces/inner_api/napi",
+    "//third_party/node/src",
   ]
   defines = [
     "APP_LOG_TAG = \"sensorJs\"",
     "LOG_DOMAIN = 0xD002700",
   ]
   sources = [
-    "./src/sensor_js.cpp",
-    "./src/sensor_napi_error.cpp",
-    "./src/sensor_napi_utils.cpp",
-    "./src/sensor_system_js.cpp",
+    "src/sensor_js.cpp",
+    "src/sensor_napi_error.cpp",
+    "src/sensor_napi_utils.cpp",
+    "src/sensor_system_js.cpp",
   ]
-  deps = [ "../native:sensor_interface_native" ]
+  deps = [ "$SUBSYSTEM_DIR/interfaces/native:sensor_interface_native" ]
   external_deps = [
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",

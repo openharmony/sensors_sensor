@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("./../../sensor.gni")
 
 ohos_shared_library("libsensor_utils") {
   sources = [
@@ -25,8 +26,8 @@ ohos_shared_library("libsensor_utils") {
   ]
 
   include_dirs = [
-    "include",
-    "./../../interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/utils/common/include",
   ]
 
   external_deps = [

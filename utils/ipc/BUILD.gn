@@ -13,6 +13,7 @@
 
 import("//base/sensors/sensor/sensor.gni")
 import("//build/ohos.gni")
+import("./../../sensor.gni")
 
 ohos_shared_library("libsensor_ipc") {
   sources = [
@@ -24,8 +25,8 @@ ohos_shared_library("libsensor_ipc") {
   ]
 
   include_dirs = [
-    "include",
-    "./../common/include",
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
   defines = sensor_default_defines
