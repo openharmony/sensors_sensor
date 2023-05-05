@@ -54,11 +54,11 @@ private:
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_;
-    static bool g_isChannelCreated;
-    static int64_t g_samplingInterval;
-    static int64_t g_reportInterval;
-    static std::map<int32_t, const SensorUser *> g_subscribeMap;
-    static std::map<int32_t, const SensorUser *> g_unsubscribeMap;
+    static bool isChannelCreated_;
+    static int64_t samplingInterval_;
+    static int64_t reportInterval_;
+    static std::map<int32_t, const SensorUser *> subscribeMap_;
+    static std::map<int32_t, const SensorUser *> unsubscribeMap_;
 };
 }  // namespace Sensors
 }  // namespace OHOS
