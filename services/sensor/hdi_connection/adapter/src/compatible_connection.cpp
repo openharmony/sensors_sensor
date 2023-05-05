@@ -109,7 +109,7 @@ int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-void CompatibleConnection::SensorDataCallback(SensorEvent *event)
+void CompatibleConnection::ReportSensorDataCallback(SensorEvent *event)
 {
     CHKPV(event);
     if ((event->dataLen) == 0) {
@@ -141,7 +141,7 @@ void CompatibleConnection::SensorDataCallback(SensorEvent *event)
 int32_t CompatibleConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CHKPR(reportDataCallback, ERR_INVALID_VALUE);
-    int32_t ret = hdiServiceImpl_.Register(SensorDataCallback);
+    int32_t ret = hdiServiceImpl_.Register(ReportSensorDataCallback);
     if (ret != 0) {
         SEN_HILOGE("Register is failed");
         return ret;
