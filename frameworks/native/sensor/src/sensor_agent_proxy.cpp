@@ -31,9 +31,9 @@ constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 
 #define SenClient SensorServiceClient::GetInstance()
 OHOS::sptr<SensorAgentProxy> SensorAgentProxy::sensorObj_ = nullptr;
-bool SensorAgentProxy::isChannelCreated_;
-int64_t SensorAgentProxy::samplingInterval_;
-int64_t SensorAgentProxy::reportInterval_;
+bool SensorAgentProxy::isChannelCreated_ = false;
+int64_t SensorAgentProxy::samplingInterval_ = -1;
+int64_t SensorAgentProxy::reportInterval_ = -1;
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
 std::mutex sensorInfoMutex_;
