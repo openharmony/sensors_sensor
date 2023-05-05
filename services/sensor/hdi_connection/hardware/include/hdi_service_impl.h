@@ -41,9 +41,9 @@ private:
     static void DataReportThread();
     std::vector<int32_t> g_enableSensors;
     std::thread dataReportThread_;
-    static RecordSensorCallback g_callback;
-    static int64_t g_samplingInterval;
-    static int64_t g_reportInterval;
+    static RecordSensorCallback callback;
+    static int64_t samplingIntervalNs;
+    static int64_t reportIntervalNs;
     static std::atomic_bool g_isStop;
 };
 }  // namespace Sensors
