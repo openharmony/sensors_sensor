@@ -27,23 +27,23 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
-std::vector<SensorInformation> g_sensorInfos = {
-    {"sensor_test", "default", "1.0.0", "1.0.0", 0, 0, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
+std::vector<SensorInfo> g_sensorInfos = {
+    {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
-std::vector<int32_t> supportSensors = {0};
-float testData[] = {9.8};
-SensorEvents testEvent = {
-    .sensorId = 0,
+std::vector<int32_t> supportSensors = {1};
+float testData[] = {9.8, 0.0, 0.0};
+SensorEvent testEvent = {
+    .sensorTypeId = 1,
     .data = (uint8_t *)testData,
-    .dataLen = 4
+    .dataLen = 12
 };
 }
-RecordDataCallback HdiServiceImpl::g_callback;
-int64_t HdiServiceImpl::g_samplingInterval = -1;
-int64_t HdiServiceImpl::g_reportInterval = -1;
-std::atomic_bool HdiServiceImpl::g_isStop = false;
+RecordSensorCallback HdiServiceImpl::callback_;
+int64_t HdiServiceImpl::samplingInterval_ = -1;
+int64_t HdiServiceImpl::reportInterval_ = -1;
+std::atomic_bool HdiServiceImpl::isStop_ = false;
 
-int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInformation>& sensorList)
+int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
 {
     CALL_LOG_ENTER;
     sensorList.assign(g_sensorInfos.begin(), g_sensorInfos.end());
@@ -54,9 +54,9 @@ void HdiServiceImpl::DataReportThread()
 {
     CALL_LOG_ENTER;
     while (true) {
-        usleep(g_samplingInterval / CONVERT_MULTIPLES);
-        g_callback(&testEvent);
-        if (g_isStop) {
+        usleep(samplingInterval_ / CONVERT_MULTIPLES);
+        callback_(&testEvent);
+        if (isStop_) {
             break;
         }
     }
@@ -67,7 +67,7 @@ void HdiServiceImpl::DataReportThread()
 int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
-    CHKPR(g_callback, ERROR);
+    CHKPR(callback_, ERROR);
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
         SEN_HILOGE("not support enable sensorId:%{public}d", sensorId);
         return ERR_NO_INIT;
@@ -77,13 +77,13 @@ int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
         return ERR_OK;
     }
     g_enableSensors.push_back(sensorId);
-    if (!dataReportThread_.joinable() || g_isStop) {
+    if (!dataReportThread_.joinable() || isStop_) {
         if (dataReportThread_.joinable()) {
             dataReportThread_.join();
         }
         std::thread senocdDataThread(HdiServiceImpl::DataReportThread);
         dataReportThread_ = std::move(senocdDataThread);
-        g_isStop = false;
+        isStop_ = false;
     }
     return ERR_OK;
 };
@@ -107,7 +107,7 @@ int32_t HdiServiceImpl::DisableSensor(int32_t sensorId)
         }
     }
     if (g_enableSensors.empty()) {
-        g_isStop = true;
+        isStop_ = true;
     }
     return ERR_OK;
 }
@@ -119,8 +119,8 @@ int32_t HdiServiceImpl::SetBatch(int32_t sensorId, int64_t samplingInterval, int
         samplingInterval = SAMPLING_INTERVAL_NS;
         reportInterval = 0;
     }
-    g_samplingInterval = samplingInterval;
-    g_reportInterval = reportInterval;
+    samplingInterval_ = samplingInterval;
+    reportInterval_ = reportInterval;
     return ERR_OK;
 }
 
@@ -129,16 +129,16 @@ int32_t HdiServiceImpl::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::Register(RecordDataCallback cb)
+int32_t HdiServiceImpl::Register(RecordSensorCallback cb)
 {
     CHKPR(cb, ERROR);
-    g_callback = cb;
+    callback_ = cb;
     return ERR_OK;
 }
 
 int32_t HdiServiceImpl::Unregister()
 {
-    g_isStop = true;
+    isStop_ = true;
     return ERR_OK;
 }
 }  // namespace Sensors
