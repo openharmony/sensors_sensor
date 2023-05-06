@@ -12,28 +12,5 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("./../../sensor.gni")
 
-ohos_shared_library("libsensor_ipc") {
-  sources = [
-    "src/circle_stream_buffer.cpp",
-    "src/net_packet.cpp",
-    "src/stream_buffer.cpp",
-    "src/stream_session.cpp",
-    "src/stream_socket.cpp",
-  ]
-
-  include_dirs = [
-    "$SUBSYSTEM_DIR/utils/common/include",
-    "$SUBSYSTEM_DIR/utils/ipc/include",
-  ]
-
-  external_deps = [
-    "access_token:libaccesstoken_sdk",
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
-  ]
-
-  part_name = "sensor"
-  subsystem_name = "sensors"
-}
+SUBSYSTEM_DIR = "//base/sensors/sensor"

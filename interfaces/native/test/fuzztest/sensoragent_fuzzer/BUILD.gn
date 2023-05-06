@@ -14,17 +14,17 @@
 import("//build/config/features.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
-module_output_path = "sensors/sensor"
+import("./../../../../../sensor.gni")
 
 ohos_fuzztest("SensorAgentFuzzTest") {
-  module_out_path = module_output_path
+  module_out_path = "sensors/sensor"
 
   fuzz_config_file =
-      "//base/sensors/sensor/interfaces/native/test/fuzztest/sensoragent_fuzzer"
+      "$SUBSYSTEM_DIR/interfaces/native/test/fuzztest/sensoragent_fuzzer"
 
   include_dirs = [
-    "//base/sensors/sensor/interfaces/native/test/fuzztest/sensoragent_fuzzer",
-    "//base/sensors/sensor/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/native/test/fuzztest/sensoragent_fuzzer",
   ]
 
   cflags = [
@@ -36,7 +36,7 @@ ohos_fuzztest("SensorAgentFuzzTest") {
 
   sources = [ "sensoragent_fuzzer.cpp" ]
 
-  deps = [ "//base/sensors/sensor/interfaces/native:sensor_interface_native" ]
+  deps = [ "$SUBSYSTEM_DIR/interfaces/native:sensor_interface_native" ]
 
   external_deps = [ "c_utils:utils" ]
 }

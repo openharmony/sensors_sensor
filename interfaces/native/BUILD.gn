@@ -12,10 +12,8 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("./../../sensor.gni")
 
-SUBSYSTEM_DIR = "//base/sensors/sensor"
-
-##############################################
 ohos_ndk_library("libsensor_ndk") {
   output_name = "sensor"
   ndk_description_file = "./libsensor.json"
@@ -24,13 +22,9 @@ ohos_ndk_library("libsensor_ndk") {
 
 config("sensor_private_config") {
   include_dirs = [
-    "//commonlibrary/c_utils/base/include",
-    "//utils/system/safwk/native/include",
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
-    "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-    "//base/notification/eventhandler/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/utils/common/include",
   ]
 }
 
@@ -56,13 +50,16 @@ ohos_shared_library("sensor_interface_native") {
 
   external_deps = [
     "c_utils:utils",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
   ]
+
   part_name = "sensor"
   subsystem_name = "sensors"
 }
 
-##############################################
 group("sensor_ndk_target") {
   deps = [ ":sensor_interface_native" ]
 }

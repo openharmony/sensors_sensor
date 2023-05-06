@@ -20,7 +20,6 @@
 #include <thread>
 #include <vector>
 #include "sensor_agent_type.h"
-#include "sensor_if.h"
 #include "singleton.h"
 
 namespace OHOS {
@@ -29,12 +28,12 @@ class HdiServiceImpl : public Singleton<HdiServiceImpl> {
 public:
     HdiServiceImpl() = default;
     virtual ~HdiServiceImpl() {}
-    int32_t GetSensorList(std::vector<SensorInformation>& sensorList);
+    int32_t GetSensorList(std::vector<SensorInfo>& sensorList);
     int32_t EnableSensor(int32_t sensorId);
     int32_t DisableSensor(int32_t sensorId);
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval);
     int32_t SetMode(int32_t sensorId, int32_t mode);
-    int32_t Register(RecordDataCallback cb);
+    int32_t Register(RecordSensorCallback cb);
     int32_t Unregister();
 
 private:
@@ -42,10 +41,10 @@ private:
     static void DataReportThread();
     std::vector<int32_t> g_enableSensors;
     std::thread dataReportThread_;
-    static RecordDataCallback g_callback;
-    static int64_t g_samplingInterval;
-    static int64_t g_reportInterval;
-    static std::atomic_bool g_isStop;
+    static RecordSensorCallback callback_;
+    static int64_t samplingInterval_;
+    static int64_t reportInterval_;
+    static std::atomic_bool isStop_;
 };
 }  // namespace Sensors
 }  // namespace OHOS
