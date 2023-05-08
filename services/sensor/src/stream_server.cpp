@@ -105,31 +105,31 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     CALL_LOG_ENTER;
     int32_t sockFds[2] = { -1 };
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockFds) != 0) {
-        SEN_HILOGE("Call socketpair failed, errno:%{public}d", errno);
+        SEN_HILOGE("Socketpair failed, errno:%{public}d", errno);
         return ERROR;
     }
     serverFd = sockFds[0];
     clientFd = sockFds[1];
     if (serverFd < 0 || clientFd < 0) {
-        SEN_HILOGE("Call socketpair failed, errno:%{public}d", errno);
+        SEN_HILOGE("ServerFd or clientFd is invalid");
         return ERROR;
     }
     static constexpr size_t bufferSize = 32 * 1024;
     SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt send buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd send buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(serverFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt recv buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd recv buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt send buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd send buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt recv buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd recv buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
@@ -164,8 +164,7 @@ bool StreamServer::AddSession(SessionPtr sess)
     }
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     if (sessionsMap_.size() > MAX_SESSON_ALARM) {
-        SEN_HILOGE("Too many clients. Warning Value:%{public}zu, Current Value:%{public}zu",
-            MAX_SESSON_ALARM, sessionsMap_.size());
+        SEN_HILOGE("Too many clients, size:%{public}zu", sessionsMap_.size());
         return false;
     }
     idxPidMap_[pid] = fd;
