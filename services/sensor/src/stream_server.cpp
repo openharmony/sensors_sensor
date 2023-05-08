@@ -47,12 +47,12 @@ bool StreamServer::SendMsg(int32_t fd, const NetPacket& pkt)
         SEN_HILOGE("Fd is invalid");
         return false;
     }
-    auto ses = GetSession(fd);
-    if (ses == nullptr) {
-        SEN_HILOGE("Fd not found, The message was discarded.");
+    auto sess = GetSession(fd);
+    if (sess == nullptr) {
+        SEN_HILOGE("sess is nullptr");
         return false;
     }
-    return ses->SendMsg(pkt);
+    return sess->SendMsg(pkt);
 }
 
 void StreamServer::Multicast(const std::vector<int32_t>& fdList, const NetPacket& pkt)
@@ -117,19 +117,19 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     static constexpr size_t bufferSize = 32 * 1024;
     SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt serverFd buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt send buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(serverFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt serverFd buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt recv buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt clientFd buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt send buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt clientFd buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt recv buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
     sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
@@ -148,29 +148,28 @@ CLOSE_SOCK:
     return ERROR;
 }
 
-bool StreamServer::AddSession(SessionPtr ses)
+bool StreamServer::AddSession(SessionPtr sess)
 {
     CALL_LOG_ENTER;
-    CHKPF(ses);
-    auto fd = ses->GetFd();
+    CHKPF(sess);
+    auto fd = sess->GetFd();
     if (fd < 0) {
         SEN_HILOGE("Fd is Invalid");
         return false;
     }
-    auto pid = ses->GetPid();
+    auto pid = sess->GetPid();
     if (pid <= 0) {
-        SEN_HILOGE("Get process failed");
+        SEN_HILOGE("Pid is invalid");
         return false;
     }
+    std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     if (sessionsMap_.size() > MAX_SESSON_ALARM) {
         SEN_HILOGE("Too many clients. Warning Value:%{public}zu, Current Value:%{public}zu",
             MAX_SESSON_ALARM, sessionsMap_.size());
         return false;
     }
-    DelSession(pid);
-    std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     idxPidMap_[pid] = fd;
-    sessionsMap_[fd] = ses;
+    sessionsMap_[fd] = sess;
     return true;
 }
 
@@ -180,6 +179,7 @@ void StreamServer::DelSession(int32_t pid)
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto pidIt = idxPidMap_.find(pid);
     if (pidIt == idxPidMap_.end()) {
+        SEN_HILOGW("Pid session not exist");
         return;
     }
     int32_t fd = pidIt->second;
@@ -189,7 +189,7 @@ void StreamServer::DelSession(int32_t pid)
         sessionsMap_.erase(fdIt);
     }
     if (fd >= 0) {
-        auto rf = close(fd);
+        int32_t rf = close(fd);
         if (rf != 0) {
             SEN_HILOGE("Socket fd close failed, rf:%{public}d, errno:%{public}d", rf, errno);
         }

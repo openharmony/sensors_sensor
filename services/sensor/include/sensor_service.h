@@ -98,13 +98,12 @@ private:
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
-    SensorPowerPolicy &sensorPowerPolicy_ = SensorPowerPolicy::GetInstance();
     sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
     std::mutex uidLock_;
     // death recipient of sensor client
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
-    std::shared_ptr<PermStateChangeCb> permStateChangeCb_;
+    std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
 };

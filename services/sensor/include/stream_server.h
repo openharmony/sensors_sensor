@@ -37,7 +37,7 @@ public:
     int32_t AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenType, int32_t &serverFd, int32_t &clientFd);
 
 protected:
-    bool AddSession(SessionPtr ses);
+    bool AddSession(SessionPtr sess);
     void DelSession(int32_t pid);
     std::mutex sessionMutex_;
     std::map<int32_t, int32_t> idxPidMap_;

@@ -40,6 +40,8 @@ constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
 }  // namespace
 
+#define PowerPolicy SensorPowerPolicy::GetInstance()
+
 REGISTER_SYSTEM_ABILITY_BY_ID(SensorService, SENSOR_SERVICE_ABILITY_ID, true);
 
 SensorService::SensorService(int32_t systemAbilityId, bool runOnCreate)
@@ -425,7 +427,7 @@ ErrCode SensorService::SuspendSensors(int32_t pid)
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
-    return sensorPowerPolicy_.SuspendSensors(pid);
+    return PowerPolicy.SuspendSensors(pid);
 }
 
 ErrCode SensorService::ResumeSensors(int32_t pid)
@@ -435,7 +437,7 @@ ErrCode SensorService::ResumeSensors(int32_t pid)
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
-    return sensorPowerPolicy_.ResumeSensors(pid);
+    return PowerPolicy.ResumeSensors(pid);
 }
 
 ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
@@ -445,7 +447,7 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
-    activeInfoList = sensorPowerPolicy_.GetActiveInfoList(pid);
+    activeInfoList = PowerPolicy.GetActiveInfoList(pid);
     return ERR_OK;
 }
 
@@ -502,7 +504,7 @@ void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
     SensorBasicInfo sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
     ActiveInfo activeInfo(pid, sensorId, sensorInfo.GetSamplingPeriodNs(),
         sensorInfo.GetMaxReportDelayNs());
-    sensorPowerPolicy_.ReportActiveInfo(activeInfo, sessionList);
+    PowerPolicy.ReportActiveInfo(activeInfo, sessionList);
 }
 
 bool SensorService::RegisterPermCallback(int32_t sensorId)
