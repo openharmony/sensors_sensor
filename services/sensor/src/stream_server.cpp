@@ -142,9 +142,7 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
 
 CLOSE_SOCK:
     close(serverFd);
-    serverFd = -1;
     close(clientFd);
-    clientFd = -1;
     return ERROR;
 }
 
@@ -188,8 +186,8 @@ void StreamServer::DelSession(int32_t pid)
         sessionsMap_.erase(fdIt);
     }
     if (fd >= 0) {
-        int32_t rf = close(fd);
-        if (rf != 0) {
+        int32_t ret = close(fd);
+        if (ret != 0) {
             SEN_HILOGE("Socket fd close failed, rf:%{public}d, errno:%{public}d", rf, errno);
         }
     }
