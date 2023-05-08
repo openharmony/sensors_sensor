@@ -107,6 +107,8 @@ private:
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
 };
+
+#define PowerPolicy SensorPowerPolicy::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // SENSOR_SERVICE_H

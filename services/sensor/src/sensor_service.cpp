@@ -40,8 +40,6 @@ constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
 }  // namespace
 
-#define PowerPolicy SensorPowerPolicy::GetInstance()
-
 REGISTER_SYSTEM_ABILITY_BY_ID(SensorService, SENSOR_SERVICE_ABILITY_ID, true);
 
 SensorService::SensorService(int32_t systemAbilityId, bool runOnCreate)
