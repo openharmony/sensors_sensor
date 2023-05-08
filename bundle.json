@@ -19,12 +19,12 @@
     ],
     "deps": {
       "components": [
+        "c_utils",
         "hisysevent_native",
         "napi",
         "drivers_interface_sensor",
         "hiviewdfx_hilog_native",
         "access_token",
-        "utils_base",
         "hitrace_native",
         "ipc",
         "safwk",    
