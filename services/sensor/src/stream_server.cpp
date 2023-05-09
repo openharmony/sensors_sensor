@@ -115,6 +115,7 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
         return ERROR;
     }
     static constexpr size_t bufferSize = 32 * 1024;
+    SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
         SEN_HILOGE("Setsockopt serverFd send buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
@@ -131,7 +132,7 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
         SEN_HILOGE("Setsockopt clientFd recv buffer size failed, errno: %{public}d", errno);
         goto CLOSE_SOCK;
     }
-    SessionPtr sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
+    sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
     sess->SetTokenType(tokenType);
     if (!AddSession(sess)) {
         SEN_HILOGE("AddSession fail");
@@ -187,7 +188,7 @@ void StreamServer::DelSession(int32_t pid)
     if (fd >= 0) {
         int32_t ret = close(fd);
         if (ret != 0) {
-            SEN_HILOGE("Socket fd close failed, rf:%{public}d, errno:%{public}d", rf, errno);
+            SEN_HILOGE("Socket fd close failed, ret:%{public}d, errno:%{public}d", ret, errno);
         }
     }
 }

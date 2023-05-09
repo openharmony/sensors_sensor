@@ -108,7 +108,7 @@ private:
     std::atomic_bool isReportActiveInfo_ = false;
 };
 
-#define PowerPolicy SensorPowerPolicy::GetInstance()
+#define POWER_POLICY SensorPowerPolicy::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // SENSOR_SERVICE_H
