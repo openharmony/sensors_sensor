@@ -15,9 +15,6 @@
 
 #include "stream_buffer.h"
 
-#include <algorithm>
-#include <vector>
-
 namespace OHOS {
 namespace Sensors {
 StreamBuffer::StreamBuffer(const StreamBuffer &buf)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,9 @@
 #include "sensor_data_event.h"
 #include "sensor_hdi_connection.h"
 #include "sensor_manager.h"
+#include "sensor_power_policy.h"
 #include "sensor_service_stub.h"
+#include "stream_server.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -37,7 +39,7 @@ enum class SensorServiceState {
     STATE_RUNNING,
 };
 
-class SensorService : public SystemAbility, public SensorServiceStub {
+class SensorService : public SystemAbility, public StreamServer, public SensorServiceStub {
     DECLARE_SYSTEM_ABILITY(SensorService)
 
 public:
@@ -54,6 +56,13 @@ public:
                                 const sptr<IRemoteObject> &sensorClient) override;
     ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) override;
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
+    ErrCode SuspendSensors(int32_t pid);
+    ErrCode ResumeSensors(int32_t pid);
+    ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList);
+    ErrCode CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd);
+    ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient);
+    ErrCode EnableActiveInfoCB();
+    ErrCode DisableActiveInfoCB();
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
@@ -79,6 +88,7 @@ private:
     ErrCode DisableSensor(int32_t sensorId, int32_t pid);
     bool RegisterPermCallback(int32_t sensorId);
     void UnregisterPermCallback();
+    void ReportActiveInfo(int32_t sensorId, int32_t pid);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
@@ -93,9 +103,12 @@ private:
     std::mutex uidLock_;
     // death recipient of sensor client
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
-    std::shared_ptr<PermStateChangeCb> permStateChangeCb_;
+    std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    std::atomic_bool isReportActiveInfo_ = false;
 };
+
+#define POWER_POLICY SensorPowerPolicy::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // SENSOR_SERVICE_H

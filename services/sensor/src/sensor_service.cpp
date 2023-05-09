@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,18 +32,12 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
 constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
-enum {
-    FLUSH = 0,
-    SET_MODE,
-    RESERVED,
-};
 }  // namespace
 
 REGISTER_SYSTEM_ABILITY_BY_ID(SensorService, SENSOR_SERVICE_ABILITY_ID, true);
@@ -232,6 +226,9 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
             SEN_HILOGE("ret : %{public}d", ret);
         }
         ReportOnChangeData(sensorId);
+        if (isReportActiveInfo_) {
+            ReportActiveInfo(sensorId, pid);
+        }
         return ERR_OK;
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
@@ -250,6 +247,9 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         g_isRegister = true;
     }
     ReportSensorSysEvent(sensorId, true, pid);
+    if (isReportActiveInfo_) {
+        ReportActiveInfo(sensorId, pid);
+    }
     return ret;
 }
 
@@ -359,6 +359,8 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
             SEN_HILOGE("disablesensor failed, ret:%{public}d", ret);
         }
     }
+    DelSession(pid);
+    clientInfo_.DelActiveInfoCBPid(pid);
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
     clientInfo_.DestroyCmd(clientInfo_.GetUidByPid(pid));
@@ -377,6 +379,15 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
 void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient)
 {
     CALL_LOG_ENTER;
+    int32_t pid = clientInfo_.FindClientPid(sensorClient);
+    if (pid == INVALID_PID) {
+        SEN_HILOGE("Pid is invalid");
+        return;
+    }
+    if (!clientInfo_.CallingService(pid)) {
+        SEN_HILOGD("Cannot unregister client death recipient");
+        return;
+    }
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
     clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
     CHKPV(clientDeathObserver_);
@@ -405,6 +416,93 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
     });
     sensorDump.ParseCommand(fd, argList, sensors_, clientInfo_);
     return ERR_OK;
+}
+
+ErrCode SensorService::SuspendSensors(int32_t pid)
+{
+    CALL_LOG_ENTER;
+    if (pid < 0) {
+        SEN_HILOGE("Pid is invalid");
+        return CLIENT_PID_INVALID_ERR;
+    }
+    return POWER_POLICY.SuspendSensors(pid);
+}
+
+ErrCode SensorService::ResumeSensors(int32_t pid)
+{
+    CALL_LOG_ENTER;
+    if (pid < 0) {
+        SEN_HILOGE("Pid is invalid");
+        return CLIENT_PID_INVALID_ERR;
+    }
+    return POWER_POLICY.ResumeSensors(pid);
+}
+
+ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
+{
+    CALL_LOG_ENTER;
+    if (pid < 0) {
+        SEN_HILOGE("Pid is invalid");
+        return CLIENT_PID_INVALID_ERR;
+    }
+    activeInfoList = POWER_POLICY.GetActiveInfoList(pid);
+    return ERR_OK;
+}
+
+ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd)
+{
+    CALL_LOG_ENTER;
+    CHKPR(sensorClient, INVALID_POINTER);
+    int32_t serverFd = -1;
+    int32_t ret = AddSocketPairInfo(GetCallingUid(), GetCallingPid(),
+        AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()),
+        serverFd, std::ref(clientFd));
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Add socket pair info failed, ret:%{public}d", ret);
+        return ret;
+    }
+    RegisterClientDeathRecipient(sensorClient, GetCallingPid());
+    return ERR_OK;
+}
+
+ErrCode SensorService::DestroySocketChannel(sptr<IRemoteObject> sensorClient)
+{
+    CALL_LOG_ENTER;
+    CHKPR(sensorClient, INVALID_POINTER);
+    DelSession(GetCallingPid());
+    UnregisterClientDeathRecipient(sensorClient);
+    return ERR_OK;
+}
+
+ErrCode SensorService::EnableActiveInfoCB()
+{
+    CALL_LOG_ENTER;
+    isReportActiveInfo_ = true;
+    return clientInfo_.AddActiveInfoCBPid(GetCallingPid());
+}
+
+ErrCode SensorService::DisableActiveInfoCB()
+{
+    CALL_LOG_ENTER;
+    isReportActiveInfo_ = false;
+    return clientInfo_.DelActiveInfoCBPid(GetCallingPid());
+}
+
+void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
+{
+    CALL_LOG_ENTER;
+    std::vector<SessionPtr> sessionList;
+    auto pidList = clientInfo_.GetActiveInfoCBPid();
+    for (const auto &pid : pidList) {
+        auto sess = GetSessionByPid(pid);
+        if (sess != nullptr) {
+            sessionList.push_back(sess);
+        }
+    }
+    SensorBasicInfo sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
+    ActiveInfo activeInfo(pid, sensorId, sensorInfo.GetSamplingPeriodNs(),
+        sensorInfo.GetMaxReportDelayNs());
+    POWER_POLICY.ReportActiveInfo(activeInfo, sessionList);
 }
 
 bool SensorService::RegisterPermCallback(int32_t sensorId)
