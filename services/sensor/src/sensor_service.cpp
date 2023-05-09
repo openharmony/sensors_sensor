@@ -327,7 +327,6 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
     const int32_t clientPid = GetCallingPid();
     if (clientPid < 0) {
         SEN_HILOGE("clientPid is invalid, clientPid:%{public}d", clientPid);
-        
         return CLIENT_PID_INVALID_ERR;
     }
     std::lock_guard<std::mutex> serviceLock(serviceLock_);

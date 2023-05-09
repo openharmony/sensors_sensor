@@ -172,11 +172,11 @@ void Sensor::SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs)
 
 bool Sensor::Marshalling(Parcel &parcel) const
 {
-    if (!parcel.WriteUint32(sensorId_)) {
+    if (!parcel.WriteInt32(sensorId_)) {
         SEN_HILOGE("failed, write sensorId failed");
         return false;
     }
-    if (!parcel.WriteUint32(sensorTypeId_)) {
+    if (!parcel.WriteInt32(sensorTypeId_)) {
         SEN_HILOGE("failed, write sensorTypeId failed");
         return false;
     }
