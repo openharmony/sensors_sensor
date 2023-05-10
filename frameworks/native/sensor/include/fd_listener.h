@@ -25,7 +25,7 @@ namespace Sensors {
 class FdListener : public AppExecFwk::FileDescriptorListener {
 public:
     FdListener() = default;
-    ~FdListener() override = default;
+    ~FdListener() = default;
     void OnReadable(int32_t fd) override;
     void OnShutdown(int32_t fd) override;
     void OnException(int32_t fd) override;
@@ -33,7 +33,7 @@ public:
     DISALLOW_COPY_AND_MOVE(FdListener);
 
 private:
-    SensorDataChannel *channel_ = nullptr;
+    SensorDataChannel *channel_ = { nullptr };
 };
 }  // namespace Sensors
 }  // namespace OHOS

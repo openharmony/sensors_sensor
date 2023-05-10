@@ -266,7 +266,7 @@ ErrCode SensorServiceProxy::CreateSocketChannel(sptr<IRemoteObject> sensorClient
     }
     clientFd = reply.ReadFileDescriptor();
     if (clientFd < 0) {
-        SEN_HILOGE("Invalid fd");
+        SEN_HILOGE("Invalid fd, clientFd:%{public}d", clientFd);
         return ERROR;
     }
     return static_cast<ErrCode>(ret);

@@ -119,7 +119,7 @@ ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel
 {
     (void)data;
     std::vector<Sensor> sensors = GetSensorList();
-    int32_t sensorCount = sensors.size();
+    int32_t sensorCount = static_cast<int32_t>(sensors.size());
     WRITEINT32(reply, sensorCount, WRITE_PARCEL_ERR);
     for (int32_t i = 0; i < sensorCount; ++i) {
         if (!sensors[i].Marshalling(reply)) {
@@ -193,7 +193,7 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
         SEN_HILOGE("Get activeInfo list failed");
         return ret;
     }
-    int32_t activeInfoCount = activeInfoList.size();
+    int32_t activeInfoCount = static_cast<int32_t>(activeInfoList.size());
     WRITEINT32(reply, activeInfoCount, WRITE_PARCEL_ERR);
     for (int32_t i = 0; i < activeInfoCount; ++i) {
         if (!activeInfoList[i].Marshalling(reply)) {
