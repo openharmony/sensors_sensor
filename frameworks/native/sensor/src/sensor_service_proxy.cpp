@@ -29,7 +29,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceProxy" };
-constexpr int32_t MAX_SENSOR_COUNT = 200;
+constexpr uint32_t MAX_SENSOR_COUNT = 200;
 }  // namespace
 
 SensorServiceProxy::SensorServiceProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorService>(impl)
@@ -101,21 +101,19 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         SEN_HILOGE("failed, ret:%{public}d", ret);
         return sensors;
     }
-    int32_t sensorCount;
-    if (!reply.ReadInt32(sensorCount)) {
+    size_t sensorCount;
+    if (!reply.ReadUint32(sensorCount)) {
         SEN_HILOGE("Parcel read failed");
         return sensors;
     }
-    SEN_HILOGD("sensorCount:%{public}d", sensorCount);
+    SEN_HILOGD("sensorCount:%{public}zu", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;
     }
     Sensor sensor;
-    for (int32_t i = 0; i < sensorCount; i++) {
+    for (size_t i = 0; i < sensorCount; ++i) {
         auto tmpSensor = sensor.Unmarshalling(reply);
-        if (tmpSensor == nullptr) {
-            continue;
-        }
+        CHKPC(tmpSensor);
         sensors.push_back(*tmpSensor);
     }
     return sensors;
@@ -230,15 +228,16 @@ ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInf
         SEN_HILOGE("Failed, ret:%{public}d", ret);
         return static_cast<ErrCode>(ret);
     }
-    int32_t activeInfoCount;
-    READINT32(reply, activeInfoCount, READ_PARCEL_ERR);
+    size_t activeInfoCount;
+    READUINT32(reply, activeInfoCount, READ_PARCEL_ERR);
+    SEN_HILOGD("activeInfoCount:%{public}zu", activeInfoCount);
+    if (activeInfoCount > MAX_SENSOR_COUNT) {
+        activeInfoCount = MAX_SENSOR_COUNT;
+    }
     ActiveInfo activeInfo;
-    for (int32_t i = 0; i < activeInfoCount; ++i) {
+    for (size_t i = 0; i < activeInfoCount; ++i) {
         auto tmpActiveInfo = activeInfo.Unmarshalling(reply);
-        if (tmpActiveInfo == nullptr) {
-            SEN_HILOGE("Current activeInfo is nullptr, i:%{public}d", i);
-            continue;
-        }
+        CHKPC(tmpActiveInfo);
         activeInfoList.push_back(*tmpActiveInfo);
     }
     return static_cast<ErrCode>(ret);
