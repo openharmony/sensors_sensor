@@ -402,6 +402,8 @@ typedef struct SensorActiveInfo {
     int64_t maxReportDelayNs = -1;  /**< Maximum Report Delay, in ns */
 } SensorActiveInfo;
 
+typedef void (*SensorActiveInfoCB)(SensorActiveInfo &sensorActiveInfo);
+
 #ifdef __cplusplus
 #if __cplusplus
 }
