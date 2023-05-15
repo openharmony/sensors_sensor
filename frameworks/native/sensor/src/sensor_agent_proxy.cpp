@@ -399,7 +399,7 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid, SensorActiveInfo **s
     sensorActiveInfos_ = (SensorActiveInfo *)malloc(sizeof(SensorActiveInfo) * activeInfoCount);
     CHKPR(sensorActiveInfos_, ERROR);
     for (size_t i = 0; i < activeInfoCount; ++i) {
-        SensorActiveInfo *curActiveInfo= sensorActiveInfos_ + i;
+        SensorActiveInfo *curActiveInfo = sensorActiveInfos_ + i;
         curActiveInfo->pid = activeInfoList[i].GetPid();
         curActiveInfo->sensorId = activeInfoList[i].GetSensorId();
         curActiveInfo->samplingPeriodNs = activeInfoList[i].GetSamplingPeriodNs();

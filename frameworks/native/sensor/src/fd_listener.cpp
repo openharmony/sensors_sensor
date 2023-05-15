@@ -57,7 +57,7 @@ void FdListener::OnReadable(int32_t fd)
             SEN_HILOGD("The service side disconnect with the client. size:0, count:%{public}zu, errno:%{public}d",
                 i, errno);
             break;
-        }       
+        }
         if (size < MAX_PACKET_BUF_SIZE) {
             break;
         }
