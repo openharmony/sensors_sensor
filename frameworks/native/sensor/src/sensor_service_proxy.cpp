@@ -101,17 +101,17 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         SEN_HILOGE("failed, ret:%{public}d", ret);
         return sensors;
     }
-    size_t sensorCount;
+    uint32_t sensorCount;
     if (!reply.ReadUint32(sensorCount)) {
         SEN_HILOGE("Parcel read failed");
         return sensors;
     }
-    SEN_HILOGD("sensorCount:%{public}zu", sensorCount);
+    SEN_HILOGD("sensorCount:%{public}u", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;
     }
     Sensor sensor;
-    for (size_t i = 0; i < sensorCount; ++i) {
+    for (uint32_t i = 0; i < sensorCount; ++i) {
         auto tmpSensor = sensor.Unmarshalling(reply);
         CHKPC(tmpSensor);
         sensors.push_back(*tmpSensor);
@@ -228,14 +228,14 @@ ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInf
         SEN_HILOGE("Failed, ret:%{public}d", ret);
         return static_cast<ErrCode>(ret);
     }
-    size_t activeInfoCount;
+    uint32_t activeInfoCount;
     READUINT32(reply, activeInfoCount, READ_PARCEL_ERR);
-    SEN_HILOGD("activeInfoCount:%{public}zu", activeInfoCount);
+    SEN_HILOGD("activeInfoCount:%{public}u", activeInfoCount);
     if (activeInfoCount > MAX_SENSOR_COUNT) {
         activeInfoCount = MAX_SENSOR_COUNT;
     }
     ActiveInfo activeInfo;
-    for (size_t i = 0; i < activeInfoCount; ++i) {
+    for (uint32_t i = 0; i < activeInfoCount; ++i) {
         auto tmpActiveInfo = activeInfo.Unmarshalling(reply);
         CHKPC(tmpActiveInfo);
         activeInfoList.push_back(*tmpActiveInfo);
