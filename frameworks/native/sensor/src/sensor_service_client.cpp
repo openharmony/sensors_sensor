@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,11 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceClient
 constexpr int32_t GET_SERVICE_MAX_COUNT = 30;
 constexpr uint32_t WAIT_MS = 200;
 }  // namespace
+
+SensorServiceClient::~SensorServiceClient()
+{
+    Disconnect();
+}
 
 int32_t SensorServiceClient::InitServiceClient()
 {
@@ -182,7 +187,6 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     dataChannel_->DestroySensorDataChannel();
     // STEP2 : Restore data channel
     dataChannel_->RestoreSensorDataChannel();
-
     // STEP3 : Clear sensorlist and sensorServer_
     sensorList_.clear();
     sensorServer_ = nullptr;
@@ -200,6 +204,13 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     for (const auto &it : sensorInfoMap_) {
         sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
     }
+
+    if (!isConnected_) {
+        SEN_HILOGD("Previous socket channel status is false, not need retry creat socket channel");
+        return;
+    }
+    Disconnect();
+    CreateSocketChannel();
 }
 
 void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
@@ -223,6 +234,189 @@ void SensorServiceClient::DeleteSensorInfoItem(int32_t sensorId)
         sensorInfoMap_.erase(it);
     }
     return;
+}
+
+int32_t SensorServiceClient::SuspendSensors(int32_t pid)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "SuspendSensors");
+    ret = sensorServer_->SuspendSensors(pid);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    return ret;
+}
+
+int32_t SensorServiceClient::ResumeSensors(int32_t pid)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "ResumeSensors");
+    ret = sensorServer_->ResumeSensors(pid);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    return ret;
+}
+int32_t SensorServiceClient::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "GetActiveInfoList");
+    ret = sensorServer_->GetActiveInfoList(pid, activeInfoList);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    return ret;
+}
+
+int32_t SensorServiceClient::Register(SensorActiveInfoCB callback, sptr<SensorDataChannel> sensorDataChannel)
+{
+    CALL_LOG_ENTER;
+    if (!isConnected_) {
+        CHKPR(sensorDataChannel, INVALID_POINTER);
+        dataChannel_ = sensorDataChannel;
+        int32_t ret = CreateSocketChannel();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Register sensor active info callback failed, ret:%{public}d", ret);
+            return ret;
+        }
+    }
+    std::lock_guard<std::mutex> activeInfoCBLock(activeInfoCBMutex_);
+    activeInfoCBSet_.insert(callback);
+    return ERR_OK;
+}
+
+int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
+{
+    CALL_LOG_ENTER;
+    {
+        std::lock_guard<std::mutex> activeInfoCBLock(activeInfoCBMutex_);
+        activeInfoCBSet_.erase(callback);
+        if (!activeInfoCBSet_.empty()) {
+            return ERR_OK;
+        }
+    }
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "DisableActiveInfoCB");
+    ret = sensorServer_->DisableActiveInfoCB();
+    FinishTrace(HITRACE_TAG_SENSORS);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Disable active info callback failed, ret:%{public}d", ret);
+        return ret;
+    }
+    Disconnect();
+    StartTrace(HITRACE_TAG_SENSORS, "DestroySocketChannel");
+    ret = sensorServer_->DestroySocketChannel(sensorClientStub_);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Destroy socket channel failed, ret:%{public}d", ret);
+        return ret;
+    }
+    isConnected_ = false;
+    return ERR_OK;
+}
+
+void SensorServiceClient::ReceiveMessage(const char *buf, size_t size)
+{
+    CHKPV(buf);
+    if (size == 0 || size > MAX_PACKET_BUF_SIZE) {
+        SEN_HILOGE("Invalid input param size. size:%{public}zu", size);
+        return;
+    }
+    if (!circBuf_.Write(buf, size)) {
+        SEN_HILOGE("Write data failed. size:%{public}zu", size);
+    }
+    OnReadPackets(circBuf_, std::bind(&SensorServiceClient::HandleNetPacke, this, std::placeholders::_1));
+}
+
+void SensorServiceClient::HandleNetPacke(NetPacket &pkt)
+{
+    auto id = pkt.GetMsgId();
+    if (id != MessageId::ACTIVE_INFO) {
+        SEN_HILOGE("NetPacke message id is not ACTIVE_INFO");
+        return;
+    }
+    SensorActiveInfo sensorActiveInfo;
+    pkt >> sensorActiveInfo.pid >> sensorActiveInfo.sensorId >> sensorActiveInfo.samplingPeriodNs >>
+        sensorActiveInfo.maxReportDelayNs;
+    if (pkt.ChkRWError()) {
+        SEN_HILOGE("Packet read type failed");
+        return;
+    }
+    std::lock_guard<std::mutex> activeInfoCBLock(activeInfoCBMutex_);
+    for (auto callback : activeInfoCBSet_) {
+        if (callback != nullptr) {
+            callback(sensorActiveInfo);
+        }
+    }
+}
+
+void SensorServiceClient::Disconnect()
+{
+    CALL_LOG_ENTER;
+    if (fd_ < 0) {
+        return;
+    }
+    CHKPV(dataChannel_);
+    int32_t ret = dataChannel_->DelFdListener(fd_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Delete fd listener failed, fd:%{public}d, ret:%{public}d", fd_, ret);
+    }
+    Close();
+}
+
+int32_t SensorServiceClient::CreateSocketChannel()
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    CHKPR(sensorServer_, ERROR);
+    int32_t clientFd = -1;
+    StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
+    ret = sensorServer_->CreateSocketChannel(sensorClientStub_, clientFd);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    if (ret != ERR_OK || clientFd < 0) {
+        Close();
+        SEN_HILOGE("Create socket channel failed, ret:%{public}d", ret);
+        return ret;
+    }
+    fd_ = clientFd;
+    if (dataChannel_->AddFdListener(fd_,
+        std::bind(&SensorServiceClient::ReceiveMessage, this, std::placeholders::_1, std::placeholders::_2),
+        std::bind(&SensorServiceClient::Disconnect, this)) != ERR_OK) {
+        Close();
+        SEN_HILOGE("Add fd listener failed, fd:%{public}d", fd_);
+        return ERROR;
+    }
+    StartTrace(HITRACE_TAG_SENSORS, "EnableActiveInfoCB");
+    ret = sensorServer_->EnableActiveInfoCB();
+    FinishTrace(HITRACE_TAG_SENSORS);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Enable active info callback failed, ret:%{public}d", ret);
+        Disconnect();
+        return ret;
+    }
+    isConnected_ = true;
+    return ERR_OK;
 }
 }  // namespace Sensors
 }  // namespace OHOS
