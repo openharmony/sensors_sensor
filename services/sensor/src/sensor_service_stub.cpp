@@ -119,11 +119,11 @@ ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel
 {
     (void)data;
     std::vector<Sensor> sensors = GetSensorList();
-    size_t sensorCount = sensors.size();
+    uint32_t sensorCount = static_cast<uint32_t>(sensors.size());
     WRITEUINT32(reply, sensorCount, WRITE_PARCEL_ERR);
-    for (size_t i = 0; i < sensorCount; ++i) {
+    for (uint32_t i = 0; i < sensorCount; ++i) {
         if (!sensors[i].Marshalling(reply)) {
-            SEN_HILOGE("Sensor %{public}zu marshalling failed", i);
+            SEN_HILOGE("Sensor %{public}u marshalling failed", i);
             return GET_SENSOR_LIST_ERR;
         }
     }
@@ -193,11 +193,11 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
         SEN_HILOGE("Get activeInfo list failed");
         return ret;
     }
-    size_t activeInfoCount = activeInfoList.size();
+    uint32_t activeInfoCount = static_cast<uint32_t>(activeInfoList.size());
     WRITEUINT32(reply, activeInfoCount, WRITE_PARCEL_ERR);
-    for (size_t i = 0; i < activeInfoCount; ++i) {
+    for (uint32_t i = 0; i < activeInfoCount; ++i) {
         if (!activeInfoList[i].Marshalling(reply)) {
-            SEN_HILOGE("ActiveInfo %{public}zu marshalling failed", i);
+            SEN_HILOGE("ActiveInfo %{public}u marshalling failed", i);
             return WRITE_PARCEL_ERR;
         }
     }
