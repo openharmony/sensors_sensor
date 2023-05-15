@@ -72,7 +72,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     }
     auto pairRet = listenedFdSet_.insert(receiveFd);
     if (!pairRet.second) {
-        SEN_HILOGE("ListenedFdSet insert fd fail");
+        SEN_HILOGE("ListenedFdSet insert fd fail, fd:%{public}d", receiveFd);
         return ERROR;
     }
     return ERR_OK;
@@ -103,12 +103,12 @@ int32_t SensorDataChannel::AddFdListener(int32_t fd, ReceiveMessageFun receiveMe
     listener->SetChannel(this);
     auto errCode = eventHandler_->AddFileDescriptorListener(fd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
     if (errCode != ERR_OK) {
-        SEN_HILOGE("Add fd listener failed, errCode:%{public}u", errCode);
+        SEN_HILOGE("Add fd listener failed, fd:%{public}d, errCode:%{public}u", fd, errCode);
         return ERROR;
     }
     auto pairRet = listenedFdSet_.insert(fd);
     if (!pairRet.second) {
-        SEN_HILOGE("ListenedFdSet insert fd fail");
+        SEN_HILOGE("ListenedFdSet insert fd fail, fd:%{public}d", fd);
         return ERROR;
     }
     return ERR_OK;
@@ -121,7 +121,7 @@ int32_t SensorDataChannel::DelFdListener(int32_t fd)
     eventHandler_->RemoveFileDescriptorListener(fd);
     auto it = listenedFdSet_.find(fd);
     if (it == listenedFdSet_.end()) {
-        SEN_HILOGE("ListenedFdSet not find fd");
+        SEN_HILOGE("ListenedFdSet not find fd, fd:%{public}d", fd);
         return ERROR;
     }
     listenedFdSet_.erase(it);
@@ -130,6 +130,16 @@ int32_t SensorDataChannel::DelFdListener(int32_t fd)
         SEN_HILOGD("Set eventHandler_ nullptr");
     }
     return ERR_OK;
+}
+
+ReceiveMessageFun SensorDataChannel::GetReceiveMessageFun() const
+{
+    return receiveMessage_;
+}
+
+DisconnectFun SensorDataChannel::GetDisconnectFun() const
+{
+    return disconnect_;
 }
 }  // namespace Sensors
 }  // namespace OHOS

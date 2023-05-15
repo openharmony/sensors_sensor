@@ -28,10 +28,10 @@
 namespace OHOS {
 namespace Sensors {
 typedef void (*DataChannelCB)(SensorEvent *events, int32_t num, void *data);
+using ReceiveMessageFun = std::function<void(const char*, size_t)>;
+using DisconnectFun = std::function<void()>;
 class SensorDataChannel : public SensorBasicDataChannel {
 public:
-    using ReceiveMessageFun = std::function<void(const char*, size_t)>;
-    using DisconnectFun = std::function<void()>;
     SensorDataChannel() = default;
     ~SensorDataChannel();
     static int32_t HandleEvent(int32_t fd, int32_t events, void *data);
@@ -45,8 +45,8 @@ public:
     void *privateData_ = nullptr;
     int32_t AddFdListener(int32_t fd, ReceiveMessageFun receiveMessage, DisconnectFun disconnect);
     int32_t DelFdListener(int32_t fd);
-    ReceiveMessageFun receiveMessage_;
-    DisconnectFun disconnect_;
+    ReceiveMessageFun GetReceiveMessageFun() const;
+    DisconnectFun GetDisconnectFun() const;
 
 private:
     static void ThreadProcessTask(SensorDataChannel *sensorChannel);
@@ -56,6 +56,8 @@ private:
     static std::shared_ptr<AppExecFwk::EventRunner> eventRunner_;
     static int32_t receiveFd_;
     std::unordered_set<int32_t> listenedFdSet_;
+    ReceiveMessageFun receiveMessage_;
+    DisconnectFun disconnect_;
 };
 }  // namespace Sensors
 }  // namespace OHOS

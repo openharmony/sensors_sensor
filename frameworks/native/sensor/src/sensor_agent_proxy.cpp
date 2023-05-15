@@ -341,7 +341,7 @@ int32_t SensorAgentProxy::SuspendSensors(int32_t pid) const
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
     int32_t ret = SenClient.SuspendSensors(pid);
@@ -355,7 +355,7 @@ int32_t SensorAgentProxy::ResumeSensors(int32_t pid) const
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
     int32_t ret = SenClient.ResumeSensors(pid);
@@ -369,7 +369,7 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid, SensorActiveInfo **s
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
     CHKPR(sensorActiveInfos, OHOS::Sensors::ERROR);
@@ -387,6 +387,8 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid, SensorActiveInfo **s
     }
     if (activeInfoList.empty()) {
         SEN_HILOGD("Active info list is empty");
+        *sensorActiveInfos = nullptr;
+        *count = 0;
         return ERR_OK;
     }
     size_t activeInfoCount = activeInfoList.size();

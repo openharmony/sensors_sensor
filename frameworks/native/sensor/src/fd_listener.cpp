@@ -35,14 +35,16 @@ void FdListener::SetChannel(SensorDataChannel *channel)
 void FdListener::OnReadable(int32_t fd)
 {
     if (fd < 0) {
-        SEN_HILOGE("Invalid fd");
+        SEN_HILOGE("Invalid fd, fd:%{public}d", fd);
         return;
     }
     char szBuf[MAX_PACKET_BUF_SIZE] = {};
     for (size_t i = 0; i < MAX_RECV_LIMIT; i++) {
         ssize_t size = recv(fd, szBuf, MAX_PACKET_BUF_SIZE, MSG_DONTWAIT | MSG_NOSIGNAL);
         if (size > 0) {
-            channel_->receiveMessage_(szBuf, size);
+            CHKPV(channel_);
+            ReceiveMessageFun receiveMessage = channel_->GetReceiveMessageFun();
+            receiveMessage(szBuf, size);
         } else if (size < 0) {
             if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK) {
                 SEN_HILOGW("Continue for errno EAGAIN|EINTR|EWOULDBLOCK, size:%{public}zu, errno:%{public}d",
@@ -64,18 +66,24 @@ void FdListener::OnReadable(int32_t fd)
 
 void FdListener::OnShutdown(int32_t fd)
 {
+    CALL_LOG_ENTER;
     if (fd < 0) {
-        SEN_HILOGE("Invalid fd");
+        SEN_HILOGE("Invalid fd, fd:%{public}d", fd);
     }
-    channel_->disconnect_();
+    CHKPV(channel_);
+    DisconnectFun disconnect = channel_->GetDisconnectFun();
+    disconnect();
 }
 
 void FdListener::OnException(int32_t fd)
 {
+    CALL_LOG_ENTER;
     if (fd < 0) {
-        SEN_HILOGE("Invalid fd");
+        SEN_HILOGE("Invalid fd, fd:%{public}d", fd);
     }
-    channel_->disconnect_();
+    CHKPV(channel_);
+    DisconnectFun disconnect = channel_->GetDisconnectFun();
+    disconnect();
 }
 }  // namespace Sensors
 }  // namespace OHOS

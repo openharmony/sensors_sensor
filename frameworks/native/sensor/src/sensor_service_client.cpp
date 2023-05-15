@@ -300,10 +300,12 @@ int32_t SensorServiceClient::Register(SensorActiveInfoCB callback, sptr<SensorDa
 int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> activeInfoCBLock(activeInfoCBMutex_);
-    activeInfoCBSet_.erase(callback);
-    if (!activeInfoCBSet_.empty()) {
-        return ERR_OK;
+    {
+        std::lock_guard<std::mutex> activeInfoCBLock(activeInfoCBMutex_);
+        activeInfoCBSet_.erase(callback);
+        if (!activeInfoCBSet_.empty()) {
+            return ERR_OK;
+        }
     }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -374,7 +376,7 @@ void SensorServiceClient::Disconnect()
     CHKPV(dataChannel_);
     int32_t ret = dataChannel_->DelFdListener(fd_);
     if (ret != ERR_OK) {
-        SEN_HILOGE("Delete fd listener failed, ret:%{public}d", ret);
+        SEN_HILOGE("Delete fd listener failed, fd:%{public}d, ret:%{public}d", fd_, ret);
     }
     Close();
 }
@@ -392,7 +394,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
     StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
     ret = sensorServer_->CreateSocketChannel(sensorClientStub_, clientFd);
     FinishTrace(HITRACE_TAG_SENSORS);
-    if (!(ret == ERR_OK && clientFd >= 0)) {
+    if (ret != ERR_OK || clientFd < 0) {
         Close();
         SEN_HILOGE("Create socket channel failed, ret:%{public}d", ret);
         return ret;
@@ -402,7 +404,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
         std::bind(&SensorServiceClient::ReceiveMessage, this, std::placeholders::_1, std::placeholders::_2),
         std::bind(&SensorServiceClient::Disconnect, this)) != ERR_OK) {
         Close();
-        SEN_HILOGE("Add fd listener failed");
+        SEN_HILOGE("Add fd listener failed, fd:%{public}d", fd_);
         return ERROR;
     }
     StartTrace(HITRACE_TAG_SENSORS, "EnableActiveInfoCB");
