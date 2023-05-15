@@ -29,9 +29,13 @@ ohos_shared_library("libsensor_native") {
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
-  deps = [ "$SUBSYSTEM_DIR/utils/common:libsensor_utils" ]
+  deps = [
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
+  ]
 
   external_deps = [
     "c_utils:utils",
