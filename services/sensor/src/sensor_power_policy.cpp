@@ -41,27 +41,24 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     CALL_LOG_ENTER;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
     if (sensorIdList.empty()) {
-        // 如果clientMap中没有当前pid的sensor信息，说明不需要休眠，直接返回失败
-        SEN_HILOGE("Suspend sensor failed, sensorIdList is empty, pid:%{public}d", pid);
+        SEN_HILOGE("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
         return SUSPEND_ERR;
     }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt != pidSensorInfoMap_.end()) {
-        // policy中有数据，clientMap中也有数据
         std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
         if (!Suspend(pid, sensorIdList, sensorInfoMap)) {
-            SEN_HILOGE("Suspend part sensors, but some failed");
+            SEN_HILOGE("Suspend part sensors, but some failed, pid:%{public}d", pid);
             return SUSPEND_ERR;
         }
         return ERR_OK;
     }
-    // 数据全部保存在clientMap中
     std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap;
     auto isAllSuspend = Suspend(pid, sensorIdList, sensorInfoMap);
     pidSensorInfoMap_.insert(std::make_pair(pid, sensorInfoMap));
     if (!isAllSuspend) {
-        SEN_HILOGE("Suspend all sensors, but some failed");
+        SEN_HILOGE("Suspend all sensors, but some failed, pid:%{public}d", pid);
         return SUSPEND_ERR;
     }
     return ERR_OK;
@@ -72,34 +69,21 @@ bool SensorPowerPolicy::Suspend(int32_t pid, std::vector<int32_t> &sensorIdList,
 {
     CALL_LOG_ENTER;
     bool isAllSuspend = true;
-    for (auto &sensorId : sensorIdList) {
+    for (const auto &sensorId : sensorIdList) {
         if (CheckFreezingSensor(sensorId)) {
             SEN_HILOGD("Current sensor is pedometer detection or pedometer, can not suspend");
             continue;
         }
-        // 检查当前sensorId是否在当前pid的白名单中，如果在，continue跳过
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
         if (sensorManager_.IsOtherClientUsingSensor(sensorId, pid)) {
-            SEN_HILOGD("Other client is using this sensor now, cannot suspend");
-            sensorInfo.SetSensorState(false); // 休眠成功，将状态置为false，保存到policy中
+            SEN_HILOGD("Other client is using this sensor now, cannot suspend, sensorId:%{public}d", sensorId);
             sensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
             continue;
         }
-
-        bool flag = false;
-        for (int32_t i = 0; i < 3; ++i) {
-            if (sensorHdiConnection_.DisableSensor(sensorId) == ERR_OK) {
-                flag = true;
-                break;
-            }
-            sleep();
-        }
-
-        if (flag == true) {
-            sensorInfo.SetSensorState(false); // 休眠成功，将状态置为false
-        } else {
+        auto ret = sensorHdiConnection_.DisableSensor(sensorId);
+        if (ret != ERR_OK) {
             isAllSuspend = false;
-            sensorInfo.SetSensorState(true); // 休眠失败，将状态置为true
+            SEN_HILOGE("Hdi disable sensor failed, sensorId:%{public}d, ret:%{public}d", sensorId, ret);
         }
         sensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
         sensorManager_.AfterDisableSensor(sensorId);
@@ -113,7 +97,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt == pidSensorInfoMap_.end()) {
-        SEN_HILOGE("Pid not have suspend sensors");
+        SEN_HILOGE("Resume sensors failed, pid not exist in pidSensorInfoMap_, pid:%{public}d", pid);
         return RESUME_ERR;
     }
     bool isAllResume = true;
@@ -122,10 +106,8 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
         int32_t sensorId = sensorIt->first;
         int64_t samplingPeriodNs = sensorIt->second.GetSamplingPeriodNs();
         int64_t maxReportDelayNs = sensorIt->second.GetMaxReportDelayNs();
-        bool sensorState = sensorIt->second.GetSensorState();
-
         if (!Resume(pid, sensorId, samplingPeriodNs, maxReportDelayNs)) {
-            SEN_HILOGE("Resume sensor failed. sensorId:%{public}d", sensorId);
+            SEN_HILOGE("Resume sensor failed, sensorId:%{public}d", sensorId);
             isAllResume = false;
             ++sensorIt;
         } else {
@@ -133,7 +115,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
         }
     }
     if (!isAllResume) {
-        SEN_HILOGE("Some sensor resume failed");
+        SEN_HILOGE("Resume all sensors, but some failed, pid:%{public}d", pid);
         return RESUME_ERR;
     }
     pidSensorInfoMap_.erase(pidSensorInfoIt);
@@ -150,23 +132,14 @@ bool SensorPowerPolicy::Resume(int32_t pid, int32_t sensorId, int64_t samplingPe
         return false;
     }
     if (clientInfo_.GetSensorState(sensorId)) {
-        //当前sensor已经被其他进程打开
         SEN_HILOGD("Sensor is enable, sensorId:%{public}d", sensorId);
         auto ret = RestoreSensorInfo(pid, sensorId, samplingPeriodNs, maxReportDelayNs);
         if (ret != ERR_OK) {
             SEN_HILOGE("Restore sensor info failed, ret:%{public}d", ret);
-            // 给clientMap中恢复信息失败
             return false;
         }
         return true;
     }
-    // 当前sensor没有被其他进程打开
-    // 如果 sensorstate ==  false, 说明suspend成功, 而且没被其他进程打开
-    // 1. 给clientMap中恢复信息
-    // 2. 三次重试打开传感器，打开失败时删除clientMap中恢复的信息
-    // 如果 sensorstate == true, 说明suspend失败，而且没有被其他进程打开。  但此时sensor可能是打开状态也可能是关闭状态
-
-
     auto ret = RestoreSensorInfo(pid, sensorId, samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
         SEN_HILOGE("Restore sensor info failed, ret:%{public}d", ret);
@@ -174,7 +147,7 @@ bool SensorPowerPolicy::Resume(int32_t pid, int32_t sensorId, int64_t samplingPe
     }
     ret = sensorHdiConnection_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
-        SEN_HILOGE("Resume sensor failed, ret:%{public}d", ret);
+        SEN_HILOGE("Hdi enable sensor failed, sensorId:%{public}d, ret:%{public}d", sensorId, ret);
         clientInfo_.RemoveSubscriber(sensorId, pid);
         return false;
     }
@@ -194,17 +167,44 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, pid);
-        return ENABLE_SENSOR_ERR;
+        return SET_SENSOR_CONFIG_ERR;
     }
     return ERR_OK;
 }
+
+std::vector<int32_t> SensorPowerPolicy::GetSuspendPids()
+{
+    CALL_LOG_ENTER;
+    std::vector<int32_t> suspendPidList;
+    std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
+    for (const auto &pidSensorInfo : pidSensorInfoMap_) {
+        int32_t pid = pidSensorInfo.first;
+        suspendPidList.push_back(pid);
+    }
+    return suspendPidList;
+}
+
+ErrCode SensorPowerPolicy::ResetSensors()
+{
+    CALL_LOG_ENTER;
+    std::vector<int32_t> suspendPidList = GetSuspendPids();
+    bool resetStatus = true;
+    for (const auto &pid : suspendPidList) {
+        if (ResumeSensors(pid) != ERR_OK) {
+            SEN_HILOGE("Reset pid sensors failed, pid:%{public}d", pid);
+            resetStatus = false;
+        }
+    }
+    return resetStatus ? ERR_OK : RESET_ERR;
+}
+
 
 std::vector<ActiveInfo> SensorPowerPolicy::GetActiveInfoList(int32_t pid)
 {
     CALL_LOG_ENTER;
     std::vector<ActiveInfo> activeInfoList;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
-    for (auto &sensorId : sensorIdList) {
+    for (const auto &sensorId : sensorIdList) {
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, pid);
         ActiveInfo activeInfo(pid, sensorId, sensorInfo.GetSamplingPeriodNs(),
             sensorInfo.GetMaxReportDelayNs());
@@ -224,7 +224,7 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
         SEN_HILOGE("Packet write data failed");
         return;
     }
-    for (auto sess : sessionList) {
+    for (const auto &sess : sessionList) {
         if (!sess->SendMsg(pkt)) {
             SEN_HILOGE("Packet send failed");
             continue;
