@@ -289,7 +289,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
-    it("SensorJsTest_012", 0, function (done) { // 结果改变 可选参数传错误类型5
+    it("SensorJsTest_012", 0, function (done) {
         console.info('----------------------SensorJsTest_012---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(() => {
@@ -377,7 +377,13 @@ describe("SensorJsTest", function () {
         }
     })
 
-    it("SensorJsTest_016", 0, async function (done) { // on(), 可选参数传入undefined
+    /*
+     * @tc.name:SensorJsTest_016
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_016", 0, async function (done) {
         console.info('----------------------SensorJsTest_016---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, undefined);
         setTimeout(() => {
@@ -386,7 +392,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_017", 0, async function (done) { // on(), 可选参数传入null
+    /*
+     * @tc.name:SensorJsTest_017
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_017", 0, async function (done) {
         console.info('----------------------SensorJsTest_017---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, null);
         setTimeout(() => {
@@ -395,7 +407,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_018", 0, async function (done) { // on(), 可选参数传入错误类型"abc"
+    /*
+     * @tc.name:SensorJsTest_018
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_018", 0, async function (done) {
         console.info('----------------------SensorJsTest_018---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, "abc");
         setTimeout(() => {
@@ -404,7 +422,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_019", 0, async function (done) { // on(), 可选参数的可选属性为undefined
+    /*
+     * @tc.name:SensorJsTest_019
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_019", 0, async function (done) {
         console.info('----------------------SensorJsTest_019---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': undefined});
         setTimeout(() => {
@@ -413,7 +437,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_020", 0, async function (done) { // on(), 可选参数的可选属性为null
+    /*
+     * @tc.name:SensorJsTest_020
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_020", 0, async function (done) {
         console.info('----------------------SensorJsTest_020---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': null});
         setTimeout(() => {
@@ -422,7 +452,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_021", 0, async function (done) { // on(), 可选参数的可选属性为错误类型"abc"
+    /*
+     * @tc.name:SensorJsTest_021
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_021", 0, async function (done) {
         console.info('----------------------SensorJsTest_021---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': "abc"});
         setTimeout(() => {
@@ -431,7 +467,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_022", 0, async function (done) { // off(), 多传参数
+    /*
+     * @tc.name:SensorJsTest_022
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_022", 0, async function (done) {
         console.info('----------------------SensorJsTest_022---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(() => {
@@ -440,7 +482,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_023", 0, async function (done) { // off(), 可选参数传undefined
+    /*
+     * @tc.name:SensorJsTest_023
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_023", 0, async function (done) {
         console.info('----------------------SensorJsTest_023---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(() => {
@@ -449,7 +497,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("SensorJsTest_024", 0, async function (done) { // off(), 可选参数传null
+    /*
+     * @tc.name:SensorJsTest_024
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_024", 0, async function (done) {
         console.info('----------------------SensorJsTest_024---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
         setTimeout(() => {
@@ -1842,7 +1896,13 @@ describe("SensorJsTest", function () {
         }
     })
 
-    it("Sensor_GetGeomagneticField_058", 0, async function (done) { // 传undefined
+    /*
+     * @tc.name:Sensor_GetGeomagneticField_058
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it("Sensor_GetGeomagneticField_058", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_058----------------------------------");
         for (let i = 0; i < timeMillis.length; i++) {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], undefined).then((data) => {
@@ -1862,7 +1922,13 @@ describe("SensorJsTest", function () {
         done()
     })
 
-    it("Sensor_GetGeomagneticField_059", 0, async function (done) { // 传null
+    /*
+     * @tc.name:Sensor_GetGeomagneticField_059
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it("Sensor_GetGeomagneticField_059", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_059----------------------------------");
         for (let i = 0; i < timeMillis.length; i++) {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], null).then((data) => {
@@ -1882,7 +1948,13 @@ describe("SensorJsTest", function () {
         done()
     })
 
-    it("Sensor_GetGeomagneticField_060", 0, async function (done) { // 传"abc"
+    /*
+     * @tc.name:Sensor_GetGeomagneticField_060
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it("Sensor_GetGeomagneticField_060", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_060----------------------------------");
         for (let i = 0; i < timeMillis.length; i++) {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], "abc").then((data) => {
@@ -2117,7 +2189,7 @@ describe("SensorJsTest", function () {
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateRotationMatrix_008', 0, async function (done) { // 结果改变，可选参数传错误类型-1
+     it('Sensor_CreateRotationMatrix_008', 0, async function (done) {
         sensor.getRotationMatrix([-0.0245, 0.402, 0.0465], -1).then((data) => {
             for(let i = 0; i < data.length; i++) {
                 console.info("Sensor_CreateRotationMatrix_008 [" + i + "] : " + data[i]);
@@ -2186,7 +2258,7 @@ describe("SensorJsTest", function () {
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateRotationMatrix_011', 0, async function (done) { // 结果改变 可选参数传入错误类型-1
+     it('Sensor_CreateRotationMatrix_011', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], -1).then((data) => {
             console.info("Sensor_CreateRotationMatrix_011" + JSON.stringify(data))
             expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
@@ -2265,7 +2337,13 @@ describe("SensorJsTest", function () {
         console.info( "Sensor_CreateRotationMatrix_014 end")
     })
 
-    it('Sensor_CreateRotationMatrix_015', 0, async function (done) { //传undefined
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_015
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_015', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], undefined).then((data) => {
             console.info("Sensor_CreateRotationMatrix_015" + JSON.stringify(data))
             expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
@@ -2276,7 +2354,13 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_CreateRotationMatrix_016', 0, async function (done) { //传null
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_016
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_016', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], null).then((data) => {
             console.info("Sensor_CreateRotationMatrix_016" + JSON.stringify(data))
             expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
@@ -2287,7 +2371,13 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_CreateRotationMatrix_017', 0, async function (done) { //传undefined
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_017
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_017', 0, async function (done) {
         sensor.getRotationMatrix([0, 0, 0], undefined).then((data) => {
             for(let i = 0; i < data.length; i++) {
                 console.info("Sensor_CreateRotationMatrix_017 [" + i + "] : " + data[i]);
@@ -2300,7 +2390,13 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_CreateRotationMatrix_018', 0, async function (done) { //传null
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_018
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_018', 0, async function (done) {
         sensor.getRotationMatrix([0, 0, 0], null).then((data) => {
             for(let i = 0; i < data.length; i++) {
                 console.info("Sensor_CreateRotationMatrix_018 [" + i + "] : " + data[i]);
@@ -2473,7 +2569,7 @@ describe("SensorJsTest", function () {
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_GetDirection_008', 0, async function (done) { // 结果改变，可选参数传入错误类型
+     it('Sensor_GetDirection_008', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[1], -1).then((data) => {
             for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_GetDirection_008" + data[i])
@@ -2534,7 +2630,15 @@ describe("SensorJsTest", function () {
         }
     })
 
-    it('Sensor_GetDirection_011', 0, async function (done) { // 传undefined
+    /**
+     * test
+     *
+     * @tc.name: Sensor_GetDirection_011
+     * @tc.desc: Verification results of the incorrect parameters of the test interface.
+     * @tc.require: I5SWJI
+     * @tc.author:
+     */
+    it('Sensor_GetDirection_011', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0], undefined).then((data) => {
             for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_GetDirection_011" + data[i])
@@ -2547,7 +2651,15 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_GetDirection_012', 0, async function (done) { // 传null
+    /**
+     * test
+     *
+     * @tc.name: Sensor_GetDirection_012
+     * @tc.desc: Verification results of the incorrect parameters of the test interface.
+     * @tc.require: I5SWJI
+     * @tc.author:
+     */
+    it('Sensor_GetDirection_012', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0], null).then((data) => {
             for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_GetDirection_012" + data[i])
@@ -2949,7 +3061,13 @@ describe("SensorJsTest", function () {
         }
     })
 
-    it('Sensor_GetAngleModify_017', 0, async function (done) {//传undefined
+    /*
+     * @tc.name:Sensor_GetAngleModify_017
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it('Sensor_GetAngleModify_017', 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_017---------------------------');
         sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], [2,2,2,2,2,2,2,2,2], undefined).then((data) => {
             for(let i = 0; i < data.length; i++) {
@@ -2964,7 +3082,13 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_GetAngleModify_018', 0, async function (done) {//传null
+    /*
+     * @tc.name:Sensor_GetAngleModify_018
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it('Sensor_GetAngleModify_018', 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_018---------------------------');
         sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], [2,2,2,2,2,2,2,2,2], null).then((data) => {
             for(let i = 0; i < data.length; i++) {
@@ -2979,7 +3103,13 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_GetAngleModify_019', 0, async function (done) {//传"abc"
+    /*
+     * @tc.name:Sensor_GetAngleModify_019
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it('Sensor_GetAngleModify_019', 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_019---------------------------');
         sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], [2,2,2,2,2,2,2,2,2], null).then((data) => {
             for(let i = 0; i < data.length; i++) {
@@ -3281,7 +3411,7 @@ describe("SensorJsTest", function () {
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaternion_013', 0, async function (done) { // 结果改变，可选参数传入错误类型-1
+     it('Sensor_CreateQuaternion_013', 0, async function (done) {
         sensor.getQuaternion([0.52, -0.336, -0.251], -1).then((data) => {
             console.info('Sensor_CreateQuaternion_013');
             for (let i = 0; i < data.length; i++) {
@@ -3343,7 +3473,15 @@ describe("SensorJsTest", function () {
         }
     })
 
-    it('Sensor_CreateQuaternion_016', 0, async function (done) { //传undefined
+    /*
+     * test
+     *
+     * @tc.name: Sensor_CreateQuaternion_016
+     * @tc.desc: Verification results of the incorrect parameters of the test interface.
+     * @tc.require: I5SWJI
+     * @tc.author:
+     */
+    it('Sensor_CreateQuaternion_016', 0, async function (done) {
         sensor.getQuaternion([0.52, -0.336, -0.251], undefined).then((data) => {
             console.info('Sensor_CreateQuaternion_016');
             for (let i = 0; i < data.length; i++) {
@@ -3357,7 +3495,15 @@ describe("SensorJsTest", function () {
         })
     })
 
-    it('Sensor_CreateQuaternion_017', 0, async function (done) { //传null
+    /*
+     * test
+     *
+     * @tc.name: Sensor_CreateQuaternion_017
+     * @tc.desc: Verification results of the incorrect parameters of the test interface.
+     * @tc.require: I5SWJI
+     * @tc.author:
+     */
+    it('Sensor_CreateQuaternion_017', 0, async function (done) {
         sensor.getQuaternion([0.52, -0.336, -0.251], null).then((data) => {
             console.info('Sensor_CreateQuaternion_017');
             for (let i = 0; i < data.length; i++) {
@@ -3520,6 +3666,12 @@ describe("SensorJsTest", function () {
         console.info("Sensor_GetGeomagneticDip_006 end")
     })
 
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_007
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
     it('Sensor_GetGeomagneticDip_007', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9]).then((data) => {
             console.info("Sensor_GetGeomagneticDip_007" + data)
@@ -3532,7 +3684,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it('Sensor_GetGeomagneticDip_008', 0, async function (done) { //传undefined
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_008
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_008', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], undefined).then((data) => {
             console.info("Sensor_GetGeomagneticDip_008" + data)
             expect(data).assertEqual(getGeomagneticDipResult[0])
@@ -3544,7 +3702,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it('Sensor_GetGeomagneticDip_009', 0, async function (done) { //传null
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_009
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_009', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], null).then((data) => {
             console.info("Sensor_GetGeomagneticDip_009" + data)
             expect(data).assertEqual(getGeomagneticDipResult[0])
@@ -3556,7 +3720,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it('Sensor_GetGeomagneticDip_010', 0, async function (done) { //传"abc"
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_010
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_010', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], null).then((data) => {
             console.info("Sensor_GetGeomagneticDip_010" + data)
             expect(data).assertEqual(getGeomagneticDipResult[0])
@@ -3746,7 +3916,13 @@ describe("SensorJsTest", function () {
         console.info("Sensor_GetAltitude_008 end")
     })
 
-    it('Sensor_GetAltitude_009', 0, async function (done) { //传undefined
+    /*
+    * @tc.name: Sensor_GetAltitude_009
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetAltitude_009', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100, undefined).then((data) => {
             console.info("Sensor_GetAltitude_009" + data)
             expect(data).assertEqual(getGeomagneticDipResult[2])
@@ -3758,7 +3934,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it('Sensor_GetAltitude_010', 0, async function (done) { //传null
+    /*
+    * @tc.name: Sensor_GetAltitude_010
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetAltitude_010', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100, null).then((data) => {
             console.info("Sensor_GetAltitude_010" + data)
             expect(data).assertEqual(getGeomagneticDipResult[2])
@@ -3770,7 +3952,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it('Sensor_GetAltitude_011', 0, async function (done) { //传"abc"
+    /*
+    * @tc.name: Sensor_GetAltitude_011
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetAltitude_011', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100, "abc").then((data) => {
             console.info("Sensor_GetAltitude_011" + data)
             expect(data).assertEqual(getGeomagneticDipResult[2])
@@ -4024,7 +4212,13 @@ describe("SensorJsTest", function () {
         console.info("Sensor_TransformCoordinateSystem_010 end")
     })
 
-    it("Sensor_TransformCoordinateSystem_011", 0, async function (done) { //传undefined
+    /*
+    * @tc.name: Sensor_TransformCoordinateSystem_011
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it("Sensor_TransformCoordinateSystem_011", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_011----------------------------------");
         sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, undefined).then((data) => {
             for (let i = 0; i < data.length; i++) {
@@ -4039,7 +4233,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it("Sensor_TransformCoordinateSystem_012", 0, async function (done) { //传null
+    /*
+    * @tc.name: Sensor_TransformCoordinateSystem_012
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it("Sensor_TransformCoordinateSystem_012", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_012----------------------------------");
         sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, null).then((data) => {
             for (let i = 0; i < data.length; i++) {
@@ -4054,7 +4254,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it("Sensor_TransformCoordinateSystem_013", 0, async function (done) { //传"abc"
+    /*
+    * @tc.name: Sensor_TransformCoordinateSystem_013
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it("Sensor_TransformCoordinateSystem_013", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_013----------------------------------");
         sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, "abc").then((data) => {
             for (let i = 0; i < data.length; i++) {
@@ -4120,7 +4326,7 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2TR
     * @tc.author:
     */
-    it("Sensor_GetSensorList_003", 0, async function (done) { // 结果改变 // 可选参数传错误类型-1
+    it("Sensor_GetSensorList_003", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_003----------------------------------");
         sensor.getSensorList(-1).then(data => {
             console.info("---------------------------Sensor_GetSensorList_003 callback in-----------" + data.length);
@@ -4136,7 +4342,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it("Sensor_GetSensorList_004", 0, async function (done) {//传undefined
+    /*
+    * @tc.name: Sensor_GetSensorList_004
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSensorList_004", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_004----------------------------------");
         sensor.getSensorList(undefined).then((data) => {
             console.info("---------------------------Sensor_GetSensorList_004 callback in-----------" + data.length);
@@ -4152,7 +4364,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it("Sensor_GetSensorList_005", 0, async function (done) {//传null
+    /*
+    * @tc.name: Sensor_GetSensorList_005
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSensorList_005", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_005----------------------------------");
         sensor.getSensorList(null).then((data) => {
             console.info("---------------------------Sensor_GetSensorList_005 callback in-----------" + data.length);
@@ -4262,7 +4480,13 @@ describe("SensorJsTest", function () {
         }
     })
 
-    it("Sensor_GetSingleSensor_005", 0, async function (done) { //传undefined,按promise处理
+    /*
+    * @tc.name: Sensor_GetSingleSensor_005
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSingleSensor_005", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_005----------------------------------");
         sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER, undefined).then((data) => {
             console.info("Sensor_GetSingleSensor_005 " + JSON.stringify(data));
@@ -4275,7 +4499,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it("Sensor_GetSingleSensor_006", 0, async function (done) { //传null,按promise处理
+    /*
+    * @tc.name: Sensor_GetSingleSensor_006
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSingleSensor_006", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_006----------------------------------");
         sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER, null).then((data) => {
             console.info("Sensor_GetSingleSensor_006 " + JSON.stringify(data));
@@ -4288,7 +4518,13 @@ describe("SensorJsTest", function () {
         });
     })
 
-    it("Sensor_GetSingleSensor_007", 0, async function (done) { //传错误类型"abc",按promise处理
+    /*
+    * @tc.name: Sensor_GetSingleSensor_007
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSingleSensor_007", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_007----------------------------------");
         sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER, "abc").then((data) => {
             console.info("Sensor_GetSingleSensor_007 " + JSON.stringify(data));
@@ -4307,7 +4543,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
-    it("Sensor_SubscribeAccelerometer_001", 0, async function (done) {//传正确的可选属性
+    it("Sensor_SubscribeAccelerometer_001", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_001---------------------------');
         sensor.subscribeAccelerometer({
             interval: 'normal',
@@ -4342,7 +4578,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
-    it("Sensor_SubscribeAccelerometer_002", 0, async function (done) {//传正确的可选属性
+    it("Sensor_SubscribeAccelerometer_002", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_002---------------------------');
         sensor.subscribeAccelerometer({
             interval: 'xxx',
@@ -4365,7 +4601,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
-    it("Sensor_SubscribeAccelerometer_003", 0, async function (done) { // 不传可选属性
+    it("Sensor_SubscribeAccelerometer_003", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_003---------------------------');
         try {
             sensor.subscribeAccelerometer({
@@ -4391,7 +4627,7 @@ describe("SensorJsTest", function () {
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
-    it("Sensor_SubscribeAccelerometer_004", 0, async function (done) { //不传必选属性也不传可选属性
+    it("Sensor_SubscribeAccelerometer_004", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_004---------------------------');
         try {
             sensor.subscribeAccelerometer({
@@ -4407,7 +4643,13 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
-    it("Sensor_SubscribeAccelerometer_005", 0, async function (done) {// 多传无效参数
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_005
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_005", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_005---------------------------');
         sensor.subscribeAccelerometer({
             interval: 'normal',
@@ -4432,7 +4674,13 @@ describe("SensorJsTest", function () {
         }, 1000);
     })
 
-    it("Sensor_SubscribeAccelerometer_006", 0, async function (done) {// 参数的可选属性为undefined
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_006
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_006", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_006---------------------------');
         sensor.subscribeAccelerometer({
             interval: 'normal',
@@ -4458,8 +4706,13 @@ describe("SensorJsTest", function () {
         }, 1000);
     })
 
-
-    it("Sensor_SubscribeAccelerometer_007", 0, async function (done) {// 参数的可选属性为null
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_007
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_007", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_007---------------------------');
         sensor.subscribeAccelerometer({
             interval: 'normal',
@@ -4485,7 +4738,13 @@ describe("SensorJsTest", function () {
         }, 1000);
     })
 
-    it("Sensor_SubscribeAccelerometer_008", 0, async function (done) {// 参数的可选属性为"abc"
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_008
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_008", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_008---------------------------');
         sensor.subscribeAccelerometer({
             interval: 'normal',
