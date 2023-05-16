@@ -35,8 +35,8 @@ using Security::AccessToken::AccessTokenID;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorPowerTest" };
-constexpr int32_t sensorId { 1 };
-constexpr int32_t invalidValue { -1 };
+constexpr int32_t SENSOR_ID { 1 };
+constexpr int32_t INVALID_VALUE { -1 };
 }  // namespace
 
 class SensorPowerTest : public testing::Test {
@@ -47,7 +47,7 @@ public:
     void TearDown();
 };
 
-int32_t process_pid = 0;
+int32_t g_processPid = 0;
 
 void SensorPowerTest::SetUpTestCase()
 {
@@ -68,9 +68,9 @@ void SensorPowerTest::SetUpTestCase()
     AccessTokenKit::ReloadNativeTokenInfo();
     delete[] perms;
 
-    process_pid = getpid();
-    SEN_HILOGI("Current process pid is %{public}d", process_pid);
-    ASSERT_NE(process_pid, 0);
+    g_processPid = getpid();
+    SEN_HILOGI("Current process pid is %{public}d", g_processPid);
+    ASSERT_NE(g_processPid, 0);
 }
 
 void SensorPowerTest::TearDownTestCase() {}
@@ -106,33 +106,29 @@ void SensorActiveInfoCBImpl2(SensorActiveInfo &sensorActiveInfo)
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_001, TestSize.Level1)
 {
-    // 休眠接口异常用例
     SEN_HILOGI("SensorPowerTest_001 in");
-    int32_t ret = SuspendSensors(invalidValue);
+    int32_t ret = SuspendSensors(INVALID_VALUE);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_002, TestSize.Level1)
 {
-    // 恢复接口异常用例
     SEN_HILOGI("SensorPowerTest_002 in");
-    int32_t ret = ResumeSensors(invalidValue);
+    int32_t ret = ResumeSensors(INVALID_VALUE);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_003, TestSize.Level1)
 {
-    // 查询接口异常用例
     SEN_HILOGI("SensorPowerTest_003 in");
     SensorActiveInfo *sensorActiveInfos {nullptr};
     int32_t count { 0 };
-    int32_t ret = GetSensorActiveInfos(invalidValue, &sensorActiveInfos, &count);
+    int32_t ret = GetSensorActiveInfos(INVALID_VALUE, &sensorActiveInfos, &count);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_004, TestSize.Level1)
 {
-    // 注册接口异常用例
     SEN_HILOGI("SensorPowerTest_004 in");
     SensorActiveInfoCB callback = nullptr;
     int32_t ret = Register(callback);
@@ -141,7 +137,6 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_004, TestSize.Level1)
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_005, TestSize.Level1)
 {
-    // 取消注册接口异常用例
     SEN_HILOGI("SensorPowerTest_005 in");
     SensorActiveInfoCB callback = nullptr;
     int32_t ret = Unregister(callback);
@@ -150,51 +145,49 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_005, TestSize.Level1)
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_006, TestSize.Level1)
 {
-    // 场景用例1，订阅并打开ACC传感器》休眠进程的传感器》恢复进程的传感器》关闭并取消订阅ACC传感器
     SEN_HILOGI("SensorPowerTest_006 in");
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
 
-    int32_t ret = SubscribeSensor(sensorId, &user);
+    int32_t ret = SubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = SetBatch(sensorId, &user, 100000000, 0);
+    ret = SetBatch(SENSOR_ID, &user, 100000000, 0);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = ActivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    ret = SuspendSensors(process_pid);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    ret = ResumeSensors(process_pid);
+    ret = ActivateSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    ret = DeactivateSensor(sensorId, &user);
+    ret = SuspendSensors(g_processPid);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = UnsubscribeSensor(sensorId, &user);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = ResumeSensors(g_processPid);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = UnsubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_007, TestSize.Level1)
 {
-    // 场景用例2，订阅并打开ACC传感器》查询传感器打开数据》休眠进程的传感器》恢复进程的传感器》关闭并取消订阅ACC传感器
     SEN_HILOGI("SensorPowerTest_007 in");
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
 
-    int32_t ret = SubscribeSensor(sensorId, &user);
+    int32_t ret = SubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = SetBatch(sensorId, &user, 100000000, 0);
+    ret = SetBatch(SENSOR_ID, &user, 100000000, 0);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = ActivateSensor(sensorId, &user);
+    ret = ActivateSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     SensorActiveInfo *sensorActiveInfos {nullptr};
     int32_t count { 0 };
-    ret = GetSensorActiveInfos(process_pid, &sensorActiveInfos, &count);
+    ret = GetSensorActiveInfos(g_processPid, &sensorActiveInfos, &count);
     for (int32_t i = 0; i < count; ++i) {
         SensorActiveInfo *curSensorActiveInfo = sensorActiveInfos + i;
         SEN_HILOGI("pid:%{public}d, sensorId:%{public}d, samplingPeriodNs:%{public}" PRId64 ", "
@@ -203,23 +196,22 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_007, TestSize.Level1)
     }
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
-    ret = SuspendSensors(process_pid);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    ret = ResumeSensors(process_pid);
+    ret = SuspendSensors(g_processPid);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    ret = DeactivateSensor(sensorId, &user);
+    ret = ResumeSensors(g_processPid);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = UnsubscribeSensor(sensorId, &user);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = UnsubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_008, TestSize.Level1)
 {
-    // 场景用例3，注册回调函数》订阅并打开ACC传感器》休眠进程的传感器》恢复进程的传感器》关闭并取消订阅ACC传感器》取消注册回调函数
     SEN_HILOGI("SensorPowerTest_008 in");
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
@@ -228,25 +220,25 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_008, TestSize.Level1)
     int32_t ret = Register(callback);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
-    ret = SubscribeSensor(sensorId, &user);
+    ret = SubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = SetBatch(sensorId, &user, 100000000, 0);
+    ret = SetBatch(SENSOR_ID, &user, 100000000, 0);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = ActivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    ret = SuspendSensors(process_pid);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    ret = ResumeSensors(process_pid);
+    ret = ActivateSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    ret = DeactivateSensor(sensorId, &user);
+    ret = SuspendSensors(g_processPid);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = UnsubscribeSensor(sensorId, &user);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = ResumeSensors(g_processPid);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = UnsubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
     ret = Unregister(callback);
@@ -255,7 +247,6 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_008, TestSize.Level1)
 
 HWTEST_F(SensorPowerTest, SensorPowerTest_009, TestSize.Level1)
 {
-    // 场景用例4，注册回调函数1》注册回调函数2》订阅ACC传感器》休眠进程的传感器》恢复进程的传感器》取消订阅ACC传感器》取消注册回调函数1》取消注册回调函数2
     SEN_HILOGI("SensorPowerTest_009 in");
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
@@ -267,25 +258,25 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_009, TestSize.Level1)
     ret = Register(callback2);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
-    ret = SubscribeSensor(sensorId, &user);
+    ret = SubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = SetBatch(sensorId, &user, 100000000, 0);
+    ret = SetBatch(SENSOR_ID, &user, 100000000, 0);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = ActivateSensor(sensorId, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-    ret = SuspendSensors(process_pid);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    ret = ResumeSensors(process_pid);
+    ret = ActivateSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    ret = DeactivateSensor(sensorId, &user);
+    ret = SuspendSensors(g_processPid);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-    ret = UnsubscribeSensor(sensorId, &user);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = ResumeSensors(g_processPid);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = UnsubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
     ret = Unregister(callback);
