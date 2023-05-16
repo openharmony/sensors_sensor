@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,16 +16,20 @@
 #ifndef SENSOR_DATA_CHANNEL_H
 #define SENSOR_DATA_CHANNEL_H
 
-#include <memory>
 #include <cstdint>
+#include <functional>
+#include <memory>
+#include <unordered_set>
 
 #include "sensor_agent_type.h"
-#include "sensor_event_handler.h"
 #include "sensor_basic_data_channel.h"
+#include "sensor_event_handler.h"
 
 namespace OHOS {
 namespace Sensors {
 typedef void (*DataChannelCB)(SensorEvent *events, int32_t num, void *data);
+using ReceiveMessageFun = std::function<void(const char*, size_t)>;
+using DisconnectFun = std::function<void()>;
 class SensorDataChannel : public SensorBasicDataChannel {
 public:
     SensorDataChannel() = default;
@@ -39,14 +43,21 @@ public:
     int32_t test = 10;
     DataChannelCB dataCB_ = nullptr;
     void *privateData_ = nullptr;
+    int32_t AddFdListener(int32_t fd, ReceiveMessageFun receiveMessage, DisconnectFun disconnect);
+    int32_t DelFdListener(int32_t fd);
+    ReceiveMessageFun GetReceiveMessageFun() const;
+    DisconnectFun GetDisconnectFun() const;
 
 private:
     static void ThreadProcessTask(SensorDataChannel *sensorChannel);
     int32_t InnerSensorDataChannel();
     std::mutex eventRunnerMutex_;
-    static std::shared_ptr<SensorEventHandler> eventHandler_;
+    std::shared_ptr<SensorEventHandler> eventHandler_;
     static std::shared_ptr<AppExecFwk::EventRunner> eventRunner_;
     static int32_t receiveFd_;
+    std::unordered_set<int32_t> listenedFdSet_;
+    ReceiveMessageFun receiveMessage_;
+    DisconnectFun disconnect_;
 };
 }  // namespace Sensors
 }  // namespace OHOS
