@@ -48,6 +48,7 @@ public:
     int32_t GetSensorActiveInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, int32_t *count) const;
     int32_t Register(SensorActiveInfoCB callback) const;
     int32_t Unregister(SensorActiveInfoCB callback) const;
+    int32_t ResetSensors() const;
 
 private:
     int32_t CreateSensorDataChannel() const;

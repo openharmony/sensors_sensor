@@ -63,6 +63,7 @@ public:
     ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient) override;
     ErrCode EnableActiveInfoCB() override;
     ErrCode DisableActiveInfoCB() override;
+    ErrCode ResetSensors() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);

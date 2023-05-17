@@ -46,6 +46,7 @@ private:
     ErrCode DestroySocketChannelInner(MessageParcel &data, MessageParcel &reply);
     ErrCode EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
     ErrCode DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
+    ErrCode ResetSensorsInner(MessageParcel &data, MessageParcel &reply);
     std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };
 }  // namespace Sensors
