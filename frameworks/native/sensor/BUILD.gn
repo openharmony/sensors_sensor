@@ -16,6 +16,7 @@ import("./../../../sensor.gni")
 
 ohos_shared_library("libsensor_native") {
   sources = [
+    "src/fd_listener.cpp",
     "src/sensor_agent_proxy.cpp",
     "src/sensor_client_stub.cpp",
     "src/sensor_data_channel.cpp",
