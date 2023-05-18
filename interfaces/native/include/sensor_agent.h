@@ -127,7 +127,14 @@ int32_t DeactivateSensor(int32_t sensorTypeId, const SensorUser *user);
  * @since 5
  */
 int32_t SetMode(int32_t sensorTypeId, const SensorUser *user, int32_t mode);
-
+/**
+ * @brief 重置休眠的所有传感器
+ *
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t ResetSensors();
 #ifdef __cplusplus
 #if __cplusplus
 }

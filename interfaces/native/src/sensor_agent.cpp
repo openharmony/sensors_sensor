@@ -147,3 +147,18 @@ int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
     }
     return proxy->SetMode(sensorId, user, mode);
 }
+
+int32_t ResetSensors()
+{
+    const SensorAgentProxy *proxy = GetInstance();
+    if (proxy == nullptr) {
+        SEN_HILOGE("Proxy is nullptr");
+        return SERVICE_EXCEPTION;
+    }
+    int32_t ret = proxy->ResetSensors();
+    if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
+        return NormalizeErrCode(ret);
+    }
+    return ret;
+}
