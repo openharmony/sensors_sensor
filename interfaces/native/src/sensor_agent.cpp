@@ -148,22 +148,13 @@ int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
     return proxy->SetMode(sensorId, user, mode);
 }
 
-<<<<<<< HEAD
-int32_t ResetSensors()
-=======
 int32_t SuspendSensors(int32_t pid)
->>>>>>> 2500db0aeb3cf700dc7d08fad0a0a0526c8b712e
 {
     const SensorAgentProxy *proxy = GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("Proxy is nullptr");
         return SERVICE_EXCEPTION;
     }
-<<<<<<< HEAD
-    int32_t ret = proxy->ResetSensors();
-    if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
-=======
     int32_t ret = proxy->SuspendSensors(pid);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Suspend sensors failed, ret:%{public}d", ret);
@@ -229,7 +220,21 @@ int32_t Unregister(SensorActiveInfoCB callback)
     int32_t ret = proxy->Unregister(callback);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("Unregister active sensor infos callback failed, ret:%{public}d", ret);
->>>>>>> 2500db0aeb3cf700dc7d08fad0a0a0526c8b712e
+        return NormalizeErrCode(ret);
+    }
+    return ret;
+}
+
+int32_t ResetSensors()
+{
+    const SensorAgentProxy *proxy = GetInstance();
+    if (proxy == nullptr) {
+        SEN_HILOGE("Proxy is nullptr");
+        return SERVICE_EXCEPTION;
+    }
+    int32_t ret = proxy->ResetSensors();
+    if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
         return NormalizeErrCode(ret);
     }
     return ret;

@@ -285,5 +285,33 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_009, TestSize.Level1)
     ret = Unregister(callback2);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
+
+HWTEST_F(SensorPowerTest, SensorPowerTest_010, TestSize.Level1)
+{
+    SEN_HILOGI("SensorPowerTest_010 in");
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+
+    int32_t ret = SubscribeSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = SetBatch(SENSOR_ID, &user, 100000000, 0);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = ActivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = SuspendSensors(g_processPid);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = ResetSensors();
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = UnsubscribeSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+}
 }  // namespace Sensors
 }  // namespace OHOS
