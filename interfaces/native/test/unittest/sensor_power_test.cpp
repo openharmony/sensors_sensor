@@ -124,7 +124,7 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_003, TestSize.Level1)
     SEN_HILOGI("SensorPowerTest_003 in");
     SensorActiveInfo *sensorActiveInfos {nullptr};
     int32_t count { 0 };
-    int32_t ret = GetSensorActiveInfos(INVALID_VALUE, &sensorActiveInfos, &count);
+    int32_t ret = GetActiveSensorInfos(INVALID_VALUE, &sensorActiveInfos, &count);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
 
@@ -188,7 +188,7 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_007, TestSize.Level1)
 
     SensorActiveInfo *sensorActiveInfos {nullptr};
     int32_t count { 0 };
-    ret = GetSensorActiveInfos(g_processPid, &sensorActiveInfos, &count);
+    ret = GetActiveSensorInfos(g_processPid, &sensorActiveInfos, &count);
     for (int32_t i = 0; i < count; ++i) {
         SensorActiveInfo *curSensorActiveInfo = sensorActiveInfos + i;
         SEN_HILOGI("pid:%{public}d, sensorId:%{public}d, samplingPeriodNs:%{public}" PRId64 ", "
