@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -127,6 +127,58 @@ int32_t DeactivateSensor(int32_t sensorTypeId, const SensorUser *user);
  * @since 5
  */
 int32_t SetMode(int32_t sensorTypeId, const SensorUser *user, int32_t mode);
+
+/**
+ * @brief 挂起一个进程订阅的所有传感器
+ *
+ * @param pid 将被挂起的进程的进程号
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t SuspendSensors(int32_t pid);
+
+/**
+ * @brief 唤醒一个进程订阅的所有传感器
+ *
+ * @param pid 将被唤醒的进程的进程号
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t ResumeSensors(int32_t pid);
+
+/**
+ * @brief 查询一个进程打开的所有传感器的信息
+ *
+ * @param pid 将被查询的进程的进程号
+ * @param sensorActiveInfos 返回进程打开的所有传感器信息
+ * @param count 返回进程打开的传感器数量
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t GetActiveSensorInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, int32_t *count);
+
+/**
+ * @brief 订阅激活的传感器的信息
+ *
+ * @param callback 回调函数，返回激活的传感器的信息
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t Register(SensorActiveInfoCB callback);
+
+/**
+ * @brief 取消订阅激活的传感器的信息
+ *
+ * @param callback 取消对此回调函数的订阅
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t Unregister(SensorActiveInfoCB callback);
 
 #ifdef __cplusplus
 #if __cplusplus
