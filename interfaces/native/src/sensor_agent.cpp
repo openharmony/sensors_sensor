@@ -178,7 +178,7 @@ int32_t ResumeSensors(int32_t pid)
     return ret;
 }
 
-int32_t GetSensorActiveInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, int32_t *count)
+int32_t GetActiveSensorInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, int32_t *count)
 {
     CHKPR(sensorActiveInfos, OHOS::Sensors::ERROR);
     CHKPR(count, OHOS::Sensors::ERROR);
@@ -189,7 +189,7 @@ int32_t GetSensorActiveInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, 
     }
     int32_t ret = proxy->GetSensorActiveInfos(pid, sensorActiveInfos, count);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get sensor active infos failed, ret:%{public}d", ret);
+        SEN_HILOGE("Get active sensor infos failed, ret:%{public}d", ret);
         return NormalizeErrCode(ret);
     }
     return ret;
@@ -204,7 +204,7 @@ int32_t Register(SensorActiveInfoCB callback)
     }
     int32_t ret = proxy->Register(callback);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Register sensor active Info callback failed, ret:%{public}d", ret);
+        SEN_HILOGE("Register active sensor infos callback failed, ret:%{public}d", ret);
         return NormalizeErrCode(ret);
     }
     return ret;
@@ -219,7 +219,7 @@ int32_t Unregister(SensorActiveInfoCB callback)
     }
     int32_t ret = proxy->Unregister(callback);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Unregister sensor active info callback failed, ret:%{public}d", ret);
+        SEN_HILOGE("Unregister active sensor infos callback failed, ret:%{public}d", ret);
         return NormalizeErrCode(ret);
     }
     return ret;

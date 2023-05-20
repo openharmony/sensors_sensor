@@ -14,12 +14,13 @@
  */
 
 #include <cinttypes>
-#include <gtest/gtest.h>
 #include <thread>
+
 #include <sys/types.h>
 #include <unistd.h>
 
 #include "accesstoken_kit.h"
+#include <gtest/gtest.h>
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
 
@@ -85,7 +86,7 @@ void SensorDataCallbackImpl(SensorEvent *event)
         SEN_HILOGE("SensorEvent is null");
         return;
     }
-    float *sensorData = (float *)event[0].data;
+    float *sensorData = static_cast<float *>(event[0].data);
     SEN_HILOGI("SensorId:%{public}d, version:%{public}d,dataLen:%{public}d,data:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
