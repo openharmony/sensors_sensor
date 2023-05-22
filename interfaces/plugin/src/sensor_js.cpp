@@ -333,22 +333,13 @@ static napi_value On(napi_env env, napi_callback_info info)
         return nullptr;
     }
     int64_t interval = REPORTING_INTERVAL;
-    if (argc >= 3) {
-        if (!IsMatchType(env, args[2], napi_object)) {
-            ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be object");
-            return nullptr;
-        }
+    if (argc >= 3 && IsMatchType(env, args[2], napi_object)) {
         napi_value value = GetNamedProperty(env, args[2], "interval");
-        if ((value == nullptr) || (!IsMatchType(env, value, napi_number))) {
-            ThrowErr(env, PARAMETER_ERROR, "Get interval fail or wrong argument type");
-            return nullptr;
+        if (IsMatchType(env, value, napi_number)) {
+            GetNativeInt64(env, value, interval);
         }
-        if (!GetNativeInt64(env, value, interval)) {
-            ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
-            return nullptr;
-        }
-        SEN_HILOGD("Interval is %{public}" PRId64, interval);
     }
+    SEN_HILOGD("Interval is %{public}" PRId64, interval);
     int32_t ret = SubscribeSensor(sensorTypeId, interval, DataCallbackImpl);
     if (ret != ERR_OK) {
         ThrowErr(env, ret, "SubscribeSensor fail");
@@ -417,7 +408,7 @@ static napi_value Off(napi_env env, napi_callback_info info)
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc == 0) {
+    if (status != napi_ok || argc < 1) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -427,14 +418,10 @@ static napi_value Off(napi_env env, napi_callback_info info)
         return nullptr;
     }
     int32_t subscribeSize = -1;
-    if (argc == 1) {
-        subscribeSize = RemoveAllCallback(env, sensorTypeId);
-    } else {
-        if (!IsMatchType(env, args[1], napi_function)) {
-            ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
-            return nullptr;
-        }
+    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
         subscribeSize = RemoveCallback(env, sensorTypeId, args[1]);
+    } else {
+        subscribeSize = RemoveAllCallback(env, sensorTypeId);
     }
     if (CheckSystemSubscribe(sensorTypeId) || (subscribeSize > 0)) {
         SEN_HILOGW("There are other client subscribe system js api as well, not need unsubscribe");
@@ -453,7 +440,8 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
     size_t argc = 3;
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
-    if ((napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr) != napi_ok) || (argc < 2)) {
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
+    if (status != napi_ok || argc < 2) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -509,22 +497,23 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
         .levelIntensity = geomagneticField.ObtainLevelIntensity(),
         .totalIntensity = geomagneticField.ObtainTotalIntensity(),
     };
-    if (argc == 2) {
-        napi_value promise = nullptr;
-        if ((napi_create_promise(env, &asyncCallbackInfo->deferred, &promise)) != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+    if (argc >=3 && IsMatchType(env, args[2], napi_function)) {
+        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
+        if (status != napi_ok) {
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[2], napi_function) ||
-        (napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]) != napi_ok)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type or napi_create_reference fail ");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (status != napi_ok) {
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+        return nullptr;
+    }
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetAxisX(napi_env env, napi_value value)
@@ -544,7 +533,7 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
     napi_value args[3]  = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if ((status != napi_ok) || (argc < 2)) {
+    if (status != napi_ok || argc < 2) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -597,27 +586,23 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
         }
         asyncCallbackInfo->data.reserveData.length = static_cast<int32_t>(length);
     }
-    if (argc == 2) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
+        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[2], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetAngleModify(napi_env env, napi_callback_info info)
@@ -664,27 +649,23 @@ static napi_value GetAngleModify(napi_env env, napi_callback_info info)
             asyncCallbackInfo->data.reserveData.reserve[i] = angleChange[i];
         }
     }
-    if (argc == 2) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
+        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[2], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetDirection(napi_env env, napi_callback_info info)
@@ -694,7 +675,7 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc == 0) {
+    if (status != napi_ok || argc < 1) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -722,27 +703,23 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
             asyncCallbackInfo->data.reserveData.reserve[i] = rotationAngle[i];
         }
     }
-    if (argc == 1) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
+        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[1], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
@@ -752,7 +729,7 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc == 0) {
+    if (status != napi_ok || argc < 1) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -780,27 +757,23 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
             asyncCallbackInfo->data.reserveData.reserve[i] = quaternion[i];
         }
     }
-    if (argc == 1) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
+        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[1], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetAltitude(napi_env env, napi_callback_info info)
@@ -840,27 +813,23 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
     } else {
         asyncCallbackInfo->data.reserveData.reserve[0] = altitude;
     }
-    if (argc == 2) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
+        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[2], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
@@ -870,7 +839,7 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc == 0) {
+    if (status != napi_ok || argc < 1) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -895,27 +864,23 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
     } else {
         asyncCallbackInfo->data.reserveData.reserve[0] = geomagneticDip;
     }
-    if (argc == 1) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
+        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[1], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value CreateRotationAndInclination(const napi_env &env, napi_value args[], size_t argc)
@@ -955,27 +920,23 @@ static napi_value CreateRotationAndInclination(const napi_env &env, napi_value a
         }
     }
     napi_status status;
-    if (argc == 2) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
+        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[2], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size_t argc)
@@ -1006,27 +967,23 @@ static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size
         }
     }
     napi_status status;
-    if (argc == 1) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
+        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[1], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
@@ -1036,7 +993,7 @@ static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
     napi_value args[3] = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc == 0) {
+    if (status != napi_ok || argc < 1) {
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
@@ -1044,15 +1001,11 @@ static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be array");
         return nullptr;
     }
-    if (argc == 1 || (argc == 2 && IsMatchType(env, args[1], napi_function))) {
-        return GetRotationMatrix(env, args, argc);
-    } else if (IsMatchArrayType(env, args[1])) {
+    if (argc >= 2 && IsMatchArrayType(env, args[1])) {
         return CreateRotationAndInclination(env, args, argc);
     } else {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be array");
-        return nullptr;
+        return GetRotationMatrix(env, args, argc);
     }
-    return nullptr;
 }
 
 static napi_value GetSensorList(napi_env env, napi_callback_info info)
@@ -1081,27 +1034,23 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
             asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
         }
     }
-    if (argc == 0) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 1 && IsMatchType(env, args[0], napi_function)) {
+        status = napi_create_reference(env, args[0], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[0], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[0], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
@@ -1111,8 +1060,8 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail");
+    if (status != napi_ok || argc < 1) {
+        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
         return nullptr;
     }
     int32_t sensorTypeId = INVALID_SENSOR_ID;
@@ -1142,27 +1091,23 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
             return nullptr;
         }
     }
-    if (argc == 1) {
-        napi_value promise = nullptr;
-        status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
+    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
+        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
         if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
+            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
             return nullptr;
         }
-        EmitPromiseWork(asyncCallbackInfo);
-        return promise;
-    }
-    if (!IsMatchType(env, args[1], napi_function)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be function");
+        EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
+    napi_value promise = nullptr;
+    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
+        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
         return nullptr;
     }
-    EmitAsyncCallbackWork(asyncCallbackInfo);
-    return nullptr;
+    EmitPromiseWork(asyncCallbackInfo);
+    return promise;
 }
 
 napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type)
@@ -1171,9 +1116,15 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     size_t argc = 1;
     napi_value args[1] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
-    CHKCP((argc == 1), "The number of parameters is not valid");
-    CHKCP(IsMatchType(env, args[0], napi_object), "Wrong argument type, should be object");
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
+    if (status != napi_ok || argc < 1) {
+        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
+        return nullptr;
+    }
+    if (!IsMatchType(env, args[0], napi_object)) {
+        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be object");
+        return nullptr;
+    }
     string interval = "normal";
     if ((sensorTypeId == SENSOR_TYPE_ID_ACCELEROMETER) ||
         ((sensorTypeId == SENSOR_TYPE_ID_ORIENTATION) && (type != SUBSCRIBE_COMPASS))
@@ -1184,24 +1135,24 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, type);
     CHKPP(asyncCallbackInfo);
     napi_value napiSuccess = GetNamedProperty(env, args[0], "success");
-    CHKCP((napiSuccess != nullptr), "get napiSuccess fail");
+    CHKCP(IsMatchType(env, napiSuccess, napi_function), "get napiSuccess fail");
     CHKCP(RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
-        "register callback fail");
+        "register success callback fail");
     napi_value napiFail = GetNamedProperty(env, args[0], "fail");
-    if (napiFail != nullptr) {
+    if (IsMatchType(env, napiFail, napi_function)) {
         SEN_HILOGD("has fail callback");
         CHKCP(RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]),
-            "register callback fail");
+            "register fail callback fail");
     }
     if (auto iter = g_samplingPeriod.find(interval); iter == g_samplingPeriod.end()) {
-        CHKCP((napiFail != nullptr), "input error, interval is invalid");
+        CHKCP(IsMatchType(env, napiFail, napi_function), "input error, interval is invalid");
         CreateFailMessage(SUBSCRIBE_FAIL, INPUT_ERROR, "input error", asyncCallbackInfo);
         EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
     int32_t ret = SubscribeSensor(sensorTypeId, g_samplingPeriod[interval], DataCallbackImpl);
     if (ret != OHOS::ERR_OK) {
-        CHKCP((napiFail != nullptr), "subscribe fail");
+        CHKCP(IsMatchType(env, napiFail, napi_function), "subscribe fail");
         CreateFailMessage(SUBSCRIBE_FAIL, SENSOR_SUBSCRIBE_FAILURE, "subscribe fail", asyncCallbackInfo);
         EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
@@ -1219,8 +1170,11 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
     size_t argc = 1;
     napi_value args[1] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
-    CHKCP((argc == 0), "The number of parameters is not valid");
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
+    if (status != napi_ok) {
+        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail");
+        return nullptr;
+    }
     std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
@@ -1249,12 +1203,19 @@ napi_value GetBodyState(napi_env env, napi_callback_info info)
     size_t argc = 1;
     napi_value args[1] = { 0 };
     napi_value thisVar = nullptr;
-    CHKNRP(env, napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr), "napi_get_cb_info");
-    CHKCP((argc == 1), "The number of parameters is not valid");
-    CHKCP(IsMatchType(env, args[0], napi_object), "Wrong argument type, should be object");
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
+    if (status != napi_ok || argc < 1) {
+        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
+        return nullptr;
+    }
+    if (!IsMatchType(env, args[0], napi_object)) {
+        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, should be object");
+        return nullptr;
+    }
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, GET_BODY_STATE);
     CHKPP(asyncCallbackInfo);
     napi_value napiSuccess = GetNamedProperty(env, args[0], "success");
+    CHKCP(IsMatchType(env, napiSuccess, napi_function), "get napiSuccess fail");
     CHKCP(RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
         "register success callback fail");
     std::lock_guard<std::mutex> onBodyLock(bodyMutex_);

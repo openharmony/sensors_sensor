@@ -70,7 +70,7 @@ describe("SensorJsTest", function () {
     it("SensorJsTest_001", 0, async function (done) {
         console.info('----------------------SensorJsTest_001---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback);
-        setTimeout(()=>{
+        setTimeout(() => {
             sensor.off(sensor.SensorId.ACCELEROMETER);
             done();
         }, 500);
@@ -106,9 +106,9 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest_003", 0, async function (done) {
-        console.info('----------------------SensorJsTest003---------------------------');
+        console.info('----------------------SensorJsTest_003---------------------------');
         sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
-        setTimeout(()=>{
+        setTimeout(() => {
             console.info('----------------------SensorJsTest_003 off in---------------------------');
             sensor.off(sensor.SensorId.ACCELEROMETER);
             console.info('----------------------SensorJsTest_003 off end---------------------------');
@@ -125,7 +125,7 @@ describe("SensorJsTest", function () {
     it("SensorJsTest_004", 0, function (done) {
         console.info('----------------------SensorJsTest_004---------------------------');
         function onSensorCallback(data) {
-            console.info('SensorJsTest004  callback in');
+            console.info('SensorJsTest004 callback in');
             expect(true).assertTrue();
             done();
         }
@@ -136,7 +136,7 @@ describe("SensorJsTest", function () {
             expect(false).assertTrue();
             done();
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             console.info('----------------------SensorJsTest_004 off in---------------------------');
             sensor.off(sensor.SensorId.ACCELEROMETER);
             console.info('----------------------SensorJsTest_004 off end---------------------------');
@@ -152,7 +152,7 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest_005", 0, async function (done) {
         sensor.once(sensor.SensorId.ACCELEROMETER, callback);
-        setTimeout(()=>{
+        setTimeout(() => {
             expect(true).assertTrue();
             done();
         }, 500);
@@ -188,7 +188,7 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest_007", 0, function (done) {
         function onceSensorCallback(data) {
-            console.info('SensorJsTest007  on error');
+            console.info('SensorJsTest_007 on error');
             expect(true).assertTrue();
             done();
         }
@@ -232,7 +232,7 @@ describe("SensorJsTest", function () {
         }
         sensor.on(sensor.SensorId.ACCELEROMETER, onSensorCallback);
         sensor.off(sensor.SensorId.ACCELEROMETER, onSensorCallback);
-        setTimeout(()=>{
+        setTimeout(() => {
             expect(true).assertTrue();
             done();
         }, 500);
@@ -246,7 +246,7 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest_010", 0, async function (done) {
         function onSensorCallback(data) {
-            console.info('SensorJsTest010  on error');
+            console.info('SensorJsTest_010 on error');
             expect(false).assertTrue();
             done();
         }
@@ -267,15 +267,15 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest_011", 0, async function (done) {
-        sensor.on(sensor.SensorId.ACCELEROMETER, (data)=>{
+        sensor.on(sensor.SensorId.ACCELEROMETER, (data) => {
             console.info("callback: " + JSON.stringify(data));
             expect(typeof(data.x)).assertEqual("number");
         });
-        sensor.on(sensor.SensorId.ACCELEROMETER, (data)=>{
+        sensor.on(sensor.SensorId.ACCELEROMETER, (data) => {
             console.info("callback2: " + JSON.stringify(data));
             expect(typeof(data.x)).assertEqual("number");
         });
-        setTimeout(()=>{
+        setTimeout(() => {
             console.info('----------------------SensorJsTest_011 off in---------------------------');
             sensor.off(sensor.SensorId.ACCELEROMETER);
             console.info('----------------------SensorJsTest_011 off end---------------------------');
@@ -290,14 +290,12 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest_012", 0, function (done) {
-        try {
+        console.info('----------------------SensorJsTest_012---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
+        setTimeout(() => {
             sensor.off(sensor.SensorId.ACCELEROMETER, 5);
-        } catch (error) {
-            console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
             done();
-        }
+        }, 500);
     })
 
     /*
@@ -308,15 +306,15 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest_013", 0, async function (done) {
         console.info('----------------------SensorJsTest013---------------------------');
-        sensor.on(sensor.SensorId.ACCELEROMETER, (data)=>{
+        sensor.on(sensor.SensorId.ACCELEROMETER, (data) => {
             console.info("callback: " + JSON.stringify(data));
             expect(typeof(data.x)).assertEqual("number");
         }, {'interval': 100000000});
-        sensor.once(sensor.SensorId.ACCELEROMETER, (data)=>{
+        sensor.once(sensor.SensorId.ACCELEROMETER, (data) => {
             console.info("callback2: " + JSON.stringify(data));
             expect(typeof(data.x)).assertEqual("number");
         });
-        setTimeout(()=>{
+        setTimeout(() => {
             console.info('----------------------SensorJsTest_013 off in---------------------------');
             sensor.off(sensor.SensorId.ACCELEROMETER);
             console.info('----------------------SensorJsTest_013 off end---------------------------');
@@ -332,15 +330,15 @@ describe("SensorJsTest", function () {
      */
     it("SensorJsTest_014", 0, async function (done) {
         console.info('----------------------SensorJsTest_014---------------------------');
-        sensor.on(sensor.SensorId.ACCELEROMETER, (data)=>{
+        sensor.on(sensor.SensorId.ACCELEROMETER, (data) => {
             console.info("callback: " + JSON.stringify(data));
             expect(typeof(data.x)).assertEqual("number");
         }, {'interval': 100000000});
-        sensor.on(sensor.SensorId.ACCELEROMETER, (data)=>{
+        sensor.on(sensor.SensorId.ACCELEROMETER, (data) => {
             console.info("callback2: " + JSON.stringify(data));
             expect(typeof(data.x)).assertEqual("number");
         }, {'interval': 100000000});
-        setTimeout(()=>{
+        setTimeout(() => {
             console.info('----------------------SensorJsTest_014 off in---------------------------');
             sensor.off(sensor.SensorId.ACCELEROMETER);
             console.info('----------------------SensorJsTest_014 off end---------------------------');
@@ -377,6 +375,141 @@ describe("SensorJsTest", function () {
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
         }
+    })
+
+    /*
+     * @tc.name:SensorJsTest_016
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_016", 0, async function (done) {
+        console.info('----------------------SensorJsTest_016---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, undefined);
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_017
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_017", 0, async function (done) {
+        console.info('----------------------SensorJsTest_017---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, null);
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_018
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_018", 0, async function (done) {
+        console.info('----------------------SensorJsTest_018---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, "abc");
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_019
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_019", 0, async function (done) {
+        console.info('----------------------SensorJsTest_019---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': undefined});
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_020
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_020", 0, async function (done) {
+        console.info('----------------------SensorJsTest_020---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': null});
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_021
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_021", 0, async function (done) {
+        console.info('----------------------SensorJsTest_021---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': "abc"});
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_022
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_022", 0, async function (done) {
+        console.info('----------------------SensorJsTest_022---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER, callback, "abc");
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_023
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_023", 0, async function (done) {
+        console.info('----------------------SensorJsTest_023---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER, undefined);
+            done();
+        }, 500);
+    })
+
+    /*
+     * @tc.name:SensorJsTest_024
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     */
+    it("SensorJsTest_024", 0, async function (done) {
+        console.info('----------------------SensorJsTest_024---------------------------');
+        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
+        setTimeout(() => {
+            sensor.off(sensor.SensorId.ACCELEROMETER, null);
+            done();
+        }, 500);
     })
 
     let GEOMAGNETIC_COMPONENT_YEAR_RESULT = [
@@ -419,7 +552,7 @@ describe("SensorJsTest", function () {
                     if (error) {
                         console.info('Sensor_GetGeomagneticField_001 failed');
                         expect(false).assertTrue();
-                        setTimeout(() =>{
+                        setTimeout(() => {
                             reject()
                         }, 500)
                     } else {
@@ -432,7 +565,7 @@ describe("SensorJsTest", function () {
                         expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][4]) < EPS).assertTrue()
                         expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][5]) < EPS).assertTrue()
                         expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][6]) < EPS).assertTrue()
-                        setTimeout(() =>{
+                        setTimeout(() => {
                             resolve()
                         }, 500)
                     }
@@ -460,7 +593,7 @@ describe("SensorJsTest", function () {
                     if (error) {
                         console.info('Sensor_GetGeomagneticField_002 failed');
                         expect(false).assertTrue();
-                        setTimeout(() =>{
+                        setTimeout(() => {
                             reject()
                         }, 500)
                     } else {
@@ -473,7 +606,7 @@ describe("SensorJsTest", function () {
                         expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][4]) < EPS).assertTrue()
                         expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][5]) < EPS).assertTrue()
                         expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][6]) < EPS).assertTrue()
-                        setTimeout(() =>{
+                        setTimeout(() => {
                             resolve()
                         }, 500)
                     }
@@ -510,7 +643,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
                 expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -542,7 +675,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
                 expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -574,7 +707,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
                 expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -606,7 +739,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
                 expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -631,7 +764,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.x) && Number.isNaN(data.y) && Number.isNaN(data.z)).assertTrue();
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -656,7 +789,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.x) && Number.isNaN(data.y) && Number.isNaN(data.z)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -681,7 +814,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.x) && Number.isNaN(data.y) && Number.isNaN(data.z)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -706,7 +839,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.x) && Number.isNaN(data.y) && Number.isNaN(data.z)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -738,7 +871,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
                 expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -763,7 +896,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.x) && Number.isNaN(data.y) && Number.isNaN(data.z)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -788,7 +921,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.x) && Number.isNaN(data.y) && Number.isNaN(data.z)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -813,7 +946,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.deflectionAngle) && Number.isNaN(data.geomagneticDip)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -838,7 +971,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.deflectionAngle) && Number.isNaN(data.geomagneticDip)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -863,7 +996,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.deflectionAngle) && Number.isNaN(data.geomagneticDip)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -888,7 +1021,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.deflectionAngle) && Number.isNaN(data.geomagneticDip)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -913,7 +1046,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.deflectionAngle) && Number.isNaN(data.geomagneticDip)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -938,7 +1071,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.levelIntensity) && Number.isNaN(data.totalIntensity)).assertTrue();
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -963,7 +1096,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.levelIntensity) && Number.isNaN(data.totalIntensity)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -988,7 +1121,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.deflectionAngle) && Number.isNaN(data.geomagneticDip)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -1013,7 +1146,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.levelIntensity) && Number.isNaN(data.totalIntensity)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -1038,7 +1171,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.levelIntensity) && Number.isNaN(data.totalIntensity)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -1063,7 +1196,7 @@ describe("SensorJsTest", function () {
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
                 expect(Number.isNaN(data.levelIntensity) && Number.isNaN(data.totalIntensity)).assertTrue()
             }
-            setTimeout(() =>{
+            setTimeout(() => {
                 done()
             }, 500)
         })
@@ -1308,7 +1441,7 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("Sensor_GetGeomagneticField_035", 0, async function (done) {
-        console.info('----------------------Sensor_GetGeomagneticField_035---------------------------start');
+        console.info('----------------------Sensor_GetGeomagneticField_035---------------------------');
         await sensor.getGeomagneticInfo({'latitude':0, 'longitude':0, 'altitude':Number.NaN}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_035 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
@@ -1686,7 +1819,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getGeomagneticInfo({'latitude':0, 'longitude':0, 'altitude':Number.NEGATIVE_INFINITY}, (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -1708,7 +1841,7 @@ describe("SensorJsTest", function () {
         try {
             await sensor.getGeomagneticInfo(-1, timeMillis[0], (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -1730,7 +1863,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getGeomagneticInfo({'latitude':0, 'longitude':0, 'altitude':Number.NEGATIVE_INFINITY}, 'invalid', (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -1752,7 +1885,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getGeomagneticInfo({'invalid':0, 'longitude':0, 'altitude':Number.NEGATIVE_INFINITY}, timeMillis[0], (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -1761,6 +1894,84 @@ describe("SensorJsTest", function () {
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
             done()
         }
+    })
+
+    /*
+     * @tc.name:Sensor_GetGeomagneticField_058
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it("Sensor_GetGeomagneticField_058", 0, async function (done) {
+        console.info("---------------------------Sensor_GetGeomagneticField_058----------------------------------");
+        for (let i = 0; i < timeMillis.length; i++) {
+            await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], undefined).then((data) => {
+                console.info('Sensor_GetGeomagneticField_058 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
+                + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+            }).catch((error) => {
+                console.info("promise::catch", error);
+            })
+        }
+        done()
+    })
+
+    /*
+     * @tc.name:Sensor_GetGeomagneticField_059
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it("Sensor_GetGeomagneticField_059", 0, async function (done) {
+        console.info("---------------------------Sensor_GetGeomagneticField_059----------------------------------");
+        for (let i = 0; i < timeMillis.length; i++) {
+            await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], null).then((data) => {
+                console.info('Sensor_GetGeomagneticField_059 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
+                + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+            }).catch((error) => {
+                console.info("promise::catch", error);
+            })
+        }
+        done()
+    })
+
+    /*
+     * @tc.name:Sensor_GetGeomagneticField_060
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it("Sensor_GetGeomagneticField_060", 0, async function (done) {
+        console.info("---------------------------Sensor_GetGeomagneticField_060----------------------------------");
+        for (let i = 0; i < timeMillis.length; i++) {
+            await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], "abc").then((data) => {
+                console.info('Sensor_GetGeomagneticField_060 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
+                + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+            }).catch((error) => {
+                console.info("promise::catch", error);
+            })
+        }
+        done()
     })
 
     const SENSOR_DATA_MATRIX = [
@@ -1816,8 +2027,15 @@ describe("SensorJsTest", function () {
     let gravity = [
         [9, 9, 9], [91, 92, 93], [-9, -12, -35], [NaN, NaN, NaN], [3.40282e+38, 3.40282e+38, 3.40282e+38], [3.40282e+39, 3.40282e+39, 3.40282e+39]
     ]
+
     let geomagnetic = [
         [30, 25, 41], [3, 2, 4], [-123, -456, -564], [3.40282e+38, 3.40282e+38, 3.40282e+38], [NaN, NaN, NaN]
+    ]
+
+    let createRotationMatrixResult = [
+        [0.6724675297737122,-0.10471208393573761,0.7326819896697998,0.06531608104705811,0.9944750070571899,
+            0.08217836916446686,-0.7372390031814575,-0.007406365126371384,0.6755914688110352],
+        [1,0,0,0,1,0,0,0,1]
     ]
 
     /**
@@ -1829,7 +2047,7 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
      it('Sensor_CreateRotationMatrix_001', 0, async function (done) {
-        sensor.getRotationMatrix(gravity[0], geomagnetic[0], (error,data)=>{
+        sensor.getRotationMatrix(gravity[0], geomagnetic[0], (error, data) => {
             if (error) {
                 console.info('Sensor_CreateRotationMatrix_001 failed');
                 expect(false).assertTrue();
@@ -1851,7 +2069,7 @@ describe("SensorJsTest", function () {
      */
 
     it('Sensor_CreateRotationMatrix_002', 0, async function (done) {
-        sensor.getRotationMatrix(gravity[2],geomagnetic[2],(error,data)=>{
+        sensor.getRotationMatrix(gravity[2], geomagnetic[2], (error, data) => {
             if (error) {
                 console.info('Sensor_CreateRotationMatrix_002 failed');
                 expect(false).assertTrue();
@@ -1872,11 +2090,11 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
      it('Sensor_CreateRotationMatrix_003', 0, async function (done) {
-        sensor.getRotationMatrix(gravity[0],geomagnetic[0]).then((data) => {
+        sensor.getRotationMatrix(gravity[0], geomagnetic[0]).then((data) => {
             console.info("Sensor_CreateRotationMatrix_003" + JSON.stringify(data))
             expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -1891,7 +2109,7 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
     it('Sensor_CreateRotationMatrix_004', 0, async function (done) {
-        sensor.getRotationMatrix(gravity[1],geomagnetic[1]).then((data) => {
+        sensor.getRotationMatrix(gravity[1], geomagnetic[1]).then((data) => {
             console.info("Sensor_CreateRotationMatrix_004" + JSON.stringify(data))
             expect(data.rotation.length).assertEqual(SENSOR_DATA_MATRIX[1].rotation.length)
             for (let i = 0; i < data.rotation.length; ++i) {
@@ -1902,7 +2120,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.inclination[i] - SENSOR_DATA_MATRIX[1].inclination[i]) < EPS).assertTrue()
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -1917,11 +2135,11 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
     it('Sensor_CreateRotationMatrix_005', 0, async function (done) {
-        sensor.getRotationMatrix(gravity[2],geomagnetic[2]).then((data) => {
+        sensor.getRotationMatrix(gravity[2], geomagnetic[2]).then((data) => {
             console.info("Sensor_CreateRotationMatrix_005" + JSON.stringify(data))
             expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[2]))
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -1972,13 +2190,16 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
      it('Sensor_CreateRotationMatrix_008', 0, async function (done) {
-        try {
-            sensor.getRotationMatrix(gravity[2], -1)
-        } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+        sensor.getRotationMatrix([-0.0245, 0.402, 0.0465], -1).then((data) => {
+            for(let i = 0; i < data.length; i++) {
+                console.info("Sensor_CreateRotationMatrix_008 [" + i + "] : " + data[i]);
+                expect(data[i]).assertEqual(createRotationMatrixResult[0][i])
+            }
             done()
-        }
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
     /**
@@ -1994,7 +2215,7 @@ describe("SensorJsTest", function () {
             sensor.getRotationMatrix().then((data) => {
                 expect(true).assertfalse()
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -2018,7 +2239,7 @@ describe("SensorJsTest", function () {
             sensor.getRotationMatrix(-1).then((data) => {
                 expect(true).assertfalse()
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -2038,26 +2259,16 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
      it('Sensor_CreateRotationMatrix_011', 0, async function (done) {
-        try {
-            sensor.getRotationMatrix(gravity[2], -1).then((data) => {
-                expect(true).assertfalse()
-                done()
-            }, (error) =>{
-                expect(true).assertfalse()
-                done()
-            })
-        } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+        sensor.getRotationMatrix(gravity[0], geomagnetic[0], -1).then((data) => {
+            console.info("Sensor_CreateRotationMatrix_011" + JSON.stringify(data))
+            expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
             done()
-        }
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
-    let createRotationMatrixResult = [
-        [0.6724675297737122,-0.10471208393573761,0.7326819896697998,0.06531608104705811,0.9944750070571899,
-            0.08217836916446686,-0.7372390031814575,-0.007406365126371384,0.6755914688110352],
-        [1,0,0,0,1,0,0,0,1]
-        ]
     /*
     * @tc.name: Sensor_CreateRotationMatrix_012
     * @tc.desc: Verification results of the incorrect parameters of test interface.
@@ -2066,13 +2277,13 @@ describe("SensorJsTest", function () {
     */
     it('Sensor_CreateRotationMatrix_012', 0, async function (done) {
         console.info("Sensor_CreateRotationMatrix_012 start");
-        sensor.getRotationMatrix([-0.0245, 0.402, 0.0465], (error, data) =>{
+        sensor.getRotationMatrix([-0.0245, 0.402, 0.0465], (error, data) => {
             console.info("Sensor_CreateRotationMatrix_012");
             if (error) {
                 console.info('Sensor_CreateRotationMatrix_012 failed');
                 expect(false).assertTrue();
             } else {
-                for(let i = 0;i < data.length; i++) {
+                for(let i = 0; i < data.length; i++) {
                     console.info("Sensor_CreateRotationMatrix_012 [" + i + ") = " + data[i]);
                     expect(data[i]).assertEqual(createRotationMatrixResult[0][i])
                 }
@@ -2088,15 +2299,15 @@ describe("SensorJsTest", function () {
     * tc.require: SR000GH2A2
     * @tc.author:
     */
-    it('Sensor_CreateRotationMatrix_013', 0,async function (done) {
+    it('Sensor_CreateRotationMatrix_013', 0, async function (done) {
         console.info('Sensor_CreateRotationMatrix_013 start')
         sensor.getRotationMatrix([-0.0245, 0.402, 0.0465]).then((data) => {
-            for(let i = 0;i < data.length; i++) {
+            for(let i = 0; i < data.length; i++) {
                 console.info("Sensor_CreateRotationMatrix_013 [" + i + "] : " + data[i]);
                 expect(data[i]).assertEqual(createRotationMatrixResult[0][i])
             }
             done()
-        },(error) => {
+        }, (error) => {
             expect(false).assertTrue();
             console.info('promise failed', error)
             done()
@@ -2110,10 +2321,10 @@ describe("SensorJsTest", function () {
     * tc.require: I5SWJI
     * @tc.author:
     */
-    it('Sensor_CreateRotationMatrix_014', 0,async function (done) {
+    it('Sensor_CreateRotationMatrix_014', 0, async function (done) {
         console.info('Sensor_CreateRotationMatrix_014 start')
         sensor.getRotationMatrix([0, 0, 0]).then((data) => {
-            for(let i = 0;i < data.length; i++) {
+            for(let i = 0; i < data.length; i++) {
                 console.info("Sensor_CreateRotationMatrix_014 [" + i + "] : " + data[i]);
                 expect(data[i]).assertEqual(createRotationMatrixResult[1][i])
             }
@@ -2126,6 +2337,78 @@ describe("SensorJsTest", function () {
         console.info( "Sensor_CreateRotationMatrix_014 end")
     })
 
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_015
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_015', 0, async function (done) {
+        sensor.getRotationMatrix(gravity[0], geomagnetic[0], undefined).then((data) => {
+            console.info("Sensor_CreateRotationMatrix_015" + JSON.stringify(data))
+            expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
+            done()
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_016
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_016', 0, async function (done) {
+        sensor.getRotationMatrix(gravity[0], geomagnetic[0], null).then((data) => {
+            console.info("Sensor_CreateRotationMatrix_016" + JSON.stringify(data))
+            expect(JSON.stringify(data)).assertEqual(JSON.stringify(SENSOR_DATA_MATRIX[0]))
+            done()
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_017
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_017', 0, async function (done) {
+        sensor.getRotationMatrix([0, 0, 0], undefined).then((data) => {
+            for(let i = 0; i < data.length; i++) {
+                console.info("Sensor_CreateRotationMatrix_017 [" + i + "] : " + data[i]);
+                expect(data[i]).assertEqual(createRotationMatrixResult[1][i])
+            }
+            done()
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /*
+    * tc.name: Sensor_CreateRotationMatrix_018
+    * tc.desc: Verification results of the incorrect parameters of test interface.
+    * tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_CreateRotationMatrix_018', 0, async function (done) {
+        sensor.getRotationMatrix([0, 0, 0], null).then((data) => {
+            for(let i = 0; i < data.length; i++) {
+                console.info("Sensor_CreateRotationMatrix_018 [" + i + "] : " + data[i]);
+                expect(data[i]).assertEqual(createRotationMatrixResult[1][i])
+            }
+            done()
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
     /**
      * test
      *
@@ -2135,7 +2418,7 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
     it('Sensor_GetDirection_001', 0, async function (done) {
-        sensor.getOrientation(rotationMatrix[0],(error,data)=>{
+        sensor.getOrientation(rotationMatrix[0], (error, data) => {
             if (error) {
                 console.info('Sensor_GetDirection_001 failed');
                 expect(false).assertTrue();
@@ -2158,7 +2441,7 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
     it('Sensor_GetDirection_002', 0, async function (done) {
-        sensor.getOrientation(rotationMatrix[1],function(error,data){
+        sensor.getOrientation(rotationMatrix[1], (error, data) => {
             if (error) {
                 console.info('Sensor_GetDirection_002 failed');
                 expect(false).assertTrue();
@@ -2182,12 +2465,12 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetDirection_003', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0]).then((data) => {
-            for (let i = 0; i<data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_GetDirection_003" + data[i])
                 expect(data[i]).assertEqual(GET_DIRECTION[0][i])
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2203,12 +2486,12 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetDirection_004', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[1]).then((data) => {
-            for (let i = 0; i<data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 console.info("Sensor_GetDirection_004" + data[i])
                 expect(data[i]).assertEqual(GET_DIRECTION[1][i])
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2225,12 +2508,12 @@ describe("SensorJsTest", function () {
     it('Sensor_GetDirection_005', 0, async function (done) {
         try  {
             sensor.getOrientation([1,2,3,1,2,3,1,2,3,0]).then((data) => {
-                for (let i = 0; i<data.length; i++) {
+                for (let i = 0; i < data.length; i++) {
                     console.info("Sensor_GetDirection_005 failed")
                     expect(false).assertTrue();
                 }
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(false).assertTrue();
                 console.info("Sensor_GetDirection_005 success")
                 done()
@@ -2252,7 +2535,7 @@ describe("SensorJsTest", function () {
      */
      it('Sensor_GetDirection_006', 0, async function (done) {
         try {
-            sensor.getRotationMatrix()
+            sensor.getOrientation()
         } catch (err) {
             expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
@@ -2270,7 +2553,7 @@ describe("SensorJsTest", function () {
      */
      it('Sensor_GetDirection_007', 0, async function (done) {
         try {
-            sensor.getRotationMatrix(-1)
+            sensor.getOrientation(-1)
         } catch (err) {
             expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
@@ -2287,13 +2570,16 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
      it('Sensor_GetDirection_008', 0, async function (done) {
-        try {
-            sensor.getRotationMatrix(rotationMatrix[1], -1)
-        } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+        sensor.getOrientation(rotationMatrix[1], -1).then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetDirection_008" + data[i])
+                expect(data[i]).assertEqual(GET_DIRECTION[1][i])
+            }
             done()
-        }
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
     /**
@@ -2306,10 +2592,10 @@ describe("SensorJsTest", function () {
      */
      it('Sensor_GetDirection_009', 0, async function (done) {
         try {
-            sensor.getRotationMatrix().then((data) => {
+            sensor.getOrientation().then((data) => {
                 expect(true).assertfalse()
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -2330,10 +2616,10 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetDirection_010', 0, async function (done) {
         try {
-            sensor.getRotationMatrix(-1).then((data) => {
+            sensor.getOrientation(-1).then((data) => {
                 expect(true).assertfalse()
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -2352,20 +2638,38 @@ describe("SensorJsTest", function () {
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_GetDirection_011', 0, async function (done) {
-        try {
-            sensor.getRotationMatrix(rotationMatrix[1], -1).then((data) => {
-                expect(true).assertfalse()
-                done()
-            }, (error) =>{
-                expect(true).assertfalse()
-                done()
-            })
-        } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+    it('Sensor_GetDirection_011', 0, async function (done) {
+        sensor.getOrientation(rotationMatrix[0], undefined).then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetDirection_011" + data[i])
+                expect(data[i]).assertEqual(GET_DIRECTION[0][i])
+            }
             done()
-        }
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /**
+     * test
+     *
+     * @tc.name: Sensor_GetDirection_012
+     * @tc.desc: Verification results of the incorrect parameters of the test interface.
+     * @tc.require: I5SWJI
+     * @tc.author:
+     */
+    it('Sensor_GetDirection_012', 0, async function (done) {
+        sensor.getOrientation(rotationMatrix[0], null).then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetDirection_012" + data[i])
+                expect(data[i]).assertEqual(GET_DIRECTION[0][i])
+            }
+            done()
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
     let ANGLECHANGE_9_RESULT = [
@@ -2524,7 +2828,7 @@ describe("SensorJsTest", function () {
                 expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[0][2]);
             }
             done();
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2547,7 +2851,7 @@ describe("SensorJsTest", function () {
                 expect(data[0]).assertEqual(ANGLECHANGE_9_RESULT[1][0]) && expect(Number.isNaN(data[1])).assertTrue() && expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[1][2]);
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2572,7 +2876,7 @@ describe("SensorJsTest", function () {
                 && expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[2][2]);
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2596,7 +2900,7 @@ describe("SensorJsTest", function () {
                 expect(data[0]).assertEqual(ANGLECHANGE_9_RESULT[3][0]) && expect(Number.isNaN(data[1])).assertTrue() && expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[3][2]);
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2619,7 +2923,7 @@ describe("SensorJsTest", function () {
                 expect(Number.isNaN(data[0]) && Number.isNaN(data[1]) && Number.isNaN(data[2])).assertTrue();
             }
             done()
-        }, (error) =>{
+        }, (error) => {
             expect(false).assertTrue();
             done()
         })
@@ -2702,7 +3006,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -2724,7 +3028,7 @@ describe("SensorJsTest", function () {
         try {
             await sensor.getAngleVariation(-1, [2,2,2,2,2,2,2,2,2], (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -2746,7 +3050,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], 'invalid', (err, data) => {
                 expect(false).assertTrue()
-                setTimeout(() =>{
+                setTimeout(() => {
                     done()
                 }, 500)
             });
@@ -2755,6 +3059,69 @@ describe("SensorJsTest", function () {
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
             done()
         }
+    })
+
+    /*
+     * @tc.name:Sensor_GetAngleModify_017
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it('Sensor_GetAngleModify_017', 0, async function (done) {
+        console.info('----------------------Sensor_GetAngleModify_017---------------------------');
+        sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], [2,2,2,2,2,2,2,2,2], undefined).then((data) => {
+            for(let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetAngleModify_017 [" + i + "] = " + data[i]);
+                expect(data[0]).assertEqual(ANGLECHANGE_9_RESULT[0][0]) && expect(Number.isNaN(data[1])).assertTrue() &&
+                expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[0][2]);
+            }
+            done();
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /*
+     * @tc.name:Sensor_GetAngleModify_018
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it('Sensor_GetAngleModify_018', 0, async function (done) {
+        console.info('----------------------Sensor_GetAngleModify_018---------------------------');
+        sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], [2,2,2,2,2,2,2,2,2], null).then((data) => {
+            for(let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetAngleModify_018 [" + i + "] = " + data[i]);
+                expect(data[0]).assertEqual(ANGLECHANGE_9_RESULT[0][0]) && expect(Number.isNaN(data[1])).assertTrue() &&
+                expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[0][2]);
+            }
+            done();
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /*
+     * @tc.name:Sensor_GetAngleModify_019
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: I5SWJI
+     */
+    it('Sensor_GetAngleModify_019', 0, async function (done) {
+        console.info('----------------------Sensor_GetAngleModify_019---------------------------');
+        sensor.getAngleVariation([1,2,3,1,2,3,1,2,3], [2,2,2,2,2,2,2,2,2], null).then((data) => {
+            for(let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetAngleModify_019 [" + i + "] = " + data[i]);
+                expect(data[0]).assertEqual(ANGLECHANGE_9_RESULT[0][0]) && expect(Number.isNaN(data[1])).assertTrue() &&
+                expect(data[2]).assertEqual(ANGLECHANGE_9_RESULT[0][2]);
+            }
+            done();
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
     const result = [
@@ -2771,9 +3138,9 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_001', 0,async function (done) {
+    it('Sensor_CreateQuaternion_001', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_001 start')
-        sensor.getQuaternion([0.52, -0.336, -0.251], (error, data) =>{
+        sensor.getQuaternion([0.52, -0.336, -0.251], (error, data) => {
             console.info('Sensor_CreateQuaternion_001' + 'length:' + data.length);
             if (error) {
                 console.info('Sensor_CreateQuaternion_001 failed');
@@ -2794,9 +3161,9 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_002', 0,async function (done) {
+    it('Sensor_CreateQuaternion_002', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_002 start')
-        sensor.getQuaternion([3.40282e+38, 3.40282e+38, 3.40282e+38], (error, data) =>{
+        sensor.getQuaternion([3.40282e+38, 3.40282e+38, 3.40282e+38], (error, data) => {
             if (error) {
                 console.info('Sensor_CreateQuaternion_002 failed');
                 expect(false).assertTrue();
@@ -2816,9 +3183,9 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_003', 0,async function (done) {
+    it('Sensor_CreateQuaternion_003', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_003 start')
-        sensor.getQuaternion([0, 0, 0], (error, data) =>{
+        sensor.getQuaternion([0, 0, 0], (error, data) => {
             if (error) {
                 console.info('Sensor_CreateQuaternion_003 failed');
                 expect(false).assertTrue();
@@ -2839,9 +3206,9 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_004', 0,async function (done) {
+    it('Sensor_CreateQuaternion_004', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_004 start')
-        sensor.getQuaternion([-0.325, -0.562, -0.25], (error, data) =>{
+        sensor.getQuaternion([-0.325, -0.562, -0.25], (error, data) => {
             if (error) {
                 console.info('Sensor_CreateQuaternion_004 failed');
                 expect(false).assertTrue();
@@ -2849,7 +3216,7 @@ describe("SensorJsTest", function () {
                 for (let i = 0; i < data.length; i++) {
                     console.info("data[" + i + "]: " + data[i])
                     expect(data[i]).assertEqual(result[3][i])
-            }
+                }
             }
             done()
         })
@@ -2862,10 +3229,10 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_005', 0,async function (done) {
+    it('Sensor_CreateQuaternion_005', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_005 start')
         try {
-            sensor.getQuaternion([0.25, 0.14], (error, data) =>{
+            sensor.getQuaternion([0.25, 0.14], (error, data) => {
                 if (error) {
                     expect(false).assertTrue();
                 } else {
@@ -2887,7 +3254,7 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_006', 0,async function (done) {
+    it('Sensor_CreateQuaternion_006', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_006 start')
         sensor.getQuaternion([0.52, -0.336, -0.251]).then((data) => {
             console.info('Sensor_CreateQuaternion_006');
@@ -2910,7 +3277,7 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_007', 0,async function (done) {
+    it('Sensor_CreateQuaternion_007', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_007 start')
         try {
             sensor.getQuaternion([0, 0]).then((data) => {
@@ -2936,7 +3303,7 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_008', 0,async function (done) {
+    it('Sensor_CreateQuaternion_008', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_008 start')
         sensor.getQuaternion([0, 0, 0]).then((data) => {
             console.info('Sensor_CreateQuaternion_008');
@@ -2959,7 +3326,7 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_009', 0,async function (done) {
+    it('Sensor_CreateQuaternion_009', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_009 start')
         sensor.getQuaternion([-0.325, -0.562, -0.25]).then((data) => {
             console.info('Sensor_CreateQuaternion_009');
@@ -2968,7 +3335,7 @@ describe("SensorJsTest", function () {
                 expect(data[i]).assertEqual(result[3][i])
             }
             done()
-        },(error) => {
+        }, (error) => {
             expect(false).assertTrue();
             console.info('promise failed')
             done()
@@ -2981,14 +3348,14 @@ describe("SensorJsTest", function () {
     * @tc.require: AR000GH2RP
     * @tc.author:
     */
-    it('Sensor_CreateQuaternion_010', 0,async function (done) {
+    it('Sensor_CreateQuaternion_010', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_010 start')
         try {
             sensor.getQuaternion([0.25, 0.14]).then((data) => {
                 console.info('Sensor_CreateQuaternion_010');
                 expect(false).assertTrue();
                 done()
-            },(error) => {
+            }, (error) => {
                 expect(false).assertTrue();
                 console.info('promise failed')
                 done()
@@ -3010,7 +3377,7 @@ describe("SensorJsTest", function () {
      */
      it('Sensor_CreateQuaternion_011', 0, async function (done) {
         try {
-            sensor.createQuaternion()
+            sensor.getQuaternion()
         } catch (err) {
             expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
@@ -3028,7 +3395,7 @@ describe("SensorJsTest", function () {
      */
      it('Sensor_CreateQuaternion_012', 0, async function (done) {
         try {
-            sensor.createQuaternion(-1)
+            sensor.getQuaternion(-1)
         } catch (err) {
             expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
             expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
@@ -3045,13 +3412,17 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
      it('Sensor_CreateQuaternion_013', 0, async function (done) {
-        try {
-            sensor.createQuaternion([0.52, -0.336, -0.251], -1)
-        } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+        sensor.getQuaternion([0.52, -0.336, -0.251], -1).then((data) => {
+            console.info('Sensor_CreateQuaternion_013');
+            for (let i = 0; i < data.length; i++) {
+                console.info("data[" + i + "]: " + data[i]);
+                expect(data[i]).assertEqual(result[0][i])
+            }
             done()
-        }
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
     /*
@@ -3064,10 +3435,10 @@ describe("SensorJsTest", function () {
      */
      it('Sensor_CreateQuaternion_014', 0, async function (done) {
         try {
-            sensor.createQuaternion().then((data) => {
+            sensor.getQuaternion().then((data) => {
                 expect(true).assertfalse()
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(false).assertfalse()
                 done()
             })
@@ -3088,10 +3459,10 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_CreateQuaternion_015', 0, async function (done) {
         try {
-            sensor.createQuaternion(-1).then((data) => {
+            sensor.getQuaternion(-1).then((data) => {
                 expect(true).assertfalse()
                 done()
-            }, (error) =>{
+            }, (error) => {
                 expect(false).assertfalse()
                 done()
             })
@@ -3110,20 +3481,40 @@ describe("SensorJsTest", function () {
      * @tc.require: I5SWJI
      * @tc.author:
      */
-     it('Sensor_CreateQuaternion_016', 0, async function (done) {
-        try {
-            sensor.createQuaternion([0.52, -0.336, -0.251], -1).then((data) => {
-                expect(true).assertfalse()
-                done()
-            }, (error) =>{
-                expect(false).assertfalse()
-                done()
-            })
-        } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+    it('Sensor_CreateQuaternion_016', 0, async function (done) {
+        sensor.getQuaternion([0.52, -0.336, -0.251], undefined).then((data) => {
+            console.info('Sensor_CreateQuaternion_016');
+            for (let i = 0; i < data.length; i++) {
+                console.info("data[" + i + "]: " + data[i]);
+                expect(data[i]).assertEqual(result[0][i])
+            }
             done()
-        }
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
+    })
+
+    /*
+     * test
+     *
+     * @tc.name: Sensor_CreateQuaternion_017
+     * @tc.desc: Verification results of the incorrect parameters of the test interface.
+     * @tc.require: I5SWJI
+     * @tc.author:
+     */
+    it('Sensor_CreateQuaternion_017', 0, async function (done) {
+        sensor.getQuaternion([0.52, -0.336, -0.251], null).then((data) => {
+            console.info('Sensor_CreateQuaternion_017');
+            for (let i = 0; i < data.length; i++) {
+                console.info("data[" + i + "]: " + data[i]);
+                expect(data[i]).assertEqual(result[0][i])
+            }
+            done()
+        }, (error) => {
+            expect(false).assertTrue();
+            done()
+        })
     })
 
     const getGeomagneticDipResult = [ 0.8760581016540527, 0.862170, -Infinity, 44330];
@@ -3159,7 +3550,7 @@ describe("SensorJsTest", function () {
     it('Sensor_GetGeomagneticDip_002', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_002 start')
         try {
-            sensor.getInclination([1, 2, 3, 4], (error,data) => {
+            sensor.getInclination([1, 2, 3, 4], (error, data) => {
                 if (error) {
                     expect(false).assertTrue();
                 } else {
@@ -3232,11 +3623,11 @@ describe("SensorJsTest", function () {
     it('Sensor_GetGeomagneticDip_005', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_005 start')
         try {
-            sensor.getInclination().then((data)=>{
+            sensor.getInclination().then((data) => {
                 console.info("Sensor_GetGeomagneticDip_005" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3258,11 +3649,11 @@ describe("SensorJsTest", function () {
     it('Sensor_GetGeomagneticDip_006', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_006 start')
         try {
-            sensor.getInclination(-1).then((data)=>{
+            sensor.getInclination(-1).then((data) => {
                 console.info("Sensor_GetGeomagneticDip_006" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3273,6 +3664,78 @@ describe("SensorJsTest", function () {
             done();
         }
         console.info("Sensor_GetGeomagneticDip_006 end")
+    })
+
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_007
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_007', 0, async function (done) {
+        sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9]).then((data) => {
+            console.info("Sensor_GetGeomagneticDip_007" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[0])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetGeomagneticDip_007 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_008
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_008', 0, async function (done) {
+        sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], undefined).then((data) => {
+            console.info("Sensor_GetGeomagneticDip_008" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[0])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetGeomagneticDip_008 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_009
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_009', 0, async function (done) {
+        sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], null).then((data) => {
+            console.info("Sensor_GetGeomagneticDip_009" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[0])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetGeomagneticDip_009 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetGeomagneticDip_010
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetGeomagneticDip_010', 0, async function (done) {
+        sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], null).then((data) => {
+            console.info("Sensor_GetGeomagneticDip_010" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[0])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetGeomagneticDip_010 failed');
+            expect(false).assertTrue();
+            done()
+        });
     })
 
     /*
@@ -3324,11 +3787,11 @@ describe("SensorJsTest", function () {
     * @tc.author:
     */
     it('Sensor_GetAltitude_003', 0, async function (done) {
-        sensor.getDeviceAltitude(0, 100).then((data)=>{
+        sensor.getDeviceAltitude(0, 100).then((data) => {
             console.info("Sensor_GetAltitude_003" + data)
             expect(data).assertEqual(getGeomagneticDipResult[2])
             done()
-        }, (error)=>{
+        }, (error) => {
             console.info('Sensor_GetAltitude_003 failed');
             expect(false).assertTrue();
             done()
@@ -3342,11 +3805,11 @@ describe("SensorJsTest", function () {
     * @tc.author:
     */
     it('Sensor_GetAltitude_004', 0, async function (done) {
-        sensor.getDeviceAltitude(5, 0).then((data)=>{
+        sensor.getDeviceAltitude(5, 0).then((data) => {
             console.info("Sensor_GetAltitude_004" + data)
             expect(data).assertEqual(getGeomagneticDipResult[3])
             done()
-        }, (error)=>{
+        }, (error) => {
             console.info('Sensor_GetAltitude_004 failed');
             expect(false).assertTrue();
             done()
@@ -3410,11 +3873,11 @@ describe("SensorJsTest", function () {
     it('Sensor_GetAltitude_007', 0, async function (done) {
         console.info('Sensor_GetAltitude_007 start')
         try {
-            sensor.getDeviceAltitude().then((data)=>{
+            sensor.getDeviceAltitude().then((data) => {
                 console.info("Sensor_GetAltitude_007" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3436,11 +3899,11 @@ describe("SensorJsTest", function () {
     it('Sensor_GetAltitude_008', 0, async function (done) {
         console.info('Sensor_GetAltitude_008 start')
         try {
-            sensor.getDeviceAltitude("invalid", 0).then((data)=>{
+            sensor.getDeviceAltitude("invalid", 0).then((data) => {
                 console.info("Sensor_GetAltitude_008" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3451,6 +3914,60 @@ describe("SensorJsTest", function () {
             done();
         }
         console.info("Sensor_GetAltitude_008 end")
+    })
+
+    /*
+    * @tc.name: Sensor_GetAltitude_009
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetAltitude_009', 0, async function (done) {
+        sensor.getDeviceAltitude(0, 100, undefined).then((data) => {
+            console.info("Sensor_GetAltitude_009" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[2])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetAltitude_009 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetAltitude_010
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetAltitude_010', 0, async function (done) {
+        sensor.getDeviceAltitude(0, 100, null).then((data) => {
+            console.info("Sensor_GetAltitude_010" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[2])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetAltitude_010 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetAltitude_011
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it('Sensor_GetAltitude_011', 0, async function (done) {
+        sensor.getDeviceAltitude(0, 100, "abc").then((data) => {
+            console.info("Sensor_GetAltitude_011" + data)
+            expect(data).assertEqual(getGeomagneticDipResult[2])
+            done()
+        }, (error) => {
+            console.info('Sensor_GetAltitude_011 failed');
+            expect(false).assertTrue();
+            done()
+        });
     })
 
     let transformCoordinateSystemResult = [
@@ -3514,7 +4031,7 @@ describe("SensorJsTest", function () {
                 expect(data[i]).assertEqual(transformCoordinateSystemResult[0][i]);
             }
             done()
-        }, (error)=>{
+        }, (error) => {
             console.info('Sensor_TransformCoordinateSystem_003 failed');
             expect(false).assertTrue();
             done()
@@ -3535,7 +4052,7 @@ describe("SensorJsTest", function () {
                 expect(data[i]).assertEqual(transformCoordinateSystemResult[2][i]);
             }
             done()
-        }, (error)=>{
+        }, (error) => {
             console.info('Sensor_TransformCoordinateSystem_004 failed');
             expect(false).assertTrue();
             done()
@@ -3598,11 +4115,11 @@ describe("SensorJsTest", function () {
     it('Sensor_TransformCoordinateSystem_007', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_007 start')
         try {
-            sensor.transformRotationMatrix().then((data)=>{
+            sensor.transformRotationMatrix().then((data) => {
                 console.info("Sensor_TransformCoordinateSystem_007" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3624,11 +4141,11 @@ describe("SensorJsTest", function () {
     it('Sensor_TransformCoordinateSystem_008', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_008 start')
         try {
-            sensor.transformRotationMatrix("invalid", 0).then((data)=>{
+            sensor.transformRotationMatrix("invalid", 0).then((data) => {
                 console.info("Sensor_TransformCoordinateSystem_008" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3650,11 +4167,11 @@ describe("SensorJsTest", function () {
     it('Sensor_TransformCoordinateSystem_009', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_008 start')
         try {
-            sensor.transformRotationMatrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], {'x':1, 'y':1}).then((data)=>{
+            sensor.transformRotationMatrix([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], {'x':1, 'y':1}).then((data) => {
                 console.info("Sensor_TransformCoordinateSystem_009" + data)
                 expect(true).assertfalse()
                 done()
-            }, (error)=>{
+            }, (error) => {
                 expect(true).assertfalse()
                 done()
             })
@@ -3696,6 +4213,69 @@ describe("SensorJsTest", function () {
     })
 
     /*
+    * @tc.name: Sensor_TransformCoordinateSystem_011
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it("Sensor_TransformCoordinateSystem_011", 0, async function (done) {
+        console.info("---------------------------Sensor_TransformCoordinateSystem_011----------------------------------");
+        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, undefined).then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_TransformCoordinateSystem_011 data[ " + i + "] = " + data[i]);
+                expect(data[i]).assertEqual(transformCoordinateSystemResult[0][i]);
+            }
+            done()
+        }, (error) => {
+            console.info('Sensor_TransformCoordinateSystem_011 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_TransformCoordinateSystem_012
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it("Sensor_TransformCoordinateSystem_012", 0, async function (done) {
+        console.info("---------------------------Sensor_TransformCoordinateSystem_012----------------------------------");
+        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, null).then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_TransformCoordinateSystem_012 data[ " + i + "] = " + data[i]);
+                expect(data[i]).assertEqual(transformCoordinateSystemResult[0][i]);
+            }
+            done()
+        }, (error) => {
+            console.info('Sensor_TransformCoordinateSystem_012 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_TransformCoordinateSystem_013
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
+    * @tc.author:
+    */
+    it("Sensor_TransformCoordinateSystem_013", 0, async function (done) {
+        console.info("---------------------------Sensor_TransformCoordinateSystem_013----------------------------------");
+        sensor.transformRotationMatrix([1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5], {'x':1, 'y':2}, "abc").then((data) => {
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_TransformCoordinateSystem_013 data[ " + i + "] = " + data[i]);
+                expect(data[i]).assertEqual(transformCoordinateSystemResult[0][i]);
+            }
+            done()
+        }, (error) => {
+            console.info('Sensor_TransformCoordinateSystem_013 failed');
+            expect(false).assertTrue();
+            done()
+        });
+    })
+
+    /*
     * @tc.name: Sensor_GetSensorList_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
@@ -3710,7 +4290,7 @@ describe("SensorJsTest", function () {
             }
             expect(true).assertTrue();
             done();
-        }, (error)=>{
+        }, (error) => {
             console.info('Sensor_GetSensorList_001 failed');
             expect(false).assertTrue();
             done();
@@ -3748,14 +4328,18 @@ describe("SensorJsTest", function () {
     */
     it("Sensor_GetSensorList_003", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_003----------------------------------");
-        try {
-            sensor.getSensorList(-1);
-        } catch(error) {
-            console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+        sensor.getSensorList(-1).then(data => {
+            console.info("---------------------------Sensor_GetSensorList_003 callback in-----------" + data.length);
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetSensorList_003 " + JSON.stringify(data[i]));
+            }
+            expect(true).assertTrue();
             done();
-        }
+        }, (error) => {
+            console.info('Sensor_GetSensorList_003 failed');
+            expect(false).assertTrue();
+            done();
+        });
     })
 
     /*
@@ -3766,23 +4350,40 @@ describe("SensorJsTest", function () {
     */
     it("Sensor_GetSensorList_004", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_004----------------------------------");
-        try {
-            sensor.getSensorList(-1).then(data => {
-                console.info("Sensor_GetSingleSensor_003 " + JSON.stringify(data));
-                expect(false).assertTrue();
-                done();
-            }), (error => {
-                console.info(error);
-                expect(error.code).assertEqual(SERVICE_EXCEPTION_CODE);
-                expect(error.code).assertEqual(SERVICE_EXCEPTION_MSG);
-                done();
-            });
-        } catch(error) {
-            console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+        sensor.getSensorList(undefined).then((data) => {
+            console.info("---------------------------Sensor_GetSensorList_004 callback in-----------" + data.length);
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetSensorList_004 " + JSON.stringify(data[i]));
+            }
+            expect(true).assertTrue();
             done();
-        }
+        }, (error) => {
+            console.info('Sensor_GetSensorList_004 failed');
+            expect(false).assertTrue();
+            done();
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetSensorList_005
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSensorList_005", 0, async function (done) {
+        console.info("---------------------------Sensor_GetSensorList_005----------------------------------");
+        sensor.getSensorList(null).then((data) => {
+            console.info("---------------------------Sensor_GetSensorList_005 callback in-----------" + data.length);
+            for (let i = 0; i < data.length; i++) {
+                console.info("Sensor_GetSensorList_005 " + JSON.stringify(data[i]));
+            }
+            expect(true).assertTrue();
+            done();
+        }, (error) => {
+            console.info('Sensor_GetSensorList_005 failed');
+            expect(false).assertTrue();
+            done();
+        });
     })
 
     /*
@@ -3841,12 +4442,12 @@ describe("SensorJsTest", function () {
     * @tc.author:
     */
     it("Sensor_GetSingleSensor_003", 0, async function (done) {
-        console.info("---------------------------SensorJsTest_114----------------------------------");
+        console.info("---------------------------Sensor_GetSingleSensor_003----------------------------------");
         sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER).then((data) => {
             console.info("Sensor_GetSingleSensor_003 " + JSON.stringify(data));
             expect(true).assertTrue();
             done();
-        }, (error)=>{
+        }, (error) => {
             console.info('Sensor_GetSingleSensor_003 failed');
             expect(false).assertTrue();
             done();
@@ -3866,7 +4467,7 @@ describe("SensorJsTest", function () {
                 console.info("Sensor_GetSingleSensor_004 " + JSON.stringify(data));
                 expect(false).assertTrue();
                 done();
-            }, (error)=>{
+            }, (error) => {
                 console.info('Sensor_GetSingleSensor_004 success');
                 expect(true).assertTrue();
                 done();
@@ -3877,6 +4478,63 @@ describe("SensorJsTest", function () {
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
         }
+    })
+
+    /*
+    * @tc.name: Sensor_GetSingleSensor_005
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSingleSensor_005", 0, async function (done) {
+        console.info("---------------------------Sensor_GetSingleSensor_005----------------------------------");
+        sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER, undefined).then((data) => {
+            console.info("Sensor_GetSingleSensor_005 " + JSON.stringify(data));
+            expect(true).assertTrue();
+            done();
+        }, (error) => {
+            console.info('Sensor_GetSingleSensor_005 failed');
+            expect(false).assertTrue();
+            done();
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetSingleSensor_006
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSingleSensor_006", 0, async function (done) {
+        console.info("---------------------------Sensor_GetSingleSensor_006----------------------------------");
+        sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER, null).then((data) => {
+            console.info("Sensor_GetSingleSensor_006 " + JSON.stringify(data));
+            expect(true).assertTrue();
+            done();
+        }, (error) => {
+            console.info('Sensor_GetSingleSensor_006 failed');
+            expect(false).assertTrue();
+            done();
+        });
+    })
+
+    /*
+    * @tc.name: Sensor_GetSingleSensor_007
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: AR000GH2TR
+    * @tc.author:
+    */
+    it("Sensor_GetSingleSensor_007", 0, async function (done) {
+        console.info("---------------------------Sensor_GetSingleSensor_007----------------------------------");
+        sensor.getSingleSensor(sensor.SensorId.ACCELEROMETER, "abc").then((data) => {
+            console.info("Sensor_GetSingleSensor_007 " + JSON.stringify(data));
+            expect(true).assertTrue();
+            done();
+        }, (error) => {
+            console.info('Sensor_GetSingleSensor_007 failed');
+            expect(false).assertTrue();
+            done();
+        });
     })
 
     /*
@@ -3893,21 +4551,21 @@ describe("SensorJsTest", function () {
               expect(typeof(data.x)).assertEqual("number");
               expect(typeof(data.y)).assertEqual("number");
               expect(typeof(data.z)).assertEqual("number");
-              console.info("SensorJsTest001 success" + JSON.stringify(data));
+              console.info("Sensor_SubscribeAccelerometer_001 success" + JSON.stringify(data));
             },
             fail: function(data, code) {
               expect(false).assertTrue();
               console.error('Subscription failed. Code: ' + code + '; Data: ' + data);
             },
         });
-        setTimeout(()=>{
+        setTimeout(() => {
             try {
                 sensor.unsubscribeAccelerometer();
             } catch (error) {
-                console.info('SensorJsTest001 unsubscribe failed' + error);
+                console.info('Sensor_SubscribeAccelerometer_001 unsubscribe failed' + error);
                 expect(false).assertTrue();
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 expect(true).assertTrue();
                 done();
             }, 500);
@@ -3957,7 +4615,7 @@ describe("SensorJsTest", function () {
             console.info('Sensor_SubscribeAccelerometer_003 Subscription failed' + error);
             expect(false).assertTrue();
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             expect(true).assertTrue();
             done();
         }, 500);
@@ -3979,10 +4637,137 @@ describe("SensorJsTest", function () {
             console.info('Sensor_SubscribeAccelerometer_004 Subscription failed' + error);
             expect(false).assertTrue();
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             expect(true).assertTrue();
             done();
         }, 500);
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_005
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_005", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_005---------------------------');
+        sensor.subscribeAccelerometer({
+            interval: 'normal',
+            success: function(data) {
+              expect(typeof(data.x)).assertEqual("number");
+              expect(typeof(data.y)).assertEqual("number");
+              expect(typeof(data.z)).assertEqual("number");
+              console.info("Sensor_SubscribeAccelerometer_005 success" + JSON.stringify(data));
+            },
+        }, "abc");
+        setTimeout(() => {
+            try {
+                sensor.unsubscribeAccelerometer();
+            } catch (error) {
+                console.info('Sensor_SubscribeAccelerometer_005 unsubscribe failed' + error);
+                expect(false).assertTrue();
+            }
+            setTimeout(() => {
+                expect(true).assertTrue();
+                done();
+            }, 500);
+        }, 1000);
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_006
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_006", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_006---------------------------');
+        sensor.subscribeAccelerometer({
+            interval: 'normal',
+            success: function(data) {
+              expect(typeof(data.x)).assertEqual("number");
+              expect(typeof(data.y)).assertEqual("number");
+              expect(typeof(data.z)).assertEqual("number");
+              console.info("Sensor_SubscribeAccelerometer_006 success" + JSON.stringify(data));
+            },
+            fail:undefined,
+        });
+        setTimeout(() => {
+            try {
+                sensor.unsubscribeAccelerometer();
+            } catch (error) {
+                console.info('Sensor_SubscribeAccelerometer_006 unsubscribe failed' + error);
+                expect(false).assertTrue();
+            }
+            setTimeout(() => {
+                expect(true).assertTrue();
+                done();
+            }, 500);
+        }, 1000);
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_007
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_007", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_007---------------------------');
+        sensor.subscribeAccelerometer({
+            interval: 'normal',
+            success: function(data) {
+              expect(typeof(data.x)).assertEqual("number");
+              expect(typeof(data.y)).assertEqual("number");
+              expect(typeof(data.z)).assertEqual("number");
+              console.info("Sensor_SubscribeAccelerometer_007 success" + JSON.stringify(data));
+            },
+            fail:null,
+        });
+        setTimeout(() => {
+            try {
+                sensor.unsubscribeAccelerometer();
+            } catch (error) {
+                console.info('Sensor_SubscribeAccelerometer_007 unsubscribe failed' + error);
+                expect(false).assertTrue();
+            }
+            setTimeout(() => {
+                expect(true).assertTrue();
+                done();
+            }, 500);
+        }, 1000);
+    })
+
+    /*
+     * @tc.name:Sensor_SubscribeAccelerometer_008
+     * @tc.desc:verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: AR000GH2TR
+     */
+    it("Sensor_SubscribeAccelerometer_008", 0, async function (done) {
+        console.info('----------------------Sensor_SubscribeAccelerometer_008---------------------------');
+        sensor.subscribeAccelerometer({
+            interval: 'normal',
+            success: function(data) {
+              expect(typeof(data.x)).assertEqual("number");
+              expect(typeof(data.y)).assertEqual("number");
+              expect(typeof(data.z)).assertEqual("number");
+              console.info("Sensor_SubscribeAccelerometer_008 success" + JSON.stringify(data));
+            },
+            fail:"abc",
+        });
+        setTimeout(() => {
+            try {
+                sensor.unsubscribeAccelerometer();
+            } catch (error) {
+                console.info('Sensor_SubscribeAccelerometer_008 unsubscribe failed' + error);
+                expect(false).assertTrue();
+            }
+            setTimeout(() => {
+                expect(true).assertTrue();
+                done();
+            }, 500);
+        }, 1000);
     })
 
     /*
@@ -3999,7 +4784,7 @@ describe("SensorJsTest", function () {
             console.info(error);
             expect(false).assertTrue();
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             expect(true).assertTrue();
             done();
         }, 500);
@@ -4019,7 +4804,7 @@ describe("SensorJsTest", function () {
             console.info(error);
             expect(false).assertTrue();
         }
-        setTimeout(()=>{
+        setTimeout(() => {
             expect(true).assertTrue();
             done();
         }, 500);
