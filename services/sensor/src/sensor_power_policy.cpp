@@ -172,7 +172,7 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
     return ERR_OK;
 }
 
-std::vector<int32_t> SensorPowerPolicy::GetSuspendPids()
+std::vector<int32_t> SensorPowerPolicy::GetSuspendPidList()
 {
     CALL_LOG_ENTER;
     std::vector<int32_t> suspendPidList;
@@ -187,7 +187,7 @@ std::vector<int32_t> SensorPowerPolicy::GetSuspendPids()
 ErrCode SensorPowerPolicy::ResetSensors()
 {
     CALL_LOG_ENTER;
-    std::vector<int32_t> suspendPidList = GetSuspendPids();
+    std::vector<int32_t> suspendPidList = GetSuspendPidList();
     bool resetStatus = true;
     for (const auto &pid : suspendPidList) {
         if (ResumeSensors(pid) != ERR_OK) {
