@@ -290,12 +290,14 @@ describe("SensorJsTest", function () {
      * @tc.require: Issue Number
      */
     it("SensorJsTest_012", 0, function (done) {
-        console.info('----------------------SensorJsTest_012---------------------------');
-        sensor.on(sensor.SensorId.ACCELEROMETER, callback, {'interval': 100000000});
-        setTimeout(() => {
+        try {
             sensor.off(sensor.SensorId.ACCELEROMETER, 5);
+        } catch (error) {
+            console.info(error);
+            expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
+            expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
             done();
-        }, 500);
+        }
     })
 
     /*

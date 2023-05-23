@@ -418,10 +418,15 @@ static napi_value Off(napi_env env, napi_callback_info info)
         return nullptr;
     }
     int32_t subscribeSize = -1;
-    if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
+    if (argc == 1) {
+        subscribeSize = RemoveAllCallback(env, sensorTypeId);
+    } else if (IsMatchType(env, args[1], napi_undefined) || IsMatchType(env, args[1], napi_null)) {
+        subscribeSize = RemoveAllCallback(env, sensorTypeId);
+    } else if (IsMatchType(env, args[1], napi_function)) {
         subscribeSize = RemoveCallback(env, sensorTypeId, args[1]);
     } else {
-        subscribeSize = RemoveAllCallback(env, sensorTypeId);
+        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, args[1] should is napi_function");
+        return nullptr;
     }
     if (CheckSystemSubscribe(sensorTypeId) || (subscribeSize > 0)) {
         SEN_HILOGW("There are other client subscribe system js api as well, not need unsubscribe");
