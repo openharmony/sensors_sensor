@@ -50,6 +50,7 @@ SensorServiceStub::SensorServiceStub()
     baseFuncs_[DESTROY_SOCKET_CHANNEL] = &SensorServiceStub::DestroySocketChannelInner;
     baseFuncs_[ENABLE_ACTIVE_INFO_CB] = &SensorServiceStub::EnableActiveInfoCBInner;
     baseFuncs_[DISABLE_ACTIVE_INFO_CB] = &SensorServiceStub::DisableActiveInfoCBInner;
+    baseFuncs_[RESET_SENSORS] = &SensorServiceStub::ResetSensorsInner;
 }
 
 SensorServiceStub::~SensorServiceStub()
@@ -253,6 +254,16 @@ ErrCode SensorServiceStub::DisableActiveInfoCBInner(MessageParcel &data, Message
         return PERMISSION_DENIED;
     }
     return DisableActiveInfoCB();
+}
+
+ErrCode SensorServiceStub::ResetSensorsInner(MessageParcel &data, MessageParcel &reply)
+{
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    return ResetSensors();
 }
 }  // namespace Sensors
 }  // namespace OHOS

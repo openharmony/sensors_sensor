@@ -180,6 +180,15 @@ int32_t Register(SensorActiveInfoCB callback);
  */
 int32_t Unregister(SensorActiveInfoCB callback);
 
+/**
+ * @brief 重置休眠的所有传感器
+ *
+ * @return 返回0表示成功，否则表示失败
+ *
+ * @since 10
+ */
+int32_t ResetSensors();
+
 #ifdef __cplusplus
 #if __cplusplus
 }

@@ -332,6 +332,21 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
     return ERR_OK;
 }
 
+int32_t SensorServiceClient::ResetSensors()
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "ResetSensors");
+    ret = sensorServer_->ResetSensors();
+    FinishTrace(HITRACE_TAG_SENSORS);
+    return ret;
+}
+
 void SensorServiceClient::ReceiveMessage(const char *buf, size_t size)
 {
     CHKPV(buf);

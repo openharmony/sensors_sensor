@@ -430,5 +430,14 @@ int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback) const
     }
     return ret;
 }
+
+int32_t SensorAgentProxy::ResetSensors() const
+{
+    int32_t ret = SenClient.ResetSensors();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
+    }
+    return ret;
+}
 }  // namespace Sensors
 }  // namespace OHOS

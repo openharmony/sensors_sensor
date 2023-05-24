@@ -47,6 +47,7 @@ public:
     virtual ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient) = 0;
     virtual ErrCode EnableActiveInfoCB() = 0;
     virtual ErrCode DisableActiveInfoCB() = 0;
+    virtual ErrCode ResetSensors() = 0;
     enum {
         ENABLE_SENSOR = 0,
         DISABLE_SENSOR,
@@ -62,6 +63,7 @@ public:
         DESTROY_SOCKET_CHANNEL,
         ENABLE_ACTIVE_INFO_CB,
         DISABLE_ACTIVE_INFO_CB,
+        RESET_SENSORS,
     };
 };
 }  // namespace Sensors
