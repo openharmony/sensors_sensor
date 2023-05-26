@@ -27,12 +27,6 @@ using OHOS::Sensors::PERMISSION_DENIED;
 
 static const HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorNativeAPI"};
 
-static const SensorAgentProxy *GetInstance()
-{
-    const SensorAgentProxy *obj = SensorAgentProxy::GetSensorsObj();
-    return obj;
-}
-
 static int32_t NormalizeErrCode(int32_t code)
 {
     switch (code) {
@@ -50,7 +44,7 @@ static int32_t NormalizeErrCode(int32_t code)
 
 int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;
@@ -65,7 +59,7 @@ int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
 
 int32_t ActivateSensor(int32_t sensorId, const SensorUser *user)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;
@@ -80,7 +74,7 @@ int32_t ActivateSensor(int32_t sensorId, const SensorUser *user)
 
 int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;
@@ -95,7 +89,7 @@ int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user)
 
 int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval, int64_t reportInterval)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;
@@ -110,7 +104,7 @@ int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInter
 
 int32_t SubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;
@@ -125,7 +119,7 @@ int32_t SubscribeSensor(int32_t sensorId, const SensorUser *user)
 
 int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;
@@ -140,7 +134,7 @@ int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
 
 int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
 {
-    const SensorAgentProxy *proxy = GetInstance();
+    SensorAgentProxy *proxy = SensorAgentProxy::GetInstance();
     if (proxy == nullptr) {
         SEN_HILOGE("proxy is nullptr");
         return SERVICE_EXCEPTION;

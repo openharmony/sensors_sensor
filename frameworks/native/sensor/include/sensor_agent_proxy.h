@@ -32,38 +32,38 @@ typedef int32_t (*SensorDataCallback)(struct SensorNativeData *events, uint32_t 
 
 struct SensorAgentProxy : public OHOS::RefBase {
 public:
-    SensorAgentProxy();
     ~SensorAgentProxy();
-    static const SensorAgentProxy *GetSensorsObj();
-    int32_t ActivateSensor(int32_t sensorId, const SensorUser *user) const;
-    int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user) const;
-    int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval, int64_t reportInterval) const;
-    int32_t SubscribeSensor(int32_t sensorId, const SensorUser *user) const;
-    int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user) const;
-    int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode) const;
-    int32_t SetOption(int32_t sensorId, const SensorUser *user, int32_t option) const;
+    static SensorAgentProxy *GetInstance();
+    int32_t ActivateSensor(int32_t sensorId, const SensorUser *user);
+    int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user);
+    int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval, int64_t reportInterval);
+    int32_t SubscribeSensor(int32_t sensorId, const SensorUser *user);
+    int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user);
+    int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode);
+    int32_t SetOption(int32_t sensorId, const SensorUser *user, int32_t option);
     int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const;
-    int32_t SuspendSensors(int32_t pid) const;
-    int32_t ResumeSensors(int32_t pid) const;
+    int32_t SuspendSensors(int32_t pid);
+    int32_t ResumeSensors(int32_t pid);
     int32_t GetSensorActiveInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, int32_t *count) const;
-    int32_t Register(SensorActiveInfoCB callback) const;
-    int32_t Unregister(SensorActiveInfoCB callback) const;
+    int32_t Register(SensorActiveInfoCB callback);
+    int32_t Unregister(SensorActiveInfoCB callback);
+    void HandleSensorData(SensorEvent *events, int32_t num, void *data);
 
 private:
-    int32_t CreateSensorDataChannel() const;
-    int32_t DestroySensorDataChannel() const;
-    static void HandleSensorData(SensorEvent *events, int32_t num, void *data);
+    SensorAgentProxy();
+    int32_t CreateSensorDataChannel();
+    int32_t DestroySensorDataChannel();
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
     static OHOS::sptr<SensorAgentProxy> sensorObj_;
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_;
-    static bool g_isChannelCreated;
-    static int64_t g_samplingInterval;
-    static int64_t g_reportInterval;
-    static std::map<int32_t, const SensorUser *> g_subscribeMap;
-    static std::map<int32_t, const SensorUser *> g_unsubscribeMap;
+    bool g_isChannelCreated;
+    int64_t g_samplingInterval;
+    int64_t g_reportInterval;
+    std::map<int32_t, const SensorUser *> g_subscribeMap;
+    std::map<int32_t, const SensorUser *> g_unsubscribeMap;
 };
 }  // namespace Sensors
 }  // namespace OHOS
