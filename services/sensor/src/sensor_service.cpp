@@ -487,6 +487,12 @@ ErrCode SensorService::DisableActiveInfoCB()
     return clientInfo_.DelActiveInfoCBPid(GetCallingPid());
 }
 
+ErrCode SensorService::ResetSensors()
+{
+    CALL_LOG_ENTER;
+    return POWER_POLICY.ResetSensors();
+}
+
 void SensorService::ReportActiveInfo(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;

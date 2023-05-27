@@ -20,6 +20,7 @@
 #include <thread>
 
 #include "refbase.h"
+#include "singleton.h"
 
 #include "sensor_agent_type.h"
 #include "sensor_data_channel.h"
@@ -30,10 +31,9 @@ struct SensorNativeData;
 struct SensorIdList;
 typedef int32_t (*SensorDataCallback)(struct SensorNativeData *events, uint32_t num);
 
-struct SensorAgentProxy : public OHOS::RefBase {
+class SensorAgentProxy {
+    DECLARE_DELAYED_SINGLETON(SensorAgentProxy);
 public:
-    ~SensorAgentProxy();
-    static SensorAgentProxy *GetInstance();
     int32_t ActivateSensor(int32_t sensorId, const SensorUser *user);
     int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user);
     int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval, int64_t reportInterval);
@@ -48,14 +48,13 @@ public:
     int32_t Register(SensorActiveInfoCB callback);
     int32_t Unregister(SensorActiveInfoCB callback);
     void HandleSensorData(SensorEvent *events, int32_t num, void *data);
+    int32_t ResetSensors() const;
 
 private:
-    SensorAgentProxy();
     int32_t CreateSensorDataChannel();
     int32_t DestroySensorDataChannel();
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
-    static OHOS::sptr<SensorAgentProxy> sensorObj_;
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_;
@@ -65,6 +64,8 @@ private:
     std::map<int32_t, const SensorUser *> g_subscribeMap;
     std::map<int32_t, const SensorUser *> g_unsubscribeMap;
 };
+
+#define SensorAgentImpl OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // endif SENSOR_PROXY_H

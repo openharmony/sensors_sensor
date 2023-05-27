@@ -364,7 +364,7 @@ describe("PedometerJsTest", function () {
                     try {
                         sensor.on(sensor.SensorId.PEDOMETER, callback);
                         sensor.on(sensor.SensorId.PEDOMETER, callback2);
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             sensor.off(sensor.SensorId.PEDOMETER);
                             done();
                         }, 1000);

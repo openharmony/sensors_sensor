@@ -30,7 +30,6 @@ constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 }  // namespace
 
 #define SenClient SensorServiceClient::GetInstance()
-OHOS::sptr<SensorAgentProxy> SensorAgentProxy::sensorObj_ = nullptr;
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
 std::mutex sensorInfoMutex_;
@@ -47,16 +46,6 @@ SensorAgentProxy::~SensorAgentProxy()
 {
     CALL_LOG_ENTER;
     ClearSensorInfos();
-}
-
-SensorAgentProxy *SensorAgentProxy::GetInstance()
-{
-    CALL_LOG_ENTER;
-    if (sensorObj_ == nullptr) {
-        SEN_HILOGD("sensorObj_ new object");
-        sensorObj_ = new (std::nothrow) SensorAgentProxy();
-    }
-    return sensorObj_;
 }
 
 void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *data)
@@ -90,7 +79,8 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
-    auto ret = dataChannel_->CreateSensorDataChannel(std::bind(&SensorAgentProxy::HandleSensorData, sensorObj_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), nullptr);
+    auto ret = dataChannel_->CreateSensorDataChannel(std::bind(&SensorAgentProxy::HandleSensorData,
+        this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), nullptr);
     if (ret != ERR_OK) {
         SEN_HILOGE("create data channel failed, ret:%{public}d", ret);
         return ret;
@@ -423,6 +413,15 @@ int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
     int32_t ret = SenClient.Unregister(callback);
     if (ret != ERR_OK) {
         SEN_HILOGE("Unregister sensor active info callback failed, ret:%{public}d", ret);
+    }
+    return ret;
+}
+
+int32_t SensorAgentProxy::ResetSensors() const
+{
+    int32_t ret = SenClient.ResetSensors();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
     }
     return ret;
 }

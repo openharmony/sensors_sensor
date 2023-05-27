@@ -34,13 +34,9 @@ class SensorDataChannel : public SensorBasicDataChannel {
 public:
     SensorDataChannel() = default;
     ~SensorDataChannel();
-    static int32_t HandleEvent(int32_t fd, int32_t events, void *data);
     int32_t CreateSensorDataChannel(DataChannelCB callBack, void *data);
     int32_t DestroySensorDataChannel();
-    bool IsThreadExit();
-    bool IsThreadStart();
     int32_t RestoreSensorDataChannel();
-    int32_t test = 10;
     DataChannelCB dataCB_ = nullptr;
     void *privateData_ = nullptr;
     int32_t AddFdListener(int32_t fd, ReceiveMessageFun receiveMessage, DisconnectFun disconnect);
@@ -49,12 +45,9 @@ public:
     DisconnectFun GetDisconnectFun() const;
 
 private:
-    static void ThreadProcessTask(SensorDataChannel *sensorChannel);
     int32_t InnerSensorDataChannel();
     std::mutex eventRunnerMutex_;
     std::shared_ptr<SensorEventHandler> eventHandler_;
-    static std::shared_ptr<AppExecFwk::EventRunner> eventRunner_;
-    static int32_t receiveFd_;
     std::unordered_set<int32_t> listenedFdSet_;
     ReceiveMessageFun receiveMessage_;
     DisconnectFun disconnect_;

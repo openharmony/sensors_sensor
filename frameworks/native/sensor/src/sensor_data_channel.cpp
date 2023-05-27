@@ -117,7 +117,7 @@ int32_t SensorDataChannel::AddFdListener(int32_t fd, ReceiveMessageFun receiveMe
 int32_t SensorDataChannel::DelFdListener(int32_t fd)
 {
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
-    CHKPL(eventHandler_);
+    CHKPR(eventHandler_, ERROR);
     eventHandler_->RemoveFileDescriptorListener(fd);
     auto it = listenedFdSet_.find(fd);
     if (it == listenedFdSet_.end()) {
