@@ -92,7 +92,7 @@ describe("PedometerJsTest", function () {
      * @tc.name:PedometerJsTest_001
      * @tc.desc:verify app info is not null
      * @tc.type: FUNC
-     * @tc.require: Issue Number
+     * @tc.require: AR000HPEMQ
      */
     it("PedometerJsTest_001", 0, async function (done) {
         console.info('----------------------PedometerJsTest_001---------------------------');
@@ -136,7 +136,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_002
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_002", 0, async function (done) {
         console.info('----------------------PedometerJsTest_002---------------------------');
@@ -177,7 +177,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_003
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_003", 0, async function (done) {
         console.info('----------------------PedometerJsTest_003---------------------------');
@@ -221,7 +221,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_004
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_004", 0, async function (done) {
         console.info('----------------------PedometerJsTest_004---------------------------');
@@ -265,7 +265,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_005
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_005", 0, async function (done) {
         console.info('----------------------PedometerJsTest_005---------------------------');
@@ -306,7 +306,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_006
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_006", 0, async function (done) {
         console.info('----------------------PedometerJsTest_006---------------------------');
@@ -346,7 +346,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_007
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_007", 0, async function (done) {
         console.info('----------------------PedometerJsTest_007---------------------------');
@@ -391,7 +391,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_008
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_008", 0, async function (done) {
         console.info('----------------------PedometerJsTest_008---------------------------');
@@ -439,7 +439,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_009
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_009", 0, async function (done) {
         console.info('----------------------PedometerJsTest_009---------------------------');
@@ -484,7 +484,7 @@ describe("PedometerJsTest", function () {
     * @tc.name:PedometerJsTest_010
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMQ
     */
     it("PedometerJsTest_010", 0, async function (done) {
         console.info('----------------------PedometerJsTest_010---------------------------');
