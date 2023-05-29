@@ -41,7 +41,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     CALL_LOG_ENTER;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
     if (sensorIdList.empty()) {
-        SEN_HILOGE("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
+        SEN_HILOGI("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
         return SUSPEND_ERR;
     }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
@@ -52,6 +52,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
             SEN_HILOGE("Suspend part sensors, but some failed, pid:%{public}d", pid);
             return SUSPEND_ERR;
         }
+        SEN_HILOGI("Suspend sensors success, pid:%{public}d", pid);
         return ERR_OK;
     }
     std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap;
@@ -61,6 +62,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
         SEN_HILOGE("Suspend all sensors, but some failed, pid:%{public}d", pid);
         return SUSPEND_ERR;
     }
+    SEN_HILOGI("Suspend sensors success, pid:%{public}d", pid);
     return ERR_OK;
 }
 
@@ -97,7 +99,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt == pidSensorInfoMap_.end()) {
-        SEN_HILOGE("Resume sensors failed, pid not exist in pidSensorInfoMap_, pid:%{public}d", pid);
+        SEN_HILOGI("Resume sensors failed, please suspend sensors first, pid:%{public}d", pid);
         return RESUME_ERR;
     }
     bool isAllResume = true;
@@ -119,6 +121,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
         return RESUME_ERR;
     }
     pidSensorInfoMap_.erase(pidSensorInfoIt);
+    SEN_HILOGI("Resume sensors success, pid:%{public}d", pid);
     return ERR_OK;
 }
 
@@ -195,6 +198,9 @@ ErrCode SensorPowerPolicy::ResetSensors()
             resetStatus = false;
         }
     }
+    if (resetStatus) {
+        SEN_HILOGI("Reset sensors success");
+    }
     return resetStatus ? ERR_OK : RESET_ERR;
 }
 
@@ -210,6 +216,7 @@ std::vector<ActiveInfo> SensorPowerPolicy::GetActiveInfoList(int32_t pid)
             sensorInfo.GetMaxReportDelayNs());
         activeInfoList.push_back(activeInfo);
     }
+    SEN_HILOGI("Get active info list success, pid:%{public}d", pid);
     return activeInfoList;
 }
 
