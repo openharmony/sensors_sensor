@@ -39,7 +39,7 @@ void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
     sensorDataProcesser_ = dataProcesser;
     reportDataCallback_ = dataCallback;
-    SEN_HILOGD("begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
+    SEN_HILOGD("Begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
     return;
 }
 
@@ -64,7 +64,7 @@ bool SensorManager::SetBestSensorParams(int32_t sensorId, int64_t samplingPeriod
     int64_t bestSamplingPeriodNs = sensorInfo.GetSamplingPeriodNs();
     int64_t bestReportDelayNs = sensorInfo.GetMaxReportDelayNs();
     if ((samplingPeriodNs > bestSamplingPeriodNs) && (maxReportDelayNs > bestReportDelayNs)) {
-        SEN_HILOGD("no need to reset sensor params");
+        SEN_HILOGD("No need to reset sensor params");
         return true;
     }
     bestSamplingPeriodNs = (samplingPeriodNs < bestSamplingPeriodNs) ? samplingPeriodNs : bestSamplingPeriodNs;
@@ -116,7 +116,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingP
     }
     int32_t maxEventCount = it->second.GetFifoMaxEventCount();
     if ((samplingPeriodNs == 0) || (maxEventCount > (INT64_MAX / samplingPeriodNs))) {
-        SEN_HILOGE("failed, samplingPeriodNs overflow");
+        SEN_HILOGE("Failed, samplingPeriodNs overflow");
         return sensorInfo;
     }
     int64_t supportDelay = samplingPeriodNs * maxEventCount;
@@ -160,7 +160,7 @@ bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid
     if (!ResetBestSensorParams(sensorId)) {
         SEN_HILOGW("ResetBestSensorParams is failed");
     }
-    SEN_HILOGD("other client is using this sensor");
+    SEN_HILOGD("Other client is using this sensor");
     return true;
 }
 
@@ -172,7 +172,7 @@ ErrCode SensorManager::AfterDisableSensor(int32_t sensorId)
         SensorData sensorData;
         auto ret = clientInfo_.GetStoreEvent(sensorId, sensorData);
         if (ret == ERR_OK) {
-            SEN_HILOGD("change the default state is far");
+            SEN_HILOGD("Change the default state is far");
             sensorData.data[0] = PROXIMITY_FAR;
             clientInfo_.StoreEvent(sensorData);
         }
@@ -188,7 +188,7 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
         case ATokenTypeEnum::TOKEN_HAP: {
             HapTokenInfo hapInfo;
             if (AccessTokenKit::GetHapTokenInfo(tokenId, hapInfo) != 0) {
-                SEN_HILOGE("get hap token info fail");
+                SEN_HILOGE("Get hap token info fail");
                 return;
             }
             packageName = hapInfo.bundleName;
@@ -198,14 +198,14 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
         case ATokenTypeEnum::TOKEN_SHELL: {
             NativeTokenInfo tokenInfo;
             if (AccessTokenKit::GetNativeTokenInfo(tokenId, tokenInfo) != 0) {
-                SEN_HILOGE("get native token info fail");
+                SEN_HILOGE("Get native token info fail");
                 return;
             }
             packageName = tokenInfo.processName;
             break;
         }
         default: {
-            SEN_HILOGW("token type not match");
+            SEN_HILOGW("Token type not match");
             break;
         }
     }

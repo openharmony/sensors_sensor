@@ -62,11 +62,11 @@ SensorServiceStub::~SensorServiceStub()
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                            MessageOption &option)
 {
-    SEN_HILOGD("begin, cmd : %{public}u", code);
+    SEN_HILOGD("Begin, cmd : %{public}u", code);
     std::u16string descriptor = SensorServiceStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {
-        SEN_HILOGE("client and service descriptors are inconsistent");
+        SEN_HILOGE("Client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
     auto itFunc = baseFuncs_.find(code);
@@ -76,7 +76,7 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
             return (this->*memberFunc)(data, reply);
         }
     }
-    SEN_HILOGD("no member func supporting, applying default process");
+    SEN_HILOGD("No member func supporting, applying default process");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 
