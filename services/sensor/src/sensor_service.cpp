@@ -76,7 +76,7 @@ void SensorService::OnStart()
         SEN_HILOGE("Init sensor policy error");
     }
     if (!SystemAbility::Publish(this)) {
-        SEN_HILOGE("publish SensorService error");
+        SEN_HILOGE("Publish SensorService error");
         return;
     }
     sensorManager_.InitSensorMap(sensorMap_, sensorDataProcesser_, reportDataCallback_);
@@ -87,7 +87,7 @@ bool SensorService::InitInterface()
 {
     auto ret = sensorHdiConnection_.ConnectHdi();
     if (ret != ERR_OK) {
-        SEN_HILOGE("connect hdi failed");
+        SEN_HILOGE("Connect hdi failed");
         return false;
     }
     return true;
@@ -118,7 +118,7 @@ bool SensorService::InitSensorList()
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         for (const auto &it : sensors_) {
             if (!(sensorMap_.insert(std::make_pair(it.GetSensorId(), it)).second)) {
-                SEN_HILOGW("sensorMap_ Insert failed");
+                SEN_HILOGW("sensorMap_ insert failed");
             }
         }
     }
@@ -134,13 +134,13 @@ void SensorService::OnStop()
 {
     CALL_LOG_ENTER;
     if (state_ == SensorServiceState::STATE_STOPPED) {
-        SEN_HILOGW("already stopped");
+        SEN_HILOGW("Already stopped");
         return;
     }
     state_ = SensorServiceState::STATE_STOPPED;
     int32_t ret = sensorHdiConnection_.DestroyHdiConnection();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destroy hdi connect fail");
+        SEN_HILOGE("Destroy hdi connect fail");
     }
     UnregisterPermCallback();
 }
@@ -170,20 +170,20 @@ void SensorService::ReportOnChangeData(int32_t sensorId)
         return;
     }
     if ((SENSOR_ON_CHANGE & it->second.GetFlags()) != SENSOR_ON_CHANGE) {
-        SEN_HILOGW("it is not onchange data, no need to report");
+        SEN_HILOGW("The data has not changed , no need to report");
         return;
     }
     SensorData sensorData;
     auto ret = clientInfo_.GetStoreEvent(sensorId, sensorData);
     if (ret != ERR_OK) {
-        SEN_HILOGE("there is no data to be reported");
+        SEN_HILOGE("There is no data to be reported");
         return;
     }
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(GetCallingPid());
     CHKPV(channel);
     auto sendRet = channel->SendData(&sensorData, sizeof(sensorData));
     if (sendRet != ERR_OK) {
-        SEN_HILOGE("send data failed");
+        SEN_HILOGE("Send data failed");
         return;
     }
 }
@@ -215,7 +215,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (clientInfo_.GetSensorState(sensorId)) {
-        SEN_HILOGW("sensor has been enabled already");
+        SEN_HILOGW("Sensor has been enabled already");
         auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
         if (ret != ERR_OK) {
             SEN_HILOGE("SaveSubscriber failed");
@@ -223,7 +223,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         }
         ReportSensorSysEvent(sensorId, true, pid);
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret : %{public}d", ret);
+            SEN_HILOGE("ret:%{public}d", ret);
         }
         ReportOnChangeData(sensorId);
         if (isReportActiveInfo_) {
@@ -267,7 +267,7 @@ ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
     ReportSensorSysEvent(sensorId, false, pid);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (sensorManager_.IsOtherClientUsingSensor(sensorId, pid)) {
-        SEN_HILOGW("other client is using this sensor now, cannot disable");
+        SEN_HILOGW("Other client is using this sensor now, can't disable");
         return ERR_OK;
     }
     if (sensorHdiConnection_.DisableSensor(sensorId) != ERR_OK) {
@@ -347,7 +347,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     CHKPV(client);
     int32_t pid = clientInfo_.FindClientPid(client);
     if (pid == INVALID_PID) {
-        SEN_HILOGE("pid is -1");
+        SEN_HILOGE("pid is invalid");
         return;
     }
     SEN_HILOGI("pid is %{public}d", pid);
@@ -355,7 +355,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     for (size_t i = 0; i < activeSensors.size(); ++i) {
         int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {
-            SEN_HILOGE("disablesensor failed, ret:%{public}d", ret);
+            SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
         }
     }
     DelSession(pid);
@@ -384,7 +384,7 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
         return;
     }
     if (!clientInfo_.CallingService(pid)) {
-        SEN_HILOGD("Cannot unregister client death recipient");
+        SEN_HILOGD("Can't unregister client death recipient");
         return;
     }
     sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
@@ -403,7 +403,7 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
     }
     SensorDump &sensorDump = SensorDump::GetInstance();
     if (args.empty()) {
-        SEN_HILOGE("param cannot be empty");
+        SEN_HILOGE("Param cannot be empty");
         dprintf(fd, "param cannot be empty\n");
         sensorDump.DumpHelp(fd);
         return DUMP_PARAM_ERR;
