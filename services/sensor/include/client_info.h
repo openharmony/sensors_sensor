@@ -79,7 +79,7 @@ public:
     int32_t AddActiveInfoCBPid(int32_t pid);
     int32_t DelActiveInfoCBPid(int32_t pid);
     std::vector<int32_t> GetActiveInfoCBPid();
-    bool IsUnregisterClientDeathRecipient(int32_t pid);
+    bool CallingService(int32_t pid);
     int32_t GetPidByTokenId(AccessTokenID tokenId);
     void UpdatePermState(int32_t pid, int32_t sensorId, bool state);
     void ChangeSensorPerm(AccessTokenID tokenId, const std::string &permName, bool state);

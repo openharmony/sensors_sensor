@@ -36,7 +36,7 @@ public:
 
 private:
     DISALLOW_COPY_AND_MOVE(CompatibleConnection);
-    static int32_t SensorDataCallback(const SensorEvents *event);
+    static void ReportSensorDataCallback(SensorEvent *event);
     static ReportDataCb reportDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
     HdiServiceImpl &hdiServiceImpl_ = HdiServiceImpl::GetInstance();
