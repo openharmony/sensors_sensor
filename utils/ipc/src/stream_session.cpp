@@ -37,9 +37,9 @@ StreamSession::StreamSession(const std::string &programName, const int32_t fd, c
     : programName_(programName)
 #ifdef OHOS_BUILD_ENABLE_RUST
 {
-    rustStreamSession_.fd_ = fd;
-    rustStreamSession_.uid_ = uid;
-    rustStreamSession_.pid_ = pid;
+    StreamSessionSetFd(streamSessionPtr_.get(), fd);
+    StreamSessionSetUid(streamSessionPtr_.get(), uid);
+    StreamSessionSetPid(streamSessionPtr_.get(), pid);
     UpdateDescript();
 }
 #else
@@ -56,7 +56,7 @@ StreamSession::StreamSession(const std::string &programName, const int32_t fd, c
 bool StreamSession::SendMsg(const char *buf, size_t size) const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return session_send_msg(&rustStreamSession_, buf, size);
+    return StreamSessionSendMsg(streamSessionPtr_.get(), buf, size);
 #else
     CHKPF(buf);
     if ((size == 0) || (size > MAX_PACKET_BUF_SIZE)) {
@@ -75,7 +75,11 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
         auto count = send(fd_, &buf[idx], remSize, MSG_DONTWAIT | MSG_NOSIGNAL);
         if (count < 0) {
             if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK) {
+#ifdef OHOS_BUILD_ENABLE_RUST
+                sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
+#else
                 usleep(SEND_RETRY_SLEEP_TIME);
+#endif
                 SEN_HILOGW("Continue for errno EAGAIN|EINTR|EWOULDBLOCK, errno:%{public}d", errno);
                 continue;
             }
@@ -85,7 +89,11 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
         idx += static_cast<size_t>(count);
         remSize -= static_cast<size_t>(count);
         if (remSize > 0) {
+#ifdef OHOS_BUILD_ENABLE_RUST
+            sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
+#else
             usleep(SEND_RETRY_SLEEP_TIME);
+#endif
         }
     }
     if (retryCount >= SEND_RETRY_LIMIT || remSize != 0) {
@@ -100,7 +108,7 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
 void StreamSession::Close()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    session_close(&rustStreamSession_);
+    StreamSessionClose(streamSessionPtr_.get());
     UpdateDescript();
 #else
     if (fd_ >= 0) {
@@ -115,13 +123,13 @@ void StreamSession::UpdateDescript()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
     std::ostringstream oss;
-    oss << "fd = " << rustStreamSession_.fd_
+    oss << "fd = " << StreamSessionGetFd(streamSessionPtr_.get())
         << ", programName = " << programName_
-        << ", moduleType = " << rustStreamSession_.moduleType_
-        << ((rustStreamSession_.fd_ < 0) ? ", closed" : ", opened")
-        << ", uid = " << rustStreamSession_.uid_
-        << ", pid = " << rustStreamSession_.pid_
-        << ", tokenType = " << rustStreamSession_.tokenType_
+        << ", moduleType = " << StreamSessionGetModuleType(streamSessionPtr_.get())
+        << ((StreamSessionGetFd(streamSessionPtr_.get()) < 0) ? ", closed" : ", opened")
+        << ", uid = " << StreamSessionGetUid(streamSessionPtr_.get())
+        << ", pid = " << StreamSessionGetPid(streamSessionPtr_.get())
+        << ", tokenType = " << StreamSessionGetTokenType(streamSessionPtr_.get())
         << std::endl;
     descript_ = oss.str().c_str();
 #else
@@ -140,13 +148,13 @@ void StreamSession::UpdateDescript()
 bool StreamSession::SendMsg(const NetPacket &pkt) const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    if (chk_rwerror(&pkt.rustStreamBuffer_)) {
+    if (StreamBufferChkRWError(pkt.streamBufferPtr_.get())) {
         SEN_HILOGE("Read and write status is error");
         return false;
     }
     StreamBuffer buf;
     pkt.MakeData(buf);
-    return SendMsg(data(&buf.rustStreamBuffer_), size(&buf.rustStreamBuffer_));
+    return SendMsg(StreamBufferData(buf.streamBufferPtr_.get()), StreamBufferSize(buf.streamBufferPtr_.get()));
 #else
     if (pkt.ChkRWError()) {
         SEN_HILOGE("Read and write status failed");
@@ -161,7 +169,7 @@ bool StreamSession::SendMsg(const NetPacket &pkt) const
 int32_t StreamSession::GetUid() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return get_uid(&rustStreamSession_);
+    return StreamSessionGetUid(streamSessionPtr_.get());
 #else
     return uid_;
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -170,7 +178,7 @@ int32_t StreamSession::GetUid() const
 int32_t StreamSession::GetPid() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return get_pid(&rustStreamSession_);
+    return StreamSessionGetPid(streamSessionPtr_.get());
 #else
     return pid_;
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -184,7 +192,7 @@ SessionPtr StreamSession::GetSharedPtr()
 int32_t StreamSession::GetFd() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return get_session_fd(&rustStreamSession_);
+    return StreamSessionGetFd(streamSessionPtr_.get());
 #else
     return fd_;
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -203,7 +211,7 @@ const std::string StreamSession::GetProgramName() const
 void StreamSession::SetTokenType(int32_t type)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    set_token_type(&rustStreamSession_, type);
+    StreamSessionSetTokenType(streamSessionPtr_.get(), type);
 #else
     tokenType_ = type;
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -212,7 +220,7 @@ void StreamSession::SetTokenType(int32_t type)
 int32_t StreamSession::GetTokenType() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return get_token_type(&rustStreamSession_);
+    return StreamSessionGetTokenType(streamSessionPtr_.get());
 #else
     return tokenType_;
 #endif // OHOS_BUILD_ENABLE_RUST

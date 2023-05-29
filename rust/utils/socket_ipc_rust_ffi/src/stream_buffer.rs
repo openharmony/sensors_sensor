@@ -73,13 +73,13 @@ pub struct StreamBuffer {
     /// error status of read or write
     pub rw_error_status: ErrorStatus,
     /// read count
-    pub r_count: i32,
+    pub r_count: usize,
     /// write count
-    pub w_count: i32,
+    pub w_count: usize,
     /// read position
-    pub r_pos: i32,
+    pub r_pos: usize,
     /// write position
-    pub w_pos: i32,
+    pub w_pos: usize,
     /// buffer of read or write
     pub sz_buff: [c_char; MAX_STREAM_BUF_SIZE + 1],
 }
@@ -144,9 +144,9 @@ impl StreamBuffer {
         }
     }
 
-    fn seek_read_pos(&mut self, n: i32) -> bool {
-        let pos: i32 = self.r_pos + n;
-        if pos < 0 || pos > self.w_pos {
+    fn seek_read_pos(&mut self, n: usize) -> bool {
+        let pos: usize = self.r_pos + n;
+        if pos > self.w_pos {
             error!(LOG_LABEL, "The position in the calculation is not as expected. pos:{} [0, {}]",
                 pos, self.w_pos);
             return false;
@@ -157,10 +157,10 @@ impl StreamBuffer {
     /// write buffer
     pub fn write_buf(&self) -> *const c_char {
         info!(LOG_LABEL, "enter write_buf");
-        &self.sz_buff[self.w_pos as usize] as *const c_char
+        &self.sz_buff[self.w_pos] as *const c_char
     }
     /// unread size
-    pub fn unread_size(&self) -> i32 {
+    pub fn unread_size(&self) -> usize {
         if self.w_pos <= self.r_pos {
             0
         } else {
@@ -184,17 +184,17 @@ impl StreamBuffer {
     }
     /// size function
     pub fn size(&self) -> usize {
-        self.w_pos as usize
+        self.w_pos
     }
     /// check error status of read or write
     pub fn chk_rwerror(&self) -> bool {
         self.rw_error_status != ErrorStatus::Ok
     }
-    fn get_available_buf_size(&self) -> i32 {
-        if self.w_pos >= MAX_STREAM_BUF_SIZE as i32 {
+    fn get_available_buf_size(&self) -> usize {
+        if self.w_pos >= MAX_STREAM_BUF_SIZE {
             0
         } else {
-            MAX_STREAM_BUF_SIZE as i32 - self.w_pos
+            MAX_STREAM_BUF_SIZE - self.w_pos
         }
     }
     fn get_error_status_remark(&self) -> *const c_char {
@@ -207,7 +207,7 @@ impl StreamBuffer {
         s.as_ptr()
     }
     fn read_buf(&self) -> *const c_char {
-        &(self.sz_buff[self.r_pos as usize]) as *const c_char
+        &(self.sz_buff[self.r_pos]) as *const c_char
     }
     /// write buffer
     pub fn write_char_usize(&mut self, buf: *const c_char, size: usize) -> bool {
@@ -224,7 +224,7 @@ impl StreamBuffer {
             self.rw_error_status = ErrorStatus::Write;
             return false;
         }
-        if (self.w_pos + size as i32) > MAX_STREAM_BUF_SIZE as i32 {
+        if (self.w_pos + size) > MAX_STREAM_BUF_SIZE {
             error!(LOG_LABEL, "The write length exceeds buffer. wIdx:{} size:{} maxBufSize:{} errCode:{}",
                 self.w_pos, size, MAX_STREAM_BUF_SIZE, MEM_OUT_OF_BOUNDS);
             self.rw_error_status = ErrorStatus::Write;
@@ -232,20 +232,20 @@ impl StreamBuffer {
         }
         unsafe {
             let pointer = &(self.sz_buff[0]) as *const c_char;
-            let ret = binding::memcpy_s(pointer.add(self.w_pos as usize) as *mut libc::c_void,
-                self.get_available_buf_size() as usize, buf as *mut libc::c_void, size);
+            let ret = binding::memcpy_s(pointer.add(self.w_pos) as *mut libc::c_void,
+                self.get_available_buf_size(), buf as *mut libc::c_void, size);
             if ret != 0 {
                 error!(LOG_LABEL, "Failed to call memcpy_s. ret:{}", ret);
                 self.rw_error_status = ErrorStatus::Write;
                 return false;
             }
         }
-        self.w_pos += size as i32;
+        self.w_pos += size;
         self.w_count += 1;
         true
     }
     fn check_write(&mut self, size: usize) -> bool {
-        let buffer_size = size as i32;
+        let buffer_size = size;
         let mut avail_size = self.get_available_buf_size();
         if buffer_size > avail_size && self.r_pos > 0 {
             self.copy_data_to_begin();
@@ -254,10 +254,10 @@ impl StreamBuffer {
         avail_size >= buffer_size
     }
     fn copy_data_to_begin(&mut self) {
-        let unread_size: i32 = self.unread_size();
+        let unread_size = self.unread_size();
         if unread_size > 0 && self.r_pos > 0 {
             for (index, value) in (self.r_pos..=self.w_pos).enumerate() {
-                self.sz_buff[index] = self.sz_buff[value as usize];
+                self.sz_buff[index] = self.sz_buff[value];
             }
         }
         debug!(LOG_LABEL, "unread_size:{} rPos:{} wPos:{}", unread_size, self.r_pos, self.w_pos);
@@ -279,7 +279,7 @@ impl StreamBuffer {
             self.rw_error_status = ErrorStatus::Read;
             return false;
         }
-        if (self.r_pos + size as i32) > self.w_pos {
+        if (self.r_pos + size) > self.w_pos {
             error!(LOG_LABEL, "Memory out of bounds on read... errCode:{}", MEM_OUT_OF_BOUNDS);
             self.rw_error_status = ErrorStatus::Read;
             return false;
@@ -292,7 +292,7 @@ impl StreamBuffer {
                 return false;
             }
         }
-        self.r_pos += size as i32;
+        self.r_pos += size;
         self.r_count += 1;
         true
     }
@@ -313,21 +313,21 @@ impl StreamBuffer {
     /// call unsafe function
     pub unsafe fn read_server_packets(&mut self, stream_server: *const CStreamServer,
         fd: i32, callback_fun: ServerPacketCallBackFun) {
-        const HEAD_SIZE: i32 = size_of::<PackHead>() as i32;
-        for _i in 0.. ONCE_PROCESS_NETPACKET_LIMIT {
-            let unread_size: i32 = self.unread_size();
+        const HEAD_SIZE: usize = size_of::<PackHead>();
+        for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
+            let unread_size = self.unread_size();
             if unread_size < HEAD_SIZE {
                 break;
             }
-            let data_size :i32 = unread_size - HEAD_SIZE;
+            let data_size = unread_size - HEAD_SIZE;
             let buf: *const c_char = self.read_buf();
             if buf.is_null() {
-                error!(LOG_LABEL, "CHKPB(buf) is null, skip then break");
+                error!(LOG_LABEL, "buf is null, skip then break");
                 break;
             }
             let head: *const PackHead = buf as *const PackHead;
             if head.is_null() {
-                error!(LOG_LABEL, "CHKPB(head) is null, skip then break");
+                error!(LOG_LABEL, "head is null, skip then break");
                 break;
             }
             let size;
@@ -336,9 +336,9 @@ impl StreamBuffer {
                 size = (*head).size;
                 id_msg = (*head).id_msg;
             }
-            if !(0..=MAX_PACKET_BUF_SIZE).contains(&(size as usize)) {
+            if !(0..=MAX_PACKET_BUF_SIZE).contains(&size) {
                 error!(LOG_LABEL, "Packet header parsing error, and this error cannot be recovered. \
-                    The buffer will be reset. (*head).size:{}, unreadSize:{}", size, unread_size);
+                    The buffer will be reset. size:{}, unreadSize:{}", size, unread_size);
                 self.reset();
                 break;
             }
@@ -351,7 +351,7 @@ impl StreamBuffer {
             };
             unsafe {
                 if size > 0 &&
-                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE as usize) as *const c_char, size as usize) {
+                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE) as *const c_char, size) {
                     error!(LOG_LABEL, "Error writing data in the NetPacket. It will be retried next time. \
                         messageid:{}, size:{}", id_msg as i32, size);
                     break;
@@ -378,21 +378,21 @@ impl StreamBuffer {
     ///
     /// call unsafe function
     pub unsafe fn read_client_packets(&mut self, client: *const CClient, callback_fun: ClientPacketCallBackFun) {
-        const HEAD_SIZE: i32 = size_of::<PackHead>() as i32;
-        for _i in 0.. ONCE_PROCESS_NETPACKET_LIMIT {
-            let unread_size: i32 = self.unread_size();
+        const HEAD_SIZE: usize = size_of::<PackHead>();
+        for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
+            let unread_size = self.unread_size();
             if unread_size < HEAD_SIZE {
                 break;
             }
-            let data_size :i32 = unread_size - HEAD_SIZE;
+            let data_size = unread_size - HEAD_SIZE;
             let buf: *const c_char = self.read_buf();
             if buf.is_null() {
-                error!(LOG_LABEL, "CHKPB(buf) is null, skip then break");
+                error!(LOG_LABEL, "buf is null, skip then break");
                 break;
             }
             let head: *const PackHead = buf as *const PackHead;
             if head.is_null() {
-                error!(LOG_LABEL, "CHKPB(head) is null, skip then break");
+                error!(LOG_LABEL, "head is null, skip then break");
                 break;
             }
             let size;
@@ -401,9 +401,9 @@ impl StreamBuffer {
                 size = (*head).size;
                 id_msg = (*head).id_msg;
             }
-            if !(0..=MAX_PACKET_BUF_SIZE).contains(&(size as usize)) {
+            if !(0..=MAX_PACKET_BUF_SIZE).contains(&size) {
                 error!(LOG_LABEL, "Packet header parsing error, and this error cannot be recovered. \
-                    The buffer will be reset. (*head).size:{}, unreadSize:{}", size, unread_size);
+                    The buffer will be reset. size:{}, unreadSize:{}", size, unread_size);
                 self.reset();
                 break;
             }
@@ -416,7 +416,7 @@ impl StreamBuffer {
             };
             unsafe {
                 if size > 0 &&
-                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE as usize) as *const c_char, size as usize) {
+                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE) as *const c_char, size) {
                     error!(LOG_LABEL, "Error writing data in the NetPacket. It will be retried next time. \
                         messageid:{}, size:{}", id_msg as i32, size);
                     break;
@@ -443,21 +443,21 @@ impl StreamBuffer {
     ///
     /// call unsafe function
     pub unsafe fn read_packets(&mut self, callback_fun: ReadPacketCallBackFun) {
-        const HEAD_SIZE: i32 = size_of::<PackHead>() as i32;
-        for _i in 0.. ONCE_PROCESS_NETPACKET_LIMIT {
-            let unread_size: i32 = self.unread_size();
+        const HEAD_SIZE: usize = size_of::<PackHead>();
+        for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
+            let unread_size = self.unread_size();
             if unread_size < HEAD_SIZE {
                 break;
             }
-            let data_size :i32 = unread_size - HEAD_SIZE;
+            let data_size = unread_size - HEAD_SIZE;
             let buf: *const c_char = self.read_buf();
             if buf.is_null() {
-                error!(LOG_LABEL, "CHKPB(buf) is null, skip then break");
+                error!(LOG_LABEL, "buf is null, skip then break");
                 break;
             }
             let head: *const PackHead = buf as *const PackHead;
             if head.is_null() {
-                error!(LOG_LABEL, "CHKPB(head) is null, skip then break");
+                error!(LOG_LABEL, "head is null, skip then break");
                 break;
             }
             let size;
@@ -466,9 +466,9 @@ impl StreamBuffer {
                 size = (*head).size;
                 id_msg = (*head).id_msg;
             }
-            if !(0..=MAX_PACKET_BUF_SIZE).contains(&(size as usize)) {
+            if !(0..=MAX_PACKET_BUF_SIZE).contains(&size) {
                 error!(LOG_LABEL, "Packet header parsing error, and this error cannot be recovered. \
-                    The buffer will be reset. (*head).size:{}, unreadSize:{}", size, unread_size);
+                    The buffer will be reset. size:{}, unreadSize:{}", size, unread_size);
                 self.reset();
                 break;
             }
@@ -481,7 +481,7 @@ impl StreamBuffer {
             };
             unsafe {
                 if size > 0 &&
-                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE as usize) as *const c_char, size as usize) {
+                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE) as *const c_char, size) {
                     error!(LOG_LABEL, "Error writing data in the NetPacket. It will be retried next time. \
                         messageid:{}, size:{}", id_msg as i32, size);
                     break;
@@ -500,8 +500,26 @@ impl StreamBuffer {
             }
         }
     }
-
-
-
+    fn r_count(&self) -> usize {
+        self.r_count
+    }
+    fn w_count(&self) -> usize {
+        self.w_count
+    }
+    fn w_pos(&self) -> usize {
+        self.w_pos
+    }
+    fn r_pos(&self) -> usize {
+        self.r_pos
+    }
+    fn sz_buff(&self) -> *const c_char {
+        &self.sz_buff[0] as *const c_char
+    }
+    fn set_rw_error_status(&mut self, rw_error_status: ErrorStatus) {
+        self.rw_error_status = rw_error_status
+    }
+    fn set_r_pos(&mut self, r_pos: usize) {
+        self.r_pos = r_pos
+    }
 }
 

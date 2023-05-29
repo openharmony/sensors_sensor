@@ -17,29 +17,31 @@
 pub mod ffi;
 use hilog_rust::{info, error, hilog, HiLogLabel, LogType};
 use std::ptr;
-use libc::{c_int, c_uint};
+use libc::c_int;
 use std::ffi::{CString, c_char};
+use std::thread::sleep; 
+use std::time::Duration;
 const ONCE_PROCESS_NETPACKET_LIMIT: i32 = 100;
 const MAX_PACKET_BUF_SIZE: usize = 256;
-const SEND_RETRY_SLEEP_TIME: c_uint = 10000;
+const SEND_RETRY_SLEEP_TIME: u64 = 10000;
 const SEND_RETRY_LIMIT: i32 = 32;
 
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
     domain: 0xD002220,
-    tag: "StreamSocket"
+    tag: "EpollManager"
 };
 
-/// struct StreamSocket
+/// struct EpollManager
 #[repr(C)]
-pub struct StreamSocket {
+pub struct EpollManager {
     /// socket_fd
     pub socket_fd: i32,
     /// epoll_fd
     pub epoll_fd: i32,
 }
 
-impl Default for StreamSocket {
+impl Default for EpollManager {
     fn default() -> Self {
         Self {
             socket_fd: -1,
@@ -48,7 +50,7 @@ impl Default for StreamSocket {
     }
 }
 
-impl StreamSocket {
+impl EpollManager {
     /// return const referance of self
     ///
     /// # Safety
@@ -135,9 +137,9 @@ impl StreamSocket {
     pub fn socket_close(&mut self) {
         if self.socket_fd >= 0 {
             unsafe {
-                let rf = libc::close(self.socket_fd as c_int);
-                if rf > 0 {
-                    error!(LOG_LABEL, "Socket close failed rf:{}", rf);
+                let res = libc::close(self.socket_fd as c_int);
+                if res > 0 {
+                    error!(LOG_LABEL, "Socket close failed res:{}", res);
                 }
             }
             self.socket_fd = -1;
@@ -179,19 +181,17 @@ impl StreamSocket {
                     error!(LOG_LABEL, "Continue for errno EAGAIN|EINTR|EWOULDBLOCK, errno:{}", errno);
                     continue;
                 }
-                error!(LOG_LABEL, "Send return failed,error:{} fd:{}", errno, self.socket_fd);
+                error!(LOG_LABEL, "Send return failed,error:{}, fd:{}", errno, self.socket_fd);
                 return false;
             }
             idx += count as usize;
             rem_size -= count as usize;
             if rem_size > 0 {
-                unsafe {
-                    libc::usleep(SEND_RETRY_SLEEP_TIME);
-                }
+                sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
             }
         }
         if retry_count >= SEND_RETRY_LIMIT || rem_size != 0 {
-            error!(LOG_LABEL, "Send too many times:{}/{},size:{}/{} fd:{}",
+            error!(LOG_LABEL, "Send too many times: {}/{}, size: {}/{}, fd: {}",
                 retry_count, SEND_RETRY_LIMIT, idx, buf_size, self.socket_fd);
             return false;
         }

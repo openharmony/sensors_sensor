@@ -21,57 +21,109 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     domain: 0xD002220,
     tag: "stream_session_ffi"
 };
-
-/// get_uid
+/// create unique_ptr of stream_session for C++
 ///
 /// # Safety
 /// 
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn get_uid(object: *const StreamSession) -> i32 {
-    info!(LOG_LABEL, "enter get_uid");
+pub unsafe extern "C" fn StreamSessionCreate() -> *mut StreamSession {
+    let stream_session: Box::<StreamSession> = Box::default(); 
+    Box::into_raw(stream_session)
+}
+/// drop unique_ptr of stream_session for C++
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamSessionDelete(raw: *mut StreamSession) {
+    if !raw.is_null() {
+        drop(Box::from_raw(raw));
+    }
+}
+/// StreamSessionSetUid
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamSessionSetUid(object: *mut StreamSession, uid: i32) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionSetUid");
+    if let Some(obj) = StreamSession::as_mut(object) {
+        obj.set_uid(uid);
+        SessionStatusCode::Ok.into()
+    } else {
+        SessionStatusCode::Fail.into()
+    }
+}
+/// StreamSessionSetFd
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamSessionSetFd(object: *mut StreamSession, fd: i32) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionSetFd");
+    if let Some(obj) = StreamSession::as_mut(object) {
+        obj.set_fd(fd);
+        SessionStatusCode::Ok.into()
+    } else {
+        SessionStatusCode::Fail.into()
+    }
+}
+/// StreamSessionSetPid
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamSessionSetPid(object: *mut StreamSession, pid: i32) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionSetPid");
+    if let Some(obj) = StreamSession::as_mut(object) {
+        obj.set_pid(pid);
+        SessionStatusCode::Ok.into()
+    } else {
+        SessionStatusCode::Fail.into()
+    }
+}
+/// StreamSessionGetUid
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamSessionGetUid(object: *const StreamSession) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionGetUid");
     if let Some(obj) = StreamSession::as_ref(object) {
         obj.uid()
     } else {
         SessionStatusCode::UidFail.into()
     }
 }
-/// get_pid
+/// StreamSessionGetPid
 ///
 /// # Safety
 /// 
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn get_pid(object: *const StreamSession) -> i32 {
-    info!(LOG_LABEL, "enter get_pid");
+pub unsafe extern "C" fn StreamSessionGetPid(object: *const StreamSession) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionGetPid");
     if let Some(obj) = StreamSession::as_ref(object) {
         obj.pid()
     } else {
         SessionStatusCode::PidFail.into()
     }
 }
-/// get module type
-///
-/// # Safety
-/// 
-/// object must be valid
-#[no_mangle]
-pub unsafe extern "C" fn get_module_type(object: *const StreamSession) -> i32 {
-    info!(LOG_LABEL, "enter get_module_type");
-    if let Some(obj) = StreamSession::as_ref(object) {
-        obj.module_type()
-    } else {
-        SessionStatusCode::ModuleTypeFail.into()
-    }
-}
+
 /// get session fd
 ///
 /// # Safety
 /// 
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn get_session_fd(object: *const StreamSession) -> i32 {
-    info!(LOG_LABEL, "enter get_session_fd");
+pub unsafe extern "C" fn StreamSessionGetFd(object: *const StreamSession) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionGetFd");
     if let Some(obj) = StreamSession::as_ref(object) {
         obj.session_fd()
     } else {
@@ -84,8 +136,8 @@ pub unsafe extern "C" fn get_session_fd(object: *const StreamSession) -> i32 {
 /// 
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn set_token_type(object: *mut StreamSession, style: i32) -> i32 {
-    info!(LOG_LABEL, "enter set_token_type");
+pub unsafe extern "C" fn StreamSessionSetTokenType(object: *mut StreamSession, style: i32) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionSetTokenType");
     if let Some(obj) = StreamSession::as_mut(object) {
         obj.set_token_type(style);
         SessionStatusCode::Ok.into()
@@ -99,12 +151,26 @@ pub unsafe extern "C" fn set_token_type(object: *mut StreamSession, style: i32) 
 ///
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn get_token_type(object: *const StreamSession) -> i32 {
-    info!(LOG_LABEL, "enter get_token_type");
+pub unsafe extern "C" fn StreamSessionGetTokenType(object: *const StreamSession) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionGetTokenType");
     if let Some(obj) = StreamSession::as_ref(object) {
         obj.token_type()
     } else {
         SessionStatusCode::TokenTypeFail.into()
+    }
+}
+/// get module_type
+///
+/// # Safety
+///
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamSessionGetModuleType(object: *const StreamSession) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionGetModuleType");
+    if let Some(obj) = StreamSession::as_ref(object) {
+        obj.module_type()
+    } else {
+        SessionStatusCode::Fail.into()
     }
 }
 /// get session close
@@ -113,8 +179,8 @@ pub unsafe extern "C" fn get_token_type(object: *const StreamSession) -> i32 {
 /// 
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn session_close(object: *mut StreamSession) -> i32 {
-    info!(LOG_LABEL, "enter session_close");
+pub unsafe extern "C" fn StreamSessionClose(object: *mut StreamSession) -> i32 {
+    info!(LOG_LABEL, "enter StreamSessionClose");
     if let Some(obj) = StreamSession::as_mut(object) {
         obj.session_close();
         SessionStatusCode::Ok.into()
@@ -129,8 +195,8 @@ pub unsafe extern "C" fn session_close(object: *mut StreamSession) -> i32 {
 /// 
 /// object must be valid
 #[no_mangle]
-pub unsafe extern "C" fn session_send_msg(object: *const StreamSession, buf: *const c_char, size: usize) -> bool {
-    info!(LOG_LABEL, "enter session_send_msg");
+pub unsafe extern "C" fn StreamSessionSendMsg(object: *const StreamSession, buf: *const c_char, size: usize) -> bool {
+    info!(LOG_LABEL, "enter StreamSessionSendMsg");
     if let Some(obj) = StreamSession::as_ref(object) {
         obj.session_send_msg(buf, size)
     } else {

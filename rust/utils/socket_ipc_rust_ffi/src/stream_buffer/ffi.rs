@@ -21,13 +21,34 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     domain: 0xD002220,
     tag: "stream_buffer_ffi"
 };
+/// create unique_ptr of stream_buffer for C++
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferCreate() -> *mut StreamBuffer {
+    let stream_buffer: Box::<StreamBuffer> = Box::default(); 
+    Box::into_raw(stream_buffer)
+}
+/// drop unique_ptr of stream_buffer for C++
+///
+/// # Safety
+/// 
+/// object must be valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferDelete(raw: *mut StreamBuffer) {
+    if !raw.is_null() {
+        drop(Box::from_raw(raw));
+    }
+}
 /// data
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn data(object: *const StreamBuffer) -> *const c_char {
+pub unsafe extern "C" fn StreamBufferData(object: *const StreamBuffer) -> *const c_char {
     info!(LOG_LABEL, "enter data");
     if let Some(obj) = StreamBuffer::as_ref(object) {
         obj.data()
@@ -41,7 +62,7 @@ pub unsafe extern "C" fn data(object: *const StreamBuffer) -> *const c_char {
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn size(object: *const StreamBuffer) -> usize {
+pub unsafe extern "C" fn StreamBufferSize(object: *const StreamBuffer) -> usize {
     info!(LOG_LABEL, "enter size");
     if let Some(obj) = StreamBuffer::as_ref(object) {
         obj.size()
@@ -49,14 +70,14 @@ pub unsafe extern "C" fn size(object: *const StreamBuffer) -> usize {
         0
     }
 }
-/// reset
+/// StreamBufferReset
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn reset(object: *mut StreamBuffer) -> i32 {
-    info!(LOG_LABEL, "enter reset");
+pub unsafe extern "C" fn StreamBufferReset(object: *mut StreamBuffer) -> i32 {
+    info!(LOG_LABEL, "enter StreamBufferReset");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.reset();
         BufferStatusCode::Ok.into()
@@ -64,13 +85,13 @@ pub unsafe extern "C" fn reset(object: *mut StreamBuffer) -> i32 {
         BufferStatusCode::ResetFail.into()
     }
 }
-/// clean
+/// StreamBufferClean
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn clean(object: *mut StreamBuffer) -> i32 {
+pub unsafe extern "C" fn StreamBufferClean(object: *mut StreamBuffer) -> i32 {
     info!(LOG_LABEL, "enter clean");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.clean();
@@ -79,45 +100,16 @@ pub unsafe extern "C" fn clean(object: *mut StreamBuffer) -> i32 {
         BufferStatusCode::CleanFail.into()
     }
 }
-/// unread_size
+/// StreamBufferWrite
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn unread_size(object: *mut StreamBuffer) -> i32 {
-    info!(LOG_LABEL, "enter unread_size");
-    if let Some(obj) = StreamBuffer::as_mut(object) {
-        obj.unread_size()
-    } else {
-        BufferStatusCode::UnreadSizeFail.into()
-    }
-}
-/// is_empty
-///
-/// # Safety
-/// 
-/// object is valid
-#[no_mangle]
-pub unsafe extern "C" fn is_empty(object: *const StreamBuffer) -> bool {
-    info!(LOG_LABEL, "enter is_empty");
-    if let Some(obj) = StreamBuffer::as_ref(object) {
-        obj.is_empty()
-    } else {
-        false
-    }
-}
-/// write_streambuffer
-///
-/// # Safety
-/// 
-/// object is valid
-#[no_mangle]
-pub unsafe extern "C" fn write_streambuffer(object: *mut StreamBuffer, buf: *const StreamBuffer) -> bool {
-    info!(LOG_LABEL, "enter write_streambuffer");
+pub unsafe extern "C" fn StreamBufferWrite(object: *mut StreamBuffer, buf: *const StreamBuffer) -> bool {
+    info!(LOG_LABEL, "enter StreamBufferWrite");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         if let Some(buffer) = StreamBuffer::as_ref(buf) {
-
             obj.write_streambuffer(buffer)
         } else {
             false
@@ -126,14 +118,14 @@ pub unsafe extern "C" fn write_streambuffer(object: *mut StreamBuffer, buf: *con
         false
     }
 }
-/// read_streambuffer
+/// StreamBufferRead
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn read_streambuffer(object: *const StreamBuffer, buf: *mut StreamBuffer) -> bool {
-    info!(LOG_LABEL, "enter read_streambuffer");
+pub unsafe extern "C" fn StreamBufferRead(object: *const StreamBuffer, buf: *mut StreamBuffer) -> bool {
+    info!(LOG_LABEL, "enter StreamBufferRead");
     if let Some(obj) = StreamBuffer::as_ref(object) {
         if let Some(buffer) = StreamBuffer::as_mut(buf) {
             obj.read_streambuffer(buffer)
@@ -144,69 +136,69 @@ pub unsafe extern "C" fn read_streambuffer(object: *const StreamBuffer, buf: *mu
         false
     }
 }
-/// chk_rwerror
+/// StreamBufferChkRWError
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn chk_rwerror(object: *const StreamBuffer) -> bool {
+pub unsafe extern "C" fn StreamBufferChkRWError(object: *const StreamBuffer) -> bool {
     if let Some(obj) = StreamBuffer::as_ref(object) {
         obj.chk_rwerror()
     } else {
         false
     }
 }
-/// get_error_status_remark
+/// StreamBufferGetErrorStatusRemark
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn get_error_status_remark(object: *const StreamBuffer) -> *const c_char {
-    info!(LOG_LABEL, "enter get_error_status_remark");
+pub unsafe extern "C" fn StreamBufferGetErrorStatusRemark(object: *const StreamBuffer) -> *const c_char {
+    info!(LOG_LABEL, "enter StreamBufferGetErrorStatusRemark");
     if let Some(obj) = StreamBuffer::as_ref(object) {
         obj.get_error_status_remark()
     } else {
         std::ptr::null()
     }
 }
-/// write_char_usize
+/// StreamBufferWriteChar
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn write_char_usize(object: *mut StreamBuffer, buf: *const c_char, size: usize) -> bool {
-    info!(LOG_LABEL, "enter write_char_usize");
+pub unsafe extern "C" fn StreamBufferWriteChar(object: *mut StreamBuffer, buf: *const c_char, size: usize) -> bool {
+    info!(LOG_LABEL, "enter StreamBufferWriteChar");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.write_char_usize(buf, size)
     } else {
         false
     }
 }
-/// check_write
+/// StreamBufferCheckWrite
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn check_write(object: *mut StreamBuffer, size: usize) -> bool {
-    info!(LOG_LABEL, "enter check_write");
+pub unsafe extern "C" fn StreamBufferCheckWrite(object: *mut StreamBuffer, size: usize) -> bool {
+    info!(LOG_LABEL, "enter StreamBufferCheckWrite");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.check_write(size)
     } else {
         false
     }
 }
-/// copy_data_to_begin
+/// CircleStreamBufferCopyDataToBegin
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn copy_data_to_begin(object: *mut StreamBuffer) -> i32 {
-    info!(LOG_LABEL, "enter copy_data_to_begin");
+pub unsafe extern "C" fn CircleStreamBufferCopyDataToBegin(object: *mut StreamBuffer) -> i32 {
+    info!(LOG_LABEL, "enter CircleStreamBufferCopyDataToBegin");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.copy_data_to_begin();
         BufferStatusCode::Ok.into()
@@ -214,28 +206,28 @@ pub unsafe extern "C" fn copy_data_to_begin(object: *mut StreamBuffer) -> i32 {
         BufferStatusCode::CopyDataToBeginFail.into()
     }
 }
-/// read_char_usize
+/// StreamBufferReadChar
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn read_char_usize(object: *mut StreamBuffer, buf: *const c_char, size: usize) -> bool {
-    info!(LOG_LABEL, "enter read_char_usize");
+pub unsafe extern "C" fn StreamBufferReadChar(object: *mut StreamBuffer, buf: *const c_char, size: usize) -> bool {
+    info!(LOG_LABEL, "enter StreamBufferReadChar");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.read_char_usize(buf, size)
     } else {
         false
     }
 }
-/// circle_write
+/// CircleStreamBufferWrite
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn circle_write(object: *mut StreamBuffer, buf: *const c_char, size: usize) -> bool {
-    info!(LOG_LABEL, "enter circle_write");
+pub unsafe extern "C" fn CircleStreamBufferWrite(object: *mut StreamBuffer, buf: *const c_char, size: usize) -> bool {
+    info!(LOG_LABEL, "enter CircleStreamBufferWrite");
     if let Some(obj) = StreamBuffer::as_mut(object) {
         obj.circle_write(buf, size)
     } else {
@@ -274,17 +266,110 @@ pub unsafe extern "C" fn read_client_packets(object: *mut StreamBuffer, stream_c
         BufferStatusCode::ReadClientPacketsFail.into()
     }
 }
-/// read_buf
+/// StreamBufferReadBuf
 ///
 /// # Safety
 /// 
 /// object is valid
 #[no_mangle]
-pub unsafe extern "C" fn read_buf(object: *const StreamBuffer) -> *const c_char {
+pub unsafe extern "C" fn StreamBufferReadBuf(object: *const StreamBuffer) -> *const c_char {
     if let Some(obj) = StreamBuffer::as_ref(object) {
         obj.read_buf()
     } else {
         std::ptr::null()
+    }
+}
+/// StreamBufferGetRcount
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferGetRcount(object: *const StreamBuffer) -> i32 {
+    if let Some(obj) = StreamBuffer::as_ref(object) {
+        obj.r_count() as i32
+    } else {
+        BufferStatusCode::Fail.into()
+    }
+}
+/// StreamBufferGetWcount
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferGetWcount(object: *const StreamBuffer) -> i32 {
+    if let Some(obj) = StreamBuffer::as_ref(object) {
+        obj.w_count() as i32
+    } else {
+        BufferStatusCode::Fail.into()
+    }
+}
+/// StreamBufferGetWpos
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferGetWpos(object: *const StreamBuffer) -> i32 {
+    if let Some(obj) = StreamBuffer::as_ref(object) {
+        obj.w_pos() as i32
+    } else {
+        BufferStatusCode::Fail.into()
+    }
+}
+/// StreamBufferGetRpos
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferGetRpos(object: *const StreamBuffer) -> i32 {
+    if let Some(obj) = StreamBuffer::as_ref(object) {
+        obj.r_pos() as i32
+    } else {
+        BufferStatusCode::Fail.into()
+    }
+}
+/// StreamBufferGetSzBuff
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferGetSzBuff(object: *const StreamBuffer) -> *const c_char {
+    if let Some(obj) = StreamBuffer::as_ref(object) {
+        obj.sz_buff()
+    } else {
+        std::ptr::null()
+    }
+}
+/// StreamBufferSetRwErrStatus
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferSetRwErrStatus(object: *mut StreamBuffer, rw_error_status: ErrorStatus) -> i32 {
+    if let Some(obj) = StreamBuffer::as_mut(object) {
+        obj.set_rw_error_status(rw_error_status);
+        BufferStatusCode::Ok.into()
+    } else {
+        BufferStatusCode::Fail.into()
+    }
+}
+/// StreamBufferSetRpos
+///
+/// # Safety
+/// 
+/// object is valid
+#[no_mangle]
+pub unsafe extern "C" fn StreamBufferSetRpos(object: *mut StreamBuffer, r_pos: i32) -> i32 {
+    if let Some(obj) = StreamBuffer::as_mut(object) {
+        obj.set_r_pos(r_pos as usize);
+        BufferStatusCode::Ok.into()
+    } else {
+        BufferStatusCode::Fail.into()
     }
 }
 

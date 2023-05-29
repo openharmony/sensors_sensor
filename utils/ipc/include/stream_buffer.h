@@ -78,7 +78,8 @@ protected:
     bool Clone(const StreamBuffer &buf);
 #ifdef OHOS_BUILD_ENABLE_RUST
 public:
-    struct RustStreamBuffer rustStreamBuffer_;
+    std::unique_ptr<RustStreamBuffer, void(*)(RustStreamBuffer*)> streamBufferPtr_
+    { StreamBufferCreate(), StreamBufferDelete };
 #else
     enum class ErrorStatus {
         ERROR_STATUS_OK,
@@ -100,9 +101,9 @@ bool StreamBuffer::Read(T &data)
 {
     if (!Read(reinterpret_cast<char *>(&data), sizeof(data))) {
 #ifdef OHOS_BUILD_ENABLE_RUST
-        const char* s = get_error_status_remark(&rustStreamBuffer_);
+        const char* s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
         SEN_HILOGE("[%{public}s] size:%{public}zu count:%{public}d",
-            s, sizeof(data), rustStreamBuffer_.rCount_ + 1);
+            s, sizeof(data), StreamBufferGetRcount(streamBufferPtr_.get()) + 1);
 #else
         SEN_HILOGE("%{public}s, size:%{public}zu, count:%{public}zu",
             GetErrorStatusRemark().c_str(), sizeof(data), rCount_ + 1);
@@ -117,9 +118,9 @@ bool StreamBuffer::Write(const T &data)
 {
     if (!Write(reinterpret_cast<const char *>(&data), sizeof(data))) {
 #ifdef OHOS_BUILD_ENABLE_RUST
-        const char* s = get_error_status_remark(&rustStreamBuffer_);
+        const char* s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
         SEN_HILOGE("[%{public}s] size:%{public}zu,count:%{public}d",
-            s, sizeof(data), rustStreamBuffer_.wCount_ + 1);
+            s, sizeof(data), StreamBufferGetWcount(streamBufferPtr_.get()) + 1);
 #else
         SEN_HILOGE("%{public}s, size:%{public}zu, count:%{public}zu",
             GetErrorStatusRemark().c_str(), sizeof(data), wCount_ + 1);

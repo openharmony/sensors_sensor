@@ -20,79 +20,54 @@
 #include "accesstoken_kit.h"
 
 extern "C" {
-    enum class ErrorStatus : int32_t {
-        ERROR_STATUS_Ok = 0,
-        ERROR_STATUS_Read = 1,
-        ERROR_STATUS_Write = 2,
-    };
-    struct RustStreamSocket {
-        int32_t fd_ { -1 };
-        int32_t epollFd_ { -1 };
-    };
-    struct RustStreamSession {
-        int32_t moduleType_ { -1 };
-        int32_t fd_ { -1 };
-        int32_t uid_ { -1 };
-        int32_t pid_ { -1 };
-        int32_t tokenType_ { OHOS::Security::AccessToken::ATokenTypeEnum::TOKEN_INVALID };
-    };
-    struct RustStreamClient {
-        bool isExit { false };
-        bool isRunning_ { false };
-        bool isConnected_ { false };
-    };
-    struct RustStreamBuffer {
-        ErrorStatus rwErrorStatus_ { ErrorStatus::ERROR_STATUS_Ok };
-        int32_t rCount_ { 0 };
-        int32_t wCount_ { 0 };
-        int32_t rPos_ { 0 };
-        int32_t wPos_ { 0 };
-        char szBuff_[OHOS::Sensors::MAX_STREAM_BUF_SIZE+1] { };
-    };
-    struct RustNetPacket {
-        OHOS::Sensors::MessageId msgId_ { OHOS::Sensors::MessageId::INVALID };
-        struct RustStreamBuffer rustStreamBuffer;
-    };
-    int32_t get_fd(const RustStreamSocket*);
-    int32_t get_epoll_fd(const RustStreamSocket*);
-    int32_t rust_epoll_create(RustStreamSocket*, int32_t);
-    int32_t rust_epoll_ctl(RustStreamSocket*, int32_t, int32_t, struct epoll_event*, int32_t);
-    int32_t rust_epoll_wait(RustStreamSocket*, struct epoll_event*, int32_t, int32_t, int32_t);
-    int32_t rust_epoll_close(RustStreamSocket*);
-    int32_t rust_close(RustStreamSocket*);
-    bool send_msg_buf_size(const RustStreamSocket*, const char*, size_t);
-    void session_close(RustStreamSession*);
-    bool session_send_msg(const RustStreamSession*, const char*, size_t);
-    bool get_connected_status(const RustStreamClient&);
-    void stop(RustStreamClient&, RustStreamSocket&);
-    void reset(RustStreamBuffer*);
-    void clean(RustStreamBuffer*);
-    bool read_streambuffer(RustStreamBuffer*, RustStreamBuffer*);
-    bool write_streambuffer(RustStreamBuffer*, const RustStreamBuffer*);
-    const char* read_buf(const RustStreamBuffer*);
-    bool read_char_usize(RustStreamBuffer*, char *, size_t);
-    bool write_char_usize(RustStreamBuffer*, const char*, size_t);
-    const char* data(const RustStreamBuffer*);
-    size_t size(const RustStreamBuffer*);
-    int32_t unread_size(RustStreamBuffer*);
-    int32_t get_available_buf_size(RustStreamBuffer*);
-    const char* get_error_status_remark(const RustStreamBuffer*);
-    bool chk_rwerror(const RustStreamBuffer*);
-    bool check_write(RustStreamBuffer*, size_t);
-    bool circle_write(RustStreamBuffer*, const char*, size_t);
-    void copy_data_to_begin(RustStreamBuffer*);
-    int32_t get_uid(const RustStreamSession*);
-    int32_t get_pid(const RustStreamSession*);
-    int32_t get_module_type(const RustStreamSession*);
-    int32_t get_session_fd(const RustStreamSession*);
-    void set_token_type(RustStreamSession*, int32_t type);
-    int32_t get_token_type(const RustStreamSession*);
-    bool seek_read_pos(RustStreamBuffer*, int32_t);
-    const char* read_buf(const RustStreamBuffer*);
-    bool is_empty(const RustStreamBuffer*);
-    size_t get_size(const RustNetPacket*);
-    int32_t get_packet_length(const RustNetPacket*);
-    const char* get_data(const RustNetPacket*);
-    OHOS::Sensors::MessageId get_msg_id(const RustNetPacket*);
+    struct RustStreamSocket;
+    struct RustStreamSession;
+    struct RustStreamBuffer;
+    struct RustNetPacket;
+    RustStreamSocket* StreamSocketCreate(void);
+    void StreamSocketDelete(RustStreamSocket* raw);
+    int32_t StreamSocketGetFd(const RustStreamSocket* rustStreamSocket);
+    int32_t StreamSocketGetEpollFd(const RustStreamSocket* rustStreamSocket);
+    int32_t StreamSocketEpollCreate(RustStreamSocket* rustStreamSocket, int32_t fd);
+    int32_t StreamSocketEpollCtl(RustStreamSocket* rustStreamSocket, int32_t fd, int32_t op, struct epoll_event* event, int32_t epollFd);
+    int32_t StreamSocketEpollWait(RustStreamSocket* rustStreamSocket, struct epoll_event* events, int32_t maxevents, int32_t timeout, int32_t epollFd);
+    int32_t StreamSocketEpollClose(RustStreamSocket* rustStreamSocket);
+    int32_t StreamSocketClose(RustStreamSocket* rustStreamSocket);
+    RustStreamSession* StreamSessionCreate(void);
+    void StreamSessionDelete(RustStreamSession* raw);
+    void StreamSessionSetUid(RustStreamSession* rustStreamSession, int32_t uid);
+    void StreamSessionSetPid(RustStreamSession* rustStreamSession, int32_t pid);
+    void StreamSessionSetFd(RustStreamSession* rustStreamSession, int32_t fd);
+    void StreamSessionClose(RustStreamSession* rustStreamSession);
+    bool StreamSessionSendMsg(const RustStreamSession* rustStreamSession, const char* buf, size_t size);
+    int32_t StreamSessionGetUid(const RustStreamSession* rustStreamSession);
+    int32_t StreamSessionGetPid(const RustStreamSession* rustStreamSession);
+    int32_t StreamSessionGetFd(const RustStreamSession* rustStreamSession);
+    void StreamSessionSetTokenType(RustStreamSession* rustStreamSession, int32_t type);
+    int32_t StreamSessionGetTokenType(const RustStreamSession* rustStreamSession);
+    int32_t StreamSessionGetModuleType(const RustStreamSession* rustStreamSession);
+    RustStreamBuffer* StreamBufferCreate(void);
+    void StreamBufferDelete(RustStreamBuffer* raw);
+    int32_t StreamBufferGetWcount(const RustStreamBuffer* rustStreamBuffer);
+    int32_t StreamBufferGetRcount(const RustStreamBuffer* rustStreamBuffer);
+    int32_t StreamBufferGetWpos(const RustStreamBuffer* rustStreamBuffer);
+    int32_t StreamBufferGetRpos(const RustStreamBuffer* rustStreamBuffer);
+    const char* StreamBufferGetSzBuff(const RustStreamBuffer* rustStreamBuffer);
+    int32_t StreamBufferSetRwErrStatus(RustStreamBuffer* rustStreamBuffer, int32_t rwErrStatus);
+    int32_t StreamBufferSetRpos(RustStreamBuffer* rustStreamBuffer, int32_t rPos);
+    void StreamBufferReset(RustStreamBuffer* rustStreamBuffer);
+    void StreamBufferClean(RustStreamBuffer* rustStreamBuffer);
+    bool StreamBufferRead(RustStreamBuffer* rustStreamBuffer1, RustStreamBuffer* rustStreamBuffer2);
+    bool StreamBufferWrite(RustStreamBuffer* rustStreamBuffer1, const RustStreamBuffer* rustStreamBuffer2);
+    const char* StreamBufferReadBuf(const RustStreamBuffer* rustStreamBuffer);
+    bool StreamBufferReadChar(RustStreamBuffer* rustStreamBuffer, char* buf, size_t size);
+    bool StreamBufferWriteChar(RustStreamBuffer* rustStreamBuffer, const char* buf, size_t size);
+    const char* StreamBufferData(const RustStreamBuffer* rustStreamBuffer);
+    size_t StreamBufferSize(const RustStreamBuffer* rustStreamBuffer);
+    const char* StreamBufferGetErrorStatusRemark(const RustStreamBuffer* rustStreamBuffer);
+    bool StreamBufferChkRWError(const RustStreamBuffer* rustStreamBuffer);
+    bool StreamBufferCheckWrite(RustStreamBuffer* rustStreamBuffer, size_t size);
+    bool CircleStreamBufferWrite(RustStreamBuffer* rustStreamBuffer, const char* buf, size_t size);
+    void CircleStreamBufferCopyDataToBegin(RustStreamBuffer* rustStreamBuffer);
 }
 #endif // RUST_BINDING_H

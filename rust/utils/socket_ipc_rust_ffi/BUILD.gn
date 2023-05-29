@@ -29,29 +29,3 @@ ohos_rust_shared_ffi("sensor_rust_util_ffi") {
   part_name = "sensor"
   subsystem_name = "sensors"
 }
-
-ohos_rust_shared_library("sensor_rust_util") {
-  sources = [ "src/lib.rs" ]
-
-  external_deps = [
-    "c_utils:utils",
-    "hiviewdfx_hilog_native:hilog_rust",
-    "hiviewdfx_hilog_native:libhilog",
-  ]
-
-  crate_name = "sensor_rust_util"
-  crate_type = "dylib"
-  install_images = [ system_base_dir ]
-
-  part_name = "sensor"
-  subsystem_name = "sensors"
-}
-
-ohos_executable("test_sensor_pkt") {
-  sources = [ "test/main.rs" ]
-  deps = [ ":sensor_rust_util" ]
-}
-
-group("unittest") {
-  deps = [ ":test_sensor_pkt" ]
-}

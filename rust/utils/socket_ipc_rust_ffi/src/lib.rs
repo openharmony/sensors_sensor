@@ -18,16 +18,11 @@
 #![allow(dead_code)]
 
 extern crate libc;
-/// mod stream socket
-pub mod stream_socket;
-/// mod stream buffer
-pub mod stream_buffer;
-/// mod stream session
-pub mod stream_session;
-/// mod net packet
-pub mod net_packet;
-/// mod binding for binding extern C interface
-pub mod binding;
+mod epoll_manager;
+mod stream_buffer;
+mod stream_session;
+mod net_packet;
+mod binding;
 mod error;
 /// annotation
 pub type Result<T> = std::result::Result<T, i32>;

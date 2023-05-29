@@ -31,7 +31,7 @@ StreamBuffer &StreamBuffer::operator=(const StreamBuffer &other)
 void StreamBuffer::Reset()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    reset(&rustStreamBuffer_);
+    StreamBufferReset(streamBufferPtr_.get());
 #else
     rPos_ = 0;
     wPos_ = 0;
@@ -44,7 +44,7 @@ void StreamBuffer::Reset()
 void StreamBuffer::Clean()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    clean(&rustStreamBuffer_);
+    StreamBufferClean(streamBufferPtr_.get());
 #else
     Reset();
     errno_t ret = memset_sp(&szBuff_, sizeof(szBuff_), 0, sizeof(szBuff_));
@@ -58,13 +58,15 @@ void StreamBuffer::Clean()
 bool StreamBuffer::Read(std::string &buf)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    if (rustStreamBuffer_.rPos_ == rustStreamBuffer_.wPos_) {
+    const int32_t ERROR_STATUS_READ = 1;
+    if (StreamBufferGetRpos(streamBufferPtr_.get()) == StreamBufferGetWpos(streamBufferPtr_.get())) {
         SEN_HILOGE("Not enough memory to read, errCode:%{public}d", STREAM_BUF_READ_FAIL);
-        rustStreamBuffer_.rwErrorStatus_ = ErrorStatus::ERROR_STATUS_Read;
+        StreamBufferSetRwErrStatus(streamBufferPtr_.get(), ERROR_STATUS_READ);
         return false;
     }
     buf = ReadBuf();
-    rustStreamBuffer_.rPos_ += static_cast<int32_t>(buf.length()) + 1;
+    StreamBufferSetRpos(streamBufferPtr_.get(),
+        StreamBufferGetRpos(streamBufferPtr_.get()) + static_cast<int32_t>(buf.length()) + 1);
     return (buf.length() > 0);
 #else
     if (rPos_ == wPos_) {
@@ -86,7 +88,7 @@ bool StreamBuffer::Write(const std::string &buf)
 bool StreamBuffer::Read(StreamBuffer &buf)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return read_streambuffer(&rustStreamBuffer_, &buf.rustStreamBuffer_);
+    return StreamBufferRead(streamBufferPtr_.get(), buf.streamBufferPtr_.get());
 #else
     return buf.Write(Data(), Size());
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -95,7 +97,7 @@ bool StreamBuffer::Read(StreamBuffer &buf)
 bool StreamBuffer::Write(const StreamBuffer &buf)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return write_streambuffer(&rustStreamBuffer_, &buf.rustStreamBuffer_);
+    return StreamBufferWrite(streamBufferPtr_.get(), buf.streamBufferPtr_.get());
 #else
     return Write(buf.Data(), buf.Size());
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -104,7 +106,7 @@ bool StreamBuffer::Write(const StreamBuffer &buf)
 bool StreamBuffer::Read(char *buf, size_t size)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return read_char_usize(&rustStreamBuffer_, buf, size);
+    return StreamBufferReadChar(streamBufferPtr_.get(), buf, size);
 #else
     if (ChkRWError()) {
         return false;
@@ -140,7 +142,7 @@ bool StreamBuffer::Read(char *buf, size_t size)
 bool StreamBuffer::Write(const char *buf, size_t size)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return write_char_usize(&rustStreamBuffer_, buf, size);
+    return StreamBufferWriteChar(streamBufferPtr_.get(), buf, size);
 #else
     if (ChkRWError()) {
         return false;
@@ -176,7 +178,7 @@ bool StreamBuffer::Write(const char *buf, size_t size)
 const char *StreamBuffer::ReadBuf() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return read_buf(&rustStreamBuffer_);
+    return StreamBufferReadBuf(streamBufferPtr_.get());
 #else
     return &szBuff_[rPos_];
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -186,7 +188,7 @@ bool StreamBuffer::Clone(const StreamBuffer &buf)
 {
     Clean();
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return Write(data(&buf.rustStreamBuffer_), size(&buf.rustStreamBuffer_));
+    return Write(StreamBufferData(buf.streamBufferPtr_.get()), StreamBufferSize(buf.streamBufferPtr_.get()));
 #else
     return Write(buf.Data(), buf.Size());
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -215,7 +217,11 @@ bool StreamBuffer::ChkRWError() const
 
 size_t StreamBuffer::Size() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamBufferSize(&rustStreamBuffer_);
+#else
     return wPos_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 size_t StreamBuffer::UnreadSize() const
@@ -244,7 +250,11 @@ const std::string &StreamBuffer::GetErrorStatusRemark() const
 
 const char *StreamBuffer::Data() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamBufferData(&rustStreamBuffer_);
+#else
     return &szBuff_[0];
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 const char *StreamBuffer::WriteBuf() const

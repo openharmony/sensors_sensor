@@ -16,8 +16,10 @@
 /// provide C interface to C++ for calling
 pub mod ffi;
 use hilog_rust::{debug, error, hilog, HiLogLabel, LogType};
-use libc::{int32_t, int64_t, c_int, c_uint};
+use libc::{int32_t, int64_t, c_int};
 use std::ffi::{CString, c_char};
+use std::thread::sleep; 
+use std::time::Duration;
 use crate::net_packet::NetPacket;
 use crate::stream_buffer::StreamBuffer;
 const LOG_LABEL: HiLogLabel = HiLogLabel {
@@ -27,7 +29,8 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 };
 const MAX_PACKET_BUF_SIZE: usize = 256;
 const SEND_RETRY_LIMIT: i32 = 32;
-const SEND_RETRY_SLEEP_TIME: c_uint = 10000;
+const SEND_RETRY_SLEEP_TIME: u64 = 10000;
+
 #[repr(C)]
 struct EventTime {
     id: int32_t,
@@ -48,6 +51,18 @@ pub struct StreamSession {
     pub pid: i32,
     /// token type field
     pub token_type: i32,
+}
+
+impl Default for StreamSession {
+    fn default() -> Self {
+        Self {
+            module_type: -1,
+            fd: -1,
+            uid: -1,
+            pid: -1,
+            token_type: -1,
+        }
+    }
 }
 
 impl StreamSession {
@@ -71,21 +86,39 @@ impl StreamSession {
     fn uid(&self) -> i32 {
         self.uid
     }
+
     fn pid(&self) -> i32 {
         self.pid
     }
+
     fn module_type(&self) -> i32 {
         self.module_type
     }
+
     fn session_fd(&self) -> i32 {
         self.fd
     }
+
     fn set_token_type(&mut self, style: i32) {
         self.token_type = style
     }
+
+    fn set_uid(&mut self, uid: i32) {
+        self.uid = uid
+    }
+
+    fn set_pid(&mut self, pid: i32) {
+        self.pid = pid
+    }
+
+    fn set_fd(&mut self, fd: i32) {
+        self.fd = fd
+    }
+
     fn token_type(&self) -> i32 {
         self.token_type
     }
+
     fn session_close(&mut self) {
         debug!(LOG_LABEL, "Enter fd_:{}.", self.fd);
         if self.fd >= 0 {
@@ -95,21 +128,22 @@ impl StreamSession {
             self.fd = -1;
         }
     }
+
     fn session_send_msg(&self, buf: *const c_char, size: usize) -> bool {
         if buf.is_null() {
-            error!(LOG_LABEL, "CHKPF(buf) is null");
+            error!(LOG_LABEL, "buf is null");
             return false;
         }
         if size == 0 || size > MAX_PACKET_BUF_SIZE {
-            error!(LOG_LABEL, "buf size:{}", size);
+            error!(LOG_LABEL, "size is either equal to 0 or greater than MAX_PACKET_BUF_SIZE, size: {}", size);
             return false;
         }
         if self.fd < 0 {
-            error!(LOG_LABEL, "The fd is less than 0");
+            error!(LOG_LABEL, "The fd is less than 0, fd: {}", self.fd);
             return false;
         }
-        let mut idx = 0;
-        let mut retry_count = 0;
+        let mut idx: usize = 0;
+        let mut retry_count: i32 = 0;
         let buf_size = size;
         let mut rem_size = buf_size;
         while rem_size > 0 && retry_count < SEND_RETRY_LIMIT {
@@ -124,10 +158,7 @@ impl StreamSession {
             };
             if count < 0 {
                 if errno == libc::EAGAIN || errno == libc::EINTR || errno == libc::EWOULDBLOCK {
-                    // safety: call libc library function which is unsafe function
-                    unsafe {
-                        libc::usleep(SEND_RETRY_SLEEP_TIME);
-                    }
+                    sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
                     error!(LOG_LABEL, "Continue for errno EAGAIN|EINTR|EWOULDBLOCK, errno:{}", errno);
                     continue;
                 }
@@ -137,10 +168,7 @@ impl StreamSession {
             idx += count as usize;
             rem_size -= count as usize;
             if rem_size > 0 {
-                // safety: call libc library function which is unsafe function
-                unsafe {
-                    libc::usleep(SEND_RETRY_SLEEP_TIME);
-                }
+                sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
             }
         }
         if retry_count >= SEND_RETRY_LIMIT || rem_size != 0 {
@@ -150,6 +178,7 @@ impl StreamSession {
         }
         true
     }
+
     /// session send message
     pub fn send_msg_pkt(&self, pkt: &NetPacket) -> bool {
         if pkt.stream_buffer.chk_rwerror() {

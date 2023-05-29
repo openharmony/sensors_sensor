@@ -32,8 +32,8 @@ StreamSocket::StreamSocket() {}
 StreamSocket::~StreamSocket()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    rust_close(&rustStreamSocket_);
-    rust_epoll_close(&rustStreamSocket_);
+    StreamSocketClose(streamSocketPtr_.get());
+    StreamSocketEpollClose(streamSocketPtr_.get());
 #else
     Close();
     EpollClose();
@@ -43,7 +43,7 @@ StreamSocket::~StreamSocket()
 int32_t StreamSocket::EpollCreate(int32_t size)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return rust_epoll_create(&rustStreamSocket_, size);
+    return StreamSocketEpollCreate(streamSocketPtr_.get(), size);
 #else
     epollFd_ = epoll_create(size);
     if (epollFd_ < 0) {
@@ -59,7 +59,7 @@ int32_t StreamSocket::EpollCreate(int32_t size)
 int32_t StreamSocket::EpollCtl(int32_t fd, int32_t op, struct epoll_event &event, int32_t epollFd)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return rust_epoll_ctl(&rustStreamSocket_, fd, op, &event, epollFd);
+    return StreamSocketEpollCtl(streamSocketPtr_.get(), fd, op, &event, epollFd);
 #else
     if (fd < 0) {
         SEN_HILOGE("Invalid fd");
@@ -89,7 +89,7 @@ int32_t StreamSocket::EpollCtl(int32_t fd, int32_t op, struct epoll_event &event
 int32_t StreamSocket::EpollWait(struct epoll_event &events, int32_t maxevents, int32_t timeout, int32_t epollFd)
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return rust_epoll_wait(&rustStreamSocket_, &events, maxevents, timeout, epollFd);
+    return StreamSocketEpollWait(streamSocketPtr_.get(), &events, maxevents, timeout, epollFd);
 #else
     if (epollFd < 0) {
         epollFd = epollFd_;
@@ -109,7 +109,7 @@ int32_t StreamSocket::EpollWait(struct epoll_event &events, int32_t maxevents, i
 void StreamSocket::EpollClose()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    rust_epoll_close(&rustStreamSocket_);
+    StreamSocketEpollClose(streamSocketPtr_.get());
 #else
     if (epollFd_ >= 0) {
         close(epollFd_);
@@ -121,7 +121,7 @@ void StreamSocket::EpollClose()
 void StreamSocket::Close()
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    rust_close(&rustStreamSocket_);
+    StreamSocketClose(streamSocketPtr_.get());
 #else
     if (fd_ >= 0) {
         auto rf = close(fd_);
@@ -136,7 +136,7 @@ void StreamSocket::Close()
 int32_t StreamSocket::GetFd() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return get_fd(&rustStreamSocket_);
+    return StreamSocketGetFd(streamSocketPtr_.get());
 #else
     return fd_;
 #endif // OHOS_BUILD_ENABLE_RUST
@@ -144,7 +144,7 @@ int32_t StreamSocket::GetFd() const
 int32_t StreamSocket::GetEpollFd() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
-    return get_epoll_fd(&rustStreamSocket_);
+    return StreamSocketGetEpollFd(streamSocketPtr_.get());
 #else
     return epollFd_;
 #endif // OHOS_BUILD_ENABLE_RUST

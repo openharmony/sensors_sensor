@@ -12,9 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-/// C++ call function
-pub mod ffi;
+
 use std::ffi::{CString, c_char};
 use hilog_rust::{hilog, error, HiLogLabel, LogType};
 use std::mem::size_of;
@@ -33,7 +31,7 @@ pub struct PackHead {
     /// NetPacket type
     pub id_msg: MessageId,
     /// SufferBuffer size
-    pub size: i32,
+    pub size: usize,
 }
 
 /// NetPacket type
@@ -91,7 +89,7 @@ pub enum MessageId {
 pub struct NetPacket {
     /// NetPacket head
     pub msg_id: MessageId,
-    /// NetPacket streambuffer
+    /// NetPacket stream buffer
     pub stream_buffer: StreamBuffer,
 }
 
@@ -138,8 +136,8 @@ impl NetPacket {
         self.stream_buffer.size()
     }
     /// get_packet_length
-    pub fn get_packet_length(&self) -> i32 {
-        size_of::<PackHead>() as i32 + self.stream_buffer.w_pos
+    pub fn get_packet_length(&self) -> usize {
+        size_of::<PackHead>() + self.stream_buffer.w_pos
     }
     /// get_data
     pub fn get_data(&self) -> *const c_char {
@@ -157,7 +155,7 @@ impl NetPacket {
         };
         buf.write(head);
         if self.stream_buffer.w_pos > 0 && !buf.write_char_usize(&self.stream_buffer.sz_buff[0] as *const c_char,
-            self.stream_buffer.w_pos as usize) {
+            self.stream_buffer.w_pos) {
             error!(LOG_LABEL, "Write data to stream failed, errCode:{}", STREAM_BUF_WRITE_FAIL);
         }
     }

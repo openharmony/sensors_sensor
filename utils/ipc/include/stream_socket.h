@@ -31,7 +31,7 @@
 
 #include "circle_stream_buffer.h"
 #include "net_packet.h"
-#ifdef OHOS_BUILD_ENABLE_RUST 
+#ifdef OHOS_BUILD_ENABLE_RUST
 #include "rust_binding.h"
 #endif // OHOS_BUILD_ENABLE_RUST
 
@@ -39,7 +39,7 @@ namespace OHOS {
 namespace Sensors {
 class StreamSocket {
 public:
-    using PacketCallBackFun = std::function<void(NetPacket&)>;
+    using PacketCallBackFun = std::function<void(NetPacket &)>;
     StreamSocket();
     virtual ~StreamSocket();
     int32_t EpollCreate(int32_t size);
@@ -51,18 +51,17 @@ public:
     int32_t GetEpollFd() const;
 #ifndef OHOS_BUILD_ENABLE_RUST
     void OnReadPackets(CircleStreamBuffer &buf, PacketCallBackFun callbackFun);
-#endif  // OHOS_BUILD_ENABLE_RUST
+#endif // OHOS_BUILD_ENABLE_RUST
     DISALLOW_COPY_AND_MOVE(StreamSocket);
-
 protected:
 #ifdef OHOS_BUILD_ENABLE_RUST
-    struct RustStreamSocket rustStreamSocket_;
+    std::unique_ptr<struct RustStreamSocket, void(*)(RustStreamSocket*)> streamSocketPtr_
+    { StreamSocketCreate(), StreamSocketDelete };
 #else
-    int32_t fd_ { -1 };
-    int32_t epollFd_ { -1 };
+    int32_t fd_{-1};
+    int32_t epollFd_{-1};
 #endif // OHOS_BUILD_ENABLE_RUST
-
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // STREAM_SOCKET_H
+#endif // STREAM_SOCKET_H

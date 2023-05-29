@@ -195,7 +195,7 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
     pkt << activeInfo.GetPid() << activeInfo.GetSensorId() <<
         activeInfo.GetSamplingPeriodNs() << activeInfo.GetMaxReportDelayNs();
 #ifdef OHOS_BUILD_ENABLE_RUST
-    if (chk_rwerror(&pkt.rustStreamBuffer_)) {
+    if (StreamBufferChkRWError(pkt.streamBufferPtr_.get())) {
 #else
     if (pkt.ChkRWError()) {
 #endif // OHOS_BUILD_ENABLE_RUST
