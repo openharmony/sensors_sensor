@@ -20,7 +20,6 @@ group("fuzztest") {
   deps = [
     "getactivesensorinfos_fuzzer:fuzztest",
     "register_fuzzer:fuzztest",
-    "resetsensors_fuzzer:fuzztest",
     "resumesensors_fuzzer:fuzztest",
     "sensoragent_fuzzer:fuzztest",
     "suspendsensors_fuzzer:fuzztest",
