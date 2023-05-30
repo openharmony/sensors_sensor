@@ -25,6 +25,7 @@ namespace Sensors {
 using namespace OHOS::AppExecFwk;
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FdListener" };
+constexpr int32_t MAX_DATA_BUF_SIZE = 256;
 }
 
 void FdListener::SetChannel(SensorDataChannel *channel)
@@ -38,9 +39,9 @@ void FdListener::OnReadable(int32_t fd)
         SEN_HILOGE("Invalid fd, fd:%{public}d", fd);
         return;
     }
-    char szBuf[MAX_PACKET_BUF_SIZE] = {};
+    char szBuf[MAX_DATA_BUF_SIZE] = {};
     for (size_t i = 0; i < MAX_RECV_LIMIT; i++) {
-        ssize_t size = recv(fd, szBuf, MAX_PACKET_BUF_SIZE, MSG_DONTWAIT | MSG_NOSIGNAL);
+        ssize_t size = recv(fd, szBuf, MAX_DATA_BUF_SIZE, MSG_DONTWAIT | MSG_NOSIGNAL);
         if (size > 0) {
             CHKPV(channel_);
             ReceiveMessageFun receiveMessage = channel_->GetReceiveMessageFun();
@@ -58,7 +59,7 @@ void FdListener::OnReadable(int32_t fd)
                 i, errno);
             break;
         }
-        if (size < MAX_PACKET_BUF_SIZE) {
+        if (size < MAX_DATA_BUF_SIZE) {
             break;
         }
     }
