@@ -63,6 +63,7 @@ ohos_shared_library("libsensor_service") {
   part_name = "sensor"
   subsystem_name = "sensors"
 }
+
 ##########################################################################
 ohos_shared_library("libsensor_service_static") {
   sources = [
