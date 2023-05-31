@@ -48,7 +48,7 @@ int32_t SensorServiceClient::InitServiceClient()
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorServer_ != nullptr) {
-        SEN_HILOGD("already init");
+        SEN_HILOGD("Already init");
         return ERR_OK;
     }
     if (sensorClientStub_ == nullptr) {
@@ -60,7 +60,7 @@ int32_t SensorServiceClient::InitServiceClient()
     while (retry < GET_SERVICE_MAX_COUNT) {
         sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
         if (sensorServer_ != nullptr) {
-            SEN_HILOGD("get service success, retry:%{public}d", retry);
+            SEN_HILOGD("Get service success, retry:%{public}d", retry);
             serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
             if (serviceDeathObserver_ != nullptr) {
                 sensorServer_->AsObject()->AddDeathRecipient(serviceDeathObserver_);
@@ -68,13 +68,13 @@ int32_t SensorServiceClient::InitServiceClient()
             sensorList_ = sensorServer_->GetSensorList();
             return ERR_OK;
         }
-        SEN_HILOGW("get service failed, retry:%{public}d", retry);
+        SEN_HILOGW("Get service failed, retry:%{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
-    SEN_HILOGE("get service failed");
+    SEN_HILOGE("Get service failed");
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }
 

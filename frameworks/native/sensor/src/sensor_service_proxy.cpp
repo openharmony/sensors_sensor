@@ -41,7 +41,7 @@ ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPerio
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
+        SEN_HILOGE("Write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
     WRITEINT32(data, sensorId, WRITE_PARCEL_ERR);
@@ -53,7 +53,7 @@ ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPerio
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -64,7 +64,7 @@ ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
+        SEN_HILOGE("Write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
     WRITEINT32(data, sensorId, WRITE_PARCEL_ERR);
@@ -74,7 +74,7 @@ ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableSensor", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -86,7 +86,7 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
     MessageOption option;
     std::vector<Sensor> sensors;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
+        SEN_HILOGE("Write descriptor failed");
         return sensors;
     }
     sptr<IRemoteObject> remote = Remote();
@@ -98,7 +98,7 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
         return sensors;
     }
     uint32_t sensorCount;
@@ -128,7 +128,7 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
+        SEN_HILOGE("Write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
     sensorBasicDataChannel->SendToBinder(data);
@@ -139,7 +139,7 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "TransferDataChannel", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     sensorBasicDataChannel->CloseSendFd();
     return static_cast<ErrCode>(ret);
@@ -152,7 +152,7 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     MessageParcel reply;
     MessageOption option;
     if (!data.WriteInterfaceToken(SensorServiceProxy::GetDescriptor())) {
-        SEN_HILOGE("write descriptor failed");
+        SEN_HILOGE("Write descriptor failed");
         return WRITE_PARCEL_ERR;
     }
     WRITEREMOTEOBJECT(data, sensorClient, WRITE_PARCEL_ERR);
@@ -162,7 +162,7 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySensorChannel", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
