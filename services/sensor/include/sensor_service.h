@@ -90,6 +90,7 @@ private:
     bool RegisterPermCallback(int32_t sensorId);
     void UnregisterPermCallback();
     void ReportActiveInfo(int32_t sensorId, int32_t pid);
+    bool CheckSensorId(int32_t sensorId);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

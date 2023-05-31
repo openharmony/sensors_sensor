@@ -34,7 +34,6 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
-constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
@@ -204,12 +203,23 @@ ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs
     return ret;
 }
 
+bool SensorService::CheckSensorId(int32_t sensorId)
+{
+    std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
+    auto it = sensorMap_.find(sensorId);
+    if (it == sensorMap_.end()) {
+        SEN_HILOGE("Invalid sensorId, sensorId:%{public}d", sensorId);
+        return false;
+    }
+    return true;
+}
+
 ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
-    if ((sensorId == INVALID_SENSOR_ID) ||
+    if ((!CheckSensorId(sensorId)) ||
         ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
-        SEN_HILOGE("sensorId is 0 or maxReportDelayNs exceeded the maximum value");
+        SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceeded the maximum value");
         return ERR_NO_INIT;
     }
     int32_t pid = GetCallingPid();
@@ -256,7 +266,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
 ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
 {
     CALL_LOG_ENTER;
-    if (sensorId == INVALID_SENSOR_ID) {
+    if (!CheckSensorId(sensorId)) {
         SEN_HILOGE("sensorId is invalid");
         return ERR_NO_INIT;
     }
