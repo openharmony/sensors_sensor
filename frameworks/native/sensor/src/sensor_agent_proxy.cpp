@@ -30,10 +30,6 @@ constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 }  // namespace
 
 #define SenClient SensorServiceClient::GetInstance()
-OHOS::sptr<SensorAgentProxy> SensorAgentProxy::sensorObj_ = nullptr;
-bool SensorAgentProxy::g_isChannelCreated;
-int64_t SensorAgentProxy::g_samplingInterval;
-int64_t SensorAgentProxy::g_reportInterval;
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
 std::mutex sensorInfoMutex_;
@@ -41,8 +37,6 @@ SensorInfo *sensorInfos_ = nullptr;
 std::mutex sensorActiveInfoMutex_;
 SensorActiveInfo *sensorActiveInfos_ = nullptr;
 int32_t sensorInfoCount_ = 0;
-std::map<int32_t, const SensorUser *> SensorAgentProxy::g_subscribeMap;
-std::map<int32_t, const SensorUser *> SensorAgentProxy::g_unsubscribeMap;
 
 SensorAgentProxy::SensorAgentProxy()
     : dataChannel_(new (std::nothrow) SensorDataChannel())
@@ -52,16 +46,6 @@ SensorAgentProxy::~SensorAgentProxy()
 {
     CALL_LOG_ENTER;
     ClearSensorInfos();
-}
-
-const SensorAgentProxy *SensorAgentProxy::GetSensorsObj()
-{
-    CALL_LOG_ENTER;
-    if (sensorObj_ == nullptr) {
-        SEN_HILOGD("sensorObj_ new object");
-        sensorObj_ = new (std::nothrow) SensorAgentProxy();
-    }
-    return sensorObj_;
 }
 
 void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *data)
@@ -86,7 +70,7 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *
     }
 }
 
-int32_t SensorAgentProxy::CreateSensorDataChannel() const
+int32_t SensorAgentProxy::CreateSensorDataChannel()
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
@@ -95,7 +79,8 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
-    auto ret = dataChannel_->CreateSensorDataChannel(HandleSensorData, nullptr);
+    auto ret = dataChannel_->CreateSensorDataChannel(std::bind(&SensorAgentProxy::HandleSensorData,
+        this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), nullptr);
     if (ret != ERR_OK) {
         SEN_HILOGE("create data channel failed, ret:%{public}d", ret);
         return ret;
@@ -110,7 +95,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel() const
     return ERR_OK;
 }
 
-int32_t SensorAgentProxy::DestroySensorDataChannel() const
+int32_t SensorAgentProxy::DestroySensorDataChannel()
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
@@ -133,7 +118,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel() const
     return ERR_OK;
 }
 
-int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user) const
+int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -161,7 +146,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     return ret;
 }
 
-int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user) const
+int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -185,7 +170,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
 }
 
 int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval,
-                                   int64_t reportInterval) const
+                                   int64_t reportInterval)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     if (!SenClient.IsValid(sensorId)) {
@@ -206,7 +191,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user) const
+int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
     SEN_HILOGI("in, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
@@ -225,7 +210,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user) const
+int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
     SEN_HILOGI("in, sensorId: %{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
@@ -250,7 +235,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int32_t mode) const
+int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -337,7 +322,7 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     return SUCCESS;
 }
 
-int32_t SensorAgentProxy::SuspendSensors(int32_t pid) const
+int32_t SensorAgentProxy::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
@@ -351,7 +336,7 @@ int32_t SensorAgentProxy::SuspendSensors(int32_t pid) const
     return ret;
 }
 
-int32_t SensorAgentProxy::ResumeSensors(int32_t pid) const
+int32_t SensorAgentProxy::ResumeSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
@@ -365,7 +350,8 @@ int32_t SensorAgentProxy::ResumeSensors(int32_t pid) const
     return ret;
 }
 
-int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid, SensorActiveInfo **sensorActiveInfos, int32_t *count) const
+int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid,
+    SensorActiveInfo **sensorActiveInfos, int32_t *count) const
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
@@ -410,7 +396,7 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid, SensorActiveInfo **s
     return ERR_OK;
 }
 
-int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback) const
+int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback)
 {
     CHKPR(callback, OHOS::Sensors::ERROR);
     CHKPR(dataChannel_, INVALID_POINTER);
@@ -421,7 +407,7 @@ int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback) const
     return ret;
 }
 
-int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback) const
+int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
 {
     CHKPR(callback, OHOS::Sensors::ERROR);
     int32_t ret = SenClient.Unregister(callback);
