@@ -115,5 +115,8 @@ ohos_shared_library("libsensor_service_static") {
   subsystem_name = "sensors"
 }
 group("sensor_service_target") {
-  deps = [ ":libsensor_service" ]
+  deps = [
+    ":libsensor_service",
+    ":libsensor_service_static",
+  ]
 }
