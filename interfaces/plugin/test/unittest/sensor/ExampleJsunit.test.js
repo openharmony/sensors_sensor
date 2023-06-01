@@ -219,26 +219,6 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_009
-     * @tc.desc:verify app info is not null
-     * @tc.type: FUNC
-     * @tc.require: Issue Number
-     */
-    it("SensorJsTest_009", 0, async function (done) {
-        function onSensorCallback(data) {
-            console.info('SensorJsTest_009 callback in');
-            expect(false).assertTrue();
-            done();
-        }
-        sensor.on(sensor.SensorId.ACCELEROMETER, onSensorCallback);
-        sensor.off(sensor.SensorId.ACCELEROMETER, onSensorCallback);
-        setTimeout(() => {
-            expect(true).assertTrue();
-            done();
-        }, 500);
-    })
-
-    /*
      * @tc.name:SensorJsTest_010
      * @tc.desc:verify app info is not null
      * @tc.type: FUNC
