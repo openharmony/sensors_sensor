@@ -16,9 +16,9 @@
 #ifndef SENSOR_PROXY_H
 #define SENSOR_PROXY_H
 
+#include <atomic>
 #include <map>
 #include <thread>
-
 #include "refbase.h"
 #include "singleton.h"
 
@@ -57,10 +57,10 @@ private:
     void ClearSensorInfos() const;
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
-    OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_;
-    bool g_isChannelCreated;
-    int64_t g_samplingInterval;
-    int64_t g_reportInterval;
+    OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_ = nullptr;
+    std::atomic_bool g_isChannelCreated = false;
+    int64_t g_samplingInterval = -1;
+    int64_t g_reportInterval = -1;
     std::map<int32_t, const SensorUser *> g_subscribeMap;
     std::map<int32_t, const SensorUser *> g_unsubscribeMap;
 };
