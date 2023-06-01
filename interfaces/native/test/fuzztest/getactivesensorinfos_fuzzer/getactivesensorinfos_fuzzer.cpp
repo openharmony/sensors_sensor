@@ -16,38 +16,39 @@
 #include "getactivesensorinfos_fuzzer.h"
 
 #include "accesstoken_kit.h"
-#include "securec.h"
 #include "nativetoken_kit.h"
+#include "securec.h"
 #include "token_setproc.h"
 
 #include "sensor_agent.h"
 #include "sensor_agent_type.h"
+#include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
+using namespace OHOS::HiviewDFX;
 using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
+constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "GetActiveSensorInfosFuzzTest" };
 constexpr size_t DATA_MIN_SIZE = 4;
 } // namespace
 
 template<class T>
-size_t GetObject(const uint8_t *data, size_t size, T &object)
+void GetObject(const uint8_t *data, size_t size, T &object)
 {
     size_t objectSize = sizeof(object);
     if (objectSize > size) {
-        return 0;
+        return;
     }
-    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
-    if (ret != EOK) {
-        return 0;
-    }
-    return objectSize;
+    memcpy_s(&object, objectSize, data, objectSize);
+    return;
 }
 
 void SetUpTestCase()
 {
-    const char **perms = new const char *[1];
+    const char **perms = new (std::nothrow) const char *[1];
+    CHKPV(perms);
     perms[0] = "ohos.permission.ACCELEROMETER";
     TokenInfoParams infoInstance = {
         .dcapsNum = 0,
@@ -56,7 +57,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "SensorPowerTest",
+        .processName = "GetActiveSensorInfosFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -71,10 +72,9 @@ void GetActiveSensorInfosFuzzTest(const uint8_t* data, size_t size)
         return;
     }
     SetUpTestCase();
-    size_t startPos = 0;
-    int32_t pid {-1};
-    GetObject<int32_t>(data + startPos, size - startPos, pid);
-    SensorActiveInfo *sensorActiveInfos {nullptr};
+    int32_t pid { -1 };
+    GetObject<int32_t>(data, size, pid);
+    SensorActiveInfo *sensorActiveInfos { nullptr };
     int32_t count { 0 };
     GetActiveSensorInfos(pid, &sensorActiveInfos, &count);
 }

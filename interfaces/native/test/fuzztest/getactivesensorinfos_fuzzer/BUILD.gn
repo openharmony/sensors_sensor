@@ -24,6 +24,7 @@ ohos_fuzztest("GetActiveSensorInfosFuzzTest") {
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/interfaces/native/test/fuzztest/getactivesensorinfos_fuzzer",
+    "$SUBSYSTEM_DIR/utils/common/include",
   ]
 
   cflags = [
@@ -42,6 +43,7 @@ ohos_fuzztest("GetActiveSensorInfosFuzzTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
   ]
 }
 

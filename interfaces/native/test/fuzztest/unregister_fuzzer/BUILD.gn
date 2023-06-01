@@ -25,6 +25,7 @@ ohos_fuzztest("UnregisterFuzzTest") {
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/interfaces/native/test/fuzztest/unregister_fuzzer",
+    "$SUBSYSTEM_DIR/utils/common/include",
   ]
 
   cflags = [
@@ -43,6 +44,7 @@ ohos_fuzztest("UnregisterFuzzTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
   ]
 }
 
