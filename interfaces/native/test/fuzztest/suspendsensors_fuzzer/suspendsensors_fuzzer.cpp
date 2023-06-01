@@ -41,7 +41,6 @@ void GetObject(const uint8_t *data, size_t size, T &object)
         return;
     }
     memcpy_s(&object, objectSize, data, objectSize);
-    return;
 }
 
 void SetUpTestCase()
