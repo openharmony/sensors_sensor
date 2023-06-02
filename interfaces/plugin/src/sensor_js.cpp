@@ -1169,17 +1169,9 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     return nullptr;
 }
 
-napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId)
+static bool RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
-    size_t argc = 1;
-    napi_value args[1] = { 0 };
-    napi_value thisVar = nullptr;
-    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail");
-        return nullptr;
-    }
     std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
@@ -1192,6 +1184,24 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
     }
     if ((!callbackInfos.empty()) || CheckSubscribe(sensorTypeId)) {
         SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
+        return false;
+    }
+    return true;
+}
+
+napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId)
+{
+    CALL_LOG_ENTER;
+    size_t argc = 1;
+    napi_value args[1] = { 0 };
+    napi_value thisVar = nullptr;
+    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
+    if (status != napi_ok) {
+        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail");
+        return nullptr;
+    }
+    if (!RemoveSubscribeCallback(env, sensorTypeId)) {
+        SEN_HILOGW("RemoveSubscribeCallback failed");
         return nullptr;
     }
     if (UnsubscribeSensor(sensorTypeId) != OHOS::ERR_OK) {
