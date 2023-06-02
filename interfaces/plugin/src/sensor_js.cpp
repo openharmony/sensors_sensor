@@ -1182,10 +1182,10 @@ static bool RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
         }
         iter = callbackInfos.erase(iter);
     }
-    if ((!callbackInfos.empty()) || CheckSubscribe(sensorTypeId)) {
-        SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
+    if (CheckSubscribe(sensorTypeId)) {
         return false;
     }
+    g_subscribeCallbacks.erase(sensorTypeId);
     return true;
 }
 
@@ -1201,14 +1201,13 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
         return nullptr;
     }
     if (!RemoveSubscribeCallback(env, sensorTypeId)) {
-        SEN_HILOGW("RemoveSubscribeCallback failed");
+        SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
         return nullptr;
     }
     if (UnsubscribeSensor(sensorTypeId) != OHOS::ERR_OK) {
         SEN_HILOGW("UnsubscribeSensor failed");
         return nullptr;
     }
-    g_subscribeCallbacks.erase(sensorTypeId);
     return nullptr;
 }
 
