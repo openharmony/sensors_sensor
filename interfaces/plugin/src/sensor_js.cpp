@@ -1169,7 +1169,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     return nullptr;
 }
 
-static bool RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
+static int32_t RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
@@ -1182,11 +1182,11 @@ static bool RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
         }
         iter = callbackInfos.erase(iter);
     }
-    if (CheckSubscribe(sensorTypeId)) {
-        return false;
+    if (callbackInfos.empty()) {
+        g_subscribeCallbacks.erase(sensorTypeId);
+        return 0;
     }
-    g_subscribeCallbacks.erase(sensorTypeId);
-    return true;
+    return callbackInfos.size();
 }
 
 napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId)
@@ -1200,7 +1200,7 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail");
         return nullptr;
     }
-    if (!RemoveSubscribeCallback(env, sensorTypeId)) {
+    if (RemoveSubscribeCallback(env, sensorTypeId) != 0 || CheckSubscribe(sensorTypeId)) {
         SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
         return nullptr;
     }
