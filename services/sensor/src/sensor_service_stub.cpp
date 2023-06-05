@@ -198,7 +198,7 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
     int32_t pid;
     READINT32(data, pid, READ_PARCEL_ERR);
     std::vector<ActiveInfo> activeInfoList;
-    int32_t ret = GetActiveInfoList(pid, activeInfoList);
+    ret = GetActiveInfoList(pid, activeInfoList);
     if (ret != ERR_OK) {
         SEN_HILOGE("Get activeInfo list failed");
         return ret;

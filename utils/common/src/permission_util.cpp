@@ -67,7 +67,7 @@ void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::strin
 int32_t PermissionUtil::CheckManageSensorPermission(AccessTokenID callerToken)
 {
     if (AccessTokenKit::GetTokenTypeFlag(callerToken) != ATokenTypeEnum::TOKEN_NATIVE) {
-        SEN_HILOGE("TokenType is not TOKEN_NATIVE, tokenType:%{public}d", tokenType);
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
     }
     int32_t ret = AccessTokenKit::VerifyAccessToken(callerToken, MANAGE_SENSOR_PERMISSION);
