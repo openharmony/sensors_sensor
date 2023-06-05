@@ -3843,7 +3843,7 @@ describe("SensorJsTest", function () {
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
         }
-        console.info("Sensor_GetGeomagneticDip_004 end")
+        console.info("Sensor_GetAltitude_006 end")
     })
 
     /*
@@ -4085,7 +4085,7 @@ describe("SensorJsTest", function () {
             expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
             done();
         }
-        console.info("Sensor_GetGeomagneticDip_004 end")
+        console.info("Sensor_TransformCoordinateSystem_006 end")
     })
 
     /*
