@@ -194,6 +194,12 @@ bool StreamBuffer::Clone(const StreamBuffer &buf)
 #endif // OHOS_BUILD_ENABLE_RUST
 }
 #ifndef OHOS_BUILD_ENABLE_RUST
+
+bool StreamBuffer::ChkRWError() const
+{
+    return (rwErrorStatus_ != ErrorStatus::ERROR_STATUS_OK);
+}
+
 bool StreamBuffer::SeekReadPos(size_t n)
 {
     size_t pos = rPos_ + n;
@@ -208,11 +214,6 @@ bool StreamBuffer::SeekReadPos(size_t n)
 bool StreamBuffer::IsEmpty() const
 {
     return (rPos_ == wPos_);
-}
-
-bool StreamBuffer::ChkRWError() const
-{
-    return (rwErrorStatus_ != ErrorStatus::ERROR_STATUS_OK);
 }
 
 size_t StreamBuffer::Size() const
@@ -236,6 +237,9 @@ size_t StreamBuffer::GetAvailableBufSize() const
 
 const std::string &StreamBuffer::GetErrorStatusRemark() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
+#else
     static const std::vector<std::pair<ErrorStatus, std::string>> remark {
         {ErrorStatus::ERROR_STATUS_OK, "OK"},
         {ErrorStatus::ERROR_STATUS_READ, "READ_ERROR"},
@@ -246,6 +250,7 @@ const std::string &StreamBuffer::GetErrorStatusRemark() const
         return (item.first == rwErrorStatus_);
     });
     return (tIter != remark.cend() ? tIter->second : invalidStatus);
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 const char *StreamBuffer::Data() const

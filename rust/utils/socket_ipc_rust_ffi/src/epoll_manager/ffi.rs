@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,41 +15,51 @@
  
 use super::*;
 use hilog_rust::{info, error, hilog, HiLogLabel, LogType};
-use crate::error::SocketStatusCode;
-use crate::epoll_manager::EpollManager;
+use crate::{error::SocketStatusCode, epoll_manager::EpollManager};
 use std::mem::drop;
+use std::ffi::c_char;
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
     domain: 0xD002220,
     tag: "stream_socket_ffi"
 };
+const RET_ERR: i32 = -1;
 
-/// create unique_ptr of stream_socket for C++
+/// Create unique_ptr of StreamSocket for C++ code
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketCreate() -> *mut EpollManager {
     let epoll_manager: Box::<EpollManager> = Box::default(); 
     Box::into_raw(epoll_manager)
 }
-/// drop unique_ptr of stream_socket for C++
+/// Drop unique_ptr of StreamSocket for C++ code
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketDelete(raw: *mut EpollManager) {
     if !raw.is_null() {
         drop(Box::from_raw(raw));
     }
 }
-/// Get Fd
+/// Obtain StreamSocket's fd
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketGetFd(object: *const EpollManager) -> i32 {
     info!(LOG_LABEL, "enter StreamSocketGetFd");
@@ -59,12 +69,12 @@ pub unsafe extern "C" fn StreamSocketGetFd(object: *const EpollManager) -> i32 {
         SocketStatusCode::FdFail.into()
     }
 }
-
-/// Get Fd
+/// Obtain StreamSocket's epoll_fd
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketGetEpollFd(object: *const EpollManager) -> i32 {
     info!(LOG_LABEL, "enter StreamSocketGetEpollFd");
@@ -74,12 +84,12 @@ pub unsafe extern "C" fn StreamSocketGetEpollFd(object: *const EpollManager) -> 
         SocketStatusCode::EpollFdFail.into()
     }
 }
-
-/// Get Fd
+/// return epoll_fd by creating an event listening mechanism 
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketEpollCreate(object: *mut EpollManager, size: i32) -> i32 {
     info!(LOG_LABEL, "enter StreamSocketEpollCreate");
@@ -89,14 +99,13 @@ pub unsafe extern "C" fn StreamSocketEpollCreate(object: *mut EpollManager, size
     } else {
         SocketStatusCode::EpollCreateFail.into()
     }
-
 }
-
-/// StreamSocketEpollCtl
+/// Control fd event, which is delete, Add, and so en.
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketEpollCtl(object: *const EpollManager, fd: i32, op: i32,
     event: *mut libc::epoll_event, epoll_fd: i32) -> i32 {
@@ -104,55 +113,45 @@ pub unsafe extern "C" fn StreamSocketEpollCtl(object: *const EpollManager, fd: i
     if let Some(obj) = EpollManager::as_ref(object) {
         if fd < 0 {
             error!(LOG_LABEL, "Invalid fd");
-            return -1
+            return RET_ERR
         }
-        let epoll_fd = 
-            if epoll_fd < 0 {
-                if obj.is_valid_epoll(){
-                    obj.epoll_fd()
-                } else {
-                    return -1;
-                }
-            } else {
-                epoll_fd
-            };
-        EpollManager::epoll_ctl(fd, op, event, epoll_fd)
+        let epoll_fd_temp = obj.find_epoll_fd(epoll_fd);
+        if epoll_fd_temp == RET_ERR {
+            error!(LOG_LABEL, "Invalid epoll_fd");
+            return RET_ERR
+        }
+        EpollManager::epoll_ctl(fd, op, event, epoll_fd_temp)
     } else {
         SocketStatusCode::EpollCtlFail.into()
     }
 }
-
-/// StreamSocketEpollWait
+/// Wait epoll event which is generated
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketEpollWait(
     object: *const EpollManager, events: *mut libc::epoll_event, maxevents: i32, timeout: i32, epoll_fd: i32) -> i32 {
     info!(LOG_LABEL, "enter StreamSocketEpollWait");
     if let Some(obj) = EpollManager::as_ref(object) {
-        let epoll_fd = 
-            if epoll_fd < 0 {
-                if obj.is_valid_epoll() {
-                    obj.epoll_fd()
-                } else {
-                    return -1;
-                }
-            } else {
-                epoll_fd
-            };
-        EpollManager::epoll_wait(events, maxevents, timeout, epoll_fd)
+        let epoll_fd_temp = obj.find_epoll_fd(epoll_fd);
+        if epoll_fd_temp == RET_ERR {
+            error!(LOG_LABEL, "Invalid epoll_fd");
+            return RET_ERR
+        }
+        EpollManager::epoll_wait(events, maxevents, timeout, epoll_fd_temp)
     } else {
         SocketStatusCode::EpollWaitFail.into()
     }
 }
-
-/// StreamSocketEpollClose
+/// Close epoll fd after finishing listening event.
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketEpollClose(object: *mut EpollManager) -> i32 {
     info!(LOG_LABEL, "enter StreamSocketEpollClose");
@@ -163,11 +162,12 @@ pub unsafe extern "C" fn StreamSocketEpollClose(object: *mut EpollManager) -> i3
         SocketStatusCode::EpollCloseFail.into()
     }
 }
-/// StreamSocketClose
+/// Close socket fd after Sending data.
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketClose(object: *mut EpollManager) -> i32 {
     info!(LOG_LABEL, "enter StreamSocketClose");
@@ -178,5 +178,19 @@ pub unsafe extern "C" fn StreamSocketClose(object: *mut EpollManager) -> i32 {
         SocketStatusCode::SocketCloseFail.into()
     }
 }
-
-
+/// Set socket fd
+///
+/// # Safety
+/// 
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
+#[no_mangle]
+pub unsafe extern "C" fn StreamSocketSetFd(object: *mut EpollManager, fd: i32) -> i32 {
+    info!(LOG_LABEL, "enter StreamSocketSetFd");
+    if let Some(obj) = EpollManager::as_mut(object) {
+        obj.socket_set_fd(fd);
+        SocketStatusCode::Ok.into()
+    } else {
+        SocketStatusCode::SocketSetFdFail.into()
+    }
+}

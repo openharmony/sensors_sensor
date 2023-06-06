@@ -48,9 +48,9 @@ public:
     bool Write(const StreamBuffer &buf);
     virtual bool Write(const char *buf, size_t size);
 #ifndef OHOS_BUILD_ENABLE_RUST
+    bool ChkRWError() const;
     bool SeekReadPos(size_t n);
     bool IsEmpty() const;
-    bool ChkRWError() const;
     size_t Size() const;
     size_t UnreadSize() const;
     size_t GetAvailableBufSize() const;

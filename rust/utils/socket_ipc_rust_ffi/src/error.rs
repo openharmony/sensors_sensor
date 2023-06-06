@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +23,7 @@ pub enum SocketStatusCode {
     EpollWaitFail = -6,
     EpollCloseFail = -7,
     SocketCloseFail = -8,
+    SocketSetFdFail = -9,
 }
 
 pub enum BufferStatusCode {
@@ -40,6 +41,12 @@ pub enum BufferStatusCode {
     ReadServerPacketsFail = -11,
     ReadClientPacketsFail = -12,
     SizeFail = -13,
+    RcountFail = -14,
+    WcountFail = -15,
+    WposFail = -16,
+    RposFail = -17,
+    SetRwErrStatusFail = -18,
+    SetRposFail = -19,
 }
 
 pub enum SessionStatusCode {
@@ -52,7 +59,11 @@ pub enum SessionStatusCode {
     SetTokenTypeFail = -6,
     TokenTypeFail = -7,
     CloseFail = -8,
+    SetUidFail = -9,
+    SetFdFail = -10,
+    SetPidFail = -11,
 }
+
 pub enum NetPacketStatusCode {
     Ok = 0,
     Fail = -1,
@@ -70,10 +81,12 @@ impl From<SocketStatusCode> for i32 {
             SocketStatusCode::EpollWaitFail => -6,
             SocketStatusCode::EpollCloseFail => -7,
             SocketStatusCode::SocketCloseFail => -8,
+            SocketStatusCode::SocketSetFdFail => -9,
             _ => -1,
         }
     }
 }
+
 impl From<BufferStatusCode> for i32 {
     fn from(code: BufferStatusCode) -> i32 {
         match code {
@@ -90,6 +103,12 @@ impl From<BufferStatusCode> for i32 {
             BufferStatusCode::ReadServerPacketsFail => -11,
             BufferStatusCode::ReadClientPacketsFail => -12,
             BufferStatusCode::SizeFail => -13,
+            BufferStatusCode::RcountFail => -14,
+            BufferStatusCode::WcountFail => -15,
+            BufferStatusCode::WposFail => -16,
+            BufferStatusCode::RposFail => -17,
+            BufferStatusCode::SetRwErrStatusFail => -18,
+            BufferStatusCode::SetRposFail => -19,
             _ => -1,
         }
     }
@@ -106,10 +125,14 @@ impl From<SessionStatusCode> for i32 {
             SessionStatusCode::SetTokenTypeFail => -6,
             SessionStatusCode::TokenTypeFail => -7,
             SessionStatusCode::CloseFail => -8,
+            SessionStatusCode::SetUidFail => -9,
+            SessionStatusCode::SetFdFail => -10,
+            SessionStatusCode::SetPidFail => -11,
             _ => -1,
         }
     }
 }
+
 impl From<NetPacketStatusCode> for i32 {
     fn from(code: NetPacketStatusCode) -> i32 {
         match code {

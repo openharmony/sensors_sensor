@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,13 +17,15 @@
 #include <stdint.h>
 #include <string.h>
 #include "proto.h"
-#include "accesstoken_kit.h"
 
 extern "C" {
     struct RustStreamSocket;
     struct RustStreamSession;
     struct RustStreamBuffer;
-    struct RustNetPacket;
+    struct RustNetPacket {
+        OHOS::Sensors::MessageId msgId { OHOS::Sensors::MessageId::INVALID };
+        struct RustStreamBuffer* streamBuffer;
+    };
     RustStreamSocket* StreamSocketCreate(void);
     void StreamSocketDelete(RustStreamSocket* raw);
     int32_t StreamSocketGetFd(const RustStreamSocket* rustStreamSocket);
@@ -33,6 +35,7 @@ extern "C" {
     int32_t StreamSocketEpollWait(RustStreamSocket* rustStreamSocket, struct epoll_event* events, int32_t maxevents, int32_t timeout, int32_t epollFd);
     int32_t StreamSocketEpollClose(RustStreamSocket* rustStreamSocket);
     int32_t StreamSocketClose(RustStreamSocket* rustStreamSocket);
+    int32_t StreamSocketSetFd(RustStreamSocket* rustStreamSocket, int32_t fd);
     RustStreamSession* StreamSessionCreate(void);
     void StreamSessionDelete(RustStreamSession* raw);
     void StreamSessionSetUid(RustStreamSession* rustStreamSession, int32_t uid);

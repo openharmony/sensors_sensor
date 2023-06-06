@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,73 +24,51 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     tag: "NetPacket"
 };
 
-/// struct PackHead
 #[repr(packed(1))]
 #[repr(C)]
-pub struct PackHead {
-    /// NetPacket type
-    pub id_msg: MessageId,
-    /// SufferBuffer size
-    pub size: usize,
+pub(crate) struct PackHead {
+    pub(crate) id_msg: MessageId,
+    pub(crate) size: usize,
 }
 
-/// NetPacket type
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub enum MessageId {
-    ///
+pub(crate) enum MessageId {
     Invalid = 0,
-    ///
     Device,
-    ///
     DeviceIds,
-    ///
     DeviceSupportKeys,
-    ///
     AddDeviceListener,
-    ///
     DeviceKeyboardType,
-    ///
     DisplayInfo,
-    ///
     NoticeAnr,
-    ///
     MarkProcess,
-    ///
     OnSubscribeKey,
-    ///
     OnKeyEvent,
-    ///
     OnPointerEvent,
-    ///
     ReportKeyEvent,
-    ///
     ReportPointerEvent,
-    ///
     OnDeviceAdded,
-    ///
     OnDeviceRemoved,
-    ///
     CoordinationAddListener,
-    ///
     CoordinationMessage,
-    ///
     CoordinationGetState,
-
-    ///
     DragNotifyResult,
-    ///
     DragStateListener,
 }
 
-/// struct NetPacket
 #[derive(Copy, Clone)]
 #[repr(C)]
-pub struct NetPacket {
-    /// NetPacket head
-    pub msg_id: MessageId,
-    /// NetPacket stream buffer
-    pub stream_buffer: StreamBuffer,
+pub(crate) struct NetPacket {
+    pub(crate) msg_id: MessageId,
+    pub(crate) stream_buffer: StreamBuffer,
+}
+
+#[derive(Copy, Clone)]
+#[repr(C)]
+pub struct CNetPacket {
+    pub(super) msg_id: MessageId,
+    pub(super) stream_buffer_ptr: *const StreamBuffer,
 }
 
 impl Default for NetPacket {
@@ -103,52 +81,25 @@ impl Default for NetPacket {
 }
 
 impl NetPacket {
-    /// get refenrance from pointer
-    ///
-    ///# Safety
-    ///
-    /// object pointer is valid
-    pub unsafe fn as_ref<'a>(object: *const Self) -> Option<&'a Self>{
-        object.as_ref()
+    fn as_ref<'a>(object: *const Self) -> Option<&'a Self> {
+        // SAFETY: as_ref has already done no-null verification inside
+        unsafe {
+            object.as_ref()
+        }
     }
-    /// get mut refenrance from pointer
-    ///
-    ///# Safety
-    ///
-    /// object pointer is valid
-    pub unsafe fn as_mut<'a>(object: *mut Self) -> Option<&'a mut Self>{
-        object.as_mut()
+    fn as_mut<'a>(object: *mut Self) -> Option<&'a mut Self> {
+        // SAFETY: as_mut has already done no-null verification inside
+        unsafe {
+            object.as_mut()
+        }
     }
-    /// write
-    pub fn write<T>(&mut self, data: T) {
-        let data: *const c_char = &data as *const T as *const c_char;
-        let size = size_of::<T>();
-        self.stream_buffer.write_char_usize(data, size);
-    }
-    /// read
-    pub fn read<T>(&mut self, data: &mut T) {
-        let data: *mut c_char = data as *mut T as *mut c_char;
-        let size = size_of::<T>();
-        self.stream_buffer.read_char_usize(data, size);
-    }
-    /// get_size
-    pub fn size(&self) -> usize {
+    fn size(&self) -> usize {
         self.stream_buffer.size()
     }
-    /// get_packet_length
-    pub fn get_packet_length(&self) -> usize {
+    pub(super) fn get_packet_length(&self) -> usize {
         size_of::<PackHead>() + self.stream_buffer.w_pos
     }
-    /// get_data
-    pub fn get_data(&self) -> *const c_char {
-        self.stream_buffer.data()
-    }
-    /// get_msg_id
-    pub fn get_msg_id(&self) -> MessageId {
-        self.msg_id
-    }
-    /// make_data
-    pub fn make_data(&self, buf: &mut StreamBuffer) {
+    pub(crate) fn make_data(&self, buf: &mut StreamBuffer) {
         let head = PackHead {
             id_msg: self.msg_id,
             size: self.stream_buffer.w_pos,

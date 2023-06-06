@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,30 +15,20 @@
  
 /// provide C interface to C++ for calling
 pub mod ffi;
-use hilog_rust::{info, error, hilog, debug, HiLogLabel, LogType};
+pub(super) mod net_packet;
+mod binding;
+use hilog_rust::{error, hilog, debug, HiLogLabel, LogType};
 use std::ffi::{CString, c_char};
-use crate::binding;
 use std::mem::size_of;
-use crate::binding::CStreamServer;
-use crate::binding::CClient;
-use crate::net_packet::NetPacket;
-use crate::net_packet::PackHead;
+use binding::CSensorServiceClient;
+use net_packet::{NetPacket, CNetPacket, PackHead};
 type ErrorStatus = crate::stream_buffer::ErrStatus;
 /// function pointer alias
-pub type ServerPacketCallBackFun = unsafe extern "C" fn (
-    stream_server: *const CStreamServer,
-    fd: i32,
-    pkt: *const NetPacket,
-);
-/// function pointer alias
 pub type ClientPacketCallBackFun = unsafe extern "C" fn (
-    client: *const CClient,
-    pkt: *const NetPacket,
+    client: *const CSensorServiceClient,
+    pkt: *const CNetPacket,
 );
-/// function pointer alias
-pub type ReadPacketCallBackFun = unsafe fn (
-    pkt: *mut NetPacket,
-);
+
 const ONCE_PROCESS_NETPACKET_LIMIT: i32 = 100;
 const MAX_STREAM_BUF_SIZE: usize = 256;
 /// max buffer size of packet
@@ -66,22 +56,15 @@ pub enum ErrStatus {
     Write = 2,
 }
 
-/// struct streambuffer
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct StreamBuffer {
-    /// error status of read or write
-    pub rw_error_status: ErrorStatus,
-    /// read count
-    pub r_count: usize,
-    /// write count
-    pub w_count: usize,
-    /// read position
-    pub r_pos: usize,
-    /// write position
-    pub w_pos: usize,
-    /// buffer of read or write
-    pub sz_buff: [c_char; MAX_STREAM_BUF_SIZE + 1],
+    rw_error_status: ErrorStatus,
+    r_count: usize,
+    w_count: usize,
+    r_pos: usize,
+    w_pos: usize,
+    sz_buff: [c_char; MAX_STREAM_BUF_SIZE + 1],
 }
 
 impl Default for StreamBuffer {
@@ -99,30 +82,23 @@ impl Default for StreamBuffer {
 
 
 impl StreamBuffer {
-    /// return const referance of self
-    ///
-    /// # Safety
-    /// 
-    /// Makesure object is null pointer
-    unsafe fn as_ref<'a>(object: *const Self) -> Option<&'a Self>{
-        object.as_ref()
+    fn as_ref<'a>(object: *const Self) -> Option<&'a Self> {
+        // SAFETY: as_ref has already done no-null verification inside
+        unsafe {
+            object.as_ref()
+        }
     }
-    /// return mutable referance of self
-    ///
-    /// # Safety
-    /// 
-    /// Makesure object is null pointer
-    unsafe fn as_mut<'a>(object: *mut Self) -> Option<&'a mut Self>{
-        object.as_mut()
+    fn as_mut<'a>(object: *mut Self) -> Option<&'a mut Self> {
+        // SAFETY: as_mut has already done no-null verification inside
+        unsafe {
+            object.as_mut()
+        }
     }
-
-    /// write 
-    pub fn write<T>(&mut self, data: T) {
+    fn write<T>(&mut self, data: T) {
         let data: *const c_char = &data as *const T as *const c_char;
         let size = size_of::<T>();
         self.write_char_usize(data, size);
     }
-
     fn reset(&mut self) {
         self.r_pos = 0;
         self.w_pos = 0;
@@ -130,64 +106,53 @@ impl StreamBuffer {
         self.w_count = 0;
         self.rw_error_status = ErrorStatus::Ok;
     }
-
     fn clean(&mut self) {
         self.reset();
         let size = MAX_STREAM_BUF_SIZE + 1;
         let reference = &(self.sz_buff);
         let pointer = reference as *const c_char;
-        unsafe {
-            let ret = binding::memset_s(pointer as *mut libc::c_void, size, 0, size);
-            if ret != 0 {
-                error!(LOG_LABEL, "Call memset_s fail");
-            }
+        // SAFETY: memset_s is the security function of the C library
+        let ret = unsafe {
+            binding::memset_s(pointer as *mut libc::c_void, size, 0, size)
+        };
+        if ret != 0 {
+            error!(LOG_LABEL, "Call memset_s fail");
         }
     }
-
     fn seek_read_pos(&mut self, n: usize) -> bool {
         let pos: usize = self.r_pos + n;
         if pos > self.w_pos {
             error!(LOG_LABEL, "The position in the calculation is not as expected. pos:{} [0, {}]",
                 pos, self.w_pos);
-            return false;
+            false
+        } else {
+            self.r_pos = pos;
+            true
         }
-        self.r_pos = pos;
-        true
     }
-    /// write buffer
-    pub fn write_buf(&self) -> *const c_char {
-        info!(LOG_LABEL, "enter write_buf");
-        &self.sz_buff[self.w_pos] as *const c_char
-    }
-    /// unread size
-    pub fn unread_size(&self) -> usize {
+    fn unread_size(&self) -> usize {
         if self.w_pos <= self.r_pos {
             0
         } else {
             self.w_pos - self.r_pos
         }
     }
-
     fn is_empty(&self) -> bool {
         self.r_pos == self.w_pos
     }
-
     fn write_streambuffer(&mut self, buf: &Self) -> bool {
         self.write_char_usize(buf.data(), buf.size())
     }
     fn read_streambuffer(&self, buf: &mut Self) -> bool {
         buf.write_char_usize(self.data(), self.size())
     }
-    /// data function
-    pub fn data(&self) -> *const c_char {
+    pub(crate) fn data(&self) -> *const c_char {
         &(self.sz_buff[0]) as *const c_char
     }
-    /// size function
-    pub fn size(&self) -> usize {
+    pub(crate) fn size(&self) -> usize {
         self.w_pos
     }
-    /// check error status of read or write
-    pub fn chk_rwerror(&self) -> bool {
+    pub(crate) fn chk_rwerror(&self) -> bool {
         self.rw_error_status != ErrorStatus::Ok
     }
     fn get_available_buf_size(&self) -> usize {
@@ -198,19 +163,17 @@ impl StreamBuffer {
         }
     }
     fn get_error_status_remark(&self) -> *const c_char {
-        let s = match self.rw_error_status {
-            ErrorStatus::Ok => "OK\0",
-            ErrorStatus::Read => "READ_ERROR\0",
-            ErrorStatus::Write => "WRITE_ERROR\0",
+        let s: &[c_char] = match self.rw_error_status {
+            ErrorStatus::Ok => b"OK\0",
+            ErrorStatus::Read => b"READ_ERROR\0",
+            ErrorStatus::Write => b"WRITE_ERROR\0",
         };
-        error!(LOG_LABEL, "rw_error_status={}", s);
         s.as_ptr()
     }
     fn read_buf(&self) -> *const c_char {
         &(self.sz_buff[self.r_pos]) as *const c_char
     }
-    /// write buffer
-    pub fn write_char_usize(&mut self, buf: *const c_char, size: usize) -> bool {
+    fn write_char_usize(&mut self, buf: *const c_char, size: usize) -> bool {
         if self.chk_rwerror() {
             return false;
         }
@@ -230,15 +193,16 @@ impl StreamBuffer {
             self.rw_error_status = ErrorStatus::Write;
             return false;
         }
-        unsafe {
-            let pointer = &(self.sz_buff[0]) as *const c_char;
-            let ret = binding::memcpy_s(pointer.add(self.w_pos) as *mut libc::c_void,
-                self.get_available_buf_size(), buf as *mut libc::c_void, size);
-            if ret != 0 {
-                error!(LOG_LABEL, "Failed to call memcpy_s. ret:{}", ret);
-                self.rw_error_status = ErrorStatus::Write;
-                return false;
-            }
+        let pointer = &(self.sz_buff[0]) as *const c_char;
+        // SAFETY: memcpy_s is the security function of the C library
+        let ret = unsafe {
+            binding::memcpy_s(pointer.add(self.w_pos) as *mut libc::c_void, self.get_available_buf_size(),
+            buf as *mut libc::c_void, size)
+        };
+        if ret != 0 {
+            error!(LOG_LABEL, "Failed to call memcpy_s. ret:{}", ret);
+            self.rw_error_status = ErrorStatus::Write;
+            return false;
         }
         self.w_pos += size;
         self.w_count += 1;
@@ -264,8 +228,7 @@ impl StreamBuffer {
         self.r_pos = 0;
         self.w_pos = unread_size;
     }
-    /// read buffer
-    pub fn read_char_usize(&mut self, buf: *const c_char, size: usize) -> bool {
+    fn read_char_usize(&mut self, buf: *const c_char, size: usize) -> bool {
         if self.chk_rwerror() {
             return false;
         }
@@ -284,20 +247,20 @@ impl StreamBuffer {
             self.rw_error_status = ErrorStatus::Read;
             return false;
         }
-        unsafe {
-            let ret = binding::memcpy_s(buf as *mut libc::c_void, size, self.read_buf() as *const libc::c_void, size);
-            if ret != 0 {
-                error!(LOG_LABEL, "Failed to call memcpy_s. ret:{}", ret);
-                self.rw_error_status = ErrorStatus::Read;
-                return false;
-            }
+        // SAFETY: memcpy_s is the security function of the C library
+        let ret = unsafe {
+            binding::memcpy_s(buf as *mut libc::c_void, size, self.read_buf() as *const libc::c_void, size)
+        };
+        if ret != 0 {
+            error!(LOG_LABEL, "Failed to call memcpy_s. ret:{}", ret);
+            self.rw_error_status = ErrorStatus::Read;
+            return false;
         }
         self.r_pos += size;
         self.r_count += 1;
         true
     }
-    /// circle write
-    pub fn circle_write(&mut self, buf: *const c_char, size: usize) -> bool {
+    fn circle_write(&mut self, buf: *const c_char, size: usize) -> bool {
         if !self.check_write(size) {
             error!(LOG_LABEL, "Out of buffer memory, availableSize:{}, size:{}, unreadSize:{}, rPos:{}, wPos:{}",
                 self.get_available_buf_size(), size, self.unread_size(),
@@ -306,13 +269,8 @@ impl StreamBuffer {
         }
         self.write_char_usize(buf, size)
     }
-    /// callback function
-    ///
-    ///# Safety
-    ///
-    /// call unsafe function
-    pub unsafe fn read_server_packets(&mut self, stream_server: *const CStreamServer,
-        fd: i32, callback_fun: ServerPacketCallBackFun) {
+
+    pub unsafe fn read_client_packets(&mut self, client: *const CSensorServiceClient, callback_fun: ClientPacketCallBackFun) {
         const HEAD_SIZE: usize = size_of::<PackHead>();
         for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
             let unread_size = self.unread_size();
@@ -330,12 +288,14 @@ impl StreamBuffer {
                 error!(LOG_LABEL, "head is null, skip then break");
                 break;
             }
-            let size;
-            let id_msg;
-            unsafe {
-                size = (*head).size;
-                id_msg = (*head).id_msg;
-            }
+            // SAFETY: head pointer should be not null certainly
+            let size = unsafe {
+                (*head).size
+            };
+            // SAFETY: head pointer should be not null certainly
+            let id_msg = unsafe {
+                (*head).id_msg
+            };
             if !(0..=MAX_PACKET_BUF_SIZE).contains(&size) {
                 error!(LOG_LABEL, "Packet header parsing error, and this error cannot be recovered. \
                     The buffer will be reset. size:{}, unreadSize:{}", size, unread_size);
@@ -363,137 +323,13 @@ impl StreamBuffer {
                 self.reset();
                 break;
             }
-            unsafe {
-                callback_fun(stream_server, fd, &mut pkt as *const NetPacket);
-            }
-            if self.is_empty() {
-                self.reset();
-                break;
-            }
-        }
-    }
-    /// callback of client
-    ///
-    ///# Safety
-    ///
-    /// call unsafe function
-    pub unsafe fn read_client_packets(&mut self, client: *const CClient, callback_fun: ClientPacketCallBackFun) {
-        const HEAD_SIZE: usize = size_of::<PackHead>();
-        for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
-            let unread_size = self.unread_size();
-            if unread_size < HEAD_SIZE {
-                break;
-            }
-            let data_size = unread_size - HEAD_SIZE;
-            let buf: *const c_char = self.read_buf();
-            if buf.is_null() {
-                error!(LOG_LABEL, "buf is null, skip then break");
-                break;
-            }
-            let head: *const PackHead = buf as *const PackHead;
-            if head.is_null() {
-                error!(LOG_LABEL, "head is null, skip then break");
-                break;
-            }
-            let size;
-            let id_msg;
-            unsafe {
-                size = (*head).size;
-                id_msg = (*head).id_msg;
-            }
-            if !(0..=MAX_PACKET_BUF_SIZE).contains(&size) {
-                error!(LOG_LABEL, "Packet header parsing error, and this error cannot be recovered. \
-                    The buffer will be reset. size:{}, unreadSize:{}", size, unread_size);
-                self.reset();
-                break;
-            }
-            if size > data_size {
-                break;
-            }
-            let mut pkt: NetPacket = NetPacket {
-                msg_id: id_msg,
-                ..Default::default()
+            let c_net_packet: CNetPacket = CNetPacket {
+                msg_id: pkt.msg_id,
+                stream_buffer_ptr: Box::into_raw(Box::new(pkt.stream_buffer))
             };
             unsafe {
-                if size > 0 &&
-                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE) as *const c_char, size) {
-                    error!(LOG_LABEL, "Error writing data in the NetPacket. It will be retried next time. \
-                        messageid:{}, size:{}", id_msg as i32, size);
-                    break;
-                }
+                callback_fun(client, &c_net_packet as *const CNetPacket);
             }
-            if !self.seek_read_pos(pkt.get_packet_length()) {
-                error!(LOG_LABEL, "Set read position error, and this error cannot be recovered, and the buffer \
-                    will be reset. packetSize:{} unreadSize:{}", pkt.get_packet_length(), unread_size);
-                self.reset();
-                break;
-            }
-            unsafe {
-                callback_fun(client, &pkt as *const NetPacket);
-            }
-            if self.is_empty() {
-                self.reset();
-                break;
-            }
-        }
-    }
-    /// read packets
-    ///
-    ///# Safety
-    ///
-    /// call unsafe function
-    pub unsafe fn read_packets(&mut self, callback_fun: ReadPacketCallBackFun) {
-        const HEAD_SIZE: usize = size_of::<PackHead>();
-        for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
-            let unread_size = self.unread_size();
-            if unread_size < HEAD_SIZE {
-                break;
-            }
-            let data_size = unread_size - HEAD_SIZE;
-            let buf: *const c_char = self.read_buf();
-            if buf.is_null() {
-                error!(LOG_LABEL, "buf is null, skip then break");
-                break;
-            }
-            let head: *const PackHead = buf as *const PackHead;
-            if head.is_null() {
-                error!(LOG_LABEL, "head is null, skip then break");
-                break;
-            }
-            let size;
-            let id_msg;
-            unsafe {
-                size = (*head).size;
-                id_msg = (*head).id_msg;
-            }
-            if !(0..=MAX_PACKET_BUF_SIZE).contains(&size) {
-                error!(LOG_LABEL, "Packet header parsing error, and this error cannot be recovered. \
-                    The buffer will be reset. size:{}, unreadSize:{}", size, unread_size);
-                self.reset();
-                break;
-            }
-            if size > data_size {
-                break;
-            }
-            let mut pkt: NetPacket = NetPacket {
-                msg_id: id_msg,
-                ..Default::default()
-            };
-            unsafe {
-                if size > 0 &&
-                    !pkt.stream_buffer.write_char_usize(buf.add(HEAD_SIZE) as *const c_char, size) {
-                    error!(LOG_LABEL, "Error writing data in the NetPacket. It will be retried next time. \
-                        messageid:{}, size:{}", id_msg as i32, size);
-                    break;
-                }
-            }
-            if !self.seek_read_pos(pkt.get_packet_length()) {
-                error!(LOG_LABEL, "Set read position error, and this error cannot be recovered, and the buffer \
-                    will be reset. packetSize:{} unreadSize:{}", pkt.get_packet_length(), unread_size);
-                self.reset();
-                break;
-            }
-            callback_fun(&mut pkt as *mut NetPacket);
             if self.is_empty() {
                 self.reset();
                 break;

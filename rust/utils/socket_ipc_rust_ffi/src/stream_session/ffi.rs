@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Huawei Device Co., Ltd.
+ * Copyright (C) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,32 +21,41 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     domain: 0xD002220,
     tag: "stream_session_ffi"
 };
-/// create unique_ptr of stream_session for C++
+/// Create unique_ptr of StreamSession for C++ code
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionCreate() -> *mut StreamSession {
     let stream_session: Box::<StreamSession> = Box::default(); 
     Box::into_raw(stream_session)
 }
-/// drop unique_ptr of stream_session for C++
+/// Drop unique_ptr of StreamSession for C++ code
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionDelete(raw: *mut StreamSession) {
     if !raw.is_null() {
         drop(Box::from_raw(raw));
     }
 }
-/// StreamSessionSetUid
+/// Set StreamSession's uid
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionSetUid(object: *mut StreamSession, uid: i32) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionSetUid");
@@ -54,14 +63,15 @@ pub unsafe extern "C" fn StreamSessionSetUid(object: *mut StreamSession, uid: i3
         obj.set_uid(uid);
         SessionStatusCode::Ok.into()
     } else {
-        SessionStatusCode::Fail.into()
+        SessionStatusCode::SetUidFail.into()
     }
 }
-/// StreamSessionSetFd
+/// Set StreamSession's fd
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionSetFd(object: *mut StreamSession, fd: i32) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionSetFd");
@@ -69,14 +79,15 @@ pub unsafe extern "C" fn StreamSessionSetFd(object: *mut StreamSession, fd: i32)
         obj.set_fd(fd);
         SessionStatusCode::Ok.into()
     } else {
-        SessionStatusCode::Fail.into()
+        SessionStatusCode::SetFdFail.into()
     }
 }
-/// StreamSessionSetPid
+/// Set StreamSession's pid
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionSetPid(object: *mut StreamSession, pid: i32) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionSetPid");
@@ -84,14 +95,15 @@ pub unsafe extern "C" fn StreamSessionSetPid(object: *mut StreamSession, pid: i3
         obj.set_pid(pid);
         SessionStatusCode::Ok.into()
     } else {
-        SessionStatusCode::Fail.into()
+        SessionStatusCode::SetPidFail.into()
     }
 }
-/// StreamSessionGetUid
+/// Obtain StreamSession's uid
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionGetUid(object: *const StreamSession) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionGetUid");
@@ -101,11 +113,12 @@ pub unsafe extern "C" fn StreamSessionGetUid(object: *const StreamSession) -> i3
         SessionStatusCode::UidFail.into()
     }
 }
-/// StreamSessionGetPid
+/// Obtain StreamSession's pid
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionGetPid(object: *const StreamSession) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionGetPid");
@@ -116,11 +129,12 @@ pub unsafe extern "C" fn StreamSessionGetPid(object: *const StreamSession) -> i3
     }
 }
 
-/// get session fd
+/// Obtain StreamSession's fd
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionGetFd(object: *const StreamSession) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionGetFd");
@@ -130,11 +144,12 @@ pub unsafe extern "C" fn StreamSessionGetFd(object: *const StreamSession) -> i32
         SessionStatusCode::FdFail.into()
     }
 }
-/// get token type
+/// Set StreamSession's tokentype
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionSetTokenType(object: *mut StreamSession, style: i32) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionSetTokenType");
@@ -145,11 +160,12 @@ pub unsafe extern "C" fn StreamSessionSetTokenType(object: *mut StreamSession, s
         SessionStatusCode::SetTokenTypeFail.into()
     }
 }
-/// get token type
+/// Obtain StreamSession's tokentype
 ///
 /// # Safety
-///
-/// object must be valid
+/// 
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionGetTokenType(object: *const StreamSession) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionGetTokenType");
@@ -159,25 +175,27 @@ pub unsafe extern "C" fn StreamSessionGetTokenType(object: *const StreamSession)
         SessionStatusCode::TokenTypeFail.into()
     }
 }
-/// get module_type
+/// Obtain StreamSession's moduletype
 ///
 /// # Safety
-///
-/// object must be valid
+/// 
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionGetModuleType(object: *const StreamSession) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionGetModuleType");
     if let Some(obj) = StreamSession::as_ref(object) {
         obj.module_type()
     } else {
-        SessionStatusCode::Fail.into()
+        SessionStatusCode::ModuleTypeFail.into()
     }
 }
-/// get session close
+/// Close StreamSession's fd
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionClose(object: *mut StreamSession) -> i32 {
     info!(LOG_LABEL, "enter StreamSessionClose");
@@ -189,11 +207,12 @@ pub unsafe extern "C" fn StreamSessionClose(object: *mut StreamSession) -> i32 {
     }
 }
 
-/// session send message
+/// Send message via StreamSessions
 ///
 /// # Safety
 /// 
-/// object must be valid
+/// The pointer which pointed the memory already initialized must be valid.
+/// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionSendMsg(object: *const StreamSession, buf: *const c_char, size: usize) -> bool {
     info!(LOG_LABEL, "enter StreamSessionSendMsg");
