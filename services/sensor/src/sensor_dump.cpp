@@ -268,6 +268,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
         case SENSOR_TYPE_ID_BAROMETER:
         case SENSOR_TYPE_ID_HALL:
+        case SENSOR_TYPE_ID_TEMPERATURE:
         case SENSOR_TYPE_ID_PROXIMITY:
         case SENSOR_TYPE_ID_HUMIDITY:
         case SENSOR_TYPE_ID_AMBIENT_TEMPERATURE:

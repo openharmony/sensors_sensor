@@ -48,6 +48,7 @@ ohos_shared_library("libsensor_native") {
     "samgr:samgr_proxy",
   ]
 
+  innerapi_tags = [ "platformsdk_indirect" ]
   part_name = "sensor"
   subsystem_name = "sensors"
 }
