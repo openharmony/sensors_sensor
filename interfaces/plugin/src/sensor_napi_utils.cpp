@@ -164,6 +164,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_MAGNETIC_FIELD, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_BAROMETER, { "pressure" } },
     { SENSOR_TYPE_ID_HALL, { "status" } },
+    { SENSOR_TYPE_ID_TEMPERATURE, { "temperature" } },
     { SENSOR_TYPE_ID_PROXIMITY, { "distance" } },
     { SENSOR_TYPE_ID_HUMIDITY, { "humidity" } },
     { SENSOR_TYPE_ID_ORIENTATION, { "alpha", "beta", "gamma" } },
