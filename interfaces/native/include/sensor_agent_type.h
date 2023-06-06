@@ -278,6 +278,13 @@ typedef struct HumidityData {
 } HumidityData;
 
 /**
+ * @brief Define the temperature sensor data structure. Measures the relative temperature of the environment in degrees Celsius (°C)
+ */
+typedef struct TemperatureData {
+    float temperature;
+} TemperatureData;
+
+/**
  * @brief Defines the magnetic field sensor data structure. Measure the ambient geomagnetic field in three
  * physical axes (x, y, z) in μT.
  */
