@@ -111,7 +111,7 @@ describe("BarometerJsTest", function () {
                     done();
                 }
                 try {
-                    sensor.on(sensor.SensorId.BAROMETER, callback, {'interval':100000000});
+                    sensor.on(sensor.SensorId.BAROMETER, callback, {'interval': 100000000});
                     setTimeout(() => {
                         sensor.off(sensor.SensorId.BAROMETER);
                         done();

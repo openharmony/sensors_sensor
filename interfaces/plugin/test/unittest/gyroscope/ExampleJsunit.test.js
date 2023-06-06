@@ -115,7 +115,7 @@ describe("GyroscopeJsTest", function () {
                     done();
                 }
                 try {
-                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval':100000000});
+                    sensor.on(sensor.SensorId.GYROSCOPE, callback, {'interval': 100000000});
                     setTimeout(() => {
                         sensor.off(sensor.SensorId.GYROSCOPE);
                         done();
