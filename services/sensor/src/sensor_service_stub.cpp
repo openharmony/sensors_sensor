@@ -160,6 +160,11 @@ ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParce
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
     }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+        return PERMISSION_DENIED;
+    }
     (void)reply;
     int32_t pid;
     READINT32(data, pid, READ_PARCEL_ERR);
@@ -171,6 +176,11 @@ ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
     (void)reply;
@@ -261,6 +271,11 @@ ErrCode SensorServiceStub::ResetSensorsInner(MessageParcel &data, MessageParcel 
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
     return ResetSensors();

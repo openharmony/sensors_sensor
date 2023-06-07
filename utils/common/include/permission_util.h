@@ -28,6 +28,7 @@ const std::string ACCELEROMETER_PERMISSION = "ohos.permission.ACCELEROMETER";
 const std::string GYROSCOPE_PERMISSION = "ohos.permission.GYROSCOPE";
 const std::string ACTIVITY_MOTION_PERMISSION = "ohos.permission.ACTIVITY_MOTION";
 const std::string READ_HEALTH_DATA_PERMISSION = "ohos.permission.READ_HEALTH_DATA";
+const std::string MANAGE_SENSOR_PERMISSION = "ohos.permission.MANAGE_SENSOR";
 
 using namespace Security::AccessToken;
 class PermissionUtil : public Singleton<PermissionUtil> {
@@ -35,7 +36,8 @@ public:
     PermissionUtil() = default;
     virtual ~PermissionUtil() {};
     int32_t CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
-    bool IsNativeToken(AccessTokenID tokenID);
+    bool IsNativeToken(AccessTokenID callerToken);
+    int32_t CheckManageSensorPermission(AccessTokenID callerToken);
 
 private:
     void AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status);

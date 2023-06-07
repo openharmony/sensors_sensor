@@ -64,14 +64,23 @@ void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::strin
     }
 }
 
-bool PermissionUtil::IsNativeToken(AccessTokenID tokenID)
+bool PermissionUtil::IsNativeToken(AccessTokenID callerToken)
 {
-    int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenID);
+    int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(callerToken);
     if (tokenType != ATokenTypeEnum::TOKEN_NATIVE) {
         SEN_HILOGE("TokenType is not TOKEN_NATIVE, tokenType:%{public}d", tokenType);
         return false;
     }
     return true;
+}
+
+int32_t PermissionUtil::CheckManageSensorPermission(AccessTokenID callerToken)
+{
+    int32_t ret = AccessTokenKit::VerifyAccessToken(callerToken, MANAGE_SENSOR_PERMISSION);
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Verify MANAGE_SENSOR permission failed, ret:%{public}d", ret);
+    }
+    return ret;
 }
 }  // namespace Sensors
 }  // namespace OHOS
