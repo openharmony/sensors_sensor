@@ -158,8 +158,6 @@ ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParce
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
     if (ret != PERMISSION_GRANTED) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "PKG_NAME", "SuspendSensorsInner", "ERROR_CODE", ret);
         SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
@@ -174,8 +172,6 @@ ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
     if (ret != PERMISSION_GRANTED) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "PKG_NAME", "ResumeSensorsInner", "ERROR_CODE", ret);
         SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
@@ -188,17 +184,14 @@ ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel
 ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessageParcel &reply)
 {
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
-    if (ret != PERMISSION_GRANTED) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "PKG_NAME", "GetActiveInfoListInner", "ERROR_CODE", ret);
-        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+    if (!permissionUtil.CheckNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
     }
     int32_t pid;
     READINT32(data, pid, READ_PARCEL_ERR);
     std::vector<ActiveInfo> activeInfoList;
-    ret = GetActiveInfoList(pid, activeInfoList);
+    int32_t ret = GetActiveInfoList(pid, activeInfoList);
     if (ret != ERR_OK) {
         SEN_HILOGE("Get activeInfo list failed");
         return ret;
@@ -248,11 +241,8 @@ ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, Messag
 ErrCode SensorServiceStub::EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
 {
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
-    if (ret != PERMISSION_GRANTED) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "PKG_NAME", "EnableActiveInfoCBInner", "ERROR_CODE", ret);
-        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+    if (!permissionUtil.CheckNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
     }
     return EnableActiveInfoCB();
@@ -261,11 +251,8 @@ ErrCode SensorServiceStub::EnableActiveInfoCBInner(MessageParcel &data, MessageP
 ErrCode SensorServiceStub::DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply)
 {
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
-    if (ret != PERMISSION_GRANTED) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "PKG_NAME", "DisableActiveInfoCBInner", "ERROR_CODE", ret);
-        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+    if (!permissionUtil.CheckNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
     }
     return DisableActiveInfoCB();
@@ -276,8 +263,6 @@ ErrCode SensorServiceStub::ResetSensorsInner(MessageParcel &data, MessageParcel 
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
     if (ret != PERMISSION_GRANTED) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
-            HiSysEvent::EventType::SECURITY, "PKG_NAME", "ResetSensorsInner", "ERROR_CODE", ret);
         SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
