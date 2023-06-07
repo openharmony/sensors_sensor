@@ -36,8 +36,8 @@ public:
     PermissionUtil() = default;
     virtual ~PermissionUtil() {};
     int32_t CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
-    int32_t CheckManageSensorPermission(AccessTokenID callerToken);
     bool CheckNativeToken(AccessTokenID callerToken);
+    int32_t CheckManageSensorPermission(AccessTokenID callerToken);
 
 private:
     void AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status);
