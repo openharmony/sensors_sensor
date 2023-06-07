@@ -64,7 +64,7 @@ void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::strin
     }
 }
 
-bool PermissionUtil::CheckNativeToken(AccessTokenID callerToken)
+bool PermissionUtil::IsNativeToken(AccessTokenID callerToken)
 {
     int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(callerToken);
     if (tokenType != ATokenTypeEnum::TOKEN_NATIVE) {

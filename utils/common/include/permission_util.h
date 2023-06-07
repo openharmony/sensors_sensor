@@ -36,7 +36,7 @@ public:
     PermissionUtil() = default;
     virtual ~PermissionUtil() {};
     int32_t CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId);
-    bool CheckNativeToken(AccessTokenID callerToken);
+    bool IsNativeToken(AccessTokenID callerToken);
     int32_t CheckManageSensorPermission(AccessTokenID callerToken);
 
 private:
