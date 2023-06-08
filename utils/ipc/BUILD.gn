@@ -34,6 +34,7 @@ ohos_shared_library("libsensor_ipc") {
     "hiviewdfx_hilog_native:libhilog",
   ]
 
+  innerapi_tags = [ "platformsdk_indirect" ]
   part_name = "sensor"
   subsystem_name = "sensors"
 }
