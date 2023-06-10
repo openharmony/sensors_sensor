@@ -120,8 +120,8 @@ private:
     double cutoff_ { 0.0 };
     double resonance_ { 0.0 };
     double output_ { 0.0 };
-    double inputs_[ARRAY_SIZE] { 0.0 };
-    double outputs_[ARRAY_SIZE] { 0.0 };
+    double sampledData_[ARRAY_SIZE] { 0.0 };
+    double filteredData_[ARRAY_SIZE] { 0.0 };
     double speed_ { 0.0 };
     double pos_ { 0.0 };
     double pole_ { 0.0 };
