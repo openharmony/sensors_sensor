@@ -33,7 +33,6 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" };
-constexpr uint32_t MAX_SENSOR_COUNT = 200;
 }  // namespace
 
 SensorServiceStub::SensorServiceStub()

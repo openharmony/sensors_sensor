@@ -38,7 +38,6 @@ std::map<int32_t, SensorBasicInfo> sensorBasicInfoMap_;
 std::mutex sensorBasicInfoMutex_;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 30;
 constexpr uint32_t WAIT_MS = 200;
-constexpr uint32_t MAX_SENSOR_COUNT = 200;
 }
 
 ReportDataCb HdiConnection::reportDataCb_ = nullptr;
