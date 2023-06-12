@@ -78,7 +78,12 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
         SEN_HILOGE("get sensor list failed");
         return ret;
     }
-    for (size_t i = 0; i < sensorInfos.size(); i++) {
+    size_t count = sensorInfos.size();
+    if (count > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("SensorInfos size:%{public}zu", count);
+        count = MAX_SENSOR_COUNT;
+    }
+    for (size_t i = 0; i < count; i++) {
         Sensor sensor;
         sensor.SetSensorId(sensorInfos[i].sensorId);
         sensor.SetSensorTypeId(sensorInfos[i].sensorId);
