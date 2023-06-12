@@ -19,7 +19,7 @@
 /* SAID:3601 */
 namespace OHOS {
 namespace Sensors {
-enum class SensorInterfaceCode{
+enum class SensorInterfaceCode {
     ENABLE_SENSOR = 0,
     DISABLE_SENSOR,
     GET_SENSOR_STATE,
