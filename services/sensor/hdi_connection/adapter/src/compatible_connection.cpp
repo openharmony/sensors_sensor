@@ -25,6 +25,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "CompatibleConnection" };
+constexpr uint32_t MAX_SENSOR_COUNT = 200;
 }
 
 ReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
@@ -45,7 +46,12 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
         SEN_HILOGE("get sensor list failed");
         return ret;
     }
-    for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
+    size_t count = sensorInfos.size();
+    if (count > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("SensorInfos size:%{public}zu", count);
+        count = MAX_SENSOR_COUNT;
+    }
+    for (size_t i = 0; i < count; i++) {
         const std::string sensorName(sensorInfos[i].sensorName);
         const std::string vendorName(sensorInfos[i].vendorName);
         const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
