@@ -42,7 +42,7 @@ SensorServiceStub::SensorServiceStub()
         &SensorServiceStub::SensorEnableInner;
     baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_SENSOR)] =
         &SensorServiceStub::SensorDisableInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_STATE)] =
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST)] =
         &SensorServiceStub::GetAllSensorsInner;
     baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL)] =
         &SensorServiceStub::CreateDataChannelInner;
