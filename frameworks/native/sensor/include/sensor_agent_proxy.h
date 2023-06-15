@@ -65,7 +65,7 @@ private:
     std::map<int32_t, const SensorUser *> g_unsubscribeMap;
 };
 
-#define SensorAgentImpl OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
+#define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // endif SENSOR_PROXY_H

@@ -278,7 +278,8 @@ typedef struct HumidityData {
 } HumidityData;
 
 /**
- * @brief Define the temperature sensor data structure. Measures the relative temperature of the environment in degrees Celsius (°C)
+ * @brief Define the temperature sensor data structure. Measures the relative temperature of the environment
+ * in degrees Celsius (°C)
  */
 typedef struct TemperatureData {
     float temperature;
