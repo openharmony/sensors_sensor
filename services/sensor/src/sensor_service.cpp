@@ -336,7 +336,7 @@ ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
     CALL_LOG_ENTER;
     const int32_t clientPid = GetCallingPid();
     if (clientPid < 0) {
-        SEN_HILOGE("clientPid is invalid, clientPid:%{public}d", clientPid);
+        SEN_HILOGE("ClientPid is invalid, clientPid:%{public}d", clientPid);
         return CLIENT_PID_INVALID_ERR;
     }
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
@@ -390,7 +390,7 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
     CALL_LOG_ENTER;
     int32_t pid = clientInfo_.FindClientPid(sensorClient);
     if (pid == INVALID_PID) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("pid is invalid");
         return;
     }
     if (!clientInfo_.CallingService(pid)) {
@@ -431,7 +431,7 @@ ErrCode SensorService::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
     return POWER_POLICY.SuspendSensors(pid);
@@ -441,7 +441,7 @@ ErrCode SensorService::ResumeSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
     return POWER_POLICY.ResumeSensors(pid);
@@ -451,7 +451,7 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("Pid is invalid");
+        SEN_HILOGE("pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
     activeInfoList = POWER_POLICY.GetActiveInfoList(pid);

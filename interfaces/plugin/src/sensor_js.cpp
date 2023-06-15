@@ -383,7 +383,7 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
         }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
-            SEN_HILOGE("napi_get_reference_value fail");
+            SEN_HILOGE("Napi_get_reference_value fail");
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
@@ -1145,7 +1145,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
         "register success callback fail");
     napi_value napiFail = GetNamedProperty(env, args[0], "fail");
     if (IsMatchType(env, napiFail, napi_function)) {
-        SEN_HILOGD("has fail callback");
+        SEN_HILOGD("Has fail callback");
         CHKCP(RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]),
             "register fail callback fail");
     }

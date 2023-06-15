@@ -41,7 +41,7 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
 {
     CHKPR(dataCB_, SENSOR_NATIVE_REGSITER_CB_ERR);
     if (GetReceiveDataFd() != -1) {
-        SEN_HILOGE("fd not close");
+        SEN_HILOGE("Fd not close");
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
     }
     return InnerSensorDataChannel();
@@ -53,7 +53,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     // create basic data channel
     int32_t ret = CreateSensorBasicChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("create basic channel failed, ret:%{public}d", ret);
+        SEN_HILOGE("Create basic channel failed, ret:%{public}d", ret);
         return ret;
     }
     auto listener = std::make_shared<SensorFileDescriptorListener>();

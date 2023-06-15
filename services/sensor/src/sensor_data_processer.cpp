@@ -180,7 +180,7 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<int32_t, Se
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     auto sensor = sensorMap_.find(sensorId);
     if (sensor == sensorMap_.end()) {
-        SEN_HILOGE("data's sensorId is not supported");
+        SEN_HILOGE("Data's sensorId is not supported");
         return false;
     }
     sensor->second.SetFlags(data.mode);
@@ -204,7 +204,7 @@ void SensorDataProcesser::SendRawData(std::unordered_map<int32_t, SensorData> &c
     size_t eventSize = events.size();
     auto ret = channel->SendData(events.data(), eventSize * sizeof(SensorData));
     if (ret != ERR_OK) {
-        SEN_HILOGE("send data failed, ret:%{public}d", ret);
+        SEN_HILOGE("Send data failed, ret:%{public}d", ret);
         int32_t sensorId = events[eventSize - 1].sensorTypeId;
         cacheBuf[sensorId] = events[eventSize - 1];
     }
@@ -258,7 +258,7 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
     ISensorHdiConnection::dataCondition_.wait(lk);
     auto &eventsBuf = dataCallback->GetEventData();
     if (eventsBuf.eventNum <= 0) {
-        SEN_HILOGE("data cannot be empty");
+        SEN_HILOGE("Data cannot be empty");
         return NO_EVENT;
     }
     int32_t eventNum = eventsBuf.eventNum;
@@ -293,7 +293,7 @@ int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser,
     CALL_LOG_ENTER;
     do {
         if (dataProcesser->ProcessEvents(dataCallback) == INVALID_POINTER) {
-            SEN_HILOGE("callback cannot be null");
+            SEN_HILOGE("Callback cannot be null");
             return INVALID_POINTER;
         }
     } while (1);

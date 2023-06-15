@@ -46,7 +46,7 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
 {
     CHKPF(buf);
     if ((size == 0) || (size > MAX_PACKET_BUF_SIZE)) {
-        SEN_HILOGE("Buf size:%{public}zu", size);
+        SEN_HILOGE("buf size:%{public}zu", size);
         return false;
     }
     if (fd_ < 0) {
@@ -65,7 +65,7 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
                 SEN_HILOGW("Continue for errno EAGAIN|EINTR|EWOULDBLOCK, errno:%{public}d", errno);
                 continue;
             }
-            SEN_HILOGE("Send return failed,error:%{public}d fd:%{public}d", errno, fd_);
+            SEN_HILOGE("Send return failed, error:%{public}d, fd:%{public}d", errno, fd_);
             return false;
         }
         idx += static_cast<size_t>(count);

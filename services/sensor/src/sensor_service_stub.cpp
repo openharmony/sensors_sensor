@@ -62,7 +62,7 @@ SensorServiceStub::~SensorServiceStub()
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                            MessageOption &option)
 {
-    SEN_HILOGD("Begin, cmd : %{public}u", code);
+    SEN_HILOGD("Begin, cmd:%{public}u", code);
     std::u16string descriptor = SensorServiceStub::GetDescriptor();
     std::u16string remoteDescriptor = data.ReadInterfaceToken();
     if (descriptor != remoteDescriptor) {

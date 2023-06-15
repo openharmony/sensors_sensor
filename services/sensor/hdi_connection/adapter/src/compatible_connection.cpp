@@ -33,7 +33,7 @@ std::mutex ISensorHdiConnection::dataMutex_;
 std::condition_variable ISensorHdiConnection::dataCondition_;
 int32_t CompatibleConnection::ConnectHdi()
 {
-    SEN_HILOGI("connect hdi success");
+    SEN_HILOGI("Connect hdi success");
     return ERR_OK;
 }
 
@@ -42,7 +42,7 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
     std::vector<SensorInfo> sensorInfos;
     int32_t ret = hdiServiceImpl_.GetSensorList(sensorInfos);
     if (ret != 0) {
-        SEN_HILOGE("get sensor list failed");
+        SEN_HILOGE("Get sensor list failed");
         return ret;
     }
     for (int32_t i = 0; i < static_cast<int32_t>(sensorInfos.size()); i++) {
@@ -73,7 +73,7 @@ int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorId);
     if (ret != 0) {
-        SEN_HILOGE("enable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Enable sensor failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -83,7 +83,7 @@ int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorId);
     if (ret != 0) {
-        SEN_HILOGE("disable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Disable sensor failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -93,7 +93,7 @@ int32_t CompatibleConnection::SetBatch(int32_t sensorId, int64_t samplingInterva
 {
     int32_t ret = hdiServiceImpl_.SetBatch(sensorId, samplingInterval, reportInterval);
     if (ret != 0) {
-        SEN_HILOGE("set batch failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Set batch failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -103,7 +103,7 @@ int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     int32_t ret = hdiServiceImpl_.SetMode(sensorId, mode);
     if (ret != 0) {
-        SEN_HILOGI("set mode failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
         return ret;
     }
     return ERR_OK;
@@ -113,7 +113,7 @@ void CompatibleConnection::ReportSensorDataCallback(SensorEvent *event)
 {
     CHKPV(event);
     if ((event->dataLen) == 0) {
-        SEN_HILOGE("event is NULL");
+        SEN_HILOGE("Event is NULL");
         return;
     }
 
@@ -128,7 +128,7 @@ void CompatibleConnection::ReportSensorDataCallback(SensorEvent *event)
     CHKPV(sensorData.data);
     errno_t ret = memcpy_s(sensorData.data, sizeof(sensorData.data), event->data, event->dataLen);
     if (ret != EOK) {
-        SEN_HILOGE("copy data failed");
+        SEN_HILOGE("Copy data failed");
         return;
     }
     CHKPV(reportDataCallback_);

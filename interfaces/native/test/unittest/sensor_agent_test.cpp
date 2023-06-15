@@ -113,7 +113,7 @@ void SensorDataCallbackImpl(SensorEvent *event)
         return;
     }
     float *sensorData = (float *)event[0].data;
-    SEN_HILOGI("SensorId:%{public}d, version:%{public}d,dataLen:%{public}d,data:%{public}f",
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, data:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
 
@@ -124,7 +124,7 @@ void SensorDataCallbackImpl2(SensorEvent *event)
         return;
     }
     float *sensorData = (float *)event[0].data;
-    SEN_HILOGI("SensorId:%{public}d, version:%{public}d,dataLen:%{public}d,data:%{public}f",
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, data:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
 
@@ -391,8 +391,8 @@ HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
     int32_t ret = GetAllSensors(&sensorInfo, &count);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     for (int32_t i = 0; i < count; ++i) {
-        SEN_HILOGD("sensorName: %{public}s, sensorId: %{public}d, minSamplePeriod: %{public}" PRId64
-            " ns, maxSamplePeriod: %{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
+        SEN_HILOGD("sensorName:%{public}s, sensorId:%{public}d, minSamplePeriod:%{public}" PRId64
+            " ns, maxSamplePeriod:%{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
             sensorInfo[i].minSamplePeriod, sensorInfo[i].maxSamplePeriod);
     }
 }

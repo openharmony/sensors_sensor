@@ -48,7 +48,7 @@ int32_t ReportDataCallback::ReportEventCallback(SensorData* sensorData, sptr<Rep
 {
     CHKPR(sensorData, ERROR);
     if (cb == nullptr || cb->eventsBuf_.circularBuf == nullptr) {
-        SEN_HILOGE("callback or circularBuf or event cannot be null");
+        SEN_HILOGE("Callback or circularBuf or event cannot be null");
         return ERROR;
     }
     int32_t leftSize = CIRCULAR_BUF_LEN - cb->eventsBuf_.eventNum;

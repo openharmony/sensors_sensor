@@ -50,19 +50,19 @@ int32_t HdiConnection::ConnectHdi()
     while (retry < GET_HDI_SERVICE_COUNT) {
         sensorInterface_ = ISensorInterface::Get();
         if (sensorInterface_ != nullptr) {
-            SEN_HILOGI("connect v1_0 hdi success");
+            SEN_HILOGI("Connect v1_1 hdi success");
             eventCallback_ = new (std::nothrow) SensorEventCallback();
             CHKPR(eventCallback_, ERR_NO_INIT);
             RegisterHdiDeathRecipient();
             return ERR_OK;
         }
         retry++;
-        SEN_HILOGW("connect hdi service failed, retry:%{public}d", retry);
+        SEN_HILOGW("Connect hdi service failed, retry:%{public}d", retry);
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "ConnectHdi", "ERROR_CODE", CONNECT_SENSOR_HDF_ERR);
-    SEN_HILOGE("connect v1_0 hdi failed");
+    SEN_HILOGE("Connect v1_1 hdi failed");
     return ERR_NO_INIT;
 }
 
@@ -75,7 +75,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
     if (ret != 0) {
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
-        SEN_HILOGE("get sensor list failed");
+        SEN_HILOGE("Get sensor list failed");
         return ret;
     }
     for (size_t i = 0; i < sensorInfos.size(); i++) {
@@ -103,7 +103,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
     if (ret != 0) {
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
-        SEN_HILOGE("connect v1_0 hdi failed");
+        SEN_HILOGE("Connect v1_0 hdi failed");
         return ret;
     }
     SetSensorBasicInfoState(sensorId, true);
@@ -215,7 +215,7 @@ void HdiConnection::SetSensorBasicInfoState(int32_t sensorId, bool state)
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
     auto it = sensorBasicInfoMap_.find(sensorId);
     if (it == sensorBasicInfoMap_.end()) {
-        SEN_HILOGW("should set batch first");
+        SEN_HILOGW("Should set batch first");
         return;
     }
     sensorBasicInfoMap_[sensorId].SetSensorState(state);
@@ -262,18 +262,18 @@ void HdiConnection::Reconnect()
     CALL_LOG_ENTER;
     int32_t ret = ConnectHdi();
     if (ret != 0) {
-        SEN_HILOGE("failed to get an instance of hdi service");
+        SEN_HILOGE("Failed to get an instance of hdi service");
         return;
     }
     ret = sensorInterface_->Register(0, eventCallback_);
     if (ret != 0) {
-        SEN_HILOGE("register callback fail");
+        SEN_HILOGE("Register callback fail");
         return;
     }
     std::vector<Sensor> sensorList;
     ret = GetSensorList(sensorList);
     if (ret != 0) {
-        SEN_HILOGE("get sensor list fail");
+        SEN_HILOGE("Get sensor list fail");
         return;
     }
     std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
@@ -281,17 +281,17 @@ void HdiConnection::Reconnect()
         int32_t sensorTypeId = sensorInfo.first;
         SensorBasicInfo info = sensorInfo.second;
         if (info.GetSensorState() != true) {
-            SEN_HILOGE("sensorTypeId: %{public}d don't need enable sensor", sensorTypeId);
+            SEN_HILOGE("SensorTypeId:%{public}d don't need enable sensor", sensorTypeId);
             continue;
         }
         ret = sensorInterface_->SetBatch(sensorTypeId, info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
         if (ret != 0) {
-            SEN_HILOGE("sensorTypeId:%{public}d set batch fail,error:%{public}d", sensorTypeId, ret);
+            SEN_HILOGE("SensorTypeId:%{public}d set batch fail, error:%{public}d", sensorTypeId, ret);
             continue;
         }
         ret = sensorInterface_->Enable(sensorTypeId);
         if (ret != 0) {
-            SEN_HILOGE("enable sensor fail, sensorTypeId:%{public}d,error:%{public}d", sensorTypeId, ret);
+            SEN_HILOGE("Enable sensor fail, sensorTypeId:%{public}d, error:%{public}d", sensorTypeId, ret);
         }
     }
 }

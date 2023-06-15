@@ -31,12 +31,12 @@ int32_t SensorHdiConnection::ConnectHdi()
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
-        SEN_HILOGE("connect hdi service failed, try to connect compatible connection");
+        SEN_HILOGE("Connect hdi service failed, try to connect compatible connection");
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
         ret = ConnectHdiService();
     }
     if (ret != ERR_OK) {
-        SEN_HILOGE("connect hdi failed");
+        SEN_HILOGE("Connect hdi failed");
     }
     return ERR_OK;
 }
@@ -45,12 +45,12 @@ int32_t SensorHdiConnection::ConnectHdiService()
 {
     int32_t ret = iSensorHdiConnection_->ConnectHdi();
     if (ret != 0) {
-        SEN_HILOGE("connect hdi service failed");
+        SEN_HILOGE("Connect hdi service failed");
         return CONNECT_SENSOR_HDF_ERR;
     }
     ret = iSensorHdiConnection_->GetSensorList(sensorList_);
     if (ret != 0) {
-        SEN_HILOGE("get sensor list failed");
+        SEN_HILOGE("Get sensor list failed");
         return GET_SENSOR_LIST_ERR;
     }
     return ERR_OK;
@@ -68,7 +68,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
     int32_t ret = iSensorHdiConnection_->EnableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("enable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Enable sensor failed, sensorId:%{public}d", sensorId);
         return ENABLE_SENSOR_ERR;
     }
     return ret;
@@ -80,7 +80,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
     int32_t ret = iSensorHdiConnection_->DisableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("disable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Disable sensor failed, sensorId:%{public}d", sensorId);
         return DISABLE_SENSOR_ERR;
     }
     return ret;
@@ -92,7 +92,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
     int32_t ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("set batch failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Set batch failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_CONFIG_ERR;
     }
     return ret;
@@ -104,7 +104,7 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
     int32_t ret = iSensorHdiConnection_->SetMode(sensorId, mode);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("set mode failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_MODE_ERR;
     }
     return ret;
@@ -116,7 +116,7 @@ int32_t SensorHdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataC
     int32_t ret = iSensorHdiConnection_->RegisteDataReport(cb, reportDataCallback);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
-        SEN_HILOGI("registe dataReport failed");
+        SEN_HILOGI("Registe dataReport failed");
         return REGIST_CALLBACK_ERR;
     }
     return ret;
@@ -126,7 +126,7 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
 {
     int32_t ret = iSensorHdiConnection_->DestroyHdiConnection();
     if (ret != 0) {
-        SEN_HILOGI("destroy hdi connection failed");
+        SEN_HILOGI("Destroy hdi connection failed");
         return DEVICE_ERR;
     }
     return ret;

@@ -106,7 +106,7 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         SEN_HILOGE("Parcel read failed");
         return sensors;
     }
-    SEN_HILOGD("sensorCount:%{public}u", sensorCount);
+    SEN_HILOGD("SensorCount:%{public}u", sensorCount);
     if (sensorCount > MAX_SENSOR_COUNT) {
         sensorCount = MAX_SENSOR_COUNT;
     }
@@ -230,7 +230,7 @@ ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInf
     }
     uint32_t activeInfoCount;
     READUINT32(reply, activeInfoCount, READ_PARCEL_ERR);
-    SEN_HILOGD("activeInfoCount:%{public}u", activeInfoCount);
+    SEN_HILOGD("ActiveInfoCount:%{public}u", activeInfoCount);
     if (activeInfoCount > MAX_SENSOR_COUNT) {
         activeInfoCount = MAX_SENSOR_COUNT;
     }
@@ -260,7 +260,7 @@ ErrCode SensorServiceProxy::CreateSocketChannel(sptr<IRemoteObject> sensorClient
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateSocketChannel", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
         return ERROR;
     }
     clientFd = reply.ReadFileDescriptor();
@@ -288,7 +288,7 @@ ErrCode SensorServiceProxy::DestroySocketChannel(sptr<IRemoteObject> sensorClien
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySocketChannel", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -308,7 +308,7 @@ ErrCode SensorServiceProxy::EnableActiveInfoCB()
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableActiveInfoCB", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -328,7 +328,7 @@ ErrCode SensorServiceProxy::DisableActiveInfoCB()
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableActiveInfoCB", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -348,7 +348,7 @@ ErrCode SensorServiceProxy::ResetSensors()
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "ResetSensors", "ERROR_CODE", ret);
-        SEN_HILOGE("failed, ret:%{public}d", ret);
+        SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }

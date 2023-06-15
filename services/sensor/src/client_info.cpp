@@ -53,7 +53,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
         return false;
     }
     for (const auto &pidIt : it->second) {
@@ -61,7 +61,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
             return true;
         }
     }
-    SEN_HILOGE("cannot find sensorInfo, sensorId:%{public}d", sensorId);
+    SEN_HILOGE("Cannot find sensorInfo, sensorId:%{public}d", sensorId);
     return false;
 }
 
@@ -80,7 +80,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(int32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
         return sensorInfo;
     }
     for (const auto &pidIt : it->second) {
@@ -104,7 +104,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
         return false;
     }
     bool ret = false;
@@ -132,7 +132,7 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
     auto appThreadInfoItr = appThreadInfoMap_.find(pid);
     if (appThreadInfoItr == appThreadInfoMap_.end()) {
         if (appThreadInfoMap_.size() == MAX_SUPPORT_CHANNEL) {
-            SEN_HILOGE("max support channel size is %{public}d", MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("Max support channel size is %{public}d", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = appThreadInfoMap_.insert(std::make_pair(pid, appThreadInfo));
@@ -191,7 +191,7 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto channelIt = channelMap_.find(pid);
     if (channelIt == channelMap_.end()) {
-        SEN_HILOGE("there is no channel belong to the pid");
+        SEN_HILOGE("There is no channel belong to the pid");
         return nullptr;
     }
     return channelIt->second;
@@ -206,7 +206,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t s
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto clientIt = clientMap_.find(sensorId);
     if (clientIt == clientMap_.end()) {
-        SEN_HILOGD("there is no channel belong to sensorId:%{public}d", sensorId);
+        SEN_HILOGD("There is no channel belong to sensorId:%{public}d", sensorId);
         return {};
     }
     std::vector<sptr<SensorBasicDataChannel>> sensorChannel;
@@ -228,7 +228,7 @@ bool ClientInfo::UpdateSensorInfo(int32_t sensorId, int32_t pid, const SensorBas
 {
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
-        SEN_HILOGE("params are invalid");
+        SEN_HILOGE("Params are invalid");
         return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
@@ -274,7 +274,7 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
         if (channelMap_.size() == MAX_SUPPORT_CHANNEL) {
-            SEN_HILOGE("max support channel size:%{public}d", MAX_SUPPORT_CHANNEL);
+            SEN_HILOGE("Max support channel size:%{public}d", MAX_SUPPORT_CHANNEL);
             return false;
         }
         auto ret = channelMap_.insert(std::make_pair(pid, channel));
@@ -350,7 +350,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
     std::lock_guard<std::mutex> channelLock(channelMutex_);
     auto it = channelMap_.find(pid);
     if (it == channelMap_.end()) {
-        SEN_HILOGD("there is no channel belong to pid, no need to destroy");
+        SEN_HILOGD("There is no channel belong to pid, no need to destroy");
         return true;
     }
     it = channelMap_.erase(it);
@@ -371,12 +371,12 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(int32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
         return sensorInfo;
     }
     auto pidIt = it->second.find(pid);
     if (pidIt == it->second.end()) {
-        SEN_HILOGE("cannot find pid:%{public}d", pid);
+        SEN_HILOGE("Cannot find pid:%{public}d", pid);
         return sensorInfo;
     }
     sensorInfo.SetSamplingPeriodNs(pidIt->second.GetSamplingPeriodNs());
@@ -402,7 +402,7 @@ uint64_t ClientInfo::ComputeBestPeriodCount(int32_t sensorId, sptr<SensorBasicDa
     int64_t bestSamplingPeriod = GetBestSensorInfo(sensorId).GetSamplingPeriodNs();
     int64_t curSamplingPeriod = GetCurPidSensorInfo(sensorId, pid).GetSamplingPeriodNs();
     if (bestSamplingPeriod == 0L) {
-        SEN_HILOGE("best Sensor Sampling Period is 0");
+        SEN_HILOGE("Best Sensor Sampling Period is 0");
         return 0UL;
     }
     int64_t ret = curSamplingPeriod / bestSamplingPeriod;
@@ -427,7 +427,7 @@ uint64_t ClientInfo::ComputeBestFifoCount(int32_t sensorId, sptr<SensorBasicData
     int64_t curReportDelay = GetCurPidSensorInfo(sensorId, pid).GetMaxReportDelayNs();
     int64_t curSamplingPeriod = GetCurPidSensorInfo(sensorId, pid).GetSamplingPeriodNs();
     if (curSamplingPeriod == 0L) {
-        SEN_HILOGE("best sensor fifo count is 0");
+        SEN_HILOGE("Best sensor fifo count is 0");
         return 0UL;
     }
     int64_t ret = curReportDelay / curSamplingPeriod;
@@ -447,7 +447,7 @@ int32_t ClientInfo::GetStoreEvent(int32_t sensorId, SensorData &data)
         return ERR_OK;
     }
 
-    SEN_HILOGE("can't get store event, sensorId:%{public}d", sensorId);
+    SEN_HILOGE("Can't get store event, sensorId:%{public}d", sensorId);
     return NO_STORE_EVENT;
 }
 
@@ -457,7 +457,7 @@ void ClientInfo::StoreEvent(const SensorData &data)
     SensorData storedEvent;
     auto sensorHdiConnection = &SensorHdiConnection::GetInstance();
     if (sensorHdiConnection == nullptr) {
-        SEN_HILOGE("sensorHdiConnection cannot be null");
+        SEN_HILOGE("SensorHdiConnection cannot be null");
         return;
     }
     std::vector<Sensor> sensors;
@@ -505,7 +505,7 @@ int32_t ClientInfo::FindClientPid(const sptr<IRemoteObject> &sensorClient)
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
-        SEN_HILOGE("cannot find client pid");
+        SEN_HILOGE("Cannot find client pid");
         return INVALID_PID;
     }
     return it->second;
@@ -518,7 +518,7 @@ void ClientInfo::DestroyClientPid(const sptr<IRemoteObject> &sensorClient)
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
     if (it == clientPidMap_.end()) {
-        SEN_HILOGE("cannot find client pid");
+        SEN_HILOGE("Cannot find client pid");
         return;
     }
     clientPidMap_.erase(it);
@@ -698,7 +698,7 @@ int32_t ClientInfo::AddActiveInfoCBPid(int32_t pid)
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto pairRet = activeInfoCBPidSet_.insert(pid);
     if (!pairRet.second) {
-        SEN_HILOGE("Pid is duplicated");
+        SEN_HILOGE("pid is duplicated");
         return ERROR;
     }
     return ERR_OK;
@@ -709,7 +709,7 @@ int32_t ClientInfo::DelActiveInfoCBPid(int32_t pid)
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto it = activeInfoCBPidSet_.find(pid);
     if (it == activeInfoCBPidSet_.end()) {
-        SEN_HILOGE("Pid is not exists");
+        SEN_HILOGE("pid is not exists");
         return ERROR;
     }
     activeInfoCBPidSet_.erase(it);
@@ -732,13 +732,13 @@ bool ClientInfo::CallingService(int32_t pid)
     if (channelIt != channelMap_.end()) {
         return false;
     }
-    SEN_HILOGD("Pid is not exists in channelMap");
+    SEN_HILOGD("pid is not exists in channelMap");
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto pidIt = activeInfoCBPidSet_.find(pid);
     if (pidIt != activeInfoCBPidSet_.end()) {
         return false;
     }
-    SEN_HILOGD("Pid is not exists in activeInfoCBPidSet");
+    SEN_HILOGD("pid is not exists in activeInfoCBPidSet");
     return true;
 }
 

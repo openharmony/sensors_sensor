@@ -131,7 +131,7 @@ bool SensorPowerPolicy::Resume(int32_t pid, int32_t sensorId, int64_t samplingPe
     CALL_LOG_ENTER;
     if ((sensorId == INVALID_SENSOR_ID) || (samplingPeriodNs <= 0) ||
         ((samplingPeriodNs != 0L) && (maxReportDelayNs / samplingPeriodNs > MAX_EVENT_COUNT))) {
-        SEN_HILOGE("SensorId is invalid or maxReportDelayNs exceed the maximum value");
+        SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceed the maximum value");
         return false;
     }
     if (clientInfo_.GetSensorState(sensorId)) {
