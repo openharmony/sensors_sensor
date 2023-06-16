@@ -23,9 +23,9 @@
 
 #include "active_info.h"
 #include "i_sensor_client.h"
-#include "sensors_ipc_interface_code.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor.h"
+#include "sensors_ipc_interface_code.h"
 
 namespace OHOS {
 namespace Sensors {
