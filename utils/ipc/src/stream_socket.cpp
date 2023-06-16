@@ -37,9 +37,9 @@ int32_t StreamSocket::EpollCreate(int32_t size)
 {
     epollFd_ = epoll_create(size);
     if (epollFd_ < 0) {
-        SEN_HILOGE("epoll create, epollFd_:%{public}d", epollFd_);
+        SEN_HILOGE("Epoll create, epollFd_:%{public}d", epollFd_);
     } else {
-        SEN_HILOGI("epoll already create, epollFd_:%{public}d", epollFd_);
+        SEN_HILOGI("Epoll already create, epollFd_:%{public}d", epollFd_);
     }
     return epollFd_;
 }

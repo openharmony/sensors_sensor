@@ -35,7 +35,7 @@ constexpr int32_t SOCKET_PAIR_SIZE = 2;
 
 SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), isActive_(false)
 {
-    SEN_HILOGD("IsActive_:%{public}d, sendFd:%{public}d", isActive_, sendFd_);
+    SEN_HILOGD("isActive_:%{public}d, sendFd:%{public}d", isActive_, sendFd_);
 }
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
@@ -114,9 +114,9 @@ SensorBasicDataChannel::~SensorBasicDataChannel()
 
 int32_t SensorBasicDataChannel::SendToBinder(MessageParcel &data)
 {
-    SEN_HILOGD("SendFd:%{public}d", sendFd_);
+    SEN_HILOGD("sendFd:%{public}d", sendFd_);
     if (sendFd_ < 0) {
-        SEN_HILOGE("SendFd FileDescriptor error");
+        SEN_HILOGE("sendFd FileDescriptor error");
         return SENSOR_CHANNEL_SENDFD_ERR;
     }
     bool result = data.WriteFileDescriptor(sendFd_);
@@ -207,7 +207,7 @@ bool SensorBasicDataChannel::GetSensorStatus() const
 
 void SensorBasicDataChannel::SetSensorStatus(bool isActive)
 {
-    SEN_HILOGD("IsActive_:%{public}d", isActive);
+    SEN_HILOGD("isActive_:%{public}d", isActive);
     std::unique_lock<std::mutex> lock(statusLock_);
     isActive_ = isActive;
     return;

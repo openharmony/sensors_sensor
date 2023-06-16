@@ -402,7 +402,7 @@ uint64_t ClientInfo::ComputeBestPeriodCount(int32_t sensorId, sptr<SensorBasicDa
     int64_t bestSamplingPeriod = GetBestSensorInfo(sensorId).GetSamplingPeriodNs();
     int64_t curSamplingPeriod = GetCurPidSensorInfo(sensorId, pid).GetSamplingPeriodNs();
     if (bestSamplingPeriod == 0L) {
-        SEN_HILOGE("Best Sensor Sampling Period is 0");
+        SEN_HILOGE("Best sensor sampling period is 0");
         return 0UL;
     }
     int64_t ret = curSamplingPeriod / bestSamplingPeriod;
@@ -457,7 +457,7 @@ void ClientInfo::StoreEvent(const SensorData &data)
     SensorData storedEvent;
     auto sensorHdiConnection = &SensorHdiConnection::GetInstance();
     if (sensorHdiConnection == nullptr) {
-        SEN_HILOGE("SensorHdiConnection cannot be null");
+        SEN_HILOGE("sensorHdiConnection cannot be null");
         return;
     }
     std::vector<Sensor> sensors;
@@ -698,7 +698,7 @@ int32_t ClientInfo::AddActiveInfoCBPid(int32_t pid)
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto pairRet = activeInfoCBPidSet_.insert(pid);
     if (!pairRet.second) {
-        SEN_HILOGE("pid is duplicated");
+        SEN_HILOGE("Pid is duplicated");
         return ERROR;
     }
     return ERR_OK;
@@ -709,7 +709,7 @@ int32_t ClientInfo::DelActiveInfoCBPid(int32_t pid)
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto it = activeInfoCBPidSet_.find(pid);
     if (it == activeInfoCBPidSet_.end()) {
-        SEN_HILOGE("pid is not exists");
+        SEN_HILOGE("Pid is not exists");
         return ERROR;
     }
     activeInfoCBPidSet_.erase(it);
@@ -732,13 +732,13 @@ bool ClientInfo::CallingService(int32_t pid)
     if (channelIt != channelMap_.end()) {
         return false;
     }
-    SEN_HILOGD("pid is not exists in channelMap");
+    SEN_HILOGD("Pid is not exists in channelMap");
     std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     auto pidIt = activeInfoCBPidSet_.find(pid);
     if (pidIt != activeInfoCBPidSet_.end()) {
         return false;
     }
-    SEN_HILOGD("pid is not exists in activeInfoCBPidSet");
+    SEN_HILOGD("Pid is not exists in activeInfoCBPidSet");
     return true;
 }
 

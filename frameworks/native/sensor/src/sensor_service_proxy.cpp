@@ -29,7 +29,6 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceProxy" };
-constexpr uint32_t MAX_SENSOR_COUNT = 200;
 }  // namespace
 
 SensorServiceProxy::SensorServiceProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorService>(impl)
@@ -230,7 +229,7 @@ ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInf
     }
     uint32_t activeInfoCount;
     READUINT32(reply, activeInfoCount, READ_PARCEL_ERR);
-    SEN_HILOGD("ActiveInfoCount:%{public}u", activeInfoCount);
+    SEN_HILOGD("activeInfoCount:%{public}u", activeInfoCount);
     if (activeInfoCount > MAX_SENSOR_COUNT) {
         activeInfoCount = MAX_SENSOR_COUNT;
     }

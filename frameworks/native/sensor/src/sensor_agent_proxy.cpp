@@ -326,7 +326,7 @@ int32_t SensorAgentProxy::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("pid is invalid, pid:%{public}d", pid);
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
     int32_t ret = SenClient.SuspendSensors(pid);
@@ -340,7 +340,7 @@ int32_t SensorAgentProxy::ResumeSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("pid is invalid, pid:%{public}d", pid);
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
     int32_t ret = SenClient.ResumeSensors(pid);
@@ -355,7 +355,7 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid,
 {
     CALL_LOG_ENTER;
     if (pid < 0) {
-        SEN_HILOGE("pid is invalid, pid:%{public}d", pid);
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
     CHKPR(sensorActiveInfos, OHOS::Sensors::ERROR);

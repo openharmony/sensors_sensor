@@ -45,7 +45,7 @@ std::optional<std::string> GetNapiError(int32_t errorCode)
 
 void ThrowErr(const napi_env &env, const int32_t errCode, const std::string &printMsg)
 {
-    SEN_HILOGE("Essage:%{public}s, code:%{public}d", printMsg.c_str(), errCode);
+    SEN_HILOGE("Message:%{public}s, code:%{public}d", printMsg.c_str(), errCode);
     auto msg = GetNapiError(errCode);
     if (!msg) {
         SEN_HILOGE("ErrCode:%{public}d is invalid", errCode);

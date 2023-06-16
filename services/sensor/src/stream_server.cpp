@@ -44,7 +44,7 @@ bool StreamServer::SendMsg(int32_t fd, const NetPacket& pkt)
 {
     CALL_LOG_ENTER;
     if (fd < 0) {
-        SEN_HILOGE("fd is invalid");
+        SEN_HILOGE("Fd is invalid");
         return false;
     }
     auto sess = GetSession(fd);
@@ -105,31 +105,31 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     CALL_LOG_ENTER;
     int32_t sockFds[2] = { -1 };
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockFds) != 0) {
-        SEN_HILOGE("socketpair failed, errno:%{public}d", errno);
+        SEN_HILOGE("Socketpair failed, errno:%{public}d", errno);
         return ERROR;
     }
     serverFd = sockFds[0];
     clientFd = sockFds[1];
     if (serverFd < 0 || clientFd < 0) {
-        SEN_HILOGE("serverFd or clientFd is invalid");
+        SEN_HILOGE("ServerFd or clientFd is invalid");
         return ERROR;
     }
     static constexpr size_t bufferSize = 32 * 1024;
     SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("setsockopt serverFd send buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd send buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(serverFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("setsockopt serverFd recv buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd recv buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("setsockopt clientFd send buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd send buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("setsockopt clientFd recv buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd recv buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     sess = std::make_shared<StreamSession>("", serverFd, uid, pid);
@@ -152,12 +152,12 @@ bool StreamServer::AddSession(SessionPtr sess)
     CHKPF(sess);
     auto fd = sess->GetFd();
     if (fd < 0) {
-        SEN_HILOGE("fd is Invalid");
+        SEN_HILOGE("Fd is Invalid");
         return false;
     }
     auto pid = sess->GetPid();
     if (pid <= 0) {
-        SEN_HILOGE("pid is invalid");
+        SEN_HILOGE("Pid is invalid");
         return false;
     }
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
@@ -176,7 +176,7 @@ void StreamServer::DelSession(int32_t pid)
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     auto pidIt = idxPidMap_.find(pid);
     if (pidIt == idxPidMap_.end()) {
-        SEN_HILOGW("pid session not exist");
+        SEN_HILOGW("Pid session not exist");
         return;
     }
     int32_t fd = pidIt->second;

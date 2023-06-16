@@ -383,7 +383,7 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
         }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
-            SEN_HILOGE("Napi_get_reference_value fail");
+            SEN_HILOGE("napi_get_reference_value fail");
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
@@ -1169,6 +1169,26 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     return nullptr;
 }
 
+static bool RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorTypeId];
+    for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
+        CHKPC(*iter);
+        if ((*iter)->env != env) {
+            ++iter;
+            continue;
+        }
+        iter = callbackInfos.erase(iter);
+    }
+    if (callbackInfos.empty()) {
+        g_subscribeCallbacks.erase(sensorTypeId);
+        return true;
+    }
+    return false;
+}
+
 napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
@@ -1180,17 +1200,7 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
         ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail");
         return nullptr;
     }
-    std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorTypeId];
-    for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
-        CHKPC(*iter);
-        if ((*iter)->env != env) {
-            ++iter;
-            continue;
-        }
-        iter = callbackInfos.erase(iter);
-    }
-    if ((!callbackInfos.empty()) || CheckSubscribe(sensorTypeId)) {
+    if (!RemoveSubscribeCallback(env, sensorTypeId) || CheckSubscribe(sensorTypeId)) {
         SEN_HILOGW("There are other client subscribe as well, not need unsubscribe");
         return nullptr;
     }
@@ -1198,7 +1208,6 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
         SEN_HILOGW("UnsubscribeSensor failed");
         return nullptr;
     }
-    g_subscribeCallbacks.erase(sensorTypeId);
     return nullptr;
 }
 
@@ -1249,6 +1258,7 @@ static napi_value CreateEnumSensorType(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_MAGNETIC_FIELD", GetNapiInt32(env, SENSOR_TYPE_ID_MAGNETIC_FIELD)),
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_BAROMETER", GetNapiInt32(env, SENSOR_TYPE_ID_BAROMETER)),
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_HALL", GetNapiInt32(env, SENSOR_TYPE_ID_HALL)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_TEMPERATURE", GetNapiInt32(env, SENSOR_TYPE_ID_TEMPERATURE)),
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_PROXIMITY", GetNapiInt32(env, SENSOR_TYPE_ID_PROXIMITY)),
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_HUMIDITY", GetNapiInt32(env, SENSOR_TYPE_ID_HUMIDITY)),
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ORIENTATION", GetNapiInt32(env, SENSOR_TYPE_ID_ORIENTATION)),
@@ -1289,6 +1299,7 @@ static napi_value CreateEnumSensorId(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_PROPERTY("MAGNETIC_FIELD", GetNapiInt32(env, SENSOR_TYPE_ID_MAGNETIC_FIELD)),
         DECLARE_NAPI_STATIC_PROPERTY("BAROMETER", GetNapiInt32(env, SENSOR_TYPE_ID_BAROMETER)),
         DECLARE_NAPI_STATIC_PROPERTY("HALL", GetNapiInt32(env, SENSOR_TYPE_ID_HALL)),
+        DECLARE_NAPI_STATIC_PROPERTY("TEMPERATURE", GetNapiInt32(env, SENSOR_TYPE_ID_TEMPERATURE)),
         DECLARE_NAPI_STATIC_PROPERTY("PROXIMITY", GetNapiInt32(env, SENSOR_TYPE_ID_PROXIMITY)),
         DECLARE_NAPI_STATIC_PROPERTY("HUMIDITY", GetNapiInt32(env, SENSOR_TYPE_ID_HUMIDITY)),
         DECLARE_NAPI_STATIC_PROPERTY("ORIENTATION", GetNapiInt32(env, SENSOR_TYPE_ID_ORIENTATION)),

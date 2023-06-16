@@ -117,7 +117,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
             goto RELEASE_RES;
         }
         if (strcpy_s(argv[i], args[i].size() + 1, args[i].c_str()) != EOK) {
-            SEN_HILOGE("Strcpy_s error");
+            SEN_HILOGE("strcpy_s error");
             goto RELEASE_RES;
         }
     }
@@ -268,6 +268,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
         case SENSOR_TYPE_ID_BAROMETER:
         case SENSOR_TYPE_ID_HALL:
+        case SENSOR_TYPE_ID_TEMPERATURE:
         case SENSOR_TYPE_ID_PROXIMITY:
         case SENSOR_TYPE_ID_HUMIDITY:
         case SENSOR_TYPE_ID_AMBIENT_TEMPERATURE:

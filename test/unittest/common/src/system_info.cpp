@@ -66,7 +66,7 @@ int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
         }
         std::string strLine;
         if (!std::getline(filePath, strLine)) {
-            SEN_HILOGE("Getline fail");
+            SEN_HILOGE("getline fail");
             filePath.close();
             continue;
         }
@@ -106,7 +106,7 @@ int32_t CpuInfo::GetProcOccupy(int32_t pid)
 
     std::string strLine;
     if (!std::getline(file, strLine)) {
-        SEN_HILOGE("Getline fail");
+        SEN_HILOGE("getline fail");
         file.close();
         return OHOS::Sensors::ERROR;
     }
@@ -151,7 +151,7 @@ int32_t CpuInfo::GetSystemCpuStatInfo(Total_Cpu_Occupy& info)
     }
     std::string strLine;
     if (!std::getline(statFile, strLine)) {
-        SEN_HILOGE("Getline fail");
+        SEN_HILOGE("getline fail");
         statFile.close();
         return STREAM_BUF_READ_FAIL;
     }

@@ -57,6 +57,7 @@ ohos_shared_library("sensor_interface_native") {
   ]
 
   part_name = "sensor"
+  innerapi_tags = [ "platformsdk" ]
   subsystem_name = "sensors"
 }
 

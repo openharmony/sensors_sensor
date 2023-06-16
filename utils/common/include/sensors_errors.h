@@ -23,6 +23,7 @@
 
 namespace OHOS {
 namespace Sensors {
+constexpr uint32_t MAX_SENSOR_COUNT = 200;
 // Error code for user
 enum ErrorCode : int32_t {
     PERMISSION_DENIED = 201, // Use this error code when permission is denied.

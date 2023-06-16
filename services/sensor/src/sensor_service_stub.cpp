@@ -121,6 +121,10 @@ ErrCode SensorServiceStub::GetAllSensorsInner(MessageParcel &data, MessageParcel
     (void)data;
     std::vector<Sensor> sensors = GetSensorList();
     uint32_t sensorCount = static_cast<uint32_t>(sensors.size());
+    if (sensorCount > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("SensorCount:%{public}u", sensorCount);
+        sensorCount = MAX_SENSOR_COUNT;
+    }
     WRITEUINT32(reply, sensorCount, WRITE_PARCEL_ERR);
     for (uint32_t i = 0; i < sensorCount; ++i) {
         if (!sensors[i].Marshalling(reply)) {
@@ -160,6 +164,11 @@ ErrCode SensorServiceStub::SuspendSensorsInner(MessageParcel &data, MessageParce
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
     }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+        return PERMISSION_DENIED;
+    }
     (void)reply;
     int32_t pid;
     READINT32(data, pid, READ_PARCEL_ERR);
@@ -171,6 +180,11 @@ ErrCode SensorServiceStub::ResumeSensorsInner(MessageParcel &data, MessageParcel
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
     (void)reply;
@@ -195,6 +209,10 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
         return ret;
     }
     uint32_t activeInfoCount = static_cast<uint32_t>(activeInfoList.size());
+    if (activeInfoCount > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("ActiveInfoCount:%{public}u", activeInfoCount);
+        activeInfoCount = MAX_SENSOR_COUNT;
+    }
     WRITEUINT32(reply, activeInfoCount, WRITE_PARCEL_ERR);
     for (uint32_t i = 0; i < activeInfoCount; ++i) {
         if (!activeInfoList[i].Marshalling(reply)) {
@@ -261,6 +279,11 @@ ErrCode SensorServiceStub::ResetSensorsInner(MessageParcel &data, MessageParcel 
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
     }
     return ResetSensors();

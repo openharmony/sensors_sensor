@@ -41,7 +41,7 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
 {
     CHKPR(dataCB_, SENSOR_NATIVE_REGSITER_CB_ERR);
     if (GetReceiveDataFd() != -1) {
-        SEN_HILOGE("Fd not close");
+        SEN_HILOGE("fd not close");
         return SENSOR_CHANNEL_RESTORE_FD_ERR;
     }
     return InnerSensorDataChannel();

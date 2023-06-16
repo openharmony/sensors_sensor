@@ -52,11 +52,13 @@ int32_t g_processPid = 0;
 
 void SensorPowerTest::SetUpTestCase()
 {
-    const char **perms = new const char *[1];
+    const char **perms = new (std::nothrow) const char *[2];
+    CHKPV(perms);
     perms[0] = "ohos.permission.ACCELEROMETER";
+    perms[1] = "ohos.permission.MANAGE_SENSOR";
     TokenInfoParams infoInstance = {
         .dcapsNum = 0,
-        .permsNum = 1,
+        .permsNum = 2,
         .aclsNum = 0,
         .dcaps = nullptr,
         .perms = perms,
