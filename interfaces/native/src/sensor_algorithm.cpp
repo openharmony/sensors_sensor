@@ -117,7 +117,7 @@ int32_t SensorAlgorithm::TransformCoordinateSystem(std::vector<float> inRotation
 int32_t SensorAlgorithm::GetAltitude(float seaPressure, float currentPressure, float *altitude)
 {
     if (altitude == nullptr) {
-        SEN_HILOGE("invalid parameter");
+        SEN_HILOGE("Invalid parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     float coef = 1.0f / RECIPROCAL_COEFFICIENT;
@@ -130,7 +130,7 @@ int32_t SensorAlgorithm::GetAltitude(float seaPressure, float currentPressure, f
 int32_t SensorAlgorithm::GetGeomagneticDip(std::vector<float> inclinationMatrix, float *geomagneticDip)
 {
     if (geomagneticDip == nullptr) {
-        SEN_HILOGE("invalid parameter");
+        SEN_HILOGE("Invalid parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     int32_t matrixLength = static_cast<int32_t>(inclinationMatrix.size());
@@ -150,7 +150,7 @@ int32_t SensorAlgorithm::GetAngleModify(std::vector<float> curRotationMatrix, st
     std::vector<float> &angleChange)
 {
     if (static_cast<int32_t>(angleChange.size()) < ROTATION_VECTOR_LENGTH) {
-        SEN_HILOGE("invalid parameter");
+        SEN_HILOGE("Invalid parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     int32_t curRotationMatrixLength = static_cast<int32_t>(curRotationMatrix.size());
@@ -192,7 +192,7 @@ int32_t SensorAlgorithm::GetAngleModify(std::vector<float> curRotationMatrix, st
 int32_t SensorAlgorithm::GetDirection(std::vector<float> rotationMatrix, std::vector<float> &rotationAngle)
 {
     if (static_cast<int32_t>(rotationAngle.size()) < ROTATION_VECTOR_LENGTH) {
-        SEN_HILOGE("invalid parameter");
+        SEN_HILOGE("Invalid parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     int32_t rotationMatrixLength = static_cast<int32_t>(rotationMatrix.size());
@@ -224,7 +224,7 @@ int32_t SensorAlgorithm::CreateRotationMatrix(std::vector<float> rotationVector,
     std::vector<float> quaternion(4);
     int32_t ret = CreateQuaternion(rotationVector, quaternion);
     if (ret != OHOS::Sensors::SUCCESS) {
-        SEN_HILOGE("create quaternion failed");
+        SEN_HILOGE("Create quaternion failed");
         return ret;
     }
     float squareOfX = 2 * static_cast<float>(pow(quaternion[1], 2));

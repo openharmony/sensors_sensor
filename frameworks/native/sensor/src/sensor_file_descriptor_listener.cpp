@@ -97,7 +97,7 @@ void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
 void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
-        SEN_HILOGE("Invalid fd::%{public}d", fileDescriptor);
+        SEN_HILOGE("Invalid fd:%{public}d", fileDescriptor);
     }
     if (receiveDataBuff_ != nullptr) {
         delete[] receiveDataBuff_;

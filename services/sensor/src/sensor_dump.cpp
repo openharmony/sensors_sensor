@@ -113,7 +113,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     for (size_t i = 0; i < args.size(); ++i) {
         argv[i] = new (std::nothrow) char[args[i].size() + 1];
         if (argv[i] == nullptr) {
-            SEN_HILOGE("alloc failure");
+            SEN_HILOGE("Alloc failure");
             goto RELEASE_RES;
         }
         if (strcpy_s(argv[i], args[i].size() + 1, args[i].c_str()) != EOK) {
@@ -285,7 +285,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED:
             return UNCALIBRATED_DIMENSION;
         default:
-            SEN_HILOGW("sensorId: %{public}u,size: %{public}d", sensorId, COMMON_DIMENSION);
+            SEN_HILOGW("sensorId:%{public}u, size:%{public}d", sensorId, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }

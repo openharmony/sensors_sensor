@@ -117,19 +117,19 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     static constexpr size_t bufferSize = 32 * 1024;
     SessionPtr sess = nullptr;
     if (setsockopt(serverFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt serverFd send buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd send buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(serverFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt serverFd recv buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt serverFd recv buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_SNDBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt clientFd send buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd send buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     if (setsockopt(clientFd, SOL_SOCKET, SO_RCVBUF, &bufferSize, sizeof(bufferSize)) != 0) {
-        SEN_HILOGE("Setsockopt clientFd recv buffer size failed, errno: %{public}d", errno);
+        SEN_HILOGE("Setsockopt clientFd recv buffer size failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
     }
     sess = std::make_shared<StreamSession>("", serverFd, uid, pid);

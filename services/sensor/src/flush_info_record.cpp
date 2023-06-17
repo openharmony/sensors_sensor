@@ -62,7 +62,7 @@ ErrCode FlushInfoRecord::SetFlushInfo(int32_t sensorId, const sptr<SensorBasicDa
 bool FlushInfoRecord::IsFlushChannelValid(const std::vector<sptr<SensorBasicDataChannel>> &currChannelList,
                                           const sptr<SensorBasicDataChannel> &flushChannel)
 {
-    SEN_HILOGD("channel list size:%{public}u", static_cast<uint32_t>(currChannelList.size()));
+    SEN_HILOGD("Channel list size:%{public}u", static_cast<uint32_t>(currChannelList.size()));
     for (const auto &channel : currChannelList) {
         if (channel == flushChannel) {
             return true;
@@ -89,7 +89,7 @@ ErrCode FlushInfoRecord::FlushProcess(const int32_t sensorId, const uint32_t fla
     CHKPR(channel, ERROR);
     int32_t ret = SetFlushInfo(sensorId, channel, false);
     if (ret != ERR_OK) {
-        SEN_HILOGE("set flush info failed");
+        SEN_HILOGE("Set flush info failed");
         return ret;
     }
     return ERR_OK;

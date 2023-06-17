@@ -1145,7 +1145,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
         "register success callback fail");
     napi_value napiFail = GetNamedProperty(env, args[0], "fail");
     if (IsMatchType(env, napiFail, napi_function)) {
-        SEN_HILOGD("has fail callback");
+        SEN_HILOGD("Has fail callback");
         CHKCP(RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]),
             "register fail callback fail");
     }

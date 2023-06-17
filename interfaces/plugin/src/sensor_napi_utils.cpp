@@ -303,7 +303,7 @@ bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbac
     int32_t code = asyncCallbackInfo->error.code;
     auto msg = GetNapiError(code);
     if (!msg) {
-        SEN_HILOGE("errCode: %{public}d is invalid", code);
+        SEN_HILOGE("ErrCode:%{public}d is invalid", code);
         return false;
     }
     result[0] = CreateBusinessError(env, code, msg.value());

@@ -89,7 +89,7 @@ void SensorDataCallbackImpl(SensorEvent *event)
         return;
     }
     float *sensorData = (float *)event[0].data;
-    SEN_HILOGI("SensorId:%{public}d, version:%{public}d,dataLen:%{public}d,data:%{public}f",
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, data:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
 

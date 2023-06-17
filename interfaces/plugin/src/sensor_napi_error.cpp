@@ -45,10 +45,10 @@ std::optional<std::string> GetNapiError(int32_t errorCode)
 
 void ThrowErr(const napi_env &env, const int32_t errCode, const std::string &printMsg)
 {
-    SEN_HILOGE("message: %{public}s, code: %{public}d", printMsg.c_str(), errCode);
+    SEN_HILOGE("Message:%{public}s, code:%{public}d", printMsg.c_str(), errCode);
     auto msg = GetNapiError(errCode);
     if (!msg) {
-        SEN_HILOGE("errCode: %{public}d is invalid", errCode);
+        SEN_HILOGE("ErrCode:%{public}d is invalid", errCode);
         return;
     }
     napi_handle_scope scope = nullptr;

@@ -60,7 +60,7 @@ void HdiServiceImpl::DataReportThread()
             break;
         }
     }
-    SEN_HILOGI("thread stop");
+    SEN_HILOGI("Thread stop");
     return;
 }
 
@@ -69,7 +69,7 @@ int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
     CALL_LOG_ENTER;
     CHKPR(callback_, ERROR);
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
-        SEN_HILOGE("not support enable sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Not support enable sensorId:%{public}d", sensorId);
         return ERR_NO_INIT;
     }
     if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) != g_enableSensors.end()) {
@@ -92,7 +92,7 @@ int32_t HdiServiceImpl::DisableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
     if (std::find(supportSensors.begin(), supportSensors.end(), sensorId) == supportSensors.end()) {
-        SEN_HILOGE("not support disable sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Not support disable sensorId:%{public}d", sensorId);
         return ERR_NO_INIT;
     }
     if (std::find(g_enableSensors.begin(), g_enableSensors.end(), sensorId) == g_enableSensors.end()) {

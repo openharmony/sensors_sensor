@@ -33,7 +33,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
     CHKPR(reportDataCallback_, ERR_NO_INIT);
     int32_t dataSize = static_cast<int32_t>(event.data.size());
     if (dataSize == 0) {
-        SEN_HILOGI("data is empty");
+        SEN_HILOGI("Data is empty");
         return ERR_INVALID_VALUE;
     }
     SensorData sensorData = {

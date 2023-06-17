@@ -61,7 +61,7 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *
         std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
         auto iter = g_subscribeMap.find(eventStream.sensorTypeId);
         if (iter == g_subscribeMap.end()) {
-            SEN_HILOGE("sensor is not subscribed");
+            SEN_HILOGE("Sensor is not subscribed");
             return;
         }
         const SensorUser *user = iter->second;
@@ -75,20 +75,20 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (g_isChannelCreated) {
-        SEN_HILOGI("the channel has already been created");
+        SEN_HILOGI("The channel has already been created");
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
     auto ret = dataChannel_->CreateSensorDataChannel(std::bind(&SensorAgentProxy::HandleSensorData,
         this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), nullptr);
     if (ret != ERR_OK) {
-        SEN_HILOGE("create data channel failed, ret:%{public}d", ret);
+        SEN_HILOGE("Create data channel failed, ret:%{public}d", ret);
         return ret;
     }
     ret = SenClient.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
         auto destroyRet = dataChannel_->DestroySensorDataChannel();
-        SEN_HILOGE("transfer data channel failed, ret:%{public}d,destroyRet:%{public}d", ret, destroyRet);
+        SEN_HILOGE("Transfer data channel failed, ret:%{public}d, destroyRet:%{public}d", ret, destroyRet);
         return ret;
     }
     g_isChannelCreated = true;
@@ -100,18 +100,18 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (!g_isChannelCreated) {
-        SEN_HILOGI("channel has been destroyed");
+        SEN_HILOGI("Channel has been destroyed");
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
     int32_t ret = dataChannel_->DestroySensorDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destroy data channel failed, ret:%{public}d", ret);
+        SEN_HILOGE("Destroy data channel failed, ret:%{public}d", ret);
         return ret;
     }
     ret = SenClient.DestroyDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("destroy service data channel fail, ret:%{public}d", ret);
+        SEN_HILOGE("Destroy service data channel fail, ret:%{public}d", ret);
         return ret;
     }
     g_isChannelCreated = false;
@@ -123,7 +123,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (g_samplingInterval < 0 || g_reportInterval < 0) {
-        SEN_HILOGE("samplingPeriod or g_reportInterval is invalid");
+        SEN_HILOGE("SamplingPeriod or g_reportInterval is invalid");
         return ERROR;
     }
     if (!SenClient.IsValid(sensorId)) {
@@ -132,14 +132,14 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
-        SEN_HILOGE("subscribe sensorId first");
+        SEN_HILOGE("Subscribe sensorId first");
         return ERROR;
     }
     int32_t ret = SenClient.EnableSensor(sensorId, g_samplingInterval, g_reportInterval);
     g_samplingInterval = -1;
     g_reportInterval = -1;
     if (ret != 0) {
-        SEN_HILOGE("enable sensor failed, ret:%{public}d", ret);
+        SEN_HILOGE("Enable sensor failed, ret:%{public}d", ret);
         g_subscribeMap.erase(sensorId);
         return ret;
     }
@@ -156,7 +156,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap[sensorId] != user)) {
-        SEN_HILOGE("subscribe sensorId first");
+        SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     g_subscribeMap.erase(sensorId);
@@ -183,7 +183,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
-        SEN_HILOGE("subscribe sensorId first");
+        SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     g_samplingInterval = samplingInterval;
@@ -193,7 +193,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
 
 int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
-    SEN_HILOGI("in, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (!SenClient.IsValid(sensorId)) {
@@ -202,7 +202,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     }
     int32_t ret = CreateSensorDataChannel();
     if (ret != ERR_OK) {
-        SEN_HILOGE("create sensor data chanel failed");
+        SEN_HILOGE("Create sensor data chanel failed");
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
@@ -212,7 +212,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
 
 int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
-    SEN_HILOGI("in, sensorId: %{public}d", sensorId);
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (!SenClient.IsValid(sensorId)) {
@@ -221,13 +221,13 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if (g_unsubscribeMap.find(sensorId) == g_unsubscribeMap.end() || g_unsubscribeMap[sensorId] != user) {
-        SEN_HILOGE("deactivate sensorId first");
+        SEN_HILOGE("Deactivate sensorId first");
         return OHOS::Sensors::ERROR;
     }
     if (g_subscribeMap.empty()) {
         int32_t ret = DestroySensorDataChannel();
         if (ret != ERR_OK) {
-            SEN_HILOGE("destroy data channel fail, ret:%{public}d", ret);
+            SEN_HILOGE("Destroy data channel fail, ret:%{public}d", ret);
             return ret;
         }
     }
@@ -245,7 +245,7 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if ((g_subscribeMap.find(sensorId) == g_subscribeMap.end()) || (g_subscribeMap.at(sensorId) != user)) {
-        SEN_HILOGE("subscribe sensorId first");
+        SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
     return OHOS::Sensors::SUCCESS;
@@ -267,7 +267,7 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
     CALL_LOG_ENTER;
     std::vector<Sensor> sensorList = SenClient.GetSensorList();
     if (sensorList.empty()) {
-        SEN_HILOGE("get sensor lists failed");
+        SEN_HILOGE("Get sensor lists failed");
         return ERROR;
     }
     size_t count = sensorList.size();
@@ -312,7 +312,7 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     if (sensorInfos_ == nullptr) {
         int32_t ret = ConvertSensorInfos();
         if (ret != SUCCESS) {
-            SEN_HILOGE("convert sensor lists failed");
+            SEN_HILOGE("Convert sensor lists failed");
             ClearSensorInfos();
             return ERROR;
         }

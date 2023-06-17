@@ -173,55 +173,55 @@ void Sensor::SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs)
 bool Sensor::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteInt32(sensorId_)) {
-        SEN_HILOGE("failed, write sensorId failed");
+        SEN_HILOGE("Failed, write sensorId failed");
         return false;
     }
     if (!parcel.WriteInt32(sensorTypeId_)) {
-        SEN_HILOGE("failed, write sensorTypeId failed");
+        SEN_HILOGE("Failed, write sensorTypeId failed");
         return false;
     }
     if (!parcel.WriteString(sensorName_)) {
-        SEN_HILOGE("failed, write sensorName failed");
+        SEN_HILOGE("Failed, write sensorName failed");
         return false;
     }
     if (!parcel.WriteString(vendorName_)) {
-        SEN_HILOGE("failed, write vendorName failed");
+        SEN_HILOGE("Failed, write vendorName failed");
         return false;
     }
     if (!parcel.WriteString(firmwareVersion_)) {
-        SEN_HILOGE("failed, write firmwareVersion failed");
+        SEN_HILOGE("Failed, write firmwareVersion failed");
         return false;
     }
     if (!parcel.WriteString(hardwareVersion_)) {
-        SEN_HILOGE("failed, write hardwareVersion failed");
+        SEN_HILOGE("Failed, write hardwareVersion failed");
         return false;
     }
     if (!parcel.WriteFloat(maxRange_)) {
-        SEN_HILOGE("failed, write maxRange failed");
+        SEN_HILOGE("Failed, write maxRange failed");
         return false;
     }
     if (!parcel.WriteFloat(resolution_)) {
-        SEN_HILOGE("failed, write resolution failed");
+        SEN_HILOGE("Failed, write resolution failed");
         return false;
     }
     if (!parcel.WriteFloat(power_)) {
-        SEN_HILOGE("failed, write power failed");
+        SEN_HILOGE("Failed, write power failed");
         return false;
     }
     if (!parcel.WriteUint32(flags_)) {
-        SEN_HILOGE("failed, write flags failed");
+        SEN_HILOGE("Failed, write flags failed");
         return false;
     }
     if (!parcel.WriteInt32(fifoMaxEventCount_)) {
-        SEN_HILOGE("failed, write fifoMaxEventCount failed");
+        SEN_HILOGE("Failed, write fifoMaxEventCount failed");
         return false;
     }
     if (!parcel.WriteInt64(minSamplePeriodNs_)) {
-        SEN_HILOGE("failed, write minSamplePeriodNs failed");
+        SEN_HILOGE("Failed, write minSamplePeriodNs failed");
         return false;
     }
     if (!parcel.WriteInt64(maxSamplePeriodNs_)) {
-        SEN_HILOGE("failed, write maxSamplePeriodNs failed");
+        SEN_HILOGE("Failed, write maxSamplePeriodNs failed");
         return false;
     }
     return true;
