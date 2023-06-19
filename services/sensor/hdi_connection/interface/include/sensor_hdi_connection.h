@@ -31,14 +31,16 @@ public:
     int32_t DisableSensor(int32_t sensorId)  override;
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
-    int32_t RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
+    int32_t RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorHdiConnection);
-    std::unique_ptr<ISensorHdiConnection> iSensorHdiConnection_;
+    std::unique_ptr<ISensorHdiConnection> iSensorHdiConnection_ { nullptr };
+    std::unique_ptr<ISensorHdiConnection> iSensorCompatibleHdiConnection_ { nullptr };
     std::vector<Sensor> sensorList_;
     int32_t ConnectHdiService();
+    int32_t ConnectCompatibleHdi();
 };
 }  // namespace Sensors
 }  // namespace OHOS

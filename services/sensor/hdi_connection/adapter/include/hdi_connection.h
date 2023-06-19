@@ -32,7 +32,7 @@ public:
     int32_t DisableSensor(int32_t sensorId)  override;
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
     int32_t SetMode(int32_t sensorId, int32_t mode) override;
-    int32_t RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
+    int32_t RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
     ReportDataCb GetReportDataCb();
     sptr<ReportDataCallback> GetReportDataCallback();

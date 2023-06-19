@@ -143,7 +143,7 @@ void CompatibleConnection::ReportSensorDataCallback(SensorEvent *event)
     ISensorHdiConnection::dataCondition_.notify_one();
 }
 
-int32_t CompatibleConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t CompatibleConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CHKPR(reportDataCallback, ERR_INVALID_VALUE);
     int32_t ret = hdiServiceImpl_.Register(ReportSensorDataCallback);

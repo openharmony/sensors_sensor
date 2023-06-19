@@ -157,7 +157,7 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
     return ERR_OK;
 }
 
-int32_t HdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
     CALL_LOG_ENTER;
     CHKPR(reportDataCallback, ERR_NO_INIT);
@@ -165,7 +165,7 @@ int32_t HdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallbac
     int32_t ret = sensorInterface_->Register(0, eventCallback_);
     if (ret != 0) {
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
-            HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisteDataReport", "ERROR_CODE", ret);
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisterDataReport", "ERROR_CODE", ret);
         SEN_HILOGE("Register is failed");
         return ret;
     }

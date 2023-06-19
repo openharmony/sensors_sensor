@@ -24,6 +24,12 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorHdiConnection" };
+constexpr float MAX_RANGE = 9999.0;
+constexpr float POWER = 20.0;
+constexpr float RESOLITION = 0.000001;
+constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
+constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
+const std::string VERSION_NAME = "1.0.1";
 }
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -37,6 +43,10 @@ int32_t SensorHdiConnection::ConnectHdi()
     }
     if (ret != ERR_OK) {
         SEN_HILOGE("Connect hdi failed");
+    }
+    ret = ConnectCompatibleHdi();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Connect compatible hdi failed, ret:%{public}d", ret);
     }
     return ERR_OK;
 }
@@ -56,16 +66,67 @@ int32_t SensorHdiConnection::ConnectHdiService()
     return ERR_OK;
 }
 
+int32_t SensorHdiConnection::ConnectCompatibleHdi()
+{
+    if (iSensorCompatibleHdiConnection_ == nullptr) {
+        iSensorCompatibleHdiConnection_ = std::make_unique<CompatibleConnection>();
+    }
+    int32_t ret = iSensorCompatibleHdiConnection_->ConnectHdi();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Connect hdi compatible service failed");
+        return CONNECT_SENSOR_HDF_ERR;
+    }
+    return ERR_OK;
+}
+
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     sensorList.assign(sensorList_.begin(), sensorList_.end());
+    Sensor sensorColor;
+    sensorColor.SetSensorId(SENSOR_TYPE_ID_COLOR);
+    sensorColor.SetSensorTypeId(SENSOR_TYPE_ID_COLOR);
+    sensorColor.SetFirmwareVersion(VERSION_NAME);
+    sensorColor.SetHardwareVersion(VERSION_NAME);
+    sensorColor.SetMaxRange(MAX_RANGE);
+    sensorColor.SetSensorName("sensor_color");
+    sensorColor.SetVendorName("default_color");
+    sensorColor.SetResolution(RESOLITION);
+    sensorColor.SetPower(POWER);
+    sensorColor.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
+    sensorColor.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
+    sensorList.push_back(sensorColor);
+    Sensor sensorSar;
+    sensorSar.SetSensorId(SENSOR_TYPE_ID_SAR);
+    sensorSar.SetSensorTypeId(SENSOR_TYPE_ID_SAR);
+    sensorSar.SetFirmwareVersion(VERSION_NAME);
+    sensorSar.SetHardwareVersion(VERSION_NAME);
+    sensorSar.SetMaxRange(MAX_RANGE);
+    sensorSar.SetSensorName("sensor_sar");
+    sensorSar.SetVendorName("default_sar");
+    sensorSar.SetResolution(RESOLITION);
+    sensorSar.SetPower(POWER);
+    sensorSar.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
+    sensorSar.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
+    sensorList.push_back(sensorSar);
     return ERR_OK;
 }
 
 int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
-    int32_t ret = iSensorHdiConnection_->EnableSensor(sensorId);
+    int32_t ret { ENABLE_SENSOR_ERR };
+    if (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) {
+        CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
+        ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
+        FinishTrace(HITRACE_TAG_SENSORS);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Enable sensor failed in compatible, sensorId:%{public}d", sensorId);
+            return ENABLE_SENSOR_ERR;
+        }
+        return ret;
+    }
+    CHKPR(iSensorHdiConnection_, ENABLE_SENSOR_ERR);
+    ret = iSensorHdiConnection_->EnableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("Enable sensor failed, sensorId:%{public}d", sensorId);
@@ -77,7 +138,19 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
-    int32_t ret = iSensorHdiConnection_->DisableSensor(sensorId);
+    int32_t ret { ENABLE_SENSOR_ERR };
+    if (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) {
+        CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
+        ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
+        FinishTrace(HITRACE_TAG_SENSORS);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Disable sensor failed in compatible, sensorId:%{public}d", sensorId);
+            return DISABLE_SENSOR_ERR;
+        }
+        return ret;
+    }
+    CHKPR(iSensorHdiConnection_, DISABLE_SENSOR_ERR);
+    ret = iSensorHdiConnection_->DisableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("Disable sensor failed, sensorId:%{public}d", sensorId);
@@ -89,7 +162,19 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
-    int32_t ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
+    int32_t ret { ENABLE_SENSOR_ERR };
+    if (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) {
+        CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
+        ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
+        FinishTrace(HITRACE_TAG_SENSORS);
+        if (ret != ERR_OK) {
+            SEN_HILOGI("Set batch failed in compatible, sensorId:%{public}d", sensorId);
+            return SET_SENSOR_CONFIG_ERR;
+        }
+        return ret;
+    }
+    CHKPR(iSensorHdiConnection_, SET_SENSOR_CONFIG_ERR);
+    ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("Set batch failed, sensorId:%{public}d", sensorId);
@@ -101,6 +186,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetMode");
+    CHKPR(iSensorHdiConnection_, SET_SENSOR_MODE_ERR);
     int32_t ret = iSensorHdiConnection_->SetMode(sensorId, mode);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
@@ -110,10 +196,16 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
     return ret;
 }
 
-int32_t SensorHdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
+int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
-    StartTrace(HITRACE_TAG_SENSORS, "RegisteDataReport");
-    int32_t ret = iSensorHdiConnection_->RegisteDataReport(cb, reportDataCallback);
+    StartTrace(HITRACE_TAG_SENSORS, "RegisterDataReport");
+    CHKPR(iSensorHdiConnection_, REGIST_CALLBACK_ERR);
+    int32_t ret = iSensorHdiConnection_->RegisterDataReport(cb, reportDataCallback);
+    CHKPR(iSensorCompatibleHdiConnection_, REGIST_CALLBACK_ERR);
+    int32_t compatibleRet = iSensorCompatibleHdiConnection_->RegisterDataReport(cb, reportDataCallback);
+    if (compatibleRet != ERR_OK) {
+        SEN_HILOGE("Registe dataReport failed in compatible");
+    }
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != 0) {
         SEN_HILOGI("Registe dataReport failed");
@@ -124,10 +216,16 @@ int32_t SensorHdiConnection::RegisteDataReport(ReportDataCb cb, sptr<ReportDataC
 
 int32_t SensorHdiConnection::DestroyHdiConnection()
 {
+    CHKPR(iSensorHdiConnection_, DEVICE_ERR);
     int32_t ret = iSensorHdiConnection_->DestroyHdiConnection();
     if (ret != 0) {
         SEN_HILOGI("Destroy hdi connection failed");
         return DEVICE_ERR;
+    }
+    CHKPR(iSensorCompatibleHdiConnection_, DEVICE_ERR);
+    int32_t compatibleRet = iSensorCompatibleHdiConnection_->DestroyHdiConnection();
+    if (compatibleRet != ERR_OK) {
+        SEN_HILOGE("Destroy hdi connection failed in compatible");
     }
     return ret;
 }
