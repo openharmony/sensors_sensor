@@ -39,20 +39,14 @@ public:
     using PacketCallBackFun = std::function<void(NetPacket&)>;
     StreamSocket();
     virtual ~StreamSocket();
-    int32_t EpollCreate(int32_t size);
-    int32_t EpollCtl(int32_t fd, int32_t op, struct epoll_event &event, int32_t epollFd = -1);
-    int32_t EpollWait(struct epoll_event &events, int32_t maxevents, int32_t timeout, int32_t epollFd = -1);
     void OnReadPackets(CircleStreamBuffer &buf, PacketCallBackFun callbackFun);
-    void EpollClose();
     void Close();
     int32_t GetFd() const;
-    int32_t GetEpollFd() const;
 
     DISALLOW_COPY_AND_MOVE(StreamSocket);
 
 protected:
     int32_t fd_ { -1 };
-    int32_t epollFd_ { -1 };
 };
 }  // namespace Sensors
 }  // namespace OHOS

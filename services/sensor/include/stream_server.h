@@ -28,8 +28,6 @@ class StreamServer : public StreamSocket {
 public:
     StreamServer() = default;
     virtual ~StreamServer();
-    bool SendMsg(int32_t fd, const NetPacket& pkt);
-    void Multicast(const std::vector<int32_t>& fdList, const NetPacket& pkt);
     int32_t GetClientFd(int32_t pid);
     int32_t GetClientPid(int32_t fd);
     SessionPtr GetSession(int32_t fd);
