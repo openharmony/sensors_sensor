@@ -48,7 +48,8 @@ ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPerio
     WRITEINT64(data, maxReportDelayNs, WRITE_PARCEL_ERR);
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::ENABLE_SENSOR, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
@@ -69,7 +70,8 @@ ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
     WRITEINT32(data, sensorId, WRITE_PARCEL_ERR);
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::DISABLE_SENSOR, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DISABLE_SENSOR),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableSensor", "ERROR_CODE", ret);
@@ -93,7 +95,8 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
         SEN_HILOGE("remote is null");
         return sensors;
     }
-    int32_t ret = remote->SendRequest(ISensorService::GET_SENSOR_LIST, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
@@ -134,7 +137,8 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
     WRITEREMOTEOBJECT(data, sensorClient, WRITE_PARCEL_ERR);
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::TRANSFER_DATA_CHANNEL, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "TransferDataChannel", "ERROR_CODE", ret);
@@ -157,7 +161,8 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     WRITEREMOTEOBJECT(data, sensorClient, WRITE_PARCEL_ERR);
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::DESTROY_SENSOR_CHANNEL, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySensorChannel", "ERROR_CODE", ret);
@@ -178,7 +183,8 @@ ErrCode SensorServiceProxy::SuspendSensors(int32_t pid)
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::SUSPEND_SENSORS, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::SUSPEND_SENSORS),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "SuspendSensors", "ERROR_CODE", ret);
@@ -199,7 +205,8 @@ ErrCode SensorServiceProxy::ResumeSensors(int32_t pid)
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::RESUME_SENSORS, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::RESUME_SENSORS),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "ResumeSensors", "ERROR_CODE", ret);
@@ -220,7 +227,8 @@ ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInf
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::GET_ACTIVE_INFO_LIST, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetActiveInfoList", "ERROR_CODE", ret);
@@ -255,7 +263,8 @@ ErrCode SensorServiceProxy::CreateSocketChannel(sptr<IRemoteObject> sensorClient
     MessageOption option;
     sptr<IRemoteObject> remote = Remote();
     CHKPR(remote, ERROR);
-    int32_t ret = remote->SendRequest(ISensorService::CREATE_SOCKET_CHANNEL, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateSocketChannel", "ERROR_CODE", ret);
@@ -283,7 +292,8 @@ ErrCode SensorServiceProxy::DestroySocketChannel(sptr<IRemoteObject> sensorClien
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::DESTROY_SOCKET_CHANNEL, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySocketChannel", "ERROR_CODE", ret);
@@ -303,7 +313,8 @@ ErrCode SensorServiceProxy::EnableActiveInfoCB()
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::ENABLE_ACTIVE_INFO_CB, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableActiveInfoCB", "ERROR_CODE", ret);
@@ -323,7 +334,8 @@ ErrCode SensorServiceProxy::DisableActiveInfoCB()
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::DISABLE_ACTIVE_INFO_CB, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableActiveInfoCB", "ERROR_CODE", ret);
@@ -343,7 +355,8 @@ ErrCode SensorServiceProxy::ResetSensors()
     CHKPR(remote, ERROR);
     MessageParcel reply;
     MessageOption option;
-    int32_t ret = remote->SendRequest(ISensorService::RESET_SENSORS, data, reply, option);
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::RESET_SENSORS),
+        data, reply, option);
     if (ret != NO_ERROR) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "ResetSensors", "ERROR_CODE", ret);

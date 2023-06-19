@@ -25,6 +25,7 @@
 #include "i_sensor_client.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor.h"
+#include "sensors_ipc_interface_code.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -48,23 +49,6 @@ public:
     virtual ErrCode EnableActiveInfoCB() = 0;
     virtual ErrCode DisableActiveInfoCB() = 0;
     virtual ErrCode ResetSensors() = 0;
-    enum {
-        ENABLE_SENSOR = 0,
-        DISABLE_SENSOR,
-        GET_SENSOR_STATE,
-        RUN_COMMAND,
-        GET_SENSOR_LIST,
-        TRANSFER_DATA_CHANNEL,
-        DESTROY_SENSOR_CHANNEL,
-        SUSPEND_SENSORS,
-        RESUME_SENSORS,
-        GET_ACTIVE_INFO_LIST,
-        CREATE_SOCKET_CHANNEL,
-        DESTROY_SOCKET_CHANNEL,
-        ENABLE_ACTIVE_INFO_CB,
-        DISABLE_ACTIVE_INFO_CB,
-        RESET_SENSORS,
-    };
 };
 }  // namespace Sensors
 }  // namespace OHOS

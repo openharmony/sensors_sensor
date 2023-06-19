@@ -38,19 +38,32 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" 
 SensorServiceStub::SensorServiceStub()
 {
     CALL_LOG_ENTER;
-    baseFuncs_[ENABLE_SENSOR] = &SensorServiceStub::SensorEnableInner;
-    baseFuncs_[DISABLE_SENSOR] = &SensorServiceStub::SensorDisableInner;
-    baseFuncs_[GET_SENSOR_LIST] = &SensorServiceStub::GetAllSensorsInner;
-    baseFuncs_[TRANSFER_DATA_CHANNEL] = &SensorServiceStub::CreateDataChannelInner;
-    baseFuncs_[DESTROY_SENSOR_CHANNEL] = &SensorServiceStub::DestroyDataChannelInner;
-    baseFuncs_[SUSPEND_SENSORS] = &SensorServiceStub::SuspendSensorsInner;
-    baseFuncs_[RESUME_SENSORS] = &SensorServiceStub::ResumeSensorsInner;
-    baseFuncs_[GET_ACTIVE_INFO_LIST] = &SensorServiceStub::GetActiveInfoListInner;
-    baseFuncs_[CREATE_SOCKET_CHANNEL] = &SensorServiceStub::CreateSocketChannelInner;
-    baseFuncs_[DESTROY_SOCKET_CHANNEL] = &SensorServiceStub::DestroySocketChannelInner;
-    baseFuncs_[ENABLE_ACTIVE_INFO_CB] = &SensorServiceStub::EnableActiveInfoCBInner;
-    baseFuncs_[DISABLE_ACTIVE_INFO_CB] = &SensorServiceStub::DisableActiveInfoCBInner;
-    baseFuncs_[RESET_SENSORS] = &SensorServiceStub::ResetSensorsInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR)] =
+        &SensorServiceStub::SensorEnableInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_SENSOR)] =
+        &SensorServiceStub::SensorDisableInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST)] =
+        &SensorServiceStub::GetAllSensorsInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL)] =
+        &SensorServiceStub::CreateDataChannelInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL)] =
+        &SensorServiceStub::DestroyDataChannelInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::SUSPEND_SENSORS)] =
+        &SensorServiceStub::SuspendSensorsInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::RESUME_SENSORS)] =
+        &SensorServiceStub::ResumeSensorsInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST)] =
+        &SensorServiceStub::GetActiveInfoListInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL)] =
+        &SensorServiceStub::CreateSocketChannelInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL)] =
+        &SensorServiceStub::DestroySocketChannelInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB)] =
+        &SensorServiceStub::EnableActiveInfoCBInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB)] =
+        &SensorServiceStub::DisableActiveInfoCBInner;
+    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::RESET_SENSORS)] =
+        &SensorServiceStub::ResetSensorsInner;
 }
 
 SensorServiceStub::~SensorServiceStub()
