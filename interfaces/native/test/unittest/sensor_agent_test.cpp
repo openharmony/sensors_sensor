@@ -391,8 +391,8 @@ HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
     int32_t ret = GetAllSensors(&sensorInfo, &count);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     for (int32_t i = 0; i < count; ++i) {
-        SEN_HILOGD("sensorName: %{public}s, sensorId: %{public}d, minSamplePeriod: %{public}" PRId64
-            " ns, maxSamplePeriod: %{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
+        SEN_HILOGD("sensorName:%{public}s, sensorId:%{public}d, minSamplePeriod:%{public}" PRId64
+            " ns, maxSamplePeriod:%{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
             sensorInfo[i].minSamplePeriod, sensorInfo[i].maxSamplePeriod);
     }
 }
