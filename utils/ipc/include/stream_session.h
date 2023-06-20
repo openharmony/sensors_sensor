@@ -16,12 +16,7 @@
 #ifndef STREAM_SESSION_H
 #define STREAM_SESSION_H
 
-#include <list>
 #include <map>
-#include <memory>
-
-#include <sys/socket.h>
-#include <sys/un.h>
 
 #include "accesstoken_kit.h"
 #include "nocopyable.h"

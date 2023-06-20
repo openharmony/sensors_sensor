@@ -16,7 +16,6 @@
 #ifndef STREAM_BUFFER_H
 #define STREAM_BUFFER_H
 
-#include <cstdint>
 #include <string>
 #include <vector>
 

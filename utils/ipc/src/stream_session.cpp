@@ -18,11 +18,6 @@
 #include <cinttypes>
 #include <sstream>
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/un.h>
-#include <unistd.h>
-
 #include "proto.h"
 #include "sensors_errors.h"
 #include "stream_socket.h"

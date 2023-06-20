@@ -16,15 +16,9 @@
 #ifndef STREAM_SOCKET_H
 #define STREAM_SOCKET_H
 
-#include <atomic>
 #include <functional>
-#include <string>
 
-#include <fcntl.h>
-#include <sys/epoll.h>
 #include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/un.h>
 #include <unistd.h>
 
 #include "nocopyable.h"
