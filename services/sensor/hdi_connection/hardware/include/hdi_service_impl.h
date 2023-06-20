@@ -39,9 +39,9 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(HdiServiceImpl);
     static void DataReportThread();
-    std::vector<int32_t> g_enableSensors;
+    static std::vector<int32_t> enableSensors_;
     std::thread dataReportThread_;
-    static RecordSensorCallback callback_;
+    static std::vector<RecordSensorCallback> callbacks_;
     static int64_t samplingInterval_;
     static int64_t reportInterval_;
     static std::atomic_bool isStop_;
