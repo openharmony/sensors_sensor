@@ -31,7 +31,7 @@ ohos_shared_library("libsensor_ipc") {
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
   ]
 
   innerapi_tags = [ "platformsdk_indirect" ]
