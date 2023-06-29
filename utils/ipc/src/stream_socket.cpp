@@ -30,60 +30,6 @@ StreamSocket::StreamSocket() {}
 StreamSocket::~StreamSocket()
 {
     Close();
-    EpollClose();
-}
-
-int32_t StreamSocket::EpollCreate(int32_t size)
-{
-    epollFd_ = epoll_create(size);
-    if (epollFd_ < 0) {
-        SEN_HILOGE("Epoll create, epollFd_:%{public}d", epollFd_);
-    } else {
-        SEN_HILOGI("Epoll already create, epollFd_:%{public}d", epollFd_);
-    }
-    return epollFd_;
-}
-
-int32_t StreamSocket::EpollCtl(int32_t fd, int32_t op, struct epoll_event &event, int32_t epollFd)
-{
-    if (fd < 0) {
-        SEN_HILOGE("Invalid fd");
-        return ERROR;
-    }
-    if (epollFd < 0) {
-        epollFd = epollFd_;
-    }
-    if (epollFd < 0) {
-        SEN_HILOGE("Invalid param epollFd, epollFd_:%{public}d", epollFd_);
-        return ERROR;
-    }
-    int32_t ret;
-    if (op == EPOLL_CTL_DEL) {
-        ret = epoll_ctl(epollFd, op, fd, NULL);
-    } else {
-        ret = epoll_ctl(epollFd, op, fd, &event);
-    }
-    if (ret < 0) {
-        SEN_HILOGE("epoll_ctl ret:%{public}d, epollFd_:%{public}d, op:%{public}d, fd:%{public}d, errno:%{public}d",
-            ret, epollFd, op, fd, errno);
-    }
-    return ret;
-}
-
-int32_t StreamSocket::EpollWait(struct epoll_event &events, int32_t maxevents, int32_t timeout, int32_t epollFd)
-{
-    if (epollFd < 0) {
-        epollFd = epollFd_;
-    }
-    if (epollFd < 0) {
-        SEN_HILOGE("Invalid param epollFd, epollFd_:%{public}d", epollFd_);
-        return ERROR;
-    }
-    auto ret = epoll_wait(epollFd, &events, maxevents, timeout);
-    if (ret < 0) {
-        SEN_HILOGE("epoll_wait ret:%{public}d, errno:%{public}d", ret, errno);
-    }
-    return ret;
 }
 
 void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::PacketCallBackFun callbackFun)
@@ -128,14 +74,6 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
     }
 }
 
-void StreamSocket::EpollClose()
-{
-    if (epollFd_ >= 0) {
-        close(epollFd_);
-        epollFd_ = -1;
-    }
-}
-
 void StreamSocket::Close()
 {
     if (fd_ >= 0) {
@@ -150,10 +88,6 @@ void StreamSocket::Close()
 int32_t StreamSocket::GetFd() const
 {
     return fd_;
-}
-int32_t StreamSocket::GetEpollFd() const
-{
-    return epollFd_;
 }
 }  // namespace Sensors
 }  // namespace OHOS

@@ -40,29 +40,6 @@ StreamServer::~StreamServer()
     sessionsMap_.clear();
 }
 
-bool StreamServer::SendMsg(int32_t fd, const NetPacket& pkt)
-{
-    CALL_LOG_ENTER;
-    if (fd < 0) {
-        SEN_HILOGE("Fd is invalid");
-        return false;
-    }
-    auto sess = GetSession(fd);
-    if (sess == nullptr) {
-        SEN_HILOGE("sess is nullptr");
-        return false;
-    }
-    return sess->SendMsg(pkt);
-}
-
-void StreamServer::Multicast(const std::vector<int32_t>& fdList, const NetPacket& pkt)
-{
-    CALL_LOG_ENTER;
-    for (const auto &item : fdList) {
-        SendMsg(item, pkt);
-    }
-}
-
 int32_t StreamServer::GetClientFd(int32_t pid)
 {
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
