@@ -20,6 +20,8 @@
     "deps": {
       "components": [
         "c_utils",
+        "hiviewdfx_hilog_native",
+        "common",
         "hisysevent",
         "napi",
         "drivers_interface_sensor",

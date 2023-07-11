@@ -17,6 +17,9 @@
 
 #include "sensor.h"
 #include "sensor_agent_type.h"
+#ifdef OHOS_BUILD_ENABLE_RUST
+#include "rust_binding.h"
+#endif // OHOS_BUILD_ENABLE_RUST
 
 namespace OHOS {
 namespace Sensors {
@@ -227,7 +230,11 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
     NetPacket pkt(MessageId::ACTIVE_INFO);
     pkt << activeInfo.GetPid() << activeInfo.GetSensorId() <<
         activeInfo.GetSamplingPeriodNs() << activeInfo.GetMaxReportDelayNs();
+#ifdef OHOS_BUILD_ENABLE_RUST
+    if (StreamBufferChkRWError(pkt.streamBufferPtr_.get())) {
+#else
     if (pkt.ChkRWError()) {
+#endif // OHOS_BUILD_ENABLE_RUST
         SEN_HILOGE("Packet write data failed");
         return;
     }
