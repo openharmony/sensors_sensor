@@ -51,7 +51,7 @@ int32_t SensorHdiConnection::ConnectHdi()
         }
         return ret;
     }
-    if (!supportColorAndSar(sensorList_)) {
+    if (!SupportColorAndSar(sensorList_)) {
         existColorAndSar_ = false;
         ret = ConnectCompatibleHdi();
         if (ret != ERR_OK) {
