@@ -21,17 +21,24 @@
 
 namespace OHOS {
 namespace Sensors {
+#ifndef OHOS_BUILD_ENABLE_RUST
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamSocket" };
 } // namespace
+#endif // OHOS_BUILD_ENABLE_RUST
 
 StreamSocket::StreamSocket() {}
 
 StreamSocket::~StreamSocket()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    StreamSocketClose(streamSocketPtr_.get());
+#else
     Close();
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
+#ifndef OHOS_BUILD_ENABLE_RUST
 void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::PacketCallBackFun callbackFun)
 {
     constexpr size_t headSize = sizeof(PackHead);
@@ -73,9 +80,13 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
         }
     }
 }
+#endif  // OHOS_BUILD_ENABLE_RUST
 
 void StreamSocket::Close()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    StreamSocketClose(streamSocketPtr_.get());
+#else
     if (fd_ >= 0) {
         auto rf = close(fd_);
         if (rf != 0) {
@@ -83,11 +94,16 @@ void StreamSocket::Close()
         }
     }
     fd_ = -1;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 int32_t StreamSocket::GetFd() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamSocketGetFd(streamSocketPtr_.get());
+#else
     return fd_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 }  // namespace Sensors
 }  // namespace OHOS
