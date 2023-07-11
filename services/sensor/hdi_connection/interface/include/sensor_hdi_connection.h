@@ -43,7 +43,7 @@ private:
     std::vector<Sensor> sensorList_;
     int32_t ConnectHdiService();
     int32_t ConnectCompatibleHdi();
-    bool SupportColorAndSar(const std::vector<Sensor>& sensorList);
+    bool ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId);
     std::atomic_bool existColorAndSar_ = false;
 };
 }  // namespace Sensors

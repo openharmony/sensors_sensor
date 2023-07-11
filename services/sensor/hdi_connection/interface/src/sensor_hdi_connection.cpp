@@ -51,7 +51,7 @@ int32_t SensorHdiConnection::ConnectHdi()
         }
         return ret;
     }
-    if (!SupportColorAndSar(sensorList_)) {
+    if (!ExistSensor(sensorList_, SENSOR_TYPE_ID_COLOR) || !ExistSensor(sensorList_, SENSOR_TYPE_ID_SAR)) {
         existColorAndSar_ = false;
         ret = ConnectCompatibleHdi();
         if (ret != ERR_OK) {
@@ -91,19 +91,10 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
-bool SensorHdiConnection::SupportColorAndSar(const std::vector<Sensor>& sensorList)
+bool SensorHdiConnection::ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId)
 {
-    bool existColor = false;
-    bool existSar = false;
     for (const auto &sensor : sensorList) {
-        int32_t sensorId = sensor.GetSensorId();
-        if (sensorId == SENSOR_TYPE_ID_COLOR) {
-            existColor = true;
-        }
-        if (sensorId == SENSOR_TYPE_ID_SAR) {
-            existSar = true;
-        }
-        if (existColor && existSar) {
+        if (sensor.GetSensorId() == sensorId) {
             return true;
         }
     }
