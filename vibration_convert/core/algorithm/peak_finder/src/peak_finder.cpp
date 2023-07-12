@@ -61,7 +61,8 @@ std::vector<double> PeakFinder::ExtractValues(const std::vector<double> &envelop
 }
 
 // In order to reduce the impact of voiceless and noise on the frequency of voiced sounds, the threshold is increased.
-std::vector<bool> PeakFinder::GetVoiceFlag(const std::vector<double> &data, const std::vector<int32_t> &peaks, double lowerAmp)
+std::vector<bool> PeakFinder::GetVoiceFlag(const std::vector<double> &data, const std::vector<int32_t> &peaks,
+    double lowerAmp)
 {
     if (data.empty()) {
         SEN_HILOGE("data is empty");
@@ -118,8 +119,8 @@ std::vector<bool> PeakFinder::SplitVoiceSlienceRange(int32_t dataSize, const std
     }
     std::vector<bool> vioceFlag(dataSize, false);
     std::vector<bool> segmentFlag(ceil(static_cast<double>(dataSize) / hopLength_), false);
-    for (size_t k = 0; k < envelopeStart.size(); k++) {
-        for (int32_t boundary = envelopeStart[k]; boundary <= envelopeLast[k]; boundary++) {
+    for (size_t i = 0; i < envelopeStart.size(); ++i) {
+        for (int32_t boundary = envelopeStart[i]; boundary <= envelopeLast[i]; ++boundary) {
             if (boundary > vioceFlag.size()) {
                 break;
             }
@@ -211,7 +212,7 @@ bool PeakFinder::FindPeakBoundary(const std::vector<double> &data, int32_t peakP
 std::vector<int32_t> PeakFinder::PeakFilterMinRange(const std::vector<double> &data, std::vector<int32_t> &peaks,
     int32_t minSampleCount)
 {
-    if (peaks.size() <= 1) {
+    if (peaks.empty() || peaks.size() <= 1) {
         return peaks;
     }
     for (size_t i = 0; i < (peaks.size() - 1); i++) {
@@ -302,7 +303,7 @@ std::vector<int32_t> PeakFinder::FilterSecondaryPeak(const std::vector<double> &
             return {};
         }
         if (times > LOOP_TIMES_MAX) {
-            SEN_HILOGW("Entered die process, %{public}d", times);
+            SEN_HILOGW("times should not be greater than LOOP_TIMES_MAX, times:%{public}d", times);
             break;
         }
         frontIndex = index;
@@ -330,7 +331,7 @@ int32_t PeakFinder::DeletePeaks(const std::vector<double> &envelope, int32_t sta
         int32_t valleyIndex = 0;
         for (int32_t peakIndex = startPos; peakIndex < (endPos + 1); peakIndex++) {
             delFlag = GetDeleteFlagOfPeak(envelope, peakIndex, valleyIndex, valleysValue, mountainPosition);
-            if (delFlag && (peakIndex < mountainPosition.firstPos.size())) {
+            if (delFlag && (peakIndex < static_cast<int32_t>(mountainPosition.firstPos.size()))) {
                 mountainPosition.firstPos.erase(mountainPosition.firstPos.begin() + peakIndex);
                 mountainPosition.peakPos.erase(mountainPosition.peakPos.begin() + peakIndex);
                 mountainPosition.lastPos.erase(mountainPosition.lastPos.begin() + peakIndex);
@@ -370,10 +371,423 @@ bool PeakFinder::GetDeleteFlagOfPeak(const std::vector<double> &envelope, int32_
         if (peakValue < envelope[mountainPosition.peakPos[peakIndex-1]]) {
             delFlag = true;
         }
-    } else {
-        delFlag = false;
     }
     return delFlag;
+}
+
+// The valley in both peaks detection.
+int32_t PeakFinder::DetectValley(const std::vector<double> &envelope, int32_t startPos, int32_t endPos,
+    const MountainPosition &mountainPosition, ValleyPoint &valleyPoint)
+{
+    if (mountainPosition.peakPos.empty()) {
+        SEN_HILOGE("peakPos is empty");
+        return Sensors::ERROR;
+    }
+    if (startPos < 0 || endPos < 0) {
+        SEN_HILOGE("startPos or endPos is wrong");
+        return Sensors::ERROR;
+    }
+    valleyPoint.values.resize(mountainPosition.peakPos.size() + 1);
+    valleyPoint.pos.resize(mountainPosition.peakPos.size() + 1);
+
+    if ((startPos >= mountainPosition.firstPos.size()) || (endPos >= mountainPosition.lastPos.size())) {
+        SEN_HILOGE("The parameter is invalid or out of bounds");
+        return Sensors::ERROR;
+    }
+    int32_t valleyPos = mountainPosition.firstPos[startPos];
+    if (startPos > 0) {
+        int32_t startIndex = mountainPosition.peakPos[startPos - 1];
+        int32_t endindex = mountainPosition.peakPos[startPos];
+        auto iter = std::min_element((envelope.begin() + startIndex), (envelope.begin() + endindex));
+        valleyPos = iter - envelope.begin();
+    }
+    int32_t indexCount = 0;
+    valleyPoint.values[indexCount] = envelope[valleyPos];
+    valleyPoint.pos[indexCount] = valleyPos;
+    ++indexCount;
+    for (int32_t i = startPos; i < endPos; i++) {
+        int32_t startIndex = mountainPosition.peakPos[i];
+        int32_t endindex = mountainPosition.peakPos[i + 1];
+        auto iter = std::min_element((envelope.begin() + startIndex), (envelope.begin() + endindex));
+        valleyPos = iter - envelope.begin();
+        valleyPoint.values[indexCount] = envelope[valleyPos];
+        valleyPoint.pos[indexCount] = valleyPos;
+        ++indexCount;
+    }
+    valleyPos = mountainPosition.lastPos[endPos];
+    valleyPoint.values[indexCount] = envelope[valleyPos];
+    valleyPoint.pos[indexCount] = valleyPos;
+    return Sensors::SUCCESS;
+}
+
+// Calculate peak value by difference, method: low+high+low
+// 1. When equal to 0, all peak points are selected
+// 2. In situations such as OnCarpet.wav and CoinDrop.wav with zero hour high opening,
+//    having more than 2 segments is the true high
+// 3. Like heartbeat. wav, the secondary peak point is not from the lowest point and must be removed
+std::vector<int32_t> PeakFinder::DetectPeak(const std::vector<double> &envelope, double peakThreshold)
+{
+    CALL_LOG_ENTER;
+    if (envelope.empty() || envelope.size() <= 1) {
+        SEN_HILOGE("envelope is empty or envelope is less than or equal to one");
+        return {};
+    }
+    std::vector<double> gradientEnvelope;
+    for (size_t i = 0; i < (envelope.size() - 1); i++) {
+         gradientEnvelope.push_back(envelope[i+1] - envelope[i]);
+    }
+    if (gradientEnvelope.empty()) {
+        SEN_HILOGE("gradientEnvelope is empty");
+        return {};
+    }
+    std::vector<double> gradient;
+    for (size_t i = 0; i < (gradientEnvelope.size() - 1); i++) {
+        if ((gradientEnvelope[i] > 0) && (gradientEnvelope[i+1] < 0)) {
+            gradient.push_back((gradientEnvelope[i] + fabs(gradientEnvelope[i+1])) / 2);
+        }
+    }
+    // At begining, no rising edge, directly at the maximum point
+    std::vector<int32_t> peaks;
+    if ((gradientEnvelope[0] < 0) && (gradientEnvelope[1] < 0)) {
+        peaks.push_back(0);
+    }
+    if (peakThreshold < EPS_MIN) {
+        for (size_t j = 0; j < (gradientEnvelope.size() - 1); j++) {
+            if((gradientEnvelope[j] > 0) && (gradientEnvelope[j+1] < 0)) {
+                peaks.push_back(j+1);
+            }
+        }
+        return peaks;
+    }
+    double thresholdGradient = *max_element(gradient.begin(), gradient.end()) / 2;
+    if (gradient.size() > GRADIENT_SIZE_MIN) {
+        gradient.erase(max_element(gradient.begin(), gradient.end()));
+        gradient.erase(max_element(gradient.begin(), gradient.end()));
+        thresholdGradient = *max_element(gradient.begin(), gradient.end()) * peakThreshold;
+    }
+    for (size_t k = 0; k < (gradientEnvelope.size() - 1); k++) {
+        if ((gradientEnvelope[k] > 0) && (gradientEnvelope[k+1] < 0)) {
+            if ((gradientEnvelope[k] + fabs(gradientEnvelope[k+1])) / 2 > thresholdGradient) {
+                peaks.push_back(k+1);
+            }
+        }
+    }
+    return peaks;
+}
+
+// Starting from the peak, find the first lowest point on both sides
+// The minimum amplitude obtained through this method is small
+// Envelope: multi point maximum envelope
+double PeakFinder::GetLowestPeakValue(const std::vector<double> &envelope, const std::vector<int32_t> &peaks)
+{
+    if (peaks.empty()) {
+        SEN_HILOGE("peaks is empty");
+        return Sensors::ERROR;
+    }
+    std::vector<double> peakValues;
+    for (size_t i = 0; i < peaks.size(); i++) {
+        peakValues.push_back(envelope[peaks[i]]);
+    }
+    double maxPeak = *max_element(peakValues.begin(), peakValues.end());
+    double minPeak = *min_element(peakValues.begin(), peakValues.end());
+    if (maxPeak > PEAKMAX_THRESHOLD_HIGH) {
+        minPeak *= PEAK_LOWDELTA_RATIO_HIGH;
+    } else if (maxPeak > PEAKMAX_THRESHIOLD_MID) {
+        minPeak *= PEAK_LOWDELTA_RATIO_MID;
+    } else {
+        minPeak *= PEAK_LOWDELTA_RATIO_LOW;
+    }
+    return minPeak;
+}
+
+// Determine the peak position and parameters of short events through amplitude values.
+int32_t PeakFinder::GetPeakEnvelope(const std::vector<double> &data, int32_t samplingRate, int32_t hopLength,
+    PeaksInfo &peakDetection)
+{
+    CALL_LOG_ENTER;
+    if ((data.empty()) || (samplingRate == 0) || (hopLength == 0)) {
+        SEN_HILOGE("Invalid parameter");
+        return Sensors::PARAMETER_ERROR;
+    }
+    std::vector<double> absData;
+    for (size_t i = 0; i < data.size(); i++) {
+        absData.push_back(fabs(data[i]));
+    }
+    size_t maxN = static_cast<size_t>(hopLength);
+    std::vector<double> peakEnvelope;
+    std::vector<int32_t> peakEnvelopeIdx;
+    size_t i = 0;
+    while ((i + maxN) <= absData.size()) {
+        auto it = std::max_element(absData.begin() + i, absData.begin() + i + maxN);
+        int32_t maxIndex = it - absData.begin();
+        peakEnvelopeIdx.push_back(maxIndex);
+        peakEnvelope.push_back(*it);
+        i += maxN;
+    }
+    // Peak detection
+    std::vector<int32_t> peakAllIdx = DetectPeak(peakEnvelope, REMOVE_RATIO);
+
+    // Filter low peak
+    peakAllIdx = FilterLowPeak(peakEnvelope, peakAllIdx, REMOVE_RATIO);
+    std::vector<double> extractValues = ExtractValues(peakEnvelope, peakAllIdx);
+    double lowerAmp = *std::min_element(extractValues.begin(), extractValues.end()) * PEAK_LOWDELTA_RATIO_LOW;
+
+    // Filter secondary peak points
+    std::vector<int32_t> ampPeakBigIdx = FilterSecondaryPeak(peakEnvelope, peakAllIdx, lowerAmp);
+    if (ampPeakBigIdx.empty()) {
+        SEN_HILOGE("ampPeakBigIdx is empty");
+        return Sensors::ERROR;
+    }
+    peakDetection.ampPeakEnvelope = peakEnvelope;
+    peakDetection.ampPeakAllIdx = peakAllIdx;
+
+    std::vector<int32_t> ampPeakAct;
+    for (i = 0; i < ampPeakBigIdx.size(); i++) {
+        if (ampPeakBigIdx[i] >= peakEnvelopeIdx.size()) {
+            break;
+        }
+        ampPeakAct.push_back(peakEnvelopeIdx[ampPeakBigIdx[i]]);
+    }
+    // Based on the time difference between peak points, retain a larger value and filter the peak points
+    peakDetection.ampPeakIdxs = PeakFilterMinRange(absData, ampPeakAct, PEAKS_MIN_SAMPLE_COUNT);
+    double coef = 1.0 / samplingRate;
+    for (i = 0; i < peakDetection.ampPeakIdxs.size(); i++) {
+        peakDetection.ampPeakTimes.push_back(peakDetection.ampPeakIdxs[i] * coef);
+    }
+    return Sensors::SUCCESS;
+ }
+
+// Estimating the downward trend of isolated short events.
+// A descent height of less than 0.03 at 100 points indicates a slow descent.
+int32_t PeakFinder::EstimateDownwardTrend(const std::vector<double> &data, const std::vector<int32_t> &peaksPoint,
+    const std::vector<int32_t> &lastPeaksPoint, std::vector<DownwardTrendInfo> &downwardTrends)
+{
+    if (peaksPoint.empty() || lastPeaksPoint.size() < peaksPoint.size()) {
+        SEN_HILOGE("Invalid parameter");
+        return Sensors::ERROR;
+    }
+    bool isRapidlyDecay = false;
+    std::vector<double> partEnvelope;
+    for (size_t i = 0; i < peaksPoint.size(); i++) {
+        for (int32_t j = peaksPoint[i]; j < lastPeaksPoint[i]; j++) {
+            if (data[j] > data.size()) {
+                SEN_HILOGE("parameter is error");
+                break;
+            }
+            partEnvelope.push_back(data[j]);
+        }
+        double dropHeight = 0.0;
+        double ducyCycle = 0.0;
+        if (EstimateDesentEnergy(partEnvelope, dropHeight, ducyCycle) != Sensors::SUCCESS) {
+            SEN_HILOGD("EstimateDesentEnergy failed");
+            continue;
+        }
+        dropHeight *= HUNDRED_POINT_DESCENT_HEIGHT ;
+        if (IsLessNotEqual(ducyCycle, DOWN_TREND_MAX) && IsGreatNotEqual(dropHeight, DROP_HIGHT)) {
+            isRapidlyDecay = true;
+        } else {
+            isRapidlyDecay = false;
+        }
+        downwardTrends.push_back(DownwardTrendInfo(isRapidlyDecay, dropHeight, ducyCycle));
+    }
+    return Sensors::SUCCESS;
+}
+
+// Merge continuous long envelopes and continuous pure instantaneous event intervals to avoid low energy
+//   long event outputs.
+// between two short events, such as CoinDrop.wav.
+// Pre processing before peak point co envelope refinement
+// a0[0],a2[0],a0[1],a2[1]... May be discontinuous
+// Output list_ I is continuous
+void PeakFinder::SplitLongShortEnvelope(int32_t dataSize, const std::vector<int32_t> &firstPos,
+    const std::vector<int32_t> &lastPos, EnvelopeSegmentInfo &envelopeList)
+{
+    int32_t leastCount = 2 * hopLength_;
+    std::vector<int32_t> countAssemble;
+    for (size_t i = 0; i < firstPos.size(); i++) {
+        countAssemble.push_back(lastPos[i] - firstPos[i]);
+    }
+    int32_t longestSampleCount = *max_element(countAssemble.begin(), countAssemble.end());
+    if (longestSampleCount <= leastCount) {
+        SEN_HILOGE("longestSampleCount must be less than or equal to leastCount");
+        return;
+    }
+    bool preFlag = false;
+    int32_t preIndex = 0;
+    size_t countAssembleLen = countAssemble.size();
+    if (countAssembleLen == 0) {
+        SEN_HILOGE("countAssembleLen should not be 0");
+        return;
+    }
+    for (size_t j = 0; j < countAssembleLen; j++) {
+        bool flag = true;
+        if (countAssemble[j] < hopLength_) {
+            flag = false;
+        }
+        int32_t toIndex = lastPos[j];
+        if (j == 0) {
+            envelopeList.continuousEventFlag.push_back(flag);
+            envelopeList.demarcPos.push_back(0);
+            envelopeList.demarcPos.push_back(toIndex);
+            preFlag = flag;
+        } else if (j == (countAssembleLen - 1)) {
+            if (flag == preFlag) {
+                envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = dataSize;
+            } else {
+                envelopeList.continuousEventFlag.push_back(flag);
+                envelopeList.demarcPos.push_back(preIndex);
+                envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = dataSize;
+                preFlag = flag;
+            }
+        } else {
+            if (flag == preFlag) {
+                envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = toIndex;
+            } else {
+                envelopeList.continuousEventFlag.push_back(flag);
+                envelopeList.demarcPos.push_back(preIndex);
+                envelopeList.demarcPos.push_back(toIndex);
+                preFlag = flag;
+            }
+        }
+        preIndex = toIndex;
+    }
+}
+
+// Calculate the starting and ending envelopes of isolated pure short events, searching from peak to both sides
+// Do not merge common envelope peaks
+// Missing trackback function similar to note when co enveloping
+int32_t PeakFinder::GetIsolatedEnvelope(const std::vector<double> &data, const std::vector<int32_t> &peaks, double lowerAmp,
+    IsolatedEnvelopeInfo &isolatedEnvelopeInfo)
+{
+    std::vector<double> triangularEnvelope(data.size(), 0.0);
+    for (size_t i = 0; i < data.size(); i++) {
+        triangularEnvelope[i] = fabs(data[i]);
+        if (triangularEnvelope[i] < lowerAmp) {
+            triangularEnvelope[i] = 0;
+        }
+    }
+    size_t envelopeSize = triangularEnvelope.size();
+    size_t j = 0;
+    while ((j + MAX_N) <= envelopeSize) {
+        double maxValue = *std::max_element(triangularEnvelope.begin() + j, triangularEnvelope.begin() + j + MAX_N);
+        triangularEnvelope[j] = maxValue;
+        ++j;
+    }
+    int32_t leastCount = 2 * hopLength_;
+    MountainPosition mountainPosition;
+    // Obtain the independent envelope of each peak point
+    GetEachIndependentEnvelope(triangularEnvelope, peaks, lowerAmp, mountainPosition);
+    if (mountainPosition.peakPos.empty()) {
+        SEN_HILOGE("peakPos is empty");
+        return Sensors::ERROR;
+    }
+    EnvelopeSegmentInfo envelopeList;
+    // Merge continuous long envelopes and continuous pure instantaneous event intervals
+    SplitLongShortEnvelope(envelopeSize, mountainPosition.firstPos, mountainPosition.lastPos, envelopeList);
+    ValleyPoint valleyPoint;
+    size_t envPeakLen = mountainPosition.peakPos.size() - 1;
+    // The valleyes in both peaks to detection
+    if (DetectValley(triangularEnvelope, 0, envPeakLen, mountainPosition, valleyPoint) != Sensors::SUCCESS) {
+        SEN_HILOGE("DetectValley failed");
+        return Sensors::ERROR;
+    }
+    std::vector<int32_t> countAssemble;
+    for (size_t i = 0; i < mountainPosition.lastPos.size(); i++) {
+        countAssemble.push_back(mountainPosition.lastPos[i] - mountainPosition.firstPos[i]);
+    }
+    isolatedEnvelopeInfo.isHaveContinuousEvent = false;
+    isolatedEnvelopeInfo.mountainPosition = mountainPosition;
+    isolatedEnvelopeInfo.longestSampleCount = *max_element(countAssemble.begin(), countAssemble.end());
+    if (isolatedEnvelopeInfo.longestSampleCount > leastCount) {
+        isolatedEnvelopeInfo.isHaveContinuousEvent = true;
+    }
+    for (size_t i = 0; i < countAssemble.size(); i++) {
+        bool flag = false;
+        if (countAssemble[i] < hopLength_) {
+            flag = true;
+        }
+        isolatedEnvelopeInfo.transientEventFlags.push_back(flag);
+    }
+    return Sensors::SUCCESS;
+}
+
+// Find all isolated short events through the original amplitude
+int32_t PeakFinder::ObtainTransientByAmplitude(const std::vector<double> &data,
+    IsolatedEnvelopeInfo &isolatedEnvelopeInfo)
+{
+    if (data.empty()) {
+        SEN_HILOGE("data is empty");
+        return Sensors::ERROR;
+    }
+    PeaksInfo peakDetection;
+    // Determine the peak position and parameters of short events through amplitude values
+    GetPeakEnvelope(data, SAMPLE_RATE, AMPLITUDE_ENVELOPE_HOP_LENGTH, peakDetection);
+
+    // Starting from the peak, find the first lowest point on both sides
+    double ampLowerDalta = GetLowestPeakValue(peakDetection.ampPeakEnvelope, peakDetection.ampPeakAllIdx);
+
+    // Calculate the starting and ending envelopes of isolated pure short events, searching from peak to both sides
+    if (GetIsolatedEnvelope(data, peakDetection.ampPeakIdxs, ampLowerDalta, isolatedEnvelopeInfo) != Sensors::SUCCESS) {
+        SEN_HILOGE("GetIsolatedEnvelope failed");
+        return Sensors::ERROR;
+    }
+    // In order to reduce the impact of voiceless and noise on the frequency of voiced sounds,
+    // the threshold is increased
+    voiceSegmentFlag_ = GetVoiceFlag(data, peakDetection.ampPeakIdxs, ampLowerDalta);
+    std::vector<DownwardTrendInfo> downwardTrends;
+    // Estimating the downward trend of isolated short events
+    int32_t ret = EstimateDownwardTrend(data, isolatedEnvelopeInfo.mountainPosition.peakPos,
+        isolatedEnvelopeInfo.mountainPosition.lastPos, downwardTrends);
+    if (downwardTrends.size() > 0) {
+        SEN_HILOGD("isRapidlyDecay:%{public}d,dropHeight:%{public}lf,ducyCycle:%{public}lf",
+            downwardTrends[0].isRapidlyDecay, downwardTrends[0].dropHeight, downwardTrends[0].ducyCycle);
+    }
+    return ret;
+}
+
+int32_t PeakFinder::EstimateDesentEnergy(const std::vector<double> &data, double &dropHeight, double &dutyCycle)
+{
+    if (data.empty()) {
+        SEN_HILOGE("data is empty");
+        return Sensors::ERROR;
+    }
+    std::vector<double> blockSum = ObtainAmplitudeEnvelop(data, DESCENT_WNDLEN, DESCENT_WNDLEN);
+    if (blockSum.empty()) {
+        SEN_HILOGE("blockSum is empty");
+        return Sensors::ERROR;
+    }
+    // Number of consecutive drops.
+    size_t n = 1;
+    for (size_t i = 0; i < (blockSum.size() - 1); i++) {
+        if (blockSum[i] < blockSum[i + 1]) {
+            break;
+        }
+        ++n;
+    }
+    size_t dataSize = data.size();
+    dropHeight = 0;
+    if (n == 1) {
+        dropHeight = blockSum[0] / dataSize;
+    } else {
+        dropHeight = (blockSum[0] - blockSum[1]) / DESCENT_WNDLEN;
+    }
+
+    // Estimating within 1024 sampling points (0.046ms).
+    int32_t miniFrmN = ENERGY_HOP_LEN / DESCENT_WNDLEN;
+    if (n > miniFrmN) {
+        n = miniFrmN;
+    }
+    double totalEnergy = 0.0;
+    for (size_t i = 0; i < n; i++) {
+        totalEnergy += blockSum[i];
+    }
+    double virtualWholeEnergy = miniFrmN * blockSum[0];
+    if (virtualWholeEnergy < EPS_MIN) {
+        dutyCycle = 0.0;
+        SEN_HILOGW("The virtualWholeEnergy value is too low");
+    }
+    dutyCycle = totalEnergy / virtualWholeEnergy;
+    return Sensors::SUCCESS;
 }
 }  // namespace Sensors
 }  // namespace OHOS
