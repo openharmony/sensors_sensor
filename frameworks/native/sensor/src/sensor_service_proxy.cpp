@@ -186,7 +186,7 @@ ErrCode SensorServiceProxy::SuspendSensors(int32_t pid)
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::SUSPEND_SENSORS),
         data, reply, option);
     if (ret != NO_ERROR) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "SuspendSensors", "ERROR_CODE", ret);
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
@@ -208,7 +208,7 @@ ErrCode SensorServiceProxy::ResumeSensors(int32_t pid)
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::RESUME_SENSORS),
         data, reply, option);
     if (ret != NO_ERROR) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "ResumeSensors", "ERROR_CODE", ret);
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
@@ -230,7 +230,7 @@ ErrCode SensorServiceProxy::GetActiveInfoList(int32_t pid, std::vector<ActiveInf
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST),
         data, reply, option);
     if (ret != NO_ERROR) {
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SENSOR_SERVICE_IPC_EXCEPTION",
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetActiveInfoList", "ERROR_CODE", ret);
         SEN_HILOGE("Failed, ret:%{public}d", ret);
         return static_cast<ErrCode>(ret);

@@ -37,18 +37,30 @@ int32_t SensorHdiConnection::ConnectHdi()
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
+        existColorAndSar_ = false;
         SEN_HILOGE("Connect hdi service failed, try to connect compatible connection");
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
         ret = ConnectHdiService();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Connect compatible connection failed, ret:%{public}d", ret);
+            return ret;
+        }
+        ret = ConnectCompatibleHdi();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Connect color and sar compatible connection failed, ret:%{public}d", ret);
+        }
+        return ret;
     }
-    if (ret != ERR_OK) {
-        SEN_HILOGE("Connect hdi failed");
+    if (!ExistSensor(sensorList_, SENSOR_TYPE_ID_COLOR) || !ExistSensor(sensorList_, SENSOR_TYPE_ID_SAR)) {
+        existColorAndSar_ = false;
+        ret = ConnectCompatibleHdi();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Connect color and sar compatible hdi failed, ret:%{public}d", ret);
+        }
+        return ret;
     }
-    ret = ConnectCompatibleHdi();
-    if (ret != ERR_OK) {
-        SEN_HILOGE("Connect compatible hdi failed, ret:%{public}d", ret);
-    }
-    return ERR_OK;
+    existColorAndSar_ = true;
+    return ret;
 }
 
 int32_t SensorHdiConnection::ConnectHdiService()
@@ -79,9 +91,22 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
+bool SensorHdiConnection::ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId)
+{
+    for (const auto &sensor : sensorList) {
+        if (sensor.GetSensorId() == sensorId) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     sensorList.assign(sensorList_.begin(), sensorList_.end());
+    if (existColorAndSar_) {
+        return ERR_OK;
+    }
     Sensor sensorColor;
     sensorColor.SetSensorId(SENSOR_TYPE_ID_COLOR);
     sensorColor.SetSensorTypeId(SENSOR_TYPE_ID_COLOR);
@@ -114,8 +139,8 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
-    int32_t ret { ENABLE_SENSOR_ERR };
-    if (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) {
+    int32_t ret = ENABLE_SENSOR_ERR;
+    if (!existColorAndSar_ && (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR)) {
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -138,8 +163,8 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
-    int32_t ret { ENABLE_SENSOR_ERR };
-    if (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) {
+    int32_t ret = DISABLE_SENSOR_ERR;
+    if (!existColorAndSar_ && (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR)) {
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -162,8 +187,8 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
-    int32_t ret { ENABLE_SENSOR_ERR };
-    if (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) {
+    int32_t ret = SET_SENSOR_CONFIG_ERR;
+    if (!existColorAndSar_ && (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR)) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
         ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
         FinishTrace(HITRACE_TAG_SENSORS);
