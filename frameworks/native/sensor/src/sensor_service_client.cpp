@@ -34,7 +34,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceClient" };
-constexpr int32_t GET_SERVICE_MAX_COUNT = 30;
+constexpr int32_t GET_SERVICE_MAX_COUNT = 3;
 constexpr uint32_t WAIT_MS = 200;
 }  // namespace
 
