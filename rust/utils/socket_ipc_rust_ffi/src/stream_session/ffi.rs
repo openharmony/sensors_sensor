@@ -18,7 +18,7 @@ use crate::error::SessionStatusCode;
 use hilog_rust::{info, hilog, HiLogLabel, LogType};
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
-    domain: 0xD002220,
+    domain: 0xD002700,
     tag: "stream_session_ffi"
 };
 /// Create unique_ptr of StreamSession for C++ code

@@ -20,7 +20,7 @@ use crate::stream_buffer::StreamBuffer;
 const STREAM_BUF_WRITE_FAIL: i32 = 2;
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
-    domain: 0xD002220,
+    domain: 0xD002700,
     tag: "NetPacket"
 };
 

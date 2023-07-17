@@ -18,8 +18,7 @@ ohos_rust_shared_ffi("sensor_rust_util_ffi") {
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:hilog_rust",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:hilog_rust",
   ]
 
   crate_name = "sensor_rust_util_ffi"

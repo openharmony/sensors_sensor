@@ -40,7 +40,7 @@ const STREAM_BUF_READ_FAIL: i32 = 1;
 const MAX_VECTOR_SIZE: i32 = 10;
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
-    domain: 0xD002220,
+    domain: 0xD002700,
     tag: "StreamBuffer"
 };
 

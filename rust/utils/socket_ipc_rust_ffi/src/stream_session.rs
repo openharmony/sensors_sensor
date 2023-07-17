@@ -20,7 +20,7 @@ use libc::c_int;
 use std::{ffi::{CString, c_char}, thread::sleep, time::Duration};
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
-    domain: 0xD002220,
+    domain: 0xD002700,
     tag: "StreamSession"
 };
 const MAX_PACKET_BUF_SIZE: usize = 256;

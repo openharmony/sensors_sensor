@@ -20,7 +20,7 @@ use std::mem::drop;
 use std::ffi::c_char;
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
-    domain: 0xD002220,
+    domain: 0xD002700,
     tag: "stream_socket_ffi"
 };
 

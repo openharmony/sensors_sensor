@@ -18,7 +18,7 @@ use hilog_rust::{info, hilog, HiLogLabel, LogType};
 use crate::error::BufferStatusCode;
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
-    domain: 0xD002220,
+    domain: 0xD002700,
     tag: "stream_buffer_ffi"
 };
 /// Create unique_ptr of stream_buffer for C++ code
