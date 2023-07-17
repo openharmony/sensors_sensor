@@ -94,6 +94,10 @@ int32_t SensorAlgorithm::TransformCoordinateSystemImpl(std::vector<float> inRota
 int32_t SensorAlgorithm::TransformCoordinateSystem(std::vector<float> inRotationMatrix, int32_t axisX, int32_t axisY,
     std::vector<float> &outRotationMatrix)
 {
+    if (axisX < 0 || axisY < 0) {
+        SEN_HILOGE("Invalid axisX or axisY");
+        return OHOS::Sensors::PARAMETER_ERROR;
+    }
     int32_t inRotationMatrixLength = static_cast<int32_t>(inRotationMatrix.size());
     if (((inRotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH) && (inRotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH))
         || (inRotationMatrixLength != static_cast<int32_t>(outRotationMatrix.size()))) {
