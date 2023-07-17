@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 
 declare_args() {
-  rust_socket_ipc = false
+  rust_socket_ipc = true
 }
 
 SUBSYSTEM_DIR = "//base/sensors/sensor"
