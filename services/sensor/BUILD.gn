@@ -52,13 +52,19 @@ ohos_shared_library("libsensor_service") {
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
-    "drivers_interface_sensor:libsensor_proxy_1.1",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]
+
+  if (has_hdf_drivers_interface_sensor) {
+    external_deps += [
+      "drivers_interface_sensor:libsensor_proxy_1.1",
+    ]
+  }
+
   shlib_type = "sa"
   part_name = "sensor"
   subsystem_name = "sensors"
@@ -103,13 +109,18 @@ ohos_shared_library("libsensor_service_static") {
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
-    "drivers_interface_sensor:libsensor_proxy_1.1",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]
+
+  if (has_hdf_drivers_interface_sensor) {
+    external_deps += [
+      "drivers_interface_sensor:libsensor_proxy_1.1",
+    ]
+  }
 
   part_name = "sensor"
   subsystem_name = "sensors"
