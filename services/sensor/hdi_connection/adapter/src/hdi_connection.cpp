@@ -19,7 +19,9 @@
 #include <thread>
 
 #include "hisysevent.h"
+#ifdef HAS_HDF_DRIVERS_INTERFACE_SENSOR
 #include "iproxy_broker.h"
+#endif
 #include "sensor_event_callback.h"
 #include "sensors_errors.h"
 #include "v1_1/isensor_interface.h"
