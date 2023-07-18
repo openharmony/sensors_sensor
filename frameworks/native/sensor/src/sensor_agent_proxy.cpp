@@ -291,8 +291,8 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         ret = strcpy_s(sensorInfo->firmwareVersion, VERSION_MAX_LEN,
             sensorList[i].GetFirmwareVersion().c_str());
         CHKCR(ret == EOK, ERROR);
-        sensorInfo->sensorId = static_cast<int32_t>(sensorList[i].GetSensorId());
-        sensorInfo->sensorTypeId = static_cast<int32_t>(sensorList[i].GetSensorTypeId());
+        sensorInfo->sensorId = sensorList[i].GetSensorId();
+        sensorInfo->sensorTypeId = sensorList[i].GetSensorTypeId();
         sensorInfo->maxRange = sensorList[i].GetMaxRange();
         sensorInfo->precision = sensorList[i].GetResolution();
         sensorInfo->power = sensorList[i].GetPower();

@@ -74,7 +74,8 @@ void SensorService::OnStart()
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
     }
-    if (!SystemAbility::Publish(this)) {
+    sptr<SensorService> sensorService(this);
+    if (!SystemAbility::Publish(sensorService)) {
         SEN_HILOGE("Publish SensorService error");
         return;
     }
