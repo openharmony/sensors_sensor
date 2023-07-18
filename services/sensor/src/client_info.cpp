@@ -458,19 +458,21 @@ void ClientInfo::StoreEvent(const SensorData &data)
 {
     bool foundSensor = false;
     SensorData storedEvent;
+    std::vector<Sensor> sensors;
+
     #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     auto sensorHdiConnection = &SensorHdiConnection::GetInstance();
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
     if (sensorHdiConnection == nullptr) {
         SEN_HILOGE("sensorHdiConnection cannot be null");
         return;
     }
-    std::vector<Sensor> sensors;
     int32_t ret = sensorHdiConnection->GetSensorList(sensors);
     if (ret != 0) {
         SEN_HILOGE("GetSensorList is failed");
         return;
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     errno_t retVal = memcpy_s(&storedEvent, sizeof(storedEvent), &data, sizeof(data));
     if (retVal != EOK) {
         SEN_HILOGE("memcpy_s is failed");

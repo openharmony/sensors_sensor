@@ -28,7 +28,11 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorManager" };
+
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
 constexpr int32_t INVALID_SENSOR_ID = -1;
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
+
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;
 }  // namespace
