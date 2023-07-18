@@ -28,7 +28,10 @@ constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 ClientInfo &clientInfo_ = ClientInfo::GetInstance();
 SensorManager &sensorManager_ = SensorManager::GetInstance();
+
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
 SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 }  // namespace
 
 bool SensorPowerPolicy::CheckFreezingSensor(int32_t sensorId)
@@ -166,12 +169,14 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
         SEN_HILOGE("SaveSubscriber failed, ret:%{public}d", ret);
         return ret;
     }
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, pid);
         return SET_SENSOR_CONFIG_ERR;
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
     return ERR_OK;
 }
 

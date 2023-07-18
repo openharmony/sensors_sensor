@@ -19,7 +19,6 @@ ohos_shared_library("libsensor_service") {
     "src/client_info.cpp",
     "src/fifo_cache_data.cpp",
     "src/flush_info_record.cpp",
-    "src/sensor_data_processer.cpp",
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
     "src/sensor_power_policy.cpp",
@@ -58,6 +57,7 @@ ohos_shared_library("libsensor_service") {
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
       "hdi_connection/hardware/src/hdi_service_impl.cpp",
       "hdi_connection/interface/src/sensor_hdi_connection.cpp",
+      "src/sensor_data_processer.cpp",
     ]
 
     include_dirs += [
@@ -79,15 +79,9 @@ ohos_shared_library("libsensor_service") {
 ##########################################################################
 ohos_shared_library("libsensor_service_static") {
   sources = [
-    "hdi_connection/adapter/src/compatible_connection.cpp",
-    "hdi_connection/adapter/src/hdi_connection.cpp",
-    "hdi_connection/adapter/src/sensor_event_callback.cpp",
-    "hdi_connection/hardware/src/hdi_service_impl.cpp",
-    "hdi_connection/interface/src/sensor_hdi_connection.cpp",
     "src/client_info.cpp",
     "src/fifo_cache_data.cpp",
     "src/flush_info_record.cpp",
-    "src/sensor_data_processer.cpp",
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
     "src/sensor_power_policy.cpp",
@@ -100,9 +94,6 @@ ohos_shared_library("libsensor_service_static") {
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/services/sensor/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
@@ -129,6 +120,7 @@ ohos_shared_library("libsensor_service_static") {
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
       "hdi_connection/hardware/src/hdi_service_impl.cpp",
       "hdi_connection/interface/src/sensor_hdi_connection.cpp",
+      "src/sensor_data_processer.cpp",
     ]
 
     include_dirs += [

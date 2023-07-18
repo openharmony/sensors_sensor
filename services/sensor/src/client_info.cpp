@@ -19,9 +19,12 @@
 
 #include "permission_util.h"
 #include "securec.h"
-#include "sensor_hdi_connection.h"
 #include "sensor_manager.h"
 #include "sensors_errors.h"
+
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#include "sensor_hdi_connection.h"
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 
 namespace OHOS {
 namespace Sensors {
@@ -455,7 +458,9 @@ void ClientInfo::StoreEvent(const SensorData &data)
 {
     bool foundSensor = false;
     SensorData storedEvent;
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     auto sensorHdiConnection = &SensorHdiConnection::GetInstance();
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
     if (sensorHdiConnection == nullptr) {
         SEN_HILOGE("sensorHdiConnection cannot be null");
         return;

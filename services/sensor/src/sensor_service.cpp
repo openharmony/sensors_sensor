@@ -57,6 +57,8 @@ void SensorService::OnStart()
         SEN_HILOGW("SensorService has already started");
         return;
     }
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (!InitInterface()) {
         SEN_HILOGE("Init interface error");
         return;
@@ -71,6 +73,8 @@ void SensorService::OnStart()
     }
     sensorDataProcesser_ = new (std::nothrow) SensorDataProcesser(sensorMap_);
     CHKPV(sensorDataProcesser_);
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
     }
@@ -78,10 +82,17 @@ void SensorService::OnStart()
         SEN_HILOGE("Publish SensorService error");
         return;
     }
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.InitSensorMap(sensorMap_, sensorDataProcesser_, reportDataCallback_);
+    #else
+    sensorManager_.InitSensorMap(sensorMap_);
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     state_ = SensorServiceState::STATE_RUNNING;
 }
 
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
 bool SensorService::InitInterface()
 {
     auto ret = sensorHdiConnection_.ConnectHdi();
@@ -123,6 +134,7 @@ bool SensorService::InitSensorList()
     }
     return true;
 }
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 
 bool SensorService::InitSensorPolicy()
 {
@@ -137,10 +149,14 @@ void SensorService::OnStop()
         return;
     }
     state_ = SensorServiceState::STATE_STOPPED;
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     int32_t ret = sensorHdiConnection_.DestroyHdiConnection();
     if (ret != ERR_OK) {
         SEN_HILOGE("Destroy hdi connect fail");
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     UnregisterPermCallback();
 }
 
