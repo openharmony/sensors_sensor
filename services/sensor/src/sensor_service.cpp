@@ -210,12 +210,16 @@ ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs
         SEN_HILOGE("SaveSubscriber failed");
         return ret;
     }
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ENABLE_SENSOR_ERR;
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     return ret;
 }
 
@@ -263,12 +267,16 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ret;
     }
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     ret = sensorHdiConnection_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
         SEN_HILOGE("EnableSensor failed");
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return ENABLE_SENSOR_ERR;
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     if ((!g_isRegister) && (RegisterPermCallback(sensorId))) {
         g_isRegister = true;
     }
@@ -296,10 +304,14 @@ ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
         SEN_HILOGW("Other client is using this sensor now, can't disable");
         return ERR_OK;
     }
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (sensorHdiConnection_.DisableSensor(sensorId) != ERR_OK) {
         SEN_HILOGE("DisableSensor is failed");
         return DISABLE_SENSOR_ERR;
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     int32_t uid = clientInfo_.GetUidByPid(pid);
     clientInfo_.DestroyCmd(uid);
     clientInfo_.ClearDataQueue(sensorId);
@@ -315,11 +327,15 @@ ErrCode SensorService::DisableSensor(int32_t sensorId)
 std::vector<Sensor> SensorService::GetSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
+
+    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
     if (ret != 0) {
         SEN_HILOGE("GetSensorList is failed");
         return sensors_;
     }
+    #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     for (const auto &it : sensors_) {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         sensorMap_.insert(std::make_pair(it.GetSensorId(), it));
