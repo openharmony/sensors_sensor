@@ -15,11 +15,9 @@ import("//build/ohos.gni")
 
 SUBSYSTEM_DIR = "//base/sensors/sensor"
 
-# if (!defined(global_parts_info) ||
-#     defined(global_parts_info.hdf_drivers_interface_sensor)) {
-#   hdf_drivers_interface_sensor = true
-# } else {
-#   hdf_drivers_interface_sensor = false
-# }
-
-hdf_drivers_interface_sensor = false
+if (!defined(global_parts_info) ||
+    defined(global_parts_info.hdf_drivers_interface_sensor)) {
+  hdf_drivers_interface_sensor = true
+} else {
+  hdf_drivers_interface_sensor = false
+}
