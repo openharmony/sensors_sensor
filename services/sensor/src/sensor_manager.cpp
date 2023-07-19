@@ -108,7 +108,7 @@ void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap
     SEN_HILOGD("Begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
     return;
 }
-#endif
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 
 ErrCode SensorManager::SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)

@@ -177,6 +177,7 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
         SEN_HILOGE("SaveSubscriber failed, ret:%{public}d", ret);
         return ret;
     }
+
     #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
@@ -185,6 +186,7 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
         return SET_SENSOR_CONFIG_ERR;
     }
     #endif // HDF_DRIVERS_INTERFACE_SENSOR
+
     return ERR_OK;
 }
 
