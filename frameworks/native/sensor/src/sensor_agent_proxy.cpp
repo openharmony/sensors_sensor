@@ -74,7 +74,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
-    if (g_isChannelCreated) {
+    if (isChannelCreated_) {
         SEN_HILOGI("The channel has already been created");
         return ERR_OK;
     }
@@ -91,7 +91,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         SEN_HILOGE("Transfer data channel failed, ret:%{public}d, destroyRet:%{public}d", ret, destroyRet);
         return ret;
     }
-    g_isChannelCreated = true;
+    isChannelCreated_ = true;
     return ERR_OK;
 }
 
@@ -99,7 +99,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
-    if (!g_isChannelCreated) {
+    if (!isChannelCreated_) {
         SEN_HILOGI("Channel has been destroyed");
         return ERR_OK;
     }
@@ -114,7 +114,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
         SEN_HILOGE("Destroy service data channel fail, ret:%{public}d", ret);
         return ret;
     }
-    g_isChannelCreated = false;
+    isChannelCreated_ = false;
     return ERR_OK;
 }
 
@@ -122,8 +122,8 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (g_samplingInterval < 0 || g_reportInterval < 0) {
-        SEN_HILOGE("SamplingPeriod or g_reportInterval is invalid");
+    if (samplingInterval_ < 0 || reportInterval_ < 0) {
+        SEN_HILOGE("SamplingPeriod or reportInterval_ is invalid");
         return ERROR;
     }
     if (!SenClient.IsValid(sensorId)) {
@@ -135,9 +135,9 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         SEN_HILOGE("Subscribe sensorId first");
         return ERROR;
     }
-    int32_t ret = SenClient.EnableSensor(sensorId, g_samplingInterval, g_reportInterval);
-    g_samplingInterval = -1;
-    g_reportInterval = -1;
+    int32_t ret = SenClient.EnableSensor(sensorId, samplingInterval_, reportInterval_);
+    samplingInterval_ = -1;
+    reportInterval_ = -1;
     if (ret != 0) {
         SEN_HILOGE("Enable sensor failed, ret:%{public}d", ret);
         g_subscribeMap.erase(sensorId);
@@ -186,8 +186,8 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
         SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
-    g_samplingInterval = samplingInterval;
-    g_reportInterval = reportInterval;
+    samplingInterval_ = samplingInterval;
+    reportInterval_ = reportInterval;
     return OHOS::Sensors::SUCCESS;
 }
 
