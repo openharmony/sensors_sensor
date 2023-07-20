@@ -85,7 +85,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
             continue;
         }
         if (str.find("-") == 0) {
-            count += str.size() - 1;
+            count += static_cast<int32_t>(str.size()) - 1;
             continue;
         }
     }
