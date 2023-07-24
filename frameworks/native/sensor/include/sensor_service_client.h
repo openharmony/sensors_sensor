@@ -61,11 +61,11 @@ private:
     void DeleteSensorInfoItem(int32_t sensorId);
     int32_t CreateSocketChannel();
     std::mutex clientMutex_;
-    sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_;
-    sptr<ISensorService> sensorServer_;
+    sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
+    sptr<ISensorService> sensorServer_ = nullptr;
     std::vector<Sensor> sensorList_;
-    sptr<SensorDataChannel> dataChannel_;
-    sptr<SensorClientStub> sensorClientStub_;
+    sptr<SensorDataChannel> dataChannel_ = nullptr;
+    sptr<SensorClientStub> sensorClientStub_ = nullptr;
     std::mutex mapMutex_;
     std::map<int32_t, SensorBasicInfo> sensorInfoMap_;
     std::atomic_bool isConnected_ = false;
