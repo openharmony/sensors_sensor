@@ -61,8 +61,8 @@ private:
     std::atomic_bool isChannelCreated_ = false;
     int64_t samplingInterval_ = -1;
     int64_t reportInterval_ = -1;
-    std::map<int32_t, const SensorUser *> g_subscribeMap;
-    std::map<int32_t, const SensorUser *> g_unsubscribeMap;
+    std::map<int32_t, const SensorUser *> subscribeMap_;
+    std::map<int32_t, const SensorUser *> unsubscribeMap_;
 };
 
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
