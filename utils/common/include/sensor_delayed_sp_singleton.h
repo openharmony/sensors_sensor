@@ -50,13 +50,12 @@ std::mutex SensorDelayedSpSingleton<T>::mutex_;
 template<typename T>
 sptr<T> SensorDelayedSpSingleton<T>::GetInstance()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (!instance_) {
-        std::lock_guard<std::mutex> lock(mutex_);
         if (instance_ == nullptr) {
             instance_ = new T();
         }
     }
-
     return instance_;
 }
 
