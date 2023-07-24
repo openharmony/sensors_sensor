@@ -21,16 +21,23 @@ namespace OHOS {
 namespace Sensors {
 bool CircleStreamBuffer::CheckWrite(size_t size)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamBufferCheckWrite(streamBufferPtr_.get(), size);
+#else
     size_t availSize = GetAvailableBufSize();
     if (size > availSize && rPos_ > 0) {
         CopyDataToBegin();
         availSize = GetAvailableBufSize();
     }
     return (availSize >= size);
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 bool CircleStreamBuffer::Write(const char *buf, size_t size)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return CircleStreamBufferWrite(streamBufferPtr_.get(), buf, size);
+#else
     if (!CheckWrite(size)) {
         SEN_HILOGE("Buffer is overflow, availableSize:%{public}zu, size:%{public}zu,"
                    "unreadSize:%{public}zu, rPos:%{public}zu, wPos:%{public}zu",
@@ -38,10 +45,14 @@ bool CircleStreamBuffer::Write(const char *buf, size_t size)
         return false;
     }
     return StreamBuffer::Write(buf, size);
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 void CircleStreamBuffer::CopyDataToBegin()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    CircleStreamBufferCopyDataToBegin(streamBufferPtr_.get());
+#else
     size_t unreadSize = UnreadSize();
     if (unreadSize > 0 && rPos_ > 0) {
         size_t pos = 0;
@@ -52,6 +63,7 @@ void CircleStreamBuffer::CopyDataToBegin()
     SEN_HILOGD("UnreadSize:%{public}zu, rPos:%{public}zu, wPos:%{public}zu", unreadSize, rPos_, wPos_);
     rPos_ = 0;
     wPos_ = unreadSize;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 } // namespace Sensors
 } // namespace OHOS

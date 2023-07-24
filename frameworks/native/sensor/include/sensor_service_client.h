@@ -53,13 +53,13 @@ public:
     int32_t ResetSensors();
     void ReceiveMessage(const char *buf, size_t size);
     void Disconnect();
+    void HandleNetPacke(NetPacket &pkt);
 
 private:
     int32_t InitServiceClient();
     void UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
     void DeleteSensorInfoItem(int32_t sensorId);
     int32_t CreateSocketChannel();
-    void HandleNetPacke(NetPacket &pkt);
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_;
     sptr<ISensorService> sensorServer_;

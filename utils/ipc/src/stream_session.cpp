@@ -29,16 +29,30 @@ constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "St
 }
 
 StreamSession::StreamSession(const std::string &programName, const int32_t fd, const int32_t uid, const int32_t pid)
-    : programName_(programName),
+    : programName_(programName)
+#ifdef OHOS_BUILD_ENABLE_RUST
+{
+    StreamSessionSetFd(streamSessionPtr_.get(), fd);
+    StreamSessionSetUid(streamSessionPtr_.get(), uid);
+    StreamSessionSetPid(streamSessionPtr_.get(), pid);
+    UpdateDescript();
+}
+#else
+,
       fd_(fd),
       uid_(uid),
       pid_(pid)
 {
     UpdateDescript();
 }
+#endif // OHOS_BUILD_ENABLE_RUST
+
 
 bool StreamSession::SendMsg(const char *buf, size_t size) const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamSessionSendMsg(streamSessionPtr_.get(), buf, size);
+#else
     CHKPF(buf);
     if ((size == 0) || (size > MAX_PACKET_BUF_SIZE)) {
         SEN_HILOGE("buf size:%{public}zu", size);
@@ -56,7 +70,11 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
         auto count = send(fd_, &buf[idx], remSize, MSG_DONTWAIT | MSG_NOSIGNAL);
         if (count < 0) {
             if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK) {
+#ifdef OHOS_BUILD_ENABLE_RUST
+                sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
+#else
                 usleep(SEND_RETRY_SLEEP_TIME);
+#endif
                 SEN_HILOGW("Continue for errno EAGAIN|EINTR|EWOULDBLOCK, errno:%{public}d", errno);
                 continue;
             }
@@ -66,7 +84,11 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
         idx += static_cast<size_t>(count);
         remSize -= static_cast<size_t>(count);
         if (remSize > 0) {
+#ifdef OHOS_BUILD_ENABLE_RUST
+            sleep(Duration::from_micros(SEND_RETRY_SLEEP_TIME));
+#else
             usleep(SEND_RETRY_SLEEP_TIME);
+#endif
         }
     }
     if (retryCount >= SEND_RETRY_LIMIT || remSize != 0) {
@@ -75,19 +97,37 @@ bool StreamSession::SendMsg(const char *buf, size_t size) const
         return false;
     }
     return true;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 void StreamSession::Close()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    StreamSessionClose(streamSessionPtr_.get());
+    UpdateDescript();
+#else
     if (fd_ >= 0) {
         close(fd_);
         fd_ = -1;
         UpdateDescript();
     }
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 void StreamSession::UpdateDescript()
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    std::ostringstream oss;
+    oss << "fd = " << StreamSessionGetFd(streamSessionPtr_.get())
+        << ", programName = " << programName_
+        << ", moduleType = " << StreamSessionGetModuleType(streamSessionPtr_.get())
+        << ((StreamSessionGetFd(streamSessionPtr_.get()) < 0) ? ", closed" : ", opened")
+        << ", uid = " << StreamSessionGetUid(streamSessionPtr_.get())
+        << ", pid = " << StreamSessionGetPid(streamSessionPtr_.get())
+        << ", tokenType = " << StreamSessionGetTokenType(streamSessionPtr_.get())
+        << std::endl;
+    descript_ = oss.str().c_str();
+#else
     std::ostringstream oss;
     oss << "fd = " << fd_
         << ", programName = " << programName_
@@ -97,10 +137,20 @@ void StreamSession::UpdateDescript()
         << ", tokenType = " << tokenType_
         << std::endl;
     descript_ = oss.str().c_str();
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 bool StreamSession::SendMsg(const NetPacket &pkt) const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    if (StreamBufferChkRWError(pkt.streamBufferPtr_.get())) {
+        SEN_HILOGE("Read and write status is error");
+        return false;
+    }
+    StreamBuffer buf;
+    pkt.MakeData(buf);
+    return SendMsg(StreamBufferData(buf.streamBufferPtr_.get()), StreamBufferSize(buf.streamBufferPtr_.get()));
+#else
     if (pkt.ChkRWError()) {
         SEN_HILOGE("Read and write status failed");
         return false;
@@ -108,16 +158,25 @@ bool StreamSession::SendMsg(const NetPacket &pkt) const
     StreamBuffer buf;
     pkt.MakeData(buf);
     return SendMsg(buf.Data(), buf.Size());
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 int32_t StreamSession::GetUid() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamSessionGetUid(streamSessionPtr_.get());
+#else
     return uid_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 int32_t StreamSession::GetPid() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamSessionGetPid(streamSessionPtr_.get());
+#else
     return pid_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 SessionPtr StreamSession::GetSharedPtr()
@@ -127,7 +186,11 @@ SessionPtr StreamSession::GetSharedPtr()
 
 int32_t StreamSession::GetFd() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamSessionGetFd(streamSessionPtr_.get());
+#else
     return fd_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 const std::string& StreamSession::GetDescript() const
@@ -142,12 +205,20 @@ const std::string StreamSession::GetProgramName() const
 
 void StreamSession::SetTokenType(int32_t type)
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    StreamSessionSetTokenType(streamSessionPtr_.get(), type);
+#else
     tokenType_ = type;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 
 int32_t StreamSession::GetTokenType() const
 {
+#ifdef OHOS_BUILD_ENABLE_RUST
+    return StreamSessionGetTokenType(streamSessionPtr_.get());
+#else
     return tokenType_;
+#endif // OHOS_BUILD_ENABLE_RUST
 }
 }  // namespace Sensors
 }  // namespace OHOS
