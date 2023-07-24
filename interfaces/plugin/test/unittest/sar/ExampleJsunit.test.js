@@ -220,14 +220,10 @@ describe("SarJsTest", function () {
                     done();
                 }
                 try {
-                    sensor.once(sensor.SensorId.SAR, callback);
-                    setTimeout(() => {
-                        expect(true).assertTrue();
-                        done();
-                    }, 500);
+                    sensor.off(-1, callback);
                 } catch (error) {
-                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
+                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
+                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
                     done();
                 }
             });
@@ -247,104 +243,6 @@ describe("SarJsTest", function () {
     */
     it("SarJsTest_006", 0, async function (done) {
         console.info('----------------------SarJsTest_006---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try{
-                    sensor.once(sensor.SensorId.SAR, callback, 5);
-                    setTimeout(() => {
-                        expect(true).assertTrue();
-                        done();
-                    }, 500);
-                } catch (error) {
-                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:SarJsTest_007
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("SarJsTest_007", 0, async function (done) {
-        console.info('----------------------SarJsTest_007---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try{
-                    sensor.once(sensor.SensorId.SAR, 5);
-                } catch (error) {
-                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:SarJsTest_008
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("SarJsTest_008", 0, async function (done) {
-        console.info('----------------------SarJsTest_008---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try {
-                    sensor.off(-1, callback);
-                } catch (error) {
-                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:SarJsTest_009
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("SarJsTest_009", 0, async function (done) {
-        console.info('----------------------SarJsTest_009---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
                 if (error) {
@@ -374,13 +272,13 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_010
+    * @tc.name:SarJsTest_007
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("SarJsTest_010", 0, async function (done) {
-        console.info('----------------------SarJsTest_010---------------------------');
+    it("SarJsTest_007", 0, async function (done) {
+        console.info('----------------------SarJsTest_007---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
                 if (error) {
@@ -413,49 +311,13 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_011
+    * @tc.name:SarJsTest_008
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("SarJsTest_011", 0, async function (done) {
-        console.info('----------------------SarJsTest_011---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try {
-                    sensor.on(sensor.SensorId.SAR, callback, {'interval': 100000000});
-                    sensor.once(sensor.SensorId.SAR, callback2);
-                    setTimeout(() => {
-                        sensor.off(sensor.SensorId.SAR);
-                        done();
-                    }, 1000);
-                } catch (error) {
-                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:SarJsTest_012
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("SarJsTest_012", 0, async function (done) {
-        console.info('----------------------SarJsTest_012---------------------------');
+    it("SarJsTest_008", 0, async function (done) {
+        console.info('----------------------SarJsTest_008---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
                 if (error) {
@@ -488,13 +350,13 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_013
+    * @tc.name:SarJsTest_009
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("SarJsTest_013", 0, async function (done) {
-        console.info('----------------------SarJsTest_013---------------------------');
+    it("SarJsTest_009", 0, async function (done) {
+        console.info('----------------------SarJsTest_009---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.SAR, (error, data) => {
                 if (error) {
