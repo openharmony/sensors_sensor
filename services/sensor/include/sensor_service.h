@@ -26,6 +26,7 @@
 #include "client_info.h"
 #include "death_recipient_template.h"
 #include "sensor_data_event.h"
+#include "sensor_delayed_sp_singleton.h"
 #include "sensor_hdi_connection.h"
 #include "sensor_manager.h"
 #include "sensor_power_policy.h"
@@ -41,10 +42,9 @@ enum class SensorServiceState {
 
 class SensorService : public SystemAbility, public StreamServer, public SensorServiceStub {
     DECLARE_SYSTEM_ABILITY(SensorService)
+    SENSOR_DECLARE_DELAYED_SP_SINGLETON(SensorService);
 
 public:
-    explicit SensorService(int32_t systemAbilityId, bool runOnCreate = false);
-    virtual ~SensorService() = default;
     void OnDump() override;
     void OnStart() override;
     void OnStop() override;
