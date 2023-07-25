@@ -34,16 +34,20 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorService" };
+auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
+const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_sensorService.GetRefPtr());
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
 }  // namespace
 
-REGISTER_SYSTEM_ABILITY_BY_ID(SensorService, SENSOR_SERVICE_ABILITY_ID, true);
+SensorService::SensorService()
+    : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
+{
+    SEN_HILOGD("Add SystemAbility");
+}
 
-SensorService::SensorService(int32_t systemAbilityId, bool runOnCreate)
-    : SystemAbility(systemAbilityId, runOnCreate), state_(SensorServiceState::STATE_STOPPED)
-{}
+SensorService::~SensorService() {}
 
 void SensorService::OnDump()
 {
@@ -74,8 +78,7 @@ void SensorService::OnStart()
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
     }
-    sptr<SensorService> sensorService(this);
-    if (!SystemAbility::Publish(sensorService)) {
+    if (!SystemAbility::Publish(SensorDelayedSpSingleton<SensorService>::GetInstance())) {
         SEN_HILOGE("Publish SensorService error");
         return;
     }
