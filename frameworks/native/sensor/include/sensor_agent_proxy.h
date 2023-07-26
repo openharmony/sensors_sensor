@@ -58,11 +58,11 @@ private:
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_ = nullptr;
-    std::atomic_bool g_isChannelCreated = false;
-    int64_t g_samplingInterval = -1;
-    int64_t g_reportInterval = -1;
-    std::map<int32_t, const SensorUser *> g_subscribeMap;
-    std::map<int32_t, const SensorUser *> g_unsubscribeMap;
+    std::atomic_bool isChannelCreated_ = false;
+    int64_t samplingInterval_ = -1;
+    int64_t reportInterval_ = -1;
+    std::map<int32_t, const SensorUser *> subscribeMap_;
+    std::map<int32_t, const SensorUser *> unsubscribeMap_;
 };
 
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
