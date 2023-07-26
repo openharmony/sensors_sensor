@@ -75,8 +75,6 @@ ohos_shared_library("libsensor_service") {
     ]
 
     external_deps += [ "drivers_interface_sensor:libsensor_proxy_1.1" ]
-
-    sensor_default_defines += [ "HDF_DRIVERS_INTERFACE_SENSOR" ]
   }
 
   shlib_type = "sa"
@@ -145,8 +143,6 @@ ohos_shared_library("libsensor_service_static") {
     ]
 
     external_deps += [ "drivers_interface_sensor:libsensor_proxy_1.1" ]
-
-    sensor_default_defines += [ "HDF_DRIVERS_INTERFACE_SENSOR" ]
   }
 
   part_name = "sensor"
