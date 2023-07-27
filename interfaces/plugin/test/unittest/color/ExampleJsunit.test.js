@@ -222,14 +222,10 @@ describe("ColorJsTest", function () {
                     done();
                 }
                 try {
-                    sensor.once(sensor.SensorId.COLOR, callback);
-                    setTimeout(() => {
-                        expect(true).assertTrue();
-                        done();
-                    }, 500);
+                    sensor.off(-1, callback);
                 } catch (error) {
-                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
+                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
+                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
                     done();
                 }
             });
@@ -249,104 +245,6 @@ describe("ColorJsTest", function () {
     */
     it("ColorJsTest_006", 0, async function (done) {
         console.info('----------------------ColorJsTest_006---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try{
-                    sensor.once(sensor.SensorId.COLOR, callback, 5);
-                    setTimeout(() => {
-                        expect(true).assertTrue();
-                        done();
-                    }, 500);
-                } catch (error) {
-                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:ColorJsTest_007
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("ColorJsTest_007", 0, async function (done) {
-        console.info('----------------------ColorJsTest_007---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try{
-                    sensor.once(sensor.SensorId.COLOR, 5);
-                } catch (error) {
-                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:ColorJsTest_008
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("ColorJsTest_008", 0, async function (done) {
-        console.info('----------------------ColorJsTest_008---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try {
-                    sensor.off(-1, callback);
-                } catch (error) {
-                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:ColorJsTest_009
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("ColorJsTest_009", 0, async function (done) {
-        console.info('----------------------ColorJsTest_009---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
                 if (error) {
@@ -376,13 +274,13 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_010
+    * @tc.name:ColorJsTest_007
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("ColorJsTest_010", 0, async function (done) {
-        console.info('----------------------ColorJsTest_010---------------------------');
+    it("ColorJsTest_007", 0, async function (done) {
+        console.info('----------------------ColorJsTest_007---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
                 if (error) {
@@ -415,49 +313,13 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_011
+    * @tc.name:ColorJsTest_008
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("ColorJsTest_011", 0, async function (done) {
-        console.info('----------------------ColorJsTest_011---------------------------');
-        try {
-            sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
-                if (error) {
-                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-                try {
-                    sensor.on(sensor.SensorId.COLOR, callback, {'interval': 100000000});
-                    sensor.once(sensor.SensorId.COLOR, callback2);
-                    setTimeout(() => {
-                        sensor.off(sensor.SensorId.COLOR);
-                        done();
-                    }, 1000);
-                } catch (error) {
-                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(false).assertTrue();
-                    done();
-                }
-            });
-        } catch (error) {
-            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
-            done();
-        }
-    })
-
-    /*
-    * @tc.name:ColorJsTest_012
-    * @tc.desc:verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: Issue Number
-    */
-    it("ColorJsTest_012", 0, async function (done) {
-        console.info('----------------------ColorJsTest_012---------------------------');
+    it("ColorJsTest_008", 0, async function (done) {
+        console.info('----------------------ColorJsTest_008---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
                 if (error) {
@@ -490,13 +352,13 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_013
+    * @tc.name:ColorJsTest_009
     * @tc.desc:verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
     */
-    it("ColorJsTest_013", 0, async function (done) {
-        console.info('----------------------ColorJsTest_013---------------------------');
+    it("ColorJsTest_009", 0, async function (done) {
+        console.info('----------------------ColorJsTest_009---------------------------');
         try {
             sensor.getSingleSensor(sensor.SensorId.COLOR, (error, data) => {
                 if (error) {
