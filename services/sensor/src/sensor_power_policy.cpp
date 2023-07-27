@@ -31,7 +31,6 @@ constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 ClientInfo &clientInfo_ = ClientInfo::GetInstance();
 SensorManager &sensorManager_ = SensorManager::GetInstance();
-
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
@@ -88,15 +87,13 @@ bool SensorPowerPolicy::Suspend(int32_t pid, std::vector<int32_t> &sensorIdList,
             sensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
             continue;
         }
-
-        #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
         auto ret = sensorHdiConnection_.DisableSensor(sensorId);
         if (ret != ERR_OK) {
             isAllSuspend = false;
             SEN_HILOGE("Hdi disable sensor failed, sensorId:%{public}d, ret:%{public}d", sensorId, ret);
         }
-        #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
         sensorInfoMap.insert(std::make_pair(sensorId, sensorInfo));
         sensorManager_.AfterDisableSensor(sensorId);
     }
@@ -158,16 +155,14 @@ bool SensorPowerPolicy::Resume(int32_t pid, int32_t sensorId, int64_t samplingPe
         SEN_HILOGE("Restore sensor info failed, ret:%{public}d", ret);
         return false;
     }
-
-    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     ret = sensorHdiConnection_.EnableSensor(sensorId);
     if (ret != ERR_OK) {
         SEN_HILOGE("Hdi enable sensor failed, sensorId:%{public}d, ret:%{public}d", sensorId, ret);
         clientInfo_.RemoveSubscriber(sensorId, pid);
         return false;
     }
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     return true;
 }
 
@@ -180,16 +175,14 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
         SEN_HILOGE("SaveSubscriber failed, ret:%{public}d", ret);
         return ret;
     }
-
-    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, pid);
         return SET_SENSOR_CONFIG_ERR;
     }
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     return ERR_OK;
 }
 

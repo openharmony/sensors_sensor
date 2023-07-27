@@ -31,7 +31,6 @@
 #include "sensor_power_policy.h"
 #include "sensor_service_stub.h"
 #include "stream_server.h"
-
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
@@ -97,16 +96,14 @@ private:
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
     std::unordered_map<int32_t, Sensor> sensorMap_;
-
-    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     bool InitInterface();
     bool InitDataCallback();
     bool InitSensorList();
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
     // death recipient of sensor client

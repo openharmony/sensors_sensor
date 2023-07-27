@@ -28,11 +28,9 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorManager" };
-
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 constexpr int32_t INVALID_SENSOR_ID = -1;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;
 }  // namespace
@@ -162,13 +160,11 @@ bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid
         return false;
     }
     clientInfo_.ClearCurPidSensorInfo(sensorId, clientPid);
-
-    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (!ResetBestSensorParams(sensorId)) {
         SEN_HILOGW("ResetBestSensorParams is failed");
     }
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     SEN_HILOGD("Other client is using this sensor");
     return true;
 }

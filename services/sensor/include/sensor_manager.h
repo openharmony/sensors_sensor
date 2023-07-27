@@ -22,7 +22,6 @@
 
 #include "client_info.h"
 #include "flush_info_record.h"
-
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_data_processer.h"
 #include "sensor_hdi_connection.h"
@@ -35,16 +34,15 @@ namespace Sensors {
 using namespace Security::AccessToken;
 class SensorManager : public Singleton<SensorManager> {
 public:
-    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     void InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
                        sptr<ReportDataCallback> dataCallback);
     bool SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     bool ResetBestSensorParams(int32_t sensorId);
     void StartDataReportThread();
-    #else
+#else
     void InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap);
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     ErrCode SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     SensorBasicInfo GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     bool IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid);
@@ -53,13 +51,12 @@ public:
     void GetPackageName(AccessTokenID tokenId, std::string &packageName);
 
 private:
-    #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     std::thread dataThread_;
     sptr<SensorDataProcesser> sensorDataProcesser_;
     sptr<ReportDataCallback> reportDataCallback_;
-    #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     std::unordered_map<int32_t, Sensor> sensorMap_;
     std::mutex sensorMapMutex_;
