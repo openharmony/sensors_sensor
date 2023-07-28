@@ -36,7 +36,7 @@ constexpr float PROXIMITY_FAR = 5.0;
 }  // namespace
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
-void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap,
+void SensorManager::InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap,
                                   sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
@@ -93,15 +93,15 @@ void SensorManager::StartDataReportThread()
     CALL_LOG_ENTER;
     if (!dataThread_.joinable()) {
         SEN_HILOGW("dataThread_ started");
-        std::thread secondDataThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
-        dataThread_ = std::move(secondDataThread);
+        std::thread dataProcessThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
+        dataThread_ = std::move(dataProcessThread);
     }
 }
 #else
-void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap)
+void SensorManager::InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
-    sensorMap_.insert(sensorMap.begin(), sensorMap.end());
+    sensorMap_ = sensorMap;
     SEN_HILOGD("Begin sensorMap_.size:%{public}zu", sensorMap_.size());
 }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR

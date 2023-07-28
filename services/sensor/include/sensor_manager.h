@@ -35,13 +35,13 @@ using namespace Security::AccessToken;
 class SensorManager : public Singleton<SensorManager> {
 public:
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
-    void InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
+    void InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
                        sptr<ReportDataCallback> dataCallback);
     bool SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     bool ResetBestSensorParams(int32_t sensorId);
     void StartDataReportThread();
 #else
-    void InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap);
+    void InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap);
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     bool SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     SensorBasicInfo GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
