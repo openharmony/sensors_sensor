@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 use super::*;
 use hilog_rust::{info, hilog, HiLogLabel, LogType};
 use crate::error::BufferStatusCode;
@@ -24,24 +24,24 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 /// Create unique_ptr of stream_buffer for C++ code
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
-/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact
 /// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamBufferCreate() -> *mut StreamBuffer {
-    let stream_buffer: Box::<StreamBuffer> = Box::default(); 
+    let stream_buffer: Box::<StreamBuffer> = Box::default();
     Box::into_raw(stream_buffer)
 }
 /// Drop unique_ptr of stream_buffer for C++ code
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
-/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact
 /// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -53,7 +53,7 @@ pub unsafe extern "C" fn StreamBufferDelete(raw: *mut StreamBuffer) {
 /// Obtain the first address of sz_buff
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -68,7 +68,7 @@ pub unsafe extern "C" fn StreamBufferData(object: *const StreamBuffer) -> *const
 /// Obtain position writen
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -83,7 +83,7 @@ pub unsafe extern "C" fn StreamBufferSize(object: *const StreamBuffer) -> usize 
 /// Reset StreamBuffer value
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -99,7 +99,7 @@ pub unsafe extern "C" fn StreamBufferReset(object: *mut StreamBuffer) -> i32 {
 /// Clean StreamBuffer value
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -115,7 +115,7 @@ pub unsafe extern "C" fn StreamBufferClean(object: *mut StreamBuffer) -> i32 {
 /// Write object data into buf
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -134,7 +134,7 @@ pub unsafe extern "C" fn StreamBufferWrite(object: *mut StreamBuffer, buf: *cons
 /// Read object data into buf
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -153,7 +153,7 @@ pub unsafe extern "C" fn StreamBufferRead(object: *const StreamBuffer, buf: *mut
 /// Obtain status of reading or writing
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -167,7 +167,7 @@ pub unsafe extern "C" fn StreamBufferChkRWError(object: *const StreamBuffer) -> 
 /// Obtain remarked string of status
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -182,7 +182,7 @@ pub unsafe extern "C" fn StreamBufferGetErrorStatusRemark(object: *const StreamB
 /// Buf Bytes will be writen into streambuffer's sz_buff.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -197,7 +197,7 @@ pub unsafe extern "C" fn StreamBufferWriteChar(object: *mut StreamBuffer, buf: *
 /// Check whether the condition of writing could be satisfied or not.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -212,7 +212,7 @@ pub unsafe extern "C" fn StreamBufferCheckWrite(object: *mut StreamBuffer, size:
 /// CircleStreamBuffer will copy data to beginning.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -228,7 +228,7 @@ pub unsafe extern "C" fn CircleStreamBufferCopyDataToBegin(object: *mut StreamBu
 /// Read sz_buf to buf.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -243,7 +243,7 @@ pub unsafe extern "C" fn StreamBufferReadChar(object: *mut StreamBuffer, buf: *c
 /// Write sz_buf to buf.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -258,7 +258,7 @@ pub unsafe extern "C" fn CircleStreamBufferWrite(object: *mut StreamBuffer, buf:
 /// read packets on client.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -275,7 +275,7 @@ pub unsafe extern "C" fn ReadClientPackets(object: *mut StreamBuffer, stream_cli
 /// StreamBufferReadBuf.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -289,7 +289,7 @@ pub unsafe extern "C" fn StreamBufferReadBuf(object: *const StreamBuffer) -> *co
 /// obtain streambuffer's r_count field.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -303,7 +303,7 @@ pub unsafe extern "C" fn StreamBufferGetRcount(object: *const StreamBuffer) -> i
 /// obtain streambuffer's w_count field.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -317,7 +317,7 @@ pub unsafe extern "C" fn StreamBufferGetWcount(object: *const StreamBuffer) -> i
 /// obtain streambuffer's w_pos field.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -331,7 +331,7 @@ pub unsafe extern "C" fn StreamBufferGetWpos(object: *const StreamBuffer) -> i32
 /// obtain streambuffer's r_pos field.
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]

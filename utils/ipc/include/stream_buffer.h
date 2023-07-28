@@ -77,8 +77,8 @@ protected:
     bool Clone(const StreamBuffer &buf);
 #ifdef OHOS_BUILD_ENABLE_RUST
 public:
-    std::unique_ptr<RustStreamBuffer, void(*)(RustStreamBuffer*)> streamBufferPtr_
-    { StreamBufferCreate(), StreamBufferDelete };
+    std::unique_ptr<RustStreamBuffer, void(*)(RustStreamBuffer*)> streamBufferPtr_ { StreamBufferCreate(),
+        StreamBufferDelete };
 #else
     enum class ErrorStatus {
         ERROR_STATUS_OK,
@@ -92,7 +92,6 @@ public:
     size_t wPos_ { 0 };
     char szBuff_[MAX_STREAM_BUF_SIZE + 1] = {};
 #endif // OHOS_BUILD_ENABLE_RUST
-
 };
 
 template<typename T>
