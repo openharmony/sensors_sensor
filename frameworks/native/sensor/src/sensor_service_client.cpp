@@ -54,7 +54,10 @@ extern "C" {
 SensorServiceClient::~SensorServiceClient()
 {
     if (sensorServer_ != nullptr && serviceDeathObserver_ != nullptr) {
-        sensorServer_->AsObject()->RemoveDeathRecipient(serviceDeathObserver_);
+        auto remoteObject = sensorServer_->AsObject();
+        if (remoteObject != nullptr) {
+            remoteObject->RemoveDeathRecipient(serviceDeathObserver_);
+        }
     }
     Disconnect();
 }
@@ -79,7 +82,9 @@ int32_t SensorServiceClient::InitServiceClient()
             SEN_HILOGD("Get service success, retry:%{public}d", retry);
             serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
             CHKPR(serviceDeathObserver_, SENSOR_NATIVE_GET_SERVICE_ERR);
-            sensorServer_->AsObject()->AddDeathRecipient(serviceDeathObserver_);
+            auto remoteObject = sensorServer_->AsObject();
+            CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
+            remoteObject->AddDeathRecipient(serviceDeathObserver_);
             sensorList_ = sensorServer_->GetSensorList();
             return ERR_OK;
         }
@@ -173,7 +178,9 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
     }
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "TransferDataChannel");
-    ret = sensorServer_->TransferDataChannel(sensorDataChannel, sensorClientStub_->AsObject());
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPR(remoteObject, INVALID_POINTER);
+    ret = sensorServer_->TransferDataChannel(sensorDataChannel, remoteObject);
     FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
@@ -188,7 +195,9 @@ int32_t SensorServiceClient::DestroyDataChannel()
     }
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "DestroyDataChannel");
-    ret = sensorServer_->DestroySensorChannel(sensorClientStub_->AsObject());
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPR(remoteObject, INVALID_POINTER);
+    ret = sensorServer_->DestroySensorChannel(remoteObject);
     FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
@@ -213,7 +222,9 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
         return;
     }
     // STEP5 : Retransfer new channel to sensors
-    sensorServer_->TransferDataChannel(dataChannel_, sensorClientStub_->AsObject());
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPV(remoteObject);
+    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
     // STEP6 : Restore Sensor status
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {
@@ -337,7 +348,9 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
     }
     Disconnect();
     StartTrace(HITRACE_TAG_SENSORS, "DestroySocketChannel");
-    ret = sensorServer_->DestroySocketChannel(sensorClientStub_->AsObject());
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPR(remoteObject, INVALID_POINTER);
+    ret = sensorServer_->DestroySocketChannel(remoteObject);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != ERR_OK) {
         SEN_HILOGE("Destroy socket channel failed, ret:%{public}d", ret);
@@ -431,7 +444,9 @@ int32_t SensorServiceClient::CreateSocketChannel()
     CHKPR(sensorServer_, ERROR);
     int32_t clientFd = -1;
     StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
-    ret = sensorServer_->CreateSocketChannel(sensorClientStub_->AsObject(), clientFd);
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPR(remoteObject, INVALID_POINTER);
+    ret = sensorServer_->CreateSocketChannel(remoteObject, clientFd);
     FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != ERR_OK || clientFd < 0) {
         Close();
