@@ -43,8 +43,7 @@ void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
     sensorDataProcesser_ = dataProcesser;
     reportDataCallback_ = dataCallback;
-    SEN_HILOGD("Begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
-    return;
+    SEN_HILOGD("Begin sensorMap_.size:%{public}zu", sensorMap_.size());
 }
 
 bool SensorManager::SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
@@ -103,21 +102,19 @@ void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
-    SEN_HILOGD("Begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
-    return;
+    SEN_HILOGD("Begin sensorMap_.size:%{public}zu", sensorMap_.size());
 }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
 
-ErrCode SensorManager::SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
+bool SensorManager::SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     SensorBasicInfo sensorInfo = GetSensorInfo(sensorId, samplingPeriodNs, maxReportDelayNs);
-    auto updateRet = clientInfo_.UpdateSensorInfo(sensorId, pid, sensorInfo);
-    if (!updateRet) {
+    if (!clientInfo_.UpdateSensorInfo(sensorId, pid, sensorInfo)) {
         SEN_HILOGE("UpdateSensorInfo is failed");
-        return UPDATE_SENSOR_INFO_ERR;
+        return false;
     }
-    return ERR_OK;
+    return true;
 }
 
 SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
@@ -183,16 +180,6 @@ ErrCode SensorManager::AfterDisableSensor(int32_t sensorId)
         }
     }
     return ERR_OK;
-}
-
-uint32_t SensorManager::GetSensorFlag(int32_t sensorId)
-{
-    uint32_t flag = SENSOR_ONE_SHOT;
-    auto sensor = sensorMap_.find(sensorId);
-    if (sensor != sensorMap_.end()) {
-        flag = sensor->second.GetFlags();
-    }
-    return flag;
 }
 
 void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageName)

@@ -203,20 +203,19 @@ void SensorService::ReportOnChangeData(int32_t sensorId)
 
 ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    auto ret = sensorManager_.SaveSubscriber(sensorId, GetCallingPid(), samplingPeriodNs, maxReportDelayNs);
-    if (ret != ERR_OK) {
+    if (!sensorManager_.SaveSubscriber(sensorId, GetCallingPid(), samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SaveSubscriber failed");
-        return ret;
+        return UPDATE_SENSOR_INFO_ERR;
     }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
     if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
-        return ENABLE_SENSOR_ERR;
+        return SET_SENSOR_CONFIG_ERR;
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-    return ret;
+    return ERR_OK;
 }
 
 bool SensorService::CheckSensorId(int32_t sensorId)

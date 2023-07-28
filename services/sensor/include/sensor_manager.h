@@ -43,11 +43,10 @@ public:
 #else
     void InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap);
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-    ErrCode SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     SensorBasicInfo GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     bool IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid);
     ErrCode AfterDisableSensor(int32_t sensorId);
-    uint32_t GetSensorFlag(int32_t sensorId);
     void GetPackageName(AccessTokenID tokenId, std::string &packageName);
 
 private:

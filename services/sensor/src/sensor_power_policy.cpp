@@ -170,10 +170,9 @@ ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, int32_t sensorId, int6
     int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
-    auto ret = sensorManager_.SaveSubscriber(sensorId, pid, samplingPeriodNs, maxReportDelayNs);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("SaveSubscriber failed, ret:%{public}d", ret);
-        return ret;
+    if (!sensorManager_.SaveSubscriber(sensorId, pid, samplingPeriodNs, maxReportDelayNs)) {
+        SEN_HILOGE("SaveSubscriber failed");
+        return UPDATE_SENSOR_INFO_ERR;
     }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
