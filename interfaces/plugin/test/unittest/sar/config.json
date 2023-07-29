@@ -41,7 +41,7 @@
           "name": "com.example.myapplication.MainAbility",
           "icon": "$media:icon",
           "description": "$string:mainability_description",
-          "label": "GyroscopeJsTest",
+          "label": "SarJsTest",
           "type": "page",
           "launchType": "standard"
         }
