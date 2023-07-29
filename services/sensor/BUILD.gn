@@ -16,15 +16,9 @@ import("./../../sensor.gni")
 
 ohos_shared_library("libsensor_service") {
   sources = [
-    "hdi_connection/adapter/src/compatible_connection.cpp",
-    "hdi_connection/adapter/src/hdi_connection.cpp",
-    "hdi_connection/adapter/src/sensor_event_callback.cpp",
-    "hdi_connection/hardware/src/hdi_service_impl.cpp",
-    "hdi_connection/interface/src/sensor_hdi_connection.cpp",
     "src/client_info.cpp",
     "src/fifo_cache_data.cpp",
     "src/flush_info_record.cpp",
-    "src/sensor_data_processer.cpp",
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
     "src/sensor_power_policy.cpp",
@@ -37,9 +31,6 @@ ohos_shared_library("libsensor_service") {
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/services/sensor/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
@@ -59,13 +50,32 @@ ohos_shared_library("libsensor_service") {
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
-    "drivers_interface_sensor:libsensor_proxy_1.1",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]
+
+  if (hdf_drivers_interface_sensor) {
+    sources += [
+      "hdi_connection/adapter/src/compatible_connection.cpp",
+      "hdi_connection/adapter/src/hdi_connection.cpp",
+      "hdi_connection/adapter/src/sensor_event_callback.cpp",
+      "hdi_connection/hardware/src/hdi_service_impl.cpp",
+      "hdi_connection/interface/src/sensor_hdi_connection.cpp",
+      "src/sensor_data_processer.cpp",
+    ]
+
+    include_dirs += [
+      "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
+      "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
+      "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
+    ]
+
+    external_deps += [ "drivers_interface_sensor:libsensor_proxy_1.1" ]
+  }
+
   shlib_type = "sa"
   part_name = "sensor"
   subsystem_name = "sensors"
@@ -74,15 +84,9 @@ ohos_shared_library("libsensor_service") {
 ##########################################################################
 ohos_shared_library("libsensor_service_static") {
   sources = [
-    "hdi_connection/adapter/src/compatible_connection.cpp",
-    "hdi_connection/adapter/src/hdi_connection.cpp",
-    "hdi_connection/adapter/src/sensor_event_callback.cpp",
-    "hdi_connection/hardware/src/hdi_service_impl.cpp",
-    "hdi_connection/interface/src/sensor_hdi_connection.cpp",
     "src/client_info.cpp",
     "src/fifo_cache_data.cpp",
     "src/flush_info_record.cpp",
-    "src/sensor_data_processer.cpp",
     "src/sensor_dump.cpp",
     "src/sensor_manager.cpp",
     "src/sensor_power_policy.cpp",
@@ -95,9 +99,6 @@ ohos_shared_library("libsensor_service_static") {
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/interfaces/native/include",
     "$SUBSYSTEM_DIR/services/sensor/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
@@ -117,13 +118,31 @@ ohos_shared_library("libsensor_service_static") {
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
-    "drivers_interface_sensor:libsensor_proxy_1.1",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_core",
     "safwk:system_ability_fwk",
   ]
+
+  if (hdf_drivers_interface_sensor) {
+    sources += [
+      "hdi_connection/adapter/src/compatible_connection.cpp",
+      "hdi_connection/adapter/src/hdi_connection.cpp",
+      "hdi_connection/adapter/src/sensor_event_callback.cpp",
+      "hdi_connection/hardware/src/hdi_service_impl.cpp",
+      "hdi_connection/interface/src/sensor_hdi_connection.cpp",
+      "src/sensor_data_processer.cpp",
+    ]
+
+    include_dirs += [
+      "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
+      "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
+      "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
+    ]
+
+    external_deps += [ "drivers_interface_sensor:libsensor_proxy_1.1" ]
+  }
 
   part_name = "sensor"
   subsystem_name = "sensors"

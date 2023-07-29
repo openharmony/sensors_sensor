@@ -18,6 +18,7 @@
 #include <cinttypes>
 
 #include "iservice_registry.h"
+
 #include "sensor.h"
 #include "sensor_data_event.h"
 #include "sensors_errors.h"
@@ -27,30 +28,22 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorManager" };
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
 constexpr int32_t INVALID_SENSOR_ID = -1;
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;
 }  // namespace
 
-void SensorManager::InitSensorMap(std::unordered_map<int32_t, Sensor> &sensorMap,
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
+void SensorManager::InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap,
                                   sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
     sensorDataProcesser_ = dataProcesser;
     reportDataCallback_ = dataCallback;
-    SEN_HILOGD("Begin sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
-    return;
-}
-
-uint32_t SensorManager::GetSensorFlag(int32_t sensorId)
-{
-    uint32_t flag = SENSOR_ONE_SHOT;
-    auto sensor = sensorMap_.find(sensorId);
-    if (sensor != sensorMap_.end()) {
-        flag = sensor->second.GetFlags();
-    }
-    return flag;
+    SEN_HILOGD("Begin sensorMap_.size:%{public}zu", sensorMap_.size());
 }
 
 bool SensorManager::SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
@@ -95,6 +88,35 @@ bool SensorManager::ResetBestSensorParams(int32_t sensorId)
     return true;
 }
 
+void SensorManager::StartDataReportThread()
+{
+    CALL_LOG_ENTER;
+    if (!dataThread_.joinable()) {
+        SEN_HILOGW("dataThread_ started");
+        std::thread dataProcessThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
+        dataThread_ = std::move(dataProcessThread);
+    }
+}
+#else
+void SensorManager::InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap)
+{
+    std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
+    sensorMap_ = sensorMap;
+    SEN_HILOGD("Begin sensorMap_.size:%{public}zu", sensorMap_.size());
+}
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
+
+bool SensorManager::SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
+    int64_t maxReportDelayNs)
+{
+    SensorBasicInfo sensorInfo = GetSensorInfo(sensorId, samplingPeriodNs, maxReportDelayNs);
+    if (!clientInfo_.UpdateSensorInfo(sensorId, pid, sensorInfo)) {
+        SEN_HILOGE("UpdateSensorInfo is failed");
+        return false;
+    }
+    return true;
+}
+
 SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
@@ -127,28 +149,6 @@ SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingP
     return sensorInfo;
 }
 
-ErrCode SensorManager::SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs,
-    int64_t maxReportDelayNs)
-{
-    SensorBasicInfo sensorInfo = GetSensorInfo(sensorId, samplingPeriodNs, maxReportDelayNs);
-    auto updateRet = clientInfo_.UpdateSensorInfo(sensorId, pid, sensorInfo);
-    if (!updateRet) {
-        SEN_HILOGE("UpdateSensorInfo is failed");
-        return UPDATE_SENSOR_INFO_ERR;
-    }
-    return ERR_OK;
-}
-
-void SensorManager::StartDataReportThread()
-{
-    CALL_LOG_ENTER;
-    if (!dataThread_.joinable()) {
-        SEN_HILOGW("dataThread_ started");
-        std::thread secondDataThread(SensorDataProcesser::DataThread, sensorDataProcesser_, reportDataCallback_);
-        dataThread_ = std::move(secondDataThread);
-    }
-}
-
 bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid)
 {
     CALL_LOG_ENTER;
@@ -157,9 +157,11 @@ bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid
         return false;
     }
     clientInfo_.ClearCurPidSensorInfo(sensorId, clientPid);
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (!ResetBestSensorParams(sensorId)) {
         SEN_HILOGW("ResetBestSensorParams is failed");
     }
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
     SEN_HILOGD("Other client is using this sensor");
     return true;
 }

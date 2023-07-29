@@ -24,3 +24,11 @@ sensor_default_defines = []
 if (rust_socket_ipc) {
   sensor_default_defines += [ "OHOS_BUILD_ENABLE_RUST" ]
 }
+
+if (!defined(global_parts_info) ||
+    defined(global_parts_info.hdf_drivers_interface_sensor)) {
+  hdf_drivers_interface_sensor = true
+  sensor_default_defines += [ "HDF_DRIVERS_INTERFACE_SENSOR" ]
+} else {
+  hdf_drivers_interface_sensor = false
+}
