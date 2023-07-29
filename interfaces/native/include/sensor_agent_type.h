@@ -78,6 +78,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_HUMIDITY = 13,              /**< Humidity sensor */
     SENSOR_TYPE_ID_COLOR = 14,                 /**< Color sensor */
     SENSOR_TYPE_ID_SAR = 15,                   /**< Sar sensor */
+    SENSOR_TYPE_ID_POSTURE = 16;               /**< Posture sensor */
     SENSOR_TYPE_ID_PHYSICAL_MAX = 0xFF,        /**< Maximum type ID of a physical sensor */
     SENSOR_TYPE_ID_ORIENTATION = 256,          /**< Orientation sensor */
     SENSOR_TYPE_ID_GRAVITY = 257,              /**< Gravity sensor */
@@ -404,6 +405,34 @@ typedef struct HeartRateData {
 typedef struct WearDetectionData {
     float value;
 } WearDetectionData;
+
+/**
+ * @brief Defines the Color sensor data structure.
+ */
+typedef struct ColorData {
+    float lightIntensity;
+    float colorTemperature;
+} ColorData;
+
+/**
+ * @brief Defines the Sar sensor data structure.
+ */
+typedef struct SarData {
+    float absorptionRatio;
+} SarData;
+
+/**
+ * @brief Defines the posture sensor data structure.
+ */
+typedef struct PostureData {
+    float mX;
+    float mY;
+    float mZ;
+    float mXSecond;
+    float mYSecond;
+    float mZSecond;
+    float mPosture;
+} PostureData;
 
 typedef struct SensorActiveInfo {
     int32_t pid = -1;        /**< PID */
