@@ -239,8 +239,10 @@ void HdiConnection::RegisterHdiDeathRecipient()
 {
     CALL_LOG_ENTER;
     CHKPV(sensorInterface_);
-    hdiDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<HdiConnection *>(this));
-    CHKPV(hdiDeathObserver_);
+    if (hdiDeathObserver_ == nullptr) {
+        hdiDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<HdiConnection *>(this));
+        CHKPV(hdiDeathObserver_);
+    }
     OHOS::HDI::hdi_objcast<ISensorInterface>(sensorInterface_)->AddDeathRecipient(hdiDeathObserver_);
 }
 
@@ -257,6 +259,7 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     CALL_LOG_ENTER;
     sptr<IRemoteObject> hdiService = object.promote();
     CHKPV(hdiService);
+    CHKPV(hdiDeathObserver_);
     hdiService->RemoveDeathRecipient(hdiDeathObserver_);
     eventCallback_ = nullptr;
     Reconnect();

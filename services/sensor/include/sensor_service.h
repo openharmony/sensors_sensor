@@ -77,7 +77,7 @@ private:
         void PermStateChangeCallback(PermStateChangeInfo& result) override;
 
     private:
-        sptr<SensorService> server_;
+        sptr<SensorService> server_ = nullptr;
     };
 
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);

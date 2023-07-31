@@ -61,6 +61,10 @@ void SensorService::OnStart()
         SEN_HILOGW("SensorService has already started");
         return;
     }
+    if (clientDeathObserver_ == nullptr) {
+        clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
+        CHKPV(clientDeathObserver_);
+    }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (!InitInterface()) {
         SEN_HILOGE("Init interface error");
@@ -399,16 +403,15 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
 {
     CALL_LOG_ENTER;
-    sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
-    clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
-    CHKPV(clientDeathObserver_);
-    client->AsObject()->AddDeathRecipient(clientDeathObserver_);
+    CHKPV(sensorClient);
+    sensorClient->AddDeathRecipient(clientDeathObserver_);
     clientInfo_.SaveClientPid(sensorClient, pid);
 }
 
 void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient)
 {
     CALL_LOG_ENTER;
+    CHKPV(sensorClient);
     int32_t pid = clientInfo_.FindClientPid(sensorClient);
     if (pid == INVALID_PID) {
         SEN_HILOGE("Pid is invalid");
@@ -418,10 +421,7 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
         SEN_HILOGD("Can't unregister client death recipient");
         return;
     }
-    sptr<ISensorClient> client = iface_cast<ISensorClient>(sensorClient);
-    clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
-    CHKPV(clientDeathObserver_);
-    client->AsObject()->RemoveDeathRecipient(clientDeathObserver_);
+    sensorClient->RemoveDeathRecipient(clientDeathObserver_);
     clientInfo_.DestroyClientPid(sensorClient);
 }
 
