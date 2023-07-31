@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 /// provide C interface to C++ for calling
 pub mod ffi;
 use hilog_rust::{info, error, hilog, HiLogLabel, LogType};

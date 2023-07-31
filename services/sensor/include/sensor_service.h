@@ -27,11 +27,13 @@
 #include "death_recipient_template.h"
 #include "sensor_data_event.h"
 #include "sensor_delayed_sp_singleton.h"
-#include "sensor_hdi_connection.h"
 #include "sensor_manager.h"
 #include "sensor_power_policy.h"
 #include "sensor_service_stub.h"
 #include "stream_server.h"
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
+#include "sensor_hdi_connection.h"
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 
 namespace OHOS {
 namespace Sensors {
@@ -80,9 +82,6 @@ private:
 
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);
     void UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient);
-    bool InitInterface();
-    bool InitDataCallback();
-    bool InitSensorList();
     bool InitSensorPolicy();
     void ReportOnChangeData(int32_t sensorId);
     void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid);
@@ -97,12 +96,16 @@ private:
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
     std::unordered_map<int32_t, Sensor> sensorMap_;
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
+    bool InitInterface();
+    bool InitDataCallback();
+    bool InitSensorList();
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
-    ClientInfo &clientInfo_ = ClientInfo::GetInstance();
-    SensorManager &sensorManager_ = SensorManager::GetInstance();
     sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
-    std::mutex uidLock_;
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
+    ClientInfo &clientInfo_ = ClientInfo::GetInstance();
+    SensorManager &sensorManager_ = SensorManager::GetInstance();
     // death recipient of sensor client
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
