@@ -47,7 +47,7 @@ public:
 private:
     int32_t InnerSensorDataChannel();
     std::mutex eventRunnerMutex_;
-    std::shared_ptr<SensorEventHandler> eventHandler_;
+    std::shared_ptr<SensorEventHandler> eventHandler_ = nullptr;
     std::unordered_set<int32_t> listenedFdSet_;
     ReceiveMessageFun receiveMessage_;
     DisconnectFun disconnect_;

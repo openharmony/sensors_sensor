@@ -136,7 +136,6 @@ bool StreamBuffer::Read(char *buf, size_t size)
     ++rCount_;
     return true;
 #endif // OHOS_BUILD_ENABLE_RUST
-
 }
 
 bool StreamBuffer::Write(const char *buf, size_t size)

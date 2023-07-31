@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 use super::*;
 use hilog_rust::{hilog, HiLogLabel, LogType};
 use crate::{error::SocketStatusCode, epoll_manager::EpollManager};
@@ -27,24 +27,24 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 /// Create unique_ptr of StreamSocket for C++ code
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
-/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact
 /// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketCreate() -> *mut EpollManager {
-    let epoll_manager: Box::<EpollManager> = Box::default(); 
+    let epoll_manager: Box::<EpollManager> = Box::default();
     Box::into_raw(epoll_manager)
 }
 /// Drop unique_ptr of StreamSocket for C++ code
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// If uninitialized memory requires special handling, please refer to std::mem::MaybeUninit.
-/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact 
+/// The pointer needs to be aligned for access. If the memory pointed to by the pointer is a compact
 /// memory layout and requires special consideration. Please refer to (#[repr(packed)]).
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
@@ -56,7 +56,7 @@ pub unsafe extern "C" fn StreamSocketDelete(raw: *mut EpollManager) {
 /// Obtain StreamSocket's fd
 ///
 /// # Safety
-/// 
+///
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]

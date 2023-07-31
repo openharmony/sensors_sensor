@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
  // C interface for socket core object
 use libc::c_void;
 /// C StreamServer struct pointer
