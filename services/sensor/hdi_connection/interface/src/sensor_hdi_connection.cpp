@@ -93,12 +93,9 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
 
 bool SensorHdiConnection::ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId)
 {
-    for (const auto &sensor : sensorList) {
-        if (sensor.GetSensorId() == sensorId) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(sensorList.begin(), sensorList.end(), [sensorId] (const Sensor &sensor) {
+        return sensor.GetSensorId() == sensorId;
+    });
 }
 
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
