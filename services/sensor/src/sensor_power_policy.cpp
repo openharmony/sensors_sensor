@@ -106,8 +106,8 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt == pidSensorInfoMap_.end()) {
-        SEN_HILOGD("Not suspended, not need resume, pid:%{public}d", pid);
-        return ERR_OK;
+        SEN_HILOGI("Resume sensors failed, please suspend sensors first, pid:%{public}d", pid);
+        return RESUME_ERR;
     }
     bool isAllResume = true;
     std::unordered_map<int32_t, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
