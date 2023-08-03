@@ -21,5 +21,6 @@ group("unittest") {
     "pedometer_detection:PedometerDetectionJsTest",
     "sar:SarJsTest",
     "sensor:SensorJsTest",
+    "posture:PostureJsTest",
   ]
 }

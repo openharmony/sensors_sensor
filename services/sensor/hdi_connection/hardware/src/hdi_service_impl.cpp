@@ -28,7 +28,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
 std::vector<SensorInfo> g_sensorInfos = {
-    {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
+    {"sensor_zmh", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
 std::vector<int32_t> g_supportSensors = { SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_POSTURE };
 float g_testData[] = { 9.8, 0.0, 0.0 };
