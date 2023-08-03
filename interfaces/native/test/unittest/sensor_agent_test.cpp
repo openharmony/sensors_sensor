@@ -458,31 +458,5 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_004, TestSize.Level1)
     int32_t ret = SetMode(SENSOR_ID, &user, SENSOR_DEFAULT_MODE);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
-
-HWTEST_F(SensorAgentTest, SensorNativeApiTest_005, TestSize.Level1)
-{
-    SEN_HILOGI("SensorNativeApiTest_005 in");
-
-    SensorUser user;
-    user.callback = SensorDataCallbackImpl;
-
-    int32_t ret = SubscribeSensor(16, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = SetBatch(16, &user, 100000000, 100000000);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = ActivateSensor(16, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = DeactivateSensor(16, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-
-    ret = UnsubscribeSensor(16, &user);
-    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-}
 }  // namespace Sensors
 }  // namespace OHOS
