@@ -30,10 +30,11 @@ constexpr int32_t CONVERT_MULTIPLES = 1000;
 std::vector<SensorInfo> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
-std::vector<int32_t> g_supportSensors = { SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR };
+std::vector<int32_t> g_supportSensors = { SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_POSTURE };
 float g_testData[] = { 9.8, 0.0, 0.0 };
 float g_colorData[] = { 2.2, 3.3 };
 float g_sarData[] = { 8.8 };
+float g_postureData[] = { 1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 7.7 };
 SensorEvent g_testEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
     .data = reinterpret_cast<uint8_t *>(g_testData),
@@ -48,6 +49,11 @@ SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
     .data = reinterpret_cast<uint8_t *>(g_sarData),
     .dataLen = 4
+};
+SensorEvent g_postureEvent = {
+    .sensorTypeId = SENSOR_TYPE_ID_POSTURE,
+    .data = reinterpret_cast<uint8_t *>(g_postureData),
+    .dataLen = 28
 };
 }
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -78,6 +84,8 @@ void HdiServiceImpl::DataReportThread()
                     it(&g_colorEvent);
                 } else if (iter == SENSOR_TYPE_ID_SAR) {
                     it(&g_sarEvent);
+                } else if (iter == SENSOR_TYPE_ID_POSTURE) {
+                    it(&g_postureEvent);
                 } else {
                     it(&g_testEvent);
                 }
