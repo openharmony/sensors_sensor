@@ -46,8 +46,8 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     CALL_LOG_ENTER;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
     if (sensorIdList.empty()) {
-        SEN_HILOGD("Sensor list is empty, not need suspend, pid:%{public}d", pid);
-        return ERR_OK;
+        SEN_HILOGI("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
+        return SUSPEND_ERR;
     }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
