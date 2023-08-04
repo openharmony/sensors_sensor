@@ -22,6 +22,7 @@
 #include "token_setproc.h"
 
 #include "sensor_agent.h"
+#include "sensor_agent_type.h"
 #include "sensors_errors.h"
 #include "system_info.h"
 
@@ -126,6 +127,17 @@ void SensorDataCallbackImpl2(SensorEvent *event)
     float *sensorData = (float *)event[0].data;
     SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, data:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
+}
+
+void SensorDataCallbackImpl3(SensorEvent *event)
+{
+    if (event == nullptr) {
+        SEN_HILOGE("SensorEvent is null");
+        return;
+    }
+    PostureData *postureData = (PostureData *)event[0].data;
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, Gxm:%{public}f, Gym:%{public}f, Gzm:%{public}f, Gxs:%{public}f, Gys:%{public}f, Gzs:%{public}f, angle:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).Gxm, (*postureData).Gym, (*postureData).Gzm, (*postureData).Gxs, (*postureData).Gys, (*postureData).Gzs, (*postureData).angle);
 }
 
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)
@@ -457,6 +469,32 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_004, TestSize.Level1)
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SetMode(SENSOR_ID, &user, SENSOR_DEFAULT_MODE);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_005, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_005 in");
+
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl3;
+
+    int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_POSTURE, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 100000000, 100000000);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = ActivateSensor(SENSOR_TYPE_ID_POSTURE, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = DeactivateSensor(SENSOR_TYPE_ID_POSTURE, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = UnsubscribeSensor(SENSOR_TYPE_ID_POSTURE, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
 }  // namespace Sensors
 }  // namespace OHOS
