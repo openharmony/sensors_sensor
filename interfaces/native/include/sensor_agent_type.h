@@ -78,7 +78,6 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_HUMIDITY = 13,              /**< Humidity sensor */
     SENSOR_TYPE_ID_COLOR = 14,                 /**< Color sensor */
     SENSOR_TYPE_ID_SAR = 15,                   /**< Sar sensor */
-    SENSOR_TYPE_ID_POSTURE = 16,               /**< Posture sensor */
     SENSOR_TYPE_ID_PHYSICAL_MAX = 0xFF,        /**< Maximum type ID of a physical sensor */
     SENSOR_TYPE_ID_ORIENTATION = 256,          /**< Orientation sensor */
     SENSOR_TYPE_ID_GRAVITY = 257,              /**< Gravity sensor */
@@ -91,6 +90,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_SIGNIFICANT_MOTION = 264,    /**< Significant motion sensor */
     SENSOR_TYPE_ID_PEDOMETER_DETECTION = 265,   /**< Pedometer detection sensor */
     SENSOR_TYPE_ID_PEDOMETER = 266,             /**< Pedometer sensor */
+    SENSOR_TYPE_ID_POSTURE = 267,               /**< Posture sensor */
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR = 277,  /**< Geomagnetic rotation vector sensor */
     SENSOR_TYPE_ID_HEART_RATE = 278,            /**< Heart rate sensor */
     SENSOR_TYPE_ID_DEVICE_ORIENTATION = 279,    /**< Device orientation sensor */
@@ -425,13 +425,13 @@ typedef struct SarData {
  * @brief Defines the posture sensor data structure.
  */
 typedef struct PostureData {
-    float mX;
-    float mY;
-    float mZ;
-    float mXSecond;
-    float mYSecond;
-    float mZSecond;
-    float mPosture;
+    float Gxm;
+    float Gym;
+    float Gzm;
+    float Gxs;
+    float Gys;
+    float Gzs;
+    float angle;
 } PostureData;
 
 typedef struct SensorActiveInfo {
