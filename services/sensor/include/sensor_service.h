@@ -106,6 +106,7 @@ private:
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     SensorManager &sensorManager_ = SensorManager::GetInstance();
+    std::mutex uidLock_;
     // death recipient of sensor client
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
