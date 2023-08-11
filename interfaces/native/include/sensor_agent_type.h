@@ -425,12 +425,12 @@ typedef struct SarData {
  * @brief Defines the posture sensor data structure.
  */
 typedef struct PostureData {
-    float Gxm;
-    float Gym;
-    float Gzm;
-    float Gxs;
-    float Gys;
-    float Gzs;
+    float gxm;
+    float gym;
+    float gzm;
+    float gxs;
+    float gys;
+    float gzs;
     float angle;
 } PostureData;
 
