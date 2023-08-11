@@ -40,10 +40,10 @@ private:
     DISALLOW_COPY_AND_MOVE(HdiServiceImpl);
     static void DataReportThread();
     static void GenerateEvent();
-    static void GenerateAccelerometerEvent(SensorEvent *event);
-    static void GenerateColorEvent(SensorEvent *event);
-    static void GenerateSarEvent(SensorEvent *event);
-    static void GeneratePostureEvent(SensorEvent *event);
+    static void GenerateAccelerometerEvent();
+    static void GenerateColorEvent();
+    static void GenerateSarEvent();
+    static void GeneratePostureEvent();
     static std::vector<int32_t> enableSensors_;
     std::thread dataReportThread_;
     static std::vector<RecordSensorCallback> callbacks_;

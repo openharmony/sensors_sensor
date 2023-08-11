@@ -41,6 +41,10 @@ std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_SAR,
     SENSOR_TYPE_ID_POSTURE
 };
+float g_accData[3];
+float g_colorData[2];
+float g_sarData[1];
+float g_postureData[7];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
     .dataLen = 12
@@ -69,16 +73,16 @@ void HdiServiceImpl::GenerateEvent()
     for (const auto &sensorId : enableSensors_) {
         switch (sensorId) {
             case SENSOR_TYPE_ID_ACCELEROMETER:
-                GenerateAccelerometerEvent(&g_accEvent);
+                GenerateAccelerometerEvent();
                 break;
             case SENSOR_TYPE_ID_COLOR:
-                GenerateColorEvent(&g_colorEvent);
+                GenerateColorEvent();
                 break;
             case SENSOR_TYPE_ID_SAR:
-                GenerateSarEvent(&g_sarEvent);
+                GenerateSarEvent();
                 break;
             case SENSOR_TYPE_ID_POSTURE:
-                GeneratePostureEvent(&g_postureEvent);
+                GeneratePostureEvent();
                 break;
             default:
                 SEN_HILOGW("sensorId:%{public}d", sensorId);
@@ -87,7 +91,7 @@ void HdiServiceImpl::GenerateEvent()
     }
 }
 
-void HdiServiceImpl::GenerateAccelerometerEvent(SensorEvent *event)
+void HdiServiceImpl::GenerateAccelerometerEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
@@ -99,35 +103,32 @@ void HdiServiceImpl::GenerateAccelerometerEvent(SensorEvent *event)
         num1 = num2;
         num2 = temp;
     }
-    float accData[3];
-    accData[0] = sqrt(num1);
-    accData[1] = sqrt(num2 - num1);
-    accData[2] = sqrt(TARGET_SUM - num2);
-    event->data = reinterpret_cast<uint8_t *>(accData);
+    g_accData[0] = static_cast<float>(sqrt(num1));
+    g_accData[1] = static_cast<float>(sqrt(num2 - num1));
+    g_accData[2] = static_cast<float>(sqrt(TARGET_SUM - num2));
+    g_accEvent.data = reinterpret_cast<uint8_t *>(g_accData);
 }
 
-void HdiServiceImpl::GenerateColorEvent(SensorEvent *event)
+void HdiServiceImpl::GenerateColorEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<float> distr(0, MAX_RANGE);
-    float colorData[2];
-    colorData[0] = distr(eng);
-    colorData[1] = distr(eng);
-    event->data = reinterpret_cast<uint8_t *>(colorData);
+    g_colorData[0] = distr(eng);
+    g_colorData[1] = distr(eng);
+    g_colorEvent.data = reinterpret_cast<uint8_t *>(g_colorData);
 }
 
-void HdiServiceImpl::GenerateSarEvent(SensorEvent *event)
+void HdiServiceImpl::GenerateSarEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<float> distr(0, MAX_RANGE);
-    float sarData[1];
-    sarData[0] = distr(eng);
-    event->data = reinterpret_cast<uint8_t *>(sarData);
+    g_sarData[0] = distr(eng);
+    g_sarEvent.data = reinterpret_cast<uint8_t *>(g_sarData);
 }
 
-void HdiServiceImpl::GeneratePostureEvent(SensorEvent *event)
+void HdiServiceImpl::GeneratePostureEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
@@ -139,16 +140,15 @@ void HdiServiceImpl::GeneratePostureEvent(SensorEvent *event)
         num1 = num2;
         num2 = temp;
     }
-    float postureData[7];
-    postureData[0] = static_cast<float>(sqrt(num1));
-    postureData[1] = static_cast<float>(sqrt(num2 - num1));
-    postureData[2] = static_cast<float>(sqrt(TARGET_SUM - num2));
-    postureData[3] = postureData[0];
-    postureData[4] = postureData[1];
-    postureData[5] = postureData[2];
+    g_postureData[0] = static_cast<float>(sqrt(num1));
+    g_postureData[1] = static_cast<float>(sqrt(num2 - num1));
+    g_postureData[2] = static_cast<float>(sqrt(TARGET_SUM - num2));
+    g_postureData[3] = g_postureData[0];
+    g_postureData[4] = g_postureData[1];
+    g_postureData[5] = g_postureData[2];
     std::uniform_real_distribution<float> distr2(0, MAX_ANGLE);
-    postureData[6] = distr2(eng);
-    event->data = reinterpret_cast<uint8_t *>(postureData);
+    g_postureData[6] = distr2(eng);
+    g_postureEvent.data = reinterpret_cast<uint8_t *>(g_postureData);
 }
 
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
