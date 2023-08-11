@@ -138,8 +138,8 @@ void SensorDataCallbackImplPosture(SensorEvent *event)
     PostureData *postureData = (PostureData *)event[0].data;
     SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, Gxm:%{public}f, "
         "Gym:%{public}f, Gzm:%{public}f, Gxs:%{public}f, Gys:%{public}f, Gzs:%{public}f, angle:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).Gxm, (*postureData).Gym,
-        (*postureData).Gzm, (*postureData).Gxs, (*postureData).Gys, (*postureData).Gzs, (*postureData).angle);
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).gxm, (*postureData).gym,
+        (*postureData).gzm, (*postureData).gxs, (*postureData).gys, (*postureData).gzs, (*postureData).angle);
 }
 
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)
