@@ -295,7 +295,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_POSTURE:
             return SEVEN_DIMENSION;
         default:
-            SEN_HILOGW("sensorId:%{public}u, size:%{public}d", sensorId, COMMON_DIMENSION);
+            SEN_HILOGW("sensorId:%{public}d, size:%{public}d", sensorId, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }

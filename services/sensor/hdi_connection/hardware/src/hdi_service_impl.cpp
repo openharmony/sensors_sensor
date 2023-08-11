@@ -14,6 +14,8 @@
  */
 #include "hdi_service_impl.h"
 
+#include <cmath>
+#include <random>
 #include <thread>
 #include <unistd.h>
 
@@ -27,6 +29,9 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
+constexpr float TARGET_SUM = 9.8 * 9.8;
+constexpr float MAX_RANGE = 9999.0;
+constexpr float MAX_ANGLE = 180.0;
 std::vector<SensorInfo> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
@@ -36,28 +41,20 @@ std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_SAR,
     SENSOR_TYPE_ID_POSTURE
 };
-float g_testData[] = { 9.8, 0.0, 0.0 };
-float g_colorData[] = { 2.2, 3.3 };
-float g_sarData[] = { 8.8 };
-float g_postureData[] = { 9.8, 0.0, 0.0, 9.8, 0.0, 0.0, 180.0 };
-SensorEvent g_testEvent = {
+SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
-    .data = reinterpret_cast<uint8_t *>(g_testData),
     .dataLen = 12
 };
 SensorEvent g_colorEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_COLOR,
-    .data = reinterpret_cast<uint8_t *>(g_colorData),
     .dataLen = 8
 };
 SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
-    .data = reinterpret_cast<uint8_t *>(g_sarData),
     .dataLen = 4
 };
 SensorEvent g_postureEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_POSTURE,
-    .data = reinterpret_cast<uint8_t *>(g_postureData),
     .dataLen = 28
 };
 }
@@ -66,6 +63,93 @@ std::vector<RecordSensorCallback> HdiServiceImpl::callbacks_;
 int64_t HdiServiceImpl::samplingInterval_ = -1;
 int64_t HdiServiceImpl::reportInterval_ = -1;
 std::atomic_bool HdiServiceImpl::isStop_ = false;
+
+void HdiServiceImpl::GenerateEvent()
+{
+    for (const auto &sensorId : enableSensors_) {
+        switch (sensorId) {
+            case SENSOR_TYPE_ID_ACCELEROMETER:
+                GenerateAccelerometerEvent(&g_accEvent);
+                break;
+            case SENSOR_TYPE_ID_COLOR:
+                GenerateColorEvent(&g_colorEvent);
+                break;
+            case SENSOR_TYPE_ID_SAR:
+                GenerateSarEvent(&g_sarEvent);
+                break;
+            case SENSOR_TYPE_ID_POSTURE:
+                GeneratePostureEvent(&g_postureEvent);
+                break;
+            default:
+                SEN_HILOGW("sensorId:%{public}d", sensorId);
+                break;
+        }
+    }
+}
+
+void HdiServiceImpl::GenerateAccelerometerEvent(SensorEvent *event)
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0, TARGET_SUM);
+    float num1 = distr(eng);
+    float num2 = distr(eng);
+    if (num1 > num2) {
+        float temp = num1;
+        num1 = num2;
+        num2 = temp;
+    }
+    float accData[3];
+    accData[0] = sqrt(num1);
+    accData[1] = sqrt(num2 - num1);
+    accData[2] = sqrt(TARGET_SUM - num2);
+    event->data = reinterpret_cast<uint8_t *>(accData);
+}
+
+void HdiServiceImpl::GenerateColorEvent(SensorEvent *event)
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0, MAX_RANGE);
+    float colorData[2];
+    colorData[0] = distr(eng);
+    colorData[1] = distr(eng);
+    event->data = reinterpret_cast<uint8_t *>(colorData);
+}
+
+void HdiServiceImpl::GenerateSarEvent(SensorEvent *event)
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0, MAX_RANGE);
+    float sarData[1];
+    sarData[0] = distr(eng);
+    event->data = reinterpret_cast<uint8_t *>(sarData);
+}
+
+void HdiServiceImpl::GeneratePostureEvent(SensorEvent *event)
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr1(0, TARGET_SUM);
+    float num1 = distr1(eng);
+    float num2 = distr1(eng);
+    if (num1 > num2) {
+        float temp = num1;
+        num1 = num2;
+        num2 = temp;
+    }
+    float postureData[7];
+    postureData[0] = static_cast<float>(sqrt(num1));
+    postureData[1] = static_cast<float>(sqrt(num2 - num1));
+    postureData[2] = static_cast<float>(sqrt(TARGET_SUM - num2));
+    postureData[3] = postureData[0];
+    postureData[4] = postureData[1];
+    postureData[5] = postureData[2];
+    std::uniform_real_distribution<float> distr2(0, MAX_ANGLE);
+    postureData[6] = distr2(eng);
+    event->data = reinterpret_cast<uint8_t *>(postureData);
+}
 
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
 {
@@ -78,21 +162,30 @@ void HdiServiceImpl::DataReportThread()
 {
     CALL_LOG_ENTER;
     while (true) {
+        GenerateEvent();
         usleep(samplingInterval_ / CONVERT_MULTIPLES);
         for (const auto &it : callbacks_) {
             if (it == nullptr) {
                 SEN_HILOGW("RecordSensorCallback is null");
                 continue;
             }
-            for (const auto &iter : enableSensors_) {
-                if (iter == SENSOR_TYPE_ID_COLOR) {
-                    it(&g_colorEvent);
-                } else if (iter == SENSOR_TYPE_ID_SAR) {
-                    it(&g_sarEvent);
-                } else if (iter == SENSOR_TYPE_ID_POSTURE) {
-                    it(&g_postureEvent);
-                } else {
-                    it(&g_testEvent);
+            for (const auto &sensorId : enableSensors_) {
+                switch (sensorId) {
+                    case SENSOR_TYPE_ID_ACCELEROMETER:
+                        it(&g_accEvent);
+                        break;
+                    case SENSOR_TYPE_ID_COLOR:
+                        it(&g_colorEvent);
+                        break;
+                    case SENSOR_TYPE_ID_SAR:
+                        it(&g_sarEvent);
+                        break;
+                    case SENSOR_TYPE_ID_POSTURE:
+                        it(&g_postureEvent);
+                        break;
+                    default:
+                        SEN_HILOGW("sensorId:%{public}d", sensorId);
+                        break;
                 }
             }
         }
