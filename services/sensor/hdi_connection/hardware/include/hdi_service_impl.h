@@ -39,7 +39,7 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(HdiServiceImpl);
     static void DataReportThread();
-    void GenerateEvent();
+    static void GenerateEvent();
     void GenerateAccelerometerEvent(SensorEvent *event);
     void GenerateColorEvent(SensorEvent *event);
     void GenerateSarEvent(SensorEvent *event);

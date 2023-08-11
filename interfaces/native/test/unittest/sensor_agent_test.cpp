@@ -129,7 +129,40 @@ void SensorDataCallbackImpl2(SensorEvent *event)
         event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
 }
 
-void SensorDataCallbackImpl3(SensorEvent *event)
+void SensorDataCallbackImplAcc(SensorEvent *event)
+{
+    if (event == nullptr) {
+        SEN_HILOGE("SensorEvent is null");
+        return;
+    }
+    AccelData *accData = (AccelData *)event[0].data;
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, x:%{public}f, y:%{public}f, z:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*accData).x, (*accData).y, (*accData).z);
+}
+
+void SensorDataCallbackImplColor(SensorEvent *event)
+{
+    if (event == nullptr) {
+        SEN_HILOGE("SensorEvent is null");
+        return;
+    }
+    ColorData *colorData = (ColorData *)event[0].data;
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, lightIntensity:%{public}f, colorTemperature:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*colorData).lightIntensity, (*colorData).colorTemperature);
+}
+
+void SensorDataCallbackImplSar(SensorEvent *event)
+{
+    if (event == nullptr) {
+        SEN_HILOGE("SensorEvent is null");
+        return;
+    }
+    SarData *sarData = (SarData *)event[0].data;
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, absorptionRatio:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*sarData).absorptionRatio);
+}
+
+void SensorDataCallbackImplPosture(SensorEvent *event)
 {
     if (event == nullptr) {
         SEN_HILOGE("SensorEvent is null");
@@ -476,7 +509,85 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_005, TestSize.Level1)
     SEN_HILOGI("SensorNativeApiTest_005 in");
 
     SensorUser user;
-    user.callback = SensorDataCallbackImpl3;
+    user.callback = SensorDataCallbackImplAcc;
+
+    int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_ACCELEROMETER, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = SetBatch(SENSOR_TYPE_ID_ACCELEROMETER, &user, 100000000, 100000000);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = ActivateSensor(SENSOR_TYPE_ID_ACCELEROMETER, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = DeactivateSensor(SENSOR_TYPE_ID_ACCELEROMETER, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = UnsubscribeSensor(SENSOR_TYPE_ID_ACCELEROMETER, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_006, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_006 in");
+
+    SensorUser user;
+    user.callback = SensorDataCallbackImplColor;
+
+    int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_COLOR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = SetBatch(SENSOR_TYPE_ID_COLOR, &user, 100000000, 100000000);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = ActivateSensor(SENSOR_TYPE_ID_COLOR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = DeactivateSensor(SENSOR_TYPE_ID_COLOR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = UnsubscribeSensor(SENSOR_TYPE_ID_COLOR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_007, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_007 in");
+
+    SensorUser user;
+    user.callback = SensorDataCallbackImplSar;
+
+    int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_SAR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = SetBatch(SENSOR_TYPE_ID_SAR, &user, 100000000, 100000000);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = ActivateSensor(SENSOR_TYPE_ID_SAR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = DeactivateSensor(SENSOR_TYPE_ID_SAR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = UnsubscribeSensor(SENSOR_TYPE_ID_SAR, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_008, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_008 in");
+
+    SensorUser user;
+    user.callback = SensorDataCallbackImplPosture;
 
     int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_POSTURE, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
