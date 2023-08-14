@@ -96,12 +96,17 @@ void HdiServiceImpl::GenerateAccelerometerEvent()
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<float> distr(0, TARGET_SUM);
-    float num1 = distr(eng);
-    float num2 = distr(eng);
-    if (num1 > num2) {
-        float temp = num1;
-        num1 = num2;
-        num2 = temp;
+    float num1 = 0;
+    float num2 = 0;
+    while (true) {
+        num1 = distr(eng);
+        num2 = distr(eng);
+        if (std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon && num1 > num2) {
+            float temp = num1;
+            num1 = num2;
+            num2 = temp;
+            break;
+        }
     }
     g_accData[0] = static_cast<float>(sqrt(num1));
     g_accData[1] = static_cast<float>(sqrt(num2 - num1));
@@ -133,12 +138,17 @@ void HdiServiceImpl::GeneratePostureEvent()
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<float> distr1(0, TARGET_SUM);
-    float num1 = distr1(eng);
-    float num2 = distr1(eng);
-    if (num1 > num2) {
-        float temp = num1;
-        num1 = num2;
-        num2 = temp;
+    float num1 = 0;
+    float num2 = 0;
+    while (true) {
+        num1 = distr1(eng);
+        num2 = distr1(eng);
+        if (std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon && num1 > num2) {
+            float temp = num1;
+            num1 = num2;
+            num2 = temp;
+            break;
+        }
     }
     g_postureData[0] = static_cast<float>(sqrt(num1));
     g_postureData[1] = static_cast<float>(sqrt(num2 - num1));
