@@ -91,7 +91,7 @@ void HdiServiceImpl::GenerateAccelerometerEvent()
     while (true) {
         num1 = distr(eng);
         num2 = distr(eng);
-        if (std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon && num1 > num2) {
+        if ((std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon()) && (num1 > num2)) {
             float temp = num1;
             num1 = num2;
             num2 = temp;
