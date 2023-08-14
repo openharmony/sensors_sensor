@@ -407,7 +407,8 @@ typedef struct WearDetectionData {
 } WearDetectionData;
 
 /**
- * @brief Defines the color sensor data structure.
+ * @brief Defines the color sensor data structure. Measuring the light intensity in lux
+ * and color temperature in kelvin.
  */
 typedef struct ColorData {
     float lightIntensity;
@@ -415,14 +416,14 @@ typedef struct ColorData {
 } ColorData;
 
 /**
- * @brief Defines the sar sensor data structure.
+ * @brief Defines the sar sensor data structure. Measuring the absorption ratein in W/kg.
  */
 typedef struct SarData {
     float absorptionRatio;
 } SarData;
 
 /**
- * @brief Defines the posture sensor data structure.
+ * @brief Defines the posture sensor data structure. Measuring the angle between two screens in degree.
  */
 typedef struct PostureData {
     float gxm; /**< The main screen acceleration on the x axis */
