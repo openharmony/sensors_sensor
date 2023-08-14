@@ -30,7 +30,7 @@ constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
 const std::string VERSION_NAME = "1.0.1";
-std::unordered_set<int32_t> g_targetSensors = { SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_POSTURE };
+std::unordered_set<int32_t> g_targetSensors = { SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR };
 }
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -133,19 +133,6 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
     sensorSar.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorSar.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     sensorList.push_back(sensorSar);
-    Sensor sensorPosture;
-    sensorPosture.SetSensorId(SENSOR_TYPE_ID_POSTURE);
-    sensorPosture.SetSensorTypeId(SENSOR_TYPE_ID_POSTURE);
-    sensorPosture.SetFirmwareVersion(VERSION_NAME);
-    sensorPosture.SetHardwareVersion(VERSION_NAME);
-    sensorPosture.SetMaxRange(MAX_RANGE);
-    sensorPosture.SetSensorName("sensor_posture");
-    sensorPosture.SetVendorName("default_posture");
-    sensorPosture.SetResolution(RESOLITION);
-    sensorPosture.SetPower(POWER);
-    sensorPosture.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
-    sensorPosture.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
-    sensorList.push_back(sensorPosture);
     return ERR_OK;
 }
 
