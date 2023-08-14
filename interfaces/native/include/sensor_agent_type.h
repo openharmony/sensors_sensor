@@ -407,7 +407,7 @@ typedef struct WearDetectionData {
 } WearDetectionData;
 
 /**
- * @brief Defines the Color sensor data structure.
+ * @brief Defines the color sensor data structure.
  */
 typedef struct ColorData {
     float lightIntensity;
@@ -415,7 +415,7 @@ typedef struct ColorData {
 } ColorData;
 
 /**
- * @brief Defines the Sar sensor data structure.
+ * @brief Defines the sar sensor data structure.
  */
 typedef struct SarData {
     float absorptionRatio;
@@ -425,13 +425,13 @@ typedef struct SarData {
  * @brief Defines the posture sensor data structure.
  */
 typedef struct PostureData {
-    float gxm;
-    float gym;
-    float gzm;
-    float gxs;
-    float gys;
-    float gzs;
-    float angle;
+    float gxm; /**< The main screen acceleration on the x axis */
+    float gym; /**< The main screen acceleration on the y axis */
+    float gzm; /**< The main screen acceleration on the z axis */
+    float gxs; /**< The second screen acceleration on the x axis */
+    float gys; /**< The second screen acceleration on the y axis */
+    float gzs; /**< The second screen acceleration on the z axis */
+    float angle; /**< The angle between two screens */
 } PostureData;
 
 typedef struct SensorActiveInfo {
