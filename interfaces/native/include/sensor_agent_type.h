@@ -407,8 +407,7 @@ typedef struct WearDetectionData {
 } WearDetectionData;
 
 /**
- * @brief Defines the color sensor data structure. Measuring the light intensity in lux
- * and color temperature in kelvin.
+ * @brief 定义颜色传感器数据结构。测量光强，单位勒克斯；色温，单位开尔文。
  */
 typedef struct ColorData {
     float lightIntensity;
@@ -416,14 +415,14 @@ typedef struct ColorData {
 } ColorData;
 
 /**
- * @brief Defines the sar sensor data structure. Measuring the absorption ratein in W/kg.
+ * @brief 定义比吸收率传感器数据结构。测量比吸收率，单位W/kg。
  */
 typedef struct SarData {
     float absorptionRatio;
 } SarData;
 
 /**
- * @brief Defines the posture sensor data structure. Measuring the angle between two screens in degree.
+ * @brief 定义姿态传感器数据结构。测量两块屏幕之间的夹角，单位度，取值范围0~180。
  */
 typedef struct PostureData {
     float gxm; /**< The main screen acceleration on the x axis */
@@ -432,7 +431,7 @@ typedef struct PostureData {
     float gxs; /**< The second screen acceleration on the x axis */
     float gys; /**< The second screen acceleration on the y axis */
     float gzs; /**< The second screen acceleration on the z axis */
-    float angle; /**< The angle between two screens */
+    float angle; /**< The angle between two screens，the angle range is 0~180 degrees */
 } PostureData;
 
 typedef struct SensorActiveInfo {

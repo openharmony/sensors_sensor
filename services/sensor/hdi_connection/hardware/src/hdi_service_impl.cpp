@@ -75,7 +75,7 @@ void HdiServiceImpl::GenerateEvent()
                 GenerateSarEvent();
                 break;
             default:
-                SEN_HILOGW("sensorId:%{public}d", sensorId);
+                SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
                 break;
         }
     }
@@ -153,7 +153,7 @@ void HdiServiceImpl::DataReportThread()
                         it(&g_sarEvent);
                         break;
                     default:
-                        SEN_HILOGW("sensorId:%{public}d", sensorId);
+                        SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
                         break;
                 }
             }

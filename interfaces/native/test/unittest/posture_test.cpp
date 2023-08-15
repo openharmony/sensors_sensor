@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <atomic>
 #include <gtest/gtest.h>
 #include <thread>
 
@@ -27,8 +28,9 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "PostureTest" };
-constexpr int32_t INVALID_VALUE { -1 };
-bool g_existPosture = false;
+constexpr float ANGLE_MAX = 180.0;
+constexpr float ANGLE_MIN = 0.0;
+std::atomic_bool g_existPosture = false;
 }  // namespace
 
 class PostureTest : public testing::Test {
@@ -46,7 +48,7 @@ void PostureTest::SetUpTestCase()
     int32_t ret = GetAllSensors(&sensorInfo, &count);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     if (sensorInfo == nullptr || count == 0) {
-        SEN_HILOGE("SensorInfo is null or count is 0");
+        SEN_HILOGE("SensorInfo is nullptr or count is 0");
         return;
     }
     for (int32_t i = 0; i < count; ++i) {
@@ -68,14 +70,24 @@ void PostureTest::TearDown() {}
 void PostureDataCallbackImpl(SensorEvent *event)
 {
     if (event == nullptr) {
-        SEN_HILOGE("Event is null");
+        SEN_HILOGE("Event is nullptr");
+        return;
+    }
+    if (event[0].data == nullptr) {
+        SEN_HILOGE("Event[0].data is nullptr");
         return;
     }
     if (event[0].dataLen < sizeof(PostureData)) {
         SEN_HILOGE("Event dataLen less than posture data size, event.dataLen:%{public}u", event[0].dataLen);
         return;
     }
-    PostureData *postureData = (PostureData *)event[0].data;
+    PostureData *postureData = reinterpret_cast<PostureData *>(event[0].data);
+    float angle = (*postureData).angle;
+    if ((std::fabs(angle - ANGLE_MIN) > std::numeric_limits<float>::epsilon() && angle < ANGLE_MIN)
+        || (std::fabs(angle - ANGLE_MAX) > std::numeric_limits<float>::epsilon() && angle > ANGLE_MAX)) {
+        SEN_HILOGE("Invalid posture angle, angle:%{public}f", angle);
+        return;
+    }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, gxm:%{public}f, "
         "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).gxm, (*postureData).gym,
@@ -85,14 +97,24 @@ void PostureDataCallbackImpl(SensorEvent *event)
 void PostureDataCallbackImpl2(SensorEvent *event)
 {
     if (event == nullptr) {
-        SEN_HILOGE("Event is null");
+        SEN_HILOGE("Event is nullptr");
+        return;
+    }
+    if (event[0].data == nullptr) {
+        SEN_HILOGE("Event[0].data is nullptr");
         return;
     }
     if (event[0].dataLen < sizeof(PostureData)) {
         SEN_HILOGE("Event dataLen less than posture data size, event.dataLen:%{public}u", event[0].dataLen);
         return;
     }
-    PostureData *postureData = (PostureData *)event[0].data;
+    PostureData *postureData = reinterpret_cast<PostureData *>(event[0].data);
+    float angle = (*postureData).angle;
+    if ((std::fabs(angle - ANGLE_MIN) > std::numeric_limits<float>::epsilon() && angle < ANGLE_MIN)
+        || (std::fabs(angle - ANGLE_MAX) > std::numeric_limits<float>::epsilon() && angle > ANGLE_MAX)) {
+        SEN_HILOGE("Invalid posture angle, angle:%{public}f", angle);
+        return;
+    }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, gxm:%{public}f, "
         "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f",
         event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).gxm, (*postureData).gym,
@@ -101,7 +123,7 @@ void PostureDataCallbackImpl2(SensorEvent *event)
 
 HWTEST_F(PostureTest, PostureTest_001, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_001 in");
+    SEN_HILOGI("PostureTest_001 enter");
     if (g_existPosture) {
         int32_t ret = ActivateSensor(SENSOR_TYPE_ID_POSTURE, nullptr);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
@@ -110,18 +132,18 @@ HWTEST_F(PostureTest, PostureTest_001, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_002, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_002 in");
+    SEN_HILOGI("PostureTest_002 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = ActivateSensor(INVALID_VALUE, &user);
+        int32_t ret = ActivateSensor(-1, &user);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
 
 HWTEST_F(PostureTest, PostureTest_003, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_003 in");
+    SEN_HILOGI("PostureTest_003 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = nullptr;
@@ -132,7 +154,7 @@ HWTEST_F(PostureTest, PostureTest_003, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_004, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_004 in");
+    SEN_HILOGI("PostureTest_004 enter");
     if (g_existPosture) {
         int32_t ret = DeactivateSensor(SENSOR_TYPE_ID_POSTURE, nullptr);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
@@ -141,18 +163,18 @@ HWTEST_F(PostureTest, PostureTest_004, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_005, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_005 in");
+    SEN_HILOGI("PostureTest_005 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = DeactivateSensor(INVALID_VALUE, &user);
+        int32_t ret = DeactivateSensor(-1, &user);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
 
 HWTEST_F(PostureTest, PostureTest_006, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_006 in");
+    SEN_HILOGI("PostureTest_006 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = nullptr;
@@ -163,7 +185,7 @@ HWTEST_F(PostureTest, PostureTest_006, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_007, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_007 in");
+    SEN_HILOGI("PostureTest_007 enter");
     if (g_existPosture) {
         int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, nullptr, 100000000, 100000000);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
@@ -172,18 +194,18 @@ HWTEST_F(PostureTest, PostureTest_007, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_008, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_008 in");
+    SEN_HILOGI("PostureTest_008 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = SetBatch(INVALID_VALUE, &user, 100000000, 100000000);
+        int32_t ret = SetBatch(-1, &user, 100000000, 100000000);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
 
 HWTEST_F(PostureTest, PostureTest_009, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_009 in");
+    SEN_HILOGI("PostureTest_009 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = nullptr;
@@ -194,18 +216,18 @@ HWTEST_F(PostureTest, PostureTest_009, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_010, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_010 in");
+    SEN_HILOGI("PostureTest_010 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, INVALID_VALUE, INVALID_VALUE);
+        int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, -1, -1);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
 
 HWTEST_F(PostureTest, PostureTest_011, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_011 in");
+    SEN_HILOGI("PostureTest_011 enter");
     if (g_existPosture) {
         int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_POSTURE, nullptr);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
@@ -214,18 +236,18 @@ HWTEST_F(PostureTest, PostureTest_011, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_012, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_012 in");
+    SEN_HILOGI("PostureTest_012 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = SubscribeSensor(INVALID_VALUE, &user);
+        int32_t ret = SubscribeSensor(-1, &user);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
 
 HWTEST_F(PostureTest, PostureTest_013, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_013 in");
+    SEN_HILOGI("PostureTest_013 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = nullptr;
@@ -236,7 +258,7 @@ HWTEST_F(PostureTest, PostureTest_013, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_014, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_014 in");
+    SEN_HILOGI("PostureTest_014 enter");
     if (g_existPosture) {
         int32_t ret = UnsubscribeSensor(SENSOR_TYPE_ID_POSTURE, nullptr);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
@@ -245,18 +267,18 @@ HWTEST_F(PostureTest, PostureTest_014, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_015, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_015 in");
+    SEN_HILOGI("PostureTest_015 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = UnsubscribeSensor(INVALID_VALUE, &user);
+        int32_t ret = UnsubscribeSensor(-1, &user);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
 
 HWTEST_F(PostureTest, PostureTest_016, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_016 in");
+    SEN_HILOGI("PostureTest_016 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = nullptr;
@@ -267,7 +289,7 @@ HWTEST_F(PostureTest, PostureTest_016, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_017, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_017 in");
+    SEN_HILOGI("PostureTest_017 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
@@ -288,7 +310,7 @@ HWTEST_F(PostureTest, PostureTest_017, TestSize.Level1)
 
 HWTEST_F(PostureTest, PostureTest_018, TestSize.Level1)
 {
-    SEN_HILOGI("PostureTest_018 in");
+    SEN_HILOGI("PostureTest_018 enter");
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;

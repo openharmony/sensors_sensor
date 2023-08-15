@@ -46,7 +46,7 @@ int32_t SensorHdiConnection::ConnectHdi()
             return ret;
         }
     }
-    if (!ExistTargetSensors(g_targetSensors)) {
+    if (!FindTargetSensors(g_targetSensors)) {
         existTargetSensors_ = false;
         SEN_HILOGD("SensorList not contain target sensors, connect target sensors compatible connection");
         ret = ConnectCompatibleHdi();
@@ -87,7 +87,7 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
-bool SensorHdiConnection::ExistTargetSensors(const std::unordered_set<int32_t>& targetSensors)
+bool SensorHdiConnection::FindTargetSensors(const std::unordered_set<int32_t>& targetSensors)
 {
     std::unordered_set<int32_t> sensorSet;
     for (const auto &sensor : sensorList_) {
