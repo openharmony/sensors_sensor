@@ -17,9 +17,10 @@
 #include <cmath>
 #include <random>
 #include <thread>
+
 #include <unistd.h>
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -29,8 +30,8 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
-constexpr float TARGET_SUM = 9.8 * 9.8;
-constexpr float MAX_RANGE = 9999.0;
+constexpr float TARGET_SUM = 9.8F * 9.8F;
+constexpr float MAX_RANGE = 9999.0F;
 std::vector<SensorInfo> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
@@ -91,7 +92,7 @@ void HdiServiceImpl::GenerateAccelerometerEvent()
     while (true) {
         num1 = distr(eng);
         num2 = distr(eng);
-        if ((std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon()) && (num1 > num2)) {
+        if ((num1 > num2) && (std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon())) {
             float temp = num1;
             num1 = num2;
             num2 = temp;

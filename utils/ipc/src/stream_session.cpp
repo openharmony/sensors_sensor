@@ -19,7 +19,7 @@
 #include <sstream>
 
 #include "proto.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "stream_socket.h"
 
 namespace OHOS {

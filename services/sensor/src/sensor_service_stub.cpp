@@ -25,8 +25,8 @@
 #include "message_parcel.h"
 #include "permission_util.h"
 #include "sensor_client_proxy.h"
+#include "sensor_errors.h"
 #include "sensor_parcel.h"
-#include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {

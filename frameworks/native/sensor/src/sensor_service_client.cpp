@@ -24,8 +24,8 @@
 #include "hisysevent.h"
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
+#include "sensor_errors.h"
 #include "sensor_service_proxy.h"
-#include "sensors_errors.h"
 #include "system_ability_definition.h"
 #include "rust_binding.h"
 

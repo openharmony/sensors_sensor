@@ -20,7 +20,7 @@
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_manager.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"
 #endif // HDF_DRIVERS_INTERFACE_SENSOR

@@ -17,7 +17,7 @@
 #include "compatible_connection.h"
 #include "hdi_connection.h"
 #include "hitrace_meter.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -47,7 +47,6 @@ int32_t SensorHdiConnection::ConnectHdi()
         }
     }
     if (!FindTargetSensors(g_targetSensors)) {
-        existTargetSensors_ = false;
         SEN_HILOGD("SensorList not contain target sensors, connect target sensors compatible connection");
         ret = ConnectCompatibleHdi();
         if (ret != ERR_OK) {
@@ -55,7 +54,6 @@ int32_t SensorHdiConnection::ConnectHdi()
         }
         return ret;
     }
-    existTargetSensors_ = true;
     return ERR_OK;
 }
 
@@ -98,13 +96,19 @@ bool SensorHdiConnection::FindTargetSensors(const std::unordered_set<int32_t>& t
             return false;
         }
     }
+    existTargetSensors_ = true;
     return true;
+}
+
+bool SensorHdiConnection::CheckTargetSensors() const
+{
+    return existTargetSensors_;
 }
 
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     sensorList.assign(sensorList_.begin(), sensorList_.end());
-    if (existTargetSensors_) {
+    if (CheckTargetSensors()) {
         return ERR_OK;
     }
     Sensor sensorColor;
@@ -140,7 +144,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     int32_t ret = ENABLE_SENSOR_ERR;
-    if (!existTargetSensors_ && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
+    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -164,7 +168,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     int32_t ret = DISABLE_SENSOR_ERR;
-    if (!existTargetSensors_ && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
+    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -188,7 +192,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
     int32_t ret = SET_SENSOR_CONFIG_ERR;
-    if (!existTargetSensors_ && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
+    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
         ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
         FinishTrace(HITRACE_TAG_SENSORS);

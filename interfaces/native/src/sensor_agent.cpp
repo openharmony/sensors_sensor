@@ -16,7 +16,7 @@
 #include "sensor_agent.h"
 
 #include "sensor_agent_proxy.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 using OHOS::HiviewDFX::HiLog;
 using OHOS::HiviewDFX::HiLogLabel;

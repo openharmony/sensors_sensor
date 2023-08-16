@@ -45,6 +45,7 @@ private:
     int32_t ConnectHdiService();
     int32_t ConnectCompatibleHdi();
     bool FindTargetSensors(const std::unordered_set<int32_t>& targetSensors);
+    bool CheckTargetSensors() const;
     std::atomic_bool existTargetSensors_ = false;
 };
 }  // namespace Sensors

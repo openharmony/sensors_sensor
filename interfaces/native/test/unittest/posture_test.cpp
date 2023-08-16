@@ -14,12 +14,13 @@
  */
 
 #include <atomic>
-#include <gtest/gtest.h>
 #include <thread>
+
+#include <gtest/gtest.h>
 
 #include "sensor_agent.h"
 #include "sensor_agent_type.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -28,8 +29,8 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "PostureTest" };
-constexpr float ANGLE_MAX = 180.0;
-constexpr float ANGLE_MIN = 0.0;
+constexpr float ANGLE_MAX = 180.0F;
+constexpr float ANGLE_MIN = 0.0F;
 std::atomic_bool g_existPosture = false;
 }  // namespace
 
@@ -48,7 +49,7 @@ void PostureTest::SetUpTestCase()
     int32_t ret = GetAllSensors(&sensorInfo, &count);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     if (sensorInfo == nullptr || count == 0) {
-        SEN_HILOGE("SensorInfo is nullptr or count is 0");
+        SEN_HILOGE("sensorInfo is nullptr or count is 0");
         return;
     }
     for (int32_t i = 0; i < count; ++i) {
@@ -70,11 +71,11 @@ void PostureTest::TearDown() {}
 void PostureDataCallbackImpl(SensorEvent *event)
 {
     if (event == nullptr) {
-        SEN_HILOGE("Event is nullptr");
+        SEN_HILOGE("event is nullptr");
         return;
     }
     if (event[0].data == nullptr) {
-        SEN_HILOGE("Event[0].data is nullptr");
+        SEN_HILOGE("event[0].data is nullptr");
         return;
     }
     if (event[0].dataLen < sizeof(PostureData)) {
@@ -82,26 +83,26 @@ void PostureDataCallbackImpl(SensorEvent *event)
         return;
     }
     PostureData *postureData = reinterpret_cast<PostureData *>(event[0].data);
-    float angle = (*postureData).angle;
-    if ((std::fabs(angle - ANGLE_MIN) > std::numeric_limits<float>::epsilon() && angle < ANGLE_MIN)
-        || (std::fabs(angle - ANGLE_MAX) > std::numeric_limits<float>::epsilon() && angle > ANGLE_MAX)) {
+    float angle = postureData->angle;
+    if ((angle < ANGLE_MIN && std::fabs(angle - ANGLE_MIN) > std::numeric_limits<float>::epsilon())
+        || (angle > ANGLE_MAX && std::fabs(angle - ANGLE_MAX) > std::numeric_limits<float>::epsilon())) {
         SEN_HILOGE("Invalid posture angle, angle:%{public}f", angle);
         return;
     }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, gxm:%{public}f, "
         "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).gxm, (*postureData).gym,
-        (*postureData).gzm, (*postureData).gxs, (*postureData).gys, (*postureData).gzs, (*postureData).angle);
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, postureData->gxm, postureData->gym,
+        postureData->gzm, postureData->gxs, postureData->gys, postureData->gzs, postureData->angle);
 }
 
 void PostureDataCallbackImpl2(SensorEvent *event)
 {
     if (event == nullptr) {
-        SEN_HILOGE("Event is nullptr");
+        SEN_HILOGE("event is nullptr");
         return;
     }
     if (event[0].data == nullptr) {
-        SEN_HILOGE("Event[0].data is nullptr");
+        SEN_HILOGE("event[0].data is nullptr");
         return;
     }
     if (event[0].dataLen < sizeof(PostureData)) {
@@ -109,7 +110,7 @@ void PostureDataCallbackImpl2(SensorEvent *event)
         return;
     }
     PostureData *postureData = reinterpret_cast<PostureData *>(event[0].data);
-    float angle = (*postureData).angle;
+    float angle = postureData->angle;
     if ((std::fabs(angle - ANGLE_MIN) > std::numeric_limits<float>::epsilon() && angle < ANGLE_MIN)
         || (std::fabs(angle - ANGLE_MAX) > std::numeric_limits<float>::epsilon() && angle > ANGLE_MAX)) {
         SEN_HILOGE("Invalid posture angle, angle:%{public}f", angle);
@@ -117,8 +118,8 @@ void PostureDataCallbackImpl2(SensorEvent *event)
     }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, gxm:%{public}f, "
         "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, (*postureData).gxm, (*postureData).gym,
-        (*postureData).gzm, (*postureData).gxs, (*postureData).gys, (*postureData).gzs, (*postureData).angle);
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, postureData->gxm, postureData->gym,
+        postureData->gzm, postureData->gxs, postureData->gys, postureData->gzs, postureData->angle);
 }
 
 HWTEST_F(PostureTest, PostureTest_001, TestSize.Level1)
