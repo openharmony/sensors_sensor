@@ -481,7 +481,8 @@ void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         },
         asyncCallbackInfo.GetRefPtr(), &asyncCallbackInfo->asyncWork);
     if (status != napi_ok
-        || napi_queue_async_work(asyncCallbackInfo->env, asyncCallbackInfo->asyncWork) != napi_ok) {
+        || napi_queue_async_work_with_qos(
+            asyncCallbackInfo->env, asyncCallbackInfo->asyncWork, napi_qos_default) != napi_ok) {
         SEN_HILOGE("Create async work fail");
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
@@ -504,7 +505,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKPV(work);
     asyncCallbackInfo->IncStrongRef(nullptr);
     work->data = asyncCallbackInfo.GetRefPtr();
-    int32_t ret = uv_queue_work(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
+    int32_t ret = uv_queue_work_with_qos(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
         CHKPV(work);
         sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(work->data));
         DeleteWork(work);
@@ -551,9 +552,9 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         }
         ReleaseCallback(asyncCallbackInfo);
         napi_close_handle_scope(asyncCallbackInfo->env, scope);
-    });
+    }, uv_qos_default);
     if (ret != 0) {
-        SEN_HILOGE("uv_queue_work fail");
+        SEN_HILOGE("uv_queue_work_with_qos fail");
         asyncCallbackInfo->DecStrongRef(nullptr);
         DeleteWork(work);
     }
@@ -596,7 +597,8 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         },
         asyncCallbackInfo.GetRefPtr(), &asyncCallbackInfo->asyncWork);
     if (status != napi_ok
-        || napi_queue_async_work(asyncCallbackInfo->env, asyncCallbackInfo->asyncWork) != napi_ok) {
+        || napi_queue_async_work_with_qos(
+            asyncCallbackInfo->env, asyncCallbackInfo->asyncWork, napi_qos_default) != napi_ok) {
         SEN_HILOGE("Create async work fail");
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
