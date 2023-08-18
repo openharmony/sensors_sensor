@@ -146,7 +146,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
                 break;
             }
             default: {
-                dprintf(fd, "Unrecognized option: %s\nMore info with: \"hidumper -s 3601 -a -h\"\n", argv[optind-1]);
+                dprintf(fd, "Unrecognized option, More info with: \"hidumper -s 3601 -a -h\"\n");
                 break;
             }
         }
