@@ -296,7 +296,7 @@ HWTEST_F(PostureTest, PostureTest_017, TestSize.Level1)
         user.callback = PostureDataCallbackImpl;
         int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_POSTURE, &user);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 100000000, 100000000);
+        ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 10000000, 10000000);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
         ret = ActivateSensor(SENSOR_TYPE_ID_POSTURE, &user);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
@@ -317,7 +317,7 @@ HWTEST_F(PostureTest, PostureTest_018, TestSize.Level1)
         user.callback = PostureDataCallbackImpl;
         int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_POSTURE, &user);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 100000000, 100000000);
+        ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 10000000, 10000000);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
         ret = ActivateSensor(SENSOR_TYPE_ID_POSTURE, &user);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
@@ -332,7 +332,7 @@ HWTEST_F(PostureTest, PostureTest_018, TestSize.Level1)
         user2.callback = PostureDataCallbackImpl2;
         ret = SubscribeSensor(SENSOR_TYPE_ID_POSTURE, &user2);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user2, 200000000, 200000000);
+        ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user2, 20000000, 20000000);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
         ret = ActivateSensor(SENSOR_TYPE_ID_POSTURE, &user2);
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
