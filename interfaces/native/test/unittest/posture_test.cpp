@@ -188,7 +188,7 @@ HWTEST_F(PostureTest, PostureTest_007, TestSize.Level1)
 {
     SEN_HILOGI("PostureTest_007 enter");
     if (g_existPosture) {
-        int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, nullptr, 100000000, 100000000);
+        int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, nullptr, 10000000, 10000000);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
@@ -199,7 +199,7 @@ HWTEST_F(PostureTest, PostureTest_008, TestSize.Level1)
     if (g_existPosture) {
         SensorUser user;
         user.callback = PostureDataCallbackImpl;
-        int32_t ret = SetBatch(-1, &user, 100000000, 100000000);
+        int32_t ret = SetBatch(-1, &user, 10000000, 10000000);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
@@ -210,7 +210,7 @@ HWTEST_F(PostureTest, PostureTest_009, TestSize.Level1)
     if (g_existPosture) {
         SensorUser user;
         user.callback = nullptr;
-        int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 100000000, 100000000);
+        int32_t ret = SetBatch(SENSOR_TYPE_ID_POSTURE, &user, 10000000, 10000000);
         ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
     }
 }
