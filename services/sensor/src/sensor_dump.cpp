@@ -90,8 +90,8 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         }
     }
     if (count > MAX_DUMP_PARAMETERS) {
-        SEN_HILOGE("cmd param number not more than 32");
-        dprintf(fd, "cmd param number not more than 32\n");
+        SEN_HILOGE("Cmd param number not more than 32");
+        dprintf(fd, "Cmd param number not more than 32\n");
         return;
     }
     int32_t optionIndex = 0;
@@ -106,7 +106,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     char **argv = new (std::nothrow) char *[args.size()];
     CHKPV(argv);
     if (memset_s(argv, args.size() * sizeof(char *), 0, args.size() * sizeof(char *)) != EOK) {
-        SEN_HILOGE("Call memset_s failed");
+        SEN_HILOGE("memset_s failed");
         delete[] argv;
         return;
     }
