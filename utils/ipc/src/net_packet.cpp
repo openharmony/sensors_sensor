@@ -68,7 +68,7 @@ size_t NetPacket::GetPacketLength() const
 #endif // OHOS_BUILD_ENABLE_RUST
 }
 
-const char* NetPacket::GetData() const
+const char *NetPacket::GetData() const
 {
 #ifdef OHOS_BUILD_ENABLE_RUST
     return StreamBufferData(streamBufferPtr_.get());

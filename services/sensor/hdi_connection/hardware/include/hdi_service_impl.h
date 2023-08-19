@@ -28,7 +28,7 @@ class HdiServiceImpl : public Singleton<HdiServiceImpl> {
 public:
     HdiServiceImpl() = default;
     virtual ~HdiServiceImpl() {}
-    int32_t GetSensorList(std::vector<SensorInfo>& sensorList);
+    int32_t GetSensorList(std::vector<SensorInfo> &sensorList);
     int32_t EnableSensor(int32_t sensorId);
     int32_t DisableSensor(int32_t sensorId);
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval);

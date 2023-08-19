@@ -91,14 +91,14 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
-bool SensorHdiConnection::ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId)
+bool SensorHdiConnection::ExistSensor(const std::vector<Sensor> &sensorList, int32_t sensorId)
 {
     return std::any_of(sensorList.begin(), sensorList.end(), [sensorId] (const Sensor &sensor) {
         return sensor.GetSensorId() == sensorId;
     });
 }
 
-int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
+int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     sensorList.assign(sensorList_.begin(), sensorList_.end());
     if (existColorAndSar_) {

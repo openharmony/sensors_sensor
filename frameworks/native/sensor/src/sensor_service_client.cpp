@@ -39,9 +39,9 @@ constexpr int32_t GET_SERVICE_MAX_COUNT = 3;
 constexpr uint32_t WAIT_MS = 200;
 #ifdef OHOS_BUILD_ENABLE_RUST
 extern "C" {
-    void ReadClientPackets(RustStreamBuffer*, OHOS::Sensors::SensorServiceClient*,
-        void(*)(OHOS::Sensors::SensorServiceClient*, RustNetPacket*));
-    void OnPacket(SensorServiceClient* object, RustNetPacket* cPkt)
+    void ReadClientPackets(RustStreamBuffer *, OHOS::Sensors::SensorServiceClient *,
+        void(*)(OHOS::Sensors::SensorServiceClient *, RustNetPacket *));
+    void OnPacket(SensorServiceClient *object, RustNetPacket *cPkt)
     {
         NetPacket pkt(cPkt->msgId);
         pkt.streamBufferPtr_.reset(cPkt->streamBuffer);

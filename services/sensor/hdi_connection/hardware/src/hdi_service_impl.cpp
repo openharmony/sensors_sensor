@@ -56,7 +56,7 @@ int64_t HdiServiceImpl::samplingInterval_ = -1;
 int64_t HdiServiceImpl::reportInterval_ = -1;
 std::atomic_bool HdiServiceImpl::isStop_ = false;
 
-int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
+int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
 {
     CALL_LOG_ENTER;
     sensorList.assign(g_sensorInfos.begin(), g_sensorInfos.end());

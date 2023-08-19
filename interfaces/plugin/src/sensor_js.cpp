@@ -143,7 +143,7 @@ static void EmitOnceCallback(SensorEvent *event)
     if (iter == g_onceCallbackInfos.end()) {
         return;
     }
-    auto& onceCallbackInfos = iter->second;
+    auto &onceCallbackInfos = iter->second;
     while (!onceCallbackInfos.empty()) {
         auto onceCallbackInfo = onceCallbackInfos.front();
         auto beginIter = onceCallbackInfos.begin();

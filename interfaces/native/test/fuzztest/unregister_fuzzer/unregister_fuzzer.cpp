@@ -66,7 +66,7 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-void UnregisterFuzzTest(const uint8_t* data, size_t size)
+void UnregisterFuzzTest(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size < DATA_MIN_SIZE) {
         return;
@@ -79,7 +79,7 @@ void UnregisterFuzzTest(const uint8_t* data, size_t size)
 } // Sensors
 } // OHOS
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::Sensors::UnregisterFuzzTest(data, size);
     return 0;

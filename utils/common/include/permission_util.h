@@ -40,7 +40,7 @@ public:
     int32_t CheckManageSensorPermission(AccessTokenID callerToken);
 
 private:
-    void AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status);
+    void AddPermissionRecord(AccessTokenID tokenID, const std::string &permissionName, bool status);
     static std::unordered_map<int32_t, std::string> sensorPermissions_;
 };
 }  // namespace Sensors

@@ -33,13 +33,13 @@ auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 }  // namespace
 
-uint32_t GetU32Data(const char* ptr)
+uint32_t GetU32Data(const char *ptr)
 {
     // convert fuzz input data to an integer
     return (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
 }
 
-bool OnRemoteRequestFuzzTest(const char* data, size_t size)
+bool OnRemoteRequestFuzzTest(const char *data, size_t size)
 {
     uint32_t code = GetU32Data(data);
     MessageParcel datas;
@@ -54,7 +54,7 @@ bool OnRemoteRequestFuzzTest(const char* data, size_t size)
 }  // namespace Sensors
 }  // namespace OHOS
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     /* Run your code on data */
     if (data == nullptr) {
@@ -67,7 +67,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    char* ch = (char*)malloc(size + 1);
+    char *ch = (char *)malloc(size + 1);
     if (ch == nullptr) {
         std::cout << "malloc failed." << std::endl;
         return 0;

@@ -42,16 +42,16 @@ inline double CHK_RATE(double rate)
     return (rate > CPU_USAGE_MAX ? CPU_USAGE_MAX : rate);
 }
 
-int32_t CpuInfo::GetTaskPidFile(const std::string& process_name)
+int32_t CpuInfo::GetTaskPidFile(const std::string &process_name)
 {
     int32_t pid = DEFAULT_PID;
     static const std::string procPath = "/proc";
-    DIR* dir = ::opendir(procPath.c_str());
+    DIR *dir = ::opendir(procPath.c_str());
     if (dir == nullptr) {
         SEN_HILOGE("Failed to open path:%{public}s", procPath.c_str());
         return DEFAULT_PID;
     }
-    struct dirent* pidFile;
+    struct dirent *pidFile;
     while ((pidFile = ::readdir(dir)) != nullptr) {
         if ((::strcmp(pidFile->d_name, ".") == 0) || (::strcmp(pidFile->d_name, "..") == 0)) {
             continue;
@@ -129,7 +129,7 @@ int32_t CpuInfo::GetProcOccupy(int32_t pid)
     return (info.utime + info.stime + info.cutime + info.cstime);
 }
 
-double CpuInfo::GetCpuUsage(const Total_Cpu_Occupy& first, const Total_Cpu_Occupy& second)
+double CpuInfo::GetCpuUsage(const Total_Cpu_Occupy &first, const Total_Cpu_Occupy &second)
 {
     unsigned long cpuTime2 = static_cast<unsigned long>(second.user + second.nice + second.system +
                                                         second.idle + second.lowait + second.irq + second.softirq);
@@ -142,7 +142,7 @@ double CpuInfo::GetCpuUsage(const Total_Cpu_Occupy& first, const Total_Cpu_Occup
     return CHK_RATE(cpu_use + cpu_sys);
 }
 
-int32_t CpuInfo::GetSystemCpuStatInfo(Total_Cpu_Occupy& info)
+int32_t CpuInfo::GetSystemCpuStatInfo(Total_Cpu_Occupy &info)
 {
     std::ifstream statFile("/proc/stat");
     if (!statFile.is_open()) {
@@ -203,7 +203,7 @@ int64_t CpuInfo::GetSystemTotalOccupy()
     return (occupy.user + occupy.nice + occupy.system + occupy.idle);
 }
 
-double CpuInfo::GetProcCpuUsage(const std::string& process_name)
+double CpuInfo::GetProcCpuUsage(const std::string &process_name)
 {
     int64_t totalTime1 = 0;
     int64_t totalTime2 = 0;
