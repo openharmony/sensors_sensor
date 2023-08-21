@@ -25,7 +25,6 @@
         "hisysevent",
         "napi",
         "drivers_interface_sensor",
-        "hilog",
         "access_token",
         "hitrace",
         "ipc",
