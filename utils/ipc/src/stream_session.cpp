@@ -193,7 +193,7 @@ int32_t StreamSession::GetFd() const
 #endif // OHOS_BUILD_ENABLE_RUST
 }
 
-const std::string& StreamSession::GetDescript() const
+const std::string &StreamSession::GetDescript() const
 {
     return descript_;
 }

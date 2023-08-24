@@ -28,7 +28,7 @@ public:
     ISensorHdiConnection() = default;
     virtual ~ISensorHdiConnection() = default;
     virtual int32_t ConnectHdi() = 0;
-    virtual int32_t GetSensorList(std::vector<Sensor>& sensorList) = 0;
+    virtual int32_t GetSensorList(std::vector<Sensor> &sensorList) = 0;
     virtual int32_t EnableSensor(int32_t sensorId) = 0;
     virtual int32_t DisableSensor(int32_t sensorId)  = 0;
     virtual int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) = 0;

@@ -65,7 +65,7 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-void ResumeSensorsFuzzTest(const uint8_t* data, size_t size)
+void ResumeSensorsFuzzTest(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size < DATA_MIN_SIZE) {
         return;
@@ -78,7 +78,7 @@ void ResumeSensorsFuzzTest(const uint8_t* data, size_t size)
 } // Sensors
 } // OHOS
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::Sensors::ResumeSensorsFuzzTest(data, size);
     return 0;

@@ -124,7 +124,7 @@ void HdiServiceImpl::GenerateSarEvent()
     g_sarEvent.data = reinterpret_cast<uint8_t *>(g_sarData);
 }
 
-int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
+int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
 {
     CALL_LOG_ENTER;
     sensorList.assign(g_sensorInfos.begin(), g_sensorInfos.end());

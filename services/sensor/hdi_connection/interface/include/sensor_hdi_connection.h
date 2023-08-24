@@ -29,7 +29,7 @@ public:
     SensorHdiConnection() = default;
     virtual ~SensorHdiConnection() {}
     int32_t ConnectHdi() override;
-    int32_t GetSensorList(std::vector<Sensor>& sensorList) override;
+    int32_t GetSensorList(std::vector<Sensor> &sensorList) override;
     int32_t EnableSensor(int32_t sensorId) override;
     int32_t DisableSensor(int32_t sensorId)  override;
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
@@ -44,7 +44,7 @@ private:
     std::vector<Sensor> sensorList_;
     int32_t ConnectHdiService();
     int32_t ConnectCompatibleHdi();
-    bool FindTargetSensors(const std::unordered_set<int32_t>& targetSensors);
+    bool FindTargetSensors(const std::unordered_set<int32_t> &targetSensors);
     bool CheckTargetSensors() const;
     std::atomic_bool existTargetSensors_ = false;
 };

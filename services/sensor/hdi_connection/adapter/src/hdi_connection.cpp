@@ -66,7 +66,7 @@ int32_t HdiConnection::ConnectHdi()
     return ERR_NO_INIT;
 }
 
-int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
+int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     CALL_LOG_ENTER;
     CHKPR(sensorInterface_, ERR_NO_INIT);

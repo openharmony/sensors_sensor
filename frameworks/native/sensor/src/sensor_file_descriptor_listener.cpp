@@ -76,7 +76,7 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
     }
 }
 
-void SensorFileDescriptorListener::SetChannel(SensorDataChannel* channel)
+void SensorFileDescriptorListener::SetChannel(SensorDataChannel *channel)
 {
     channel_ = channel;
 }

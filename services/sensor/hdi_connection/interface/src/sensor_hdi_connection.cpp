@@ -85,7 +85,7 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
-bool SensorHdiConnection::FindTargetSensors(const std::unordered_set<int32_t>& targetSensors)
+bool SensorHdiConnection::FindTargetSensors(const std::unordered_set<int32_t> &targetSensors)
 {
     std::unordered_set<int32_t> sensorSet;
     for (const auto &sensor : sensorList_) {
@@ -105,7 +105,7 @@ bool SensorHdiConnection::CheckTargetSensors() const
     return existTargetSensors_;
 }
 
-int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
+int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     sensorList.assign(sensorList_.begin(), sensorList_.end());
     if (CheckTargetSensors()) {
