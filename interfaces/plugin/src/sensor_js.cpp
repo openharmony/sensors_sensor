@@ -376,7 +376,7 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
-    for (auto iter = callbackInfos.begin(); iter != callbackInfos.end(); ++iter) {
+    for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
         if ((*iter)->env != env) {
             continue;
@@ -387,9 +387,11 @@ static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value cal
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
-            callbackInfos.erase(iter++);
+            iter = callbackInfos.erase(iter);
             SEN_HILOGD("Remove callback success");
             break;
+        } else {
+            ++iter;
         }
     }
     if (callbackInfos.empty()) {
@@ -735,7 +737,7 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
     if (status != napi_ok || argc < 1) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
+        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info failed or number of parameter invalid");
         return nullptr;
     }
     if (!IsMatchArrayType(env, args[0])) {
@@ -747,7 +749,7 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
     CHKPP(asyncCallbackInfo);
     std::vector<float> rotationVector;
     if (!GetFloatArray(env, args[0], rotationVector)) {
-        ThrowErr(env, PARAMETER_ERROR, "Get rotationVector fail");
+        ThrowErr(env, PARAMETER_ERROR, "Get rotationVector failed");
         return nullptr;
     }
     std::vector<float> quaternion(QUATERNION_LENGTH);

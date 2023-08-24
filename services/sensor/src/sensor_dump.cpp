@@ -24,7 +24,7 @@
 
 #include "securec.h"
 #include "sensor_agent_type.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -37,10 +37,12 @@ constexpr uint32_t MS_NS = 1000000;
 
 enum {
     SOLITARIES_DIMENSION = 1,
+    TWO_DIMENSION = 2,
     COMMON_DIMENSION = 3,
     VECTOR_DIMENSION = 4,
-    POSE_6DOF_DIMENSION = 15,
     UNCALIBRATED_DIMENSION = 6,
+    SEVEN_DIMENSION = 7,
+    POSE_6DOF_DIMENSION = 15,
     DEFAULT_DIMENSION = 16,
 };
 }  // namespace
@@ -73,6 +75,9 @@ std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_HALL, "HALL" },
     { SENSOR_TYPE_ID_HEART_RATE, "HEART RATE" },
     { SENSOR_TYPE_ID_WEAR_DETECTION, "WEAR DETECTION" },
+    { SENSOR_TYPE_ID_COLOR, "COLOR" },
+    { SENSOR_TYPE_ID_SAR, "SAR" },
+    { SENSOR_TYPE_ID_POSTURE, "POSTURE" },
 };
 
 void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
@@ -90,8 +95,8 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         }
     }
     if (count > MAX_DUMP_PARAMETERS) {
-        SEN_HILOGE("cmd param number not more than 32");
-        dprintf(fd, "cmd param number not more than 32\n");
+        SEN_HILOGE("Cmd param number not more than 32");
+        dprintf(fd, "Cmd param number not more than 32\n");
         return;
     }
     int32_t optionIndex = 0;
@@ -106,7 +111,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     char **argv = new (std::nothrow) char *[args.size()];
     CHKPV(argv);
     if (memset_s(argv, args.size() * sizeof(char *), 0, args.size() * sizeof(char *)) != EOK) {
-        SEN_HILOGE("Call memset_s failed");
+        SEN_HILOGE("memset_s failed");
         delete[] argv;
         return;
     }
@@ -277,15 +282,20 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_PEDOMETER:
         case SENSOR_TYPE_ID_HEART_RATE:
         case SENSOR_TYPE_ID_WEAR_DETECTION:
+        case SENSOR_TYPE_ID_SAR:
             return SOLITARIES_DIMENSION;
+        case SENSOR_TYPE_ID_COLOR:
+            return TWO_DIMENSION;
         case SENSOR_TYPE_ID_ROTATION_VECTOR:
             return VECTOR_DIMENSION;
         case SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED:
         case SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED:
         case SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED:
             return UNCALIBRATED_DIMENSION;
+        case SENSOR_TYPE_ID_POSTURE:
+            return SEVEN_DIMENSION;
         default:
-            SEN_HILOGW("sensorId:%{public}u, size:%{public}d", sensorId, COMMON_DIMENSION);
+            SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }

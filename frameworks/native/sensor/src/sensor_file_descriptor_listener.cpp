@@ -16,7 +16,7 @@
 #include "sensor_file_descriptor_listener.h"
 #include "sensor_agent_type.h"
 #include "sensor_basic_data_channel.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "sys/socket.h"
 
 namespace OHOS {

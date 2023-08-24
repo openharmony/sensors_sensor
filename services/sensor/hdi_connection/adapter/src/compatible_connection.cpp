@@ -17,7 +17,7 @@
 #include <cstring>
 
 #include "securec.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

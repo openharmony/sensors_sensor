@@ -15,7 +15,7 @@
 #ifndef SENSOR_PARCEL_H
 #define SENSOR_PARCEL_H
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

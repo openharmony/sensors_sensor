@@ -21,7 +21,7 @@
 #include "token_setproc.h"
 
 #include "sensor_agent.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

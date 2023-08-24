@@ -15,7 +15,7 @@
 
 #include "flush_info_record.h"
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

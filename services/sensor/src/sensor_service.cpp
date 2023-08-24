@@ -26,7 +26,7 @@
 #include "securec.h"
 #include "sensor.h"
 #include "sensor_dump.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {

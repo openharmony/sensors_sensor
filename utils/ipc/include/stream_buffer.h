@@ -23,7 +23,7 @@
 #include "securec.h"
 
 #include "proto.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 #ifdef OHOS_BUILD_ENABLE_RUST
 #include "rust_binding.h"
