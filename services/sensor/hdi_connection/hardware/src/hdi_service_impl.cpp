@@ -14,10 +14,13 @@
  */
 #include "hdi_service_impl.h"
 
+#include <cmath>
+#include <random>
 #include <thread>
+
 #include <unistd.h>
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -27,26 +30,29 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr int32_t CONVERT_MULTIPLES = 1000;
+constexpr float TARGET_SUM = 9.8F * 9.8F;
+constexpr float MAX_RANGE = 9999.0F;
 std::vector<SensorInfo> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
-std::vector<int32_t> g_supportSensors = { SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR };
-float g_testData[] = { 9.8, 0.0, 0.0 };
-float g_colorData[] = { 2.2, 3.3 };
-float g_sarData[] = { 8.8 };
-SensorEvent g_testEvent = {
+std::vector<int32_t> g_supportSensors = {
+    SENSOR_TYPE_ID_ACCELEROMETER,
+    SENSOR_TYPE_ID_COLOR,
+    SENSOR_TYPE_ID_SAR
+};
+float g_accData[3];
+float g_colorData[2];
+float g_sarData[1];
+SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
-    .data = reinterpret_cast<uint8_t *>(g_testData),
     .dataLen = 12
 };
 SensorEvent g_colorEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_COLOR,
-    .data = reinterpret_cast<uint8_t *>(g_colorData),
     .dataLen = 8
 };
 SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
-    .data = reinterpret_cast<uint8_t *>(g_sarData),
     .dataLen = 4
 };
 }
@@ -55,6 +61,68 @@ std::vector<RecordSensorCallback> HdiServiceImpl::callbacks_;
 int64_t HdiServiceImpl::samplingInterval_ = -1;
 int64_t HdiServiceImpl::reportInterval_ = -1;
 std::atomic_bool HdiServiceImpl::isStop_ = false;
+
+void HdiServiceImpl::GenerateEvent()
+{
+    for (const auto &sensorId : enableSensors_) {
+        switch (sensorId) {
+            case SENSOR_TYPE_ID_ACCELEROMETER:
+                GenerateAccelerometerEvent();
+                break;
+            case SENSOR_TYPE_ID_COLOR:
+                GenerateColorEvent();
+                break;
+            case SENSOR_TYPE_ID_SAR:
+                GenerateSarEvent();
+                break;
+            default:
+                SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
+                break;
+        }
+    }
+}
+
+void HdiServiceImpl::GenerateAccelerometerEvent()
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0, TARGET_SUM);
+    float num1 = 0;
+    float num2 = 0;
+    while (true) {
+        num1 = distr(eng);
+        num2 = distr(eng);
+        if ((num1 > num2) && (std::fabs(num1 - num2) > std::numeric_limits<float>::epsilon())) {
+            float temp = num1;
+            num1 = num2;
+            num2 = temp;
+            break;
+        }
+    }
+    g_accData[0] = static_cast<float>(sqrt(num1));
+    g_accData[1] = static_cast<float>(sqrt(num2 - num1));
+    g_accData[2] = static_cast<float>(sqrt(TARGET_SUM - num2));
+    g_accEvent.data = reinterpret_cast<uint8_t *>(g_accData);
+}
+
+void HdiServiceImpl::GenerateColorEvent()
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0, MAX_RANGE);
+    g_colorData[0] = distr(eng);
+    g_colorData[1] = distr(eng);
+    g_colorEvent.data = reinterpret_cast<uint8_t *>(g_colorData);
+}
+
+void HdiServiceImpl::GenerateSarEvent()
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0, MAX_RANGE);
+    g_sarData[0] = distr(eng);
+    g_sarEvent.data = reinterpret_cast<uint8_t *>(g_sarData);
+}
 
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo>& sensorList)
 {
@@ -67,19 +135,27 @@ void HdiServiceImpl::DataReportThread()
 {
     CALL_LOG_ENTER;
     while (true) {
+        GenerateEvent();
         usleep(samplingInterval_ / CONVERT_MULTIPLES);
         for (const auto &it : callbacks_) {
             if (it == nullptr) {
                 SEN_HILOGW("RecordSensorCallback is null");
                 continue;
             }
-            for (const auto &iter : enableSensors_) {
-                if (iter == SENSOR_TYPE_ID_COLOR) {
-                    it(&g_colorEvent);
-                } else if (iter == SENSOR_TYPE_ID_SAR) {
-                    it(&g_sarEvent);
-                } else {
-                    it(&g_testEvent);
+            for (const auto &sensorId : enableSensors_) {
+                switch (sensorId) {
+                    case SENSOR_TYPE_ID_ACCELEROMETER:
+                        it(&g_accEvent);
+                        break;
+                    case SENSOR_TYPE_ID_COLOR:
+                        it(&g_colorEvent);
+                        break;
+                    case SENSOR_TYPE_ID_SAR:
+                        it(&g_sarEvent);
+                        break;
+                    default:
+                        SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
+                        break;
                 }
             }
         }

@@ -17,6 +17,7 @@
 #define SENSOR_HDI_CONNECTION_H
 
 #include <atomic>
+#include<unordered_set>
 
 #include "i_sensor_hdi_connection.h"
 #include "singleton.h"
@@ -43,8 +44,9 @@ private:
     std::vector<Sensor> sensorList_;
     int32_t ConnectHdiService();
     int32_t ConnectCompatibleHdi();
-    bool ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId);
-    std::atomic_bool existColorAndSar_ = false;
+    bool FindTargetSensors(const std::unordered_set<int32_t>& targetSensors);
+    bool CheckTargetSensors() const;
+    std::atomic_bool existTargetSensors_ = false;
 };
 }  // namespace Sensors
 }  // namespace OHOS

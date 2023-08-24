@@ -17,7 +17,7 @@
 #include "compatible_connection.h"
 #include "hdi_connection.h"
 #include "hitrace_meter.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -30,6 +30,7 @@ constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
 const std::string VERSION_NAME = "1.0.1";
+std::unordered_set<int32_t> g_targetSensors = { SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR };
 }
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -37,30 +38,23 @@ int32_t SensorHdiConnection::ConnectHdi()
     iSensorHdiConnection_ = std::make_unique<HdiConnection>();
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
-        existColorAndSar_ = false;
-        SEN_HILOGE("Connect hdi service failed, try to connect compatible connection");
+        SEN_HILOGE("Connect hdi service failed, try to connect compatible connection, ret:%{public}d", ret);
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
         ret = ConnectHdiService();
         if (ret != ERR_OK) {
             SEN_HILOGE("Connect compatible connection failed, ret:%{public}d", ret);
             return ret;
         }
+    }
+    if (!FindTargetSensors(g_targetSensors)) {
+        SEN_HILOGD("SensorList not contain target sensors, connect target sensors compatible connection");
         ret = ConnectCompatibleHdi();
         if (ret != ERR_OK) {
-            SEN_HILOGE("Connect color and sar compatible connection failed, ret:%{public}d", ret);
+            SEN_HILOGE("Connect target sensors compatible connection failed, ret:%{public}d", ret);
         }
         return ret;
     }
-    if (!ExistSensor(sensorList_, SENSOR_TYPE_ID_COLOR) || !ExistSensor(sensorList_, SENSOR_TYPE_ID_SAR)) {
-        existColorAndSar_ = false;
-        ret = ConnectCompatibleHdi();
-        if (ret != ERR_OK) {
-            SEN_HILOGE("Connect color and sar compatible hdi failed, ret:%{public}d", ret);
-        }
-        return ret;
-    }
-    existColorAndSar_ = true;
-    return ret;
+    return ERR_OK;
 }
 
 int32_t SensorHdiConnection::ConnectHdiService()
@@ -91,17 +85,30 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
-bool SensorHdiConnection::ExistSensor(const std::vector<Sensor>& sensorList, int32_t sensorId)
+bool SensorHdiConnection::FindTargetSensors(const std::unordered_set<int32_t>& targetSensors)
 {
-    return std::any_of(sensorList.begin(), sensorList.end(), [sensorId] (const Sensor &sensor) {
-        return sensor.GetSensorId() == sensorId;
-    });
+    std::unordered_set<int32_t> sensorSet;
+    for (const auto &sensor : sensorList_) {
+        sensorSet.insert(sensor.GetSensorId());
+    }
+    for (const auto &sensorId : targetSensors) {
+        if (sensorSet.find(sensorId) == sensorSet.end()) {
+            return false;
+        }
+    }
+    existTargetSensors_ = true;
+    return true;
+}
+
+bool SensorHdiConnection::CheckTargetSensors() const
+{
+    return existTargetSensors_;
 }
 
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
 {
     sensorList.assign(sensorList_.begin(), sensorList_.end());
-    if (existColorAndSar_) {
+    if (CheckTargetSensors()) {
         return ERR_OK;
     }
     Sensor sensorColor;
@@ -137,7 +144,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     int32_t ret = ENABLE_SENSOR_ERR;
-    if (!existColorAndSar_ && (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR)) {
+    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -161,7 +168,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     int32_t ret = DISABLE_SENSOR_ERR;
-    if (!existColorAndSar_ && (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR)) {
+    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -185,7 +192,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
     int32_t ret = SET_SENSOR_CONFIG_ERR;
-    if (!existColorAndSar_ && (sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR)) {
+    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
         ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
         FinishTrace(HITRACE_TAG_SENSORS);

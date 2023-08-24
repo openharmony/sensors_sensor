@@ -17,7 +17,7 @@
 
 #include <cinttypes>
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "stream_socket.h"
 
 namespace OHOS {

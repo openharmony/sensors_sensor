@@ -22,7 +22,7 @@
 
 #include "sensor_agent.h"
 #include "sensor_agent_type.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

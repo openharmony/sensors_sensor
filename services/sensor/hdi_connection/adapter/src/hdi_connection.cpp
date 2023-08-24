@@ -20,8 +20,8 @@
 
 #include "hisysevent.h"
 #include "iproxy_broker.h"
+#include "sensor_errors.h"
 #include "sensor_event_callback.h"
-#include "sensors_errors.h"
 #include "v1_1/isensor_interface.h"
 
 namespace OHOS {
