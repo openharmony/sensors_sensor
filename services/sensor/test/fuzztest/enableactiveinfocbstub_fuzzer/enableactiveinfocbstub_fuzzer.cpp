@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "sensoronremoterequest_fuzzer.h"
+#include "enableactiveinfocbstub_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -34,7 +34,6 @@ using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
-constexpr uint32_t IPC_CODE_COUNT = 13;
 auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 } // namespace
@@ -54,7 +53,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "SensorOnRemoteRequestFuzzTest",
+        .processName = "EnableActiveInfoCBStubFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -63,23 +62,17 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-uint32_t GetU32Data(const char* ptr)
-{
-    // convert fuzz input data to an integer
-    return ((ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3]) % IPC_CODE_COUNT;
-}
-
 bool OnRemoteRequestFuzzTest(const char* data, size_t size)
 {
     SetUpTestCase();
-    uint32_t code = GetU32Data(data);
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
     datas.WriteBuffer(data + U32_AT_SIZE, size - U32_AT_SIZE);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_sensorService->OnRemoteRequest(code, datas, reply, option);
+    g_sensorService->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB),
+        datas, reply, option);
     return true;
 }
 }  // namespace Sensors
