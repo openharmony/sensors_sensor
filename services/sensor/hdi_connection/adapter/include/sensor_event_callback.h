@@ -27,7 +27,7 @@ namespace Sensors {
 class SensorEventCallback : public ISensorCallback {
 public:
     virtual ~SensorEventCallback() {}
-    int32_t OnDataEvent(const HdfSensorEvents& event) override;
+    int32_t OnDataEvent(const HdfSensorEvents &event) override;
 };
 }  // namespace Sensors
 }  // namespace OHOS

@@ -53,7 +53,7 @@ int32_t PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t
     return ret;
 }
 
-void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::string& permissionName, bool status)
+void PermissionUtil::AddPermissionRecord(AccessTokenID tokenID, const std::string &permissionName, bool status)
 {
     int32_t successCount = status ? 1 : 0;
     int32_t failCount = status ? 0 : 1;

@@ -22,7 +22,7 @@
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_basic_data_channel.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {

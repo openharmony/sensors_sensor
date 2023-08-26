@@ -26,7 +26,7 @@
 #include "securec.h"
 #include "sensor.h"
 #include "sensor_dump.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -213,7 +213,9 @@ ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs
     }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.StartDataReportThread();
-    if (!sensorManager_.SetBestSensorParams(sensorId, samplingPeriodNs, maxReportDelayNs)) {
+    SensorBasicInfo sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorId, GetCallingPid());
+    if (!sensorManager_.SetBestSensorParams(sensorId,
+        sensorInfo.GetSamplingPeriodNs(), sensorInfo.GetMaxReportDelayNs())) {
         SEN_HILOGE("SetBestSensorParams failed");
         clientInfo_.RemoveSubscriber(sensorId, GetCallingPid());
         return SET_SENSOR_CONFIG_ERR;

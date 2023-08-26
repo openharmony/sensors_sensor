@@ -17,7 +17,7 @@
 
 #include <cinttypes>
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "stream_socket.h"
 
 namespace OHOS {
@@ -46,6 +46,9 @@ void FdListener::OnReadable(int32_t fd)
             CHKPV(channel_);
             ReceiveMessageFun receiveMessage = channel_->GetReceiveMessageFun();
             receiveMessage(szBuf, size);
+            if (size < MAX_DATA_BUF_SIZE) {
+                break;
+            }
         } else if (size < 0) {
             if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK) {
                 SEN_HILOGW("Continue for errno EAGAIN|EINTR|EWOULDBLOCK, size:%{public}zu, errno:%{public}d",
@@ -57,9 +60,6 @@ void FdListener::OnReadable(int32_t fd)
         } else {
             SEN_HILOGD("The service side disconnect with the client. size:0, count:%{public}zu, errno:%{public}d",
                 i, errno);
-            break;
-        }
-        if (size < MAX_DATA_BUF_SIZE) {
             break;
         }
     }

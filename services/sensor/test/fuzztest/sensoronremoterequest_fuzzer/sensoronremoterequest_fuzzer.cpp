@@ -63,13 +63,13 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-uint32_t GetU32Data(const char* ptr)
+uint32_t GetU32Data(const char *ptr)
 {
     // convert fuzz input data to an integer
     return ((ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3]) % IPC_CODE_COUNT;
 }
 
-bool OnRemoteRequestFuzzTest(const char* data, size_t size)
+bool OnRemoteRequestFuzzTest(const char *data, size_t size)
 {
     SetUpTestCase();
     uint32_t code = GetU32Data(data);
@@ -85,7 +85,7 @@ bool OnRemoteRequestFuzzTest(const char* data, size_t size)
 }  // namespace Sensors
 }  // namespace OHOS
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     /* Run your code on data */
     if (data == nullptr) {

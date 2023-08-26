@@ -28,7 +28,7 @@
 namespace OHOS {
 namespace Sensors {
 using DataChannelCB = std::function<void(SensorEvent *, int32_t, void *)>;
-using ReceiveMessageFun = std::function<void(const char*, size_t)>;
+using ReceiveMessageFun = std::function<void(const char *, size_t)>;
 using DisconnectFun = std::function<void()>;
 class SensorDataChannel : public SensorBasicDataChannel {
 public:

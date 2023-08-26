@@ -26,7 +26,7 @@ public:
     CompatibleConnection() = default;
     virtual ~CompatibleConnection() {}
     int32_t ConnectHdi() override;
-    int32_t GetSensorList(std::vector<Sensor>& sensorList) override;
+    int32_t GetSensorList(std::vector<Sensor> &sensorList) override;
     int32_t EnableSensor(int32_t sensorId) override;
     int32_t DisableSensor(int32_t sensorId)  override;
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;

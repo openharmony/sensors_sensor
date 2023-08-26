@@ -22,7 +22,7 @@
 
 #include "sensor_agent.h"
 #include "sensor_agent_type.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -66,7 +66,7 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-void GetActiveSensorInfosFuzzTest(const uint8_t* data, size_t size)
+void GetActiveSensorInfosFuzzTest(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size < DATA_MIN_SIZE) {
         return;
@@ -81,7 +81,7 @@ void GetActiveSensorInfosFuzzTest(const uint8_t* data, size_t size)
 } // Sensors
 } // OHOS
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     OHOS::Sensors::GetActiveSensorInfosFuzzTest(data, size);
     return 0;
