@@ -13,27 +13,10 @@
  * limitations under the License.
  */
 
-#ifndef SENSORS_IPC_INTERFACE_CODE_H
-#define SENSORS_IPC_INTERFACE_CODE_H
+#ifndef SENSOR_DISABLE_STUB_FUZZER_H
+#define SENSOR_DISABLE_STUB_FUZZER_H
 
-/* SAID:3601 */
-namespace OHOS {
-namespace Sensors {
-enum class SensorInterfaceCode {
-    ENABLE_SENSOR = 0,
-    DISABLE_SENSOR,
-    GET_SENSOR_LIST,
-    TRANSFER_DATA_CHANNEL,
-    DESTROY_SENSOR_CHANNEL,
-    SUSPEND_SENSORS,
-    RESUME_SENSORS,
-    GET_ACTIVE_INFO_LIST,
-    CREATE_SOCKET_CHANNEL,
-    DESTROY_SOCKET_CHANNEL,
-    ENABLE_ACTIVE_INFO_CB,
-    DISABLE_ACTIVE_INFO_CB,
-    RESET_SENSORS,
-};
-}  // namespace Sensors
-}  // namespace OHOS
-#endif  // SENSORS_IPC_INTERFACE_CODE_H
+#define FUZZ_PROJECT_NAME "sensordisablestub_fuzzer"
+
+#endif // SENSOR_DISABLE_STUB_FUZZER_H
+

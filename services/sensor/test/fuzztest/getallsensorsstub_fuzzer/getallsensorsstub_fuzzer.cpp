@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "sensoronremoterequest_fuzzer.h"
+#include "getallsensorsstub_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -33,7 +33,6 @@ using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
-constexpr uint32_t IPC_CODE_COUNT = 13;
 auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 } // namespace
@@ -53,7 +52,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "SensorOnRemoteRequestFuzzTest",
+        .processName = "GetAllSensorsStubFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -62,29 +61,23 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-uint32_t GetU32Data(const uint8_t *data)
-{
-    // convert fuzz input data to an integer
-    return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]) % IPC_CODE_COUNT;
-}
-
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    uint32_t code = GetU32Data(data);
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    datas.WriteBuffer(data + U32_AT_SIZE, size - U32_AT_SIZE);
+    datas.WriteBuffer(data, size);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_sensorService->OnRemoteRequest(code, datas, reply, option);
+    g_sensorService->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST),
+        datas, reply, option);
     return true;
 }
 }  // namespace Sensors
 }  // namespace OHOS
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     if (data == nullptr) {

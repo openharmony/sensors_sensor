@@ -17,5 +17,20 @@ import("//build/test.gni")
 
 group("fuzztest") {
   testonly = true
-  deps = [ "sensoronremoterequest_fuzzer:fuzztest" ]
+  deps = [
+    "createdatachannelstub_fuzzer:fuzztest",
+    "createsocketchannelstub_fuzzer:fuzztest",
+    "destroydatachannelstub_fuzzer:fuzztest",
+    "destroysocketchannelstub_fuzzer:fuzztest",
+    "disableactiveinfocbstub_fuzzer:fuzztest",
+    "enableactiveinfocbstub_fuzzer:fuzztest",
+    "getactiveinfoliststub_fuzzer:fuzztest",
+    "getallsensorsstub_fuzzer:fuzztest",
+    "resetsensorsstub_fuzzer:fuzztest",
+    "resumesensorsstub_fuzzer:fuzztest",
+    "resumesensorsstub_fuzzer:fuzztest",
+    "sensorenablestub_fuzzer:fuzztest",
+    "sensoronremoterequest_fuzzer:fuzztest",
+    "suspendsensorsstub_fuzzer:fuzztest",
+  ]
 }

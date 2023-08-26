@@ -16,10 +16,11 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("./../../../../../sensor.gni")
 
-ohos_fuzztest("SensorOnRemoteRequestFuzzTest") {
+ohos_fuzztest("SuspendSensorsStubFuzzTest") {
   module_out_path = "sensors/sensor"
 
-  fuzz_config_file = "$SUBSYSTEM_DIR/services/sensor/test/fuzztest/sensoronremoterequest_fuzzer"
+  fuzz_config_file =
+      "$SUBSYSTEM_DIR/services/sensor/test/fuzztest/suspendsensorsstub_fuzzer"
 
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
@@ -27,7 +28,7 @@ ohos_fuzztest("SensorOnRemoteRequestFuzzTest") {
     "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
     "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
     "$SUBSYSTEM_DIR/services/sensor/include",
-    "$SUBSYSTEM_DIR/services/sensor/test/fuzztest/sensoronremoterequest_fuzzer",
+    "$SUBSYSTEM_DIR/services/sensor/test/fuzztest/suspendsensorsstub_fuzzer",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
@@ -39,7 +40,7 @@ ohos_fuzztest("SensorOnRemoteRequestFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
 
-  sources = [ "sensoronremoterequest_fuzzer.cpp" ]
+  sources = [ "suspendsensorsstub_fuzzer.cpp" ]
 
   deps = [
     "$SUBSYSTEM_DIR/interfaces/native:sensor_interface_native",
@@ -63,6 +64,6 @@ group("fuzztest") {
   testonly = true
   deps = [
     # deps file
-    ":SensorOnRemoteRequestFuzzTest",
+    ":SuspendSensorsStubFuzzTest",
   ]
 }
