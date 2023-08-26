@@ -27,7 +27,7 @@
 #include "client_info.h"
 #include "sensor_agent_type.h"
 #include "sensor_basic_data_channel.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"
 #endif // HDF_DRIVERS_INTERFACE_SENSOR

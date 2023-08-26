@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 #include "hisysevent.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

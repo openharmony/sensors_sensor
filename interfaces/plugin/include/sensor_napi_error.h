@@ -20,7 +20,7 @@
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

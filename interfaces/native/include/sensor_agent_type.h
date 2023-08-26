@@ -90,6 +90,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_SIGNIFICANT_MOTION = 264,    /**< Significant motion sensor */
     SENSOR_TYPE_ID_PEDOMETER_DETECTION = 265,   /**< Pedometer detection sensor */
     SENSOR_TYPE_ID_PEDOMETER = 266,             /**< Pedometer sensor */
+    SENSOR_TYPE_ID_POSTURE = 267,               /**< Posture sensor */
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR = 277,  /**< Geomagnetic rotation vector sensor */
     SENSOR_TYPE_ID_HEART_RATE = 278,            /**< Heart rate sensor */
     SENSOR_TYPE_ID_DEVICE_ORIENTATION = 279,    /**< Device orientation sensor */
@@ -404,6 +405,34 @@ typedef struct HeartRateData {
 typedef struct WearDetectionData {
     float value;
 } WearDetectionData;
+
+/**
+ * @brief 定义颜色传感器数据结构。测量光强，单位勒克斯；色温，单位开尔文。
+ */
+typedef struct ColorData {
+    float lightIntensity;
+    float colorTemperature;
+} ColorData;
+
+/**
+ * @brief 定义比吸收率传感器数据结构。测量比吸收率，单位W/kg。
+ */
+typedef struct SarData {
+    float absorptionRatio;
+} SarData;
+
+/**
+ * @brief 定义姿态传感器数据结构。测量两块屏幕之间的夹角，单位度，取值范围0~180。
+ */
+typedef struct PostureData {
+    float gxm; /**< The main screen acceleration on the x axis */
+    float gym; /**< The main screen acceleration on the y axis */
+    float gzm; /**< The main screen acceleration on the z axis */
+    float gxs; /**< The second screen acceleration on the x axis */
+    float gys; /**< The second screen acceleration on the y axis */
+    float gzs; /**< The second screen acceleration on the z axis */
+    float angle; /**< The angle between two screens，the angle range is 0~180 degrees */
+} PostureData;
 
 typedef struct SensorActiveInfo {
     int32_t pid = -1;        /**< PID */

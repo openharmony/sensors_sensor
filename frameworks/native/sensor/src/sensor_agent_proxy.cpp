@@ -18,8 +18,8 @@
 #include <cstring>
 
 #include "securec.h"
+#include "sensor_errors.h"
 #include "sensor_service_client.h"
-#include "sensors_errors.h"
 
 using namespace OHOS::HiviewDFX;
 namespace OHOS {

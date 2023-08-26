@@ -16,7 +16,7 @@
 
 #include "hdi_connection.h"
 #include "sensor_data_event.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -25,7 +25,7 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 }
-int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents& event)
+int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 {
     ReportDataCb reportDataCb_ = HdiConnection_->GetReportDataCb();
     sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->GetReportDataCallback();

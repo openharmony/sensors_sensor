@@ -43,7 +43,7 @@ bool CheckSensorTypeId(int32_t sensorTypeId)
     return false;
 }
 
-bool SensorAgentFuzzTest(const uint8_t* data, size_t size)
+bool SensorAgentFuzzTest(const uint8_t *data, size_t size)
 {
     intptr_t sensorTypeId = reinterpret_cast<intptr_t>(data);
     bool validSensorId = CheckSensorTypeId(sensorTypeId);
@@ -73,7 +73,7 @@ bool SensorAgentFuzzTest(const uint8_t* data, size_t size)
     return true;
 }
 
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
     SensorAgentFuzzTest(data, size);
     return 0;

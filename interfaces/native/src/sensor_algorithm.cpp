@@ -17,7 +17,7 @@
 #include <cmath>
 #include <vector>
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 using OHOS::HiviewDFX::HiLog;
 using OHOS::HiviewDFX::HiLogLabel;

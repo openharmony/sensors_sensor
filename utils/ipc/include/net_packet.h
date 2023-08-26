@@ -38,7 +38,7 @@ public:
     void MakeData(StreamBuffer &buf) const;
     size_t GetSize() const;
     size_t GetPacketLength() const;
-    const char* GetData() const;
+    const char *GetData() const;
     MessageId GetMsgId() const;
     DISALLOW_MOVE(NetPacket);
 

@@ -28,7 +28,7 @@ class HdiServiceImpl : public Singleton<HdiServiceImpl> {
 public:
     HdiServiceImpl() = default;
     virtual ~HdiServiceImpl() {}
-    int32_t GetSensorList(std::vector<SensorInfo>& sensorList);
+    int32_t GetSensorList(std::vector<SensorInfo> &sensorList);
     int32_t EnableSensor(int32_t sensorId);
     int32_t DisableSensor(int32_t sensorId);
     int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval);
@@ -39,6 +39,10 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(HdiServiceImpl);
     static void DataReportThread();
+    static void GenerateEvent();
+    static void GenerateAccelerometerEvent();
+    static void GenerateColorEvent();
+    static void GenerateSarEvent();
     static std::vector<int32_t> enableSensors_;
     std::thread dataReportThread_;
     static std::vector<RecordSensorCallback> callbacks_;

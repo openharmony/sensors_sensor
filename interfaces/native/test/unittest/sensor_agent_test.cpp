@@ -22,7 +22,7 @@
 #include "token_setproc.h"
 
 #include "sensor_agent.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "system_info.h"
 
 namespace OHOS {
@@ -355,7 +355,7 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level1)
     ret = ActivateSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
     ret = DeactivateSensor(SENSOR_ID, &user);
