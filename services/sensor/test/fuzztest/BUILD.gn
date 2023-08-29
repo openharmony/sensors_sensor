@@ -28,7 +28,7 @@ group("fuzztest") {
     "getallsensorsstub_fuzzer:fuzztest",
     "resetsensorsstub_fuzzer:fuzztest",
     "resumesensorsstub_fuzzer:fuzztest",
-    "resumesensorsstub_fuzzer:fuzztest",
+    "sensordisablestub_fuzzer:fuzztest",
     "sensorenablestub_fuzzer:fuzztest",
     "sensoronremoterequest_fuzzer:fuzztest",
     "suspendsensorsstub_fuzzer:fuzztest",

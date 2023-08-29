@@ -33,7 +33,7 @@ using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
-auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
+auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 } // namespace
 
@@ -70,7 +70,7 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_sensorService->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR),
         datas, reply, option);
     return true;
 }
