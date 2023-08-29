@@ -20,14 +20,14 @@
 
 namespace OHOS {
 namespace Sensors {
-static const size_t SEND_RETRY_LIMIT = 32;
-static const size_t SEND_RETRY_SLEEP_TIME = 10000;
-static const size_t MAX_VECTOR_SIZE = 10;
-static const size_t MAX_SESSON_ALARM = 100;
-static const size_t MAX_RECV_LIMIT = 13;
-static const size_t MAX_STREAM_BUF_SIZE = 256;
-static const size_t MAX_PACKET_BUF_SIZE = 256;
-static const size_t ONCE_PROCESS_NETPACKET_LIMIT = 100;
+static constexpr size_t SEND_RETRY_LIMIT = 32;
+static constexpr size_t SEND_RETRY_SLEEP_TIME = 10000;
+static constexpr size_t MAX_VECTOR_SIZE = 10;
+static constexpr size_t MAX_SESSON_ALARM = 100;
+static constexpr size_t MAX_RECV_LIMIT = 13;
+static constexpr size_t MAX_STREAM_BUF_SIZE = 256;
+static constexpr size_t MAX_PACKET_BUF_SIZE = 256;
+static constexpr size_t ONCE_PROCESS_NETPACKET_LIMIT = 100;
 
 enum class MessageId : int32_t {
     INVALID,
