@@ -17,7 +17,7 @@
 
 #include "geomagnetic_field.h"
 #include "sensor_algorithm.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

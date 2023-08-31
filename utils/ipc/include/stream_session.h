@@ -44,7 +44,7 @@ public:
     int32_t GetPid() const;
     SessionPtr GetSharedPtr();
     int32_t GetFd() const;
-    const std::string& GetDescript() const;
+    const std::string &GetDescript() const;
     const std::string GetProgramName() const;
     void SetTokenType(int32_t type);
     int32_t GetTokenType() const;

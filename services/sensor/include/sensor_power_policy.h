@@ -24,8 +24,8 @@
 
 #include "active_info.h"
 #include "client_info.h"
+#include "sensor_errors.h"
 #include "sensor_manager.h"
-#include "sensors_errors.h"
 #include "stream_session.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"

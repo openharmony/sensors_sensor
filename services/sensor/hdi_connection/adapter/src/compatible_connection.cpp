@@ -17,7 +17,7 @@
 #include <cstring>
 
 #include "securec.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -37,7 +37,7 @@ int32_t CompatibleConnection::ConnectHdi()
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::GetSensorList(std::vector<Sensor>& sensorList)
+int32_t CompatibleConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     std::vector<SensorInfo> sensorInfos;
     int32_t ret = hdiServiceImpl_.GetSensorList(sensorInfos);

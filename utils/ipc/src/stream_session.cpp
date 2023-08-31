@@ -19,7 +19,7 @@
 #include <sstream>
 
 #include "proto.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "stream_socket.h"
 
 namespace OHOS {
@@ -193,7 +193,7 @@ int32_t StreamSession::GetFd() const
 #endif // OHOS_BUILD_ENABLE_RUST
 }
 
-const std::string& StreamSession::GetDescript() const
+const std::string &StreamSession::GetDescript() const
 {
     return descript_;
 }

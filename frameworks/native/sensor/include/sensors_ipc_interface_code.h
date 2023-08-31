@@ -22,8 +22,6 @@ namespace Sensors {
 enum class SensorInterfaceCode {
     ENABLE_SENSOR = 0,
     DISABLE_SENSOR,
-    GET_SENSOR_STATE,
-    RUN_COMMAND,
     GET_SENSOR_LIST,
     TRANSFER_DATA_CHANNEL,
     DESTROY_SENSOR_CHANNEL,

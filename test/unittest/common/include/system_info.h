@@ -29,14 +29,14 @@ public:
     SystemInfo() = default;
     virtual ~SystemInfo() = default;
     virtual double GetSystemCpuUsage();
-    virtual double GetProcCpuUsage(const std::string& process_name);
+    virtual double GetProcCpuUsage(const std::string &process_name);
 };
 
 class CpuInfo : public SystemInfo {
 public:
     double GetSystemCpuUsage();
-    double GetProcCpuUsage(const std::string& process_name);
-    int32_t GetTaskPidFile(const std::string& process_name);
+    double GetProcCpuUsage(const std::string &process_name);
+    int32_t GetTaskPidFile(const std::string &process_name);
 
 private:
     struct Total_Cpu_Occupy {
@@ -60,9 +60,9 @@ private:
     };
     int32_t GetProcOccupy(int32_t pid);
 
-    int32_t GetSystemCpuStatInfo(Total_Cpu_Occupy& info);
+    int32_t GetSystemCpuStatInfo(Total_Cpu_Occupy &info);
     int64_t GetSystemTotalOccupy();
-    double GetCpuUsage(const Total_Cpu_Occupy& first, const Total_Cpu_Occupy& second);
+    double GetCpuUsage(const Total_Cpu_Occupy &first, const Total_Cpu_Occupy &second);
 };
 } // namespace SYSTEM_INFO
 } // namespace Sensors

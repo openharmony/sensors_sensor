@@ -22,7 +22,7 @@
 #include "token_setproc.h"
 
 #include "sensor_agent.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 #include "system_info.h"
 
 namespace OHOS {
@@ -37,7 +37,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "Sens
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
 
-PermissionDef infoManagerTestPermDef_ = {
+PermissionDef g_infoManagerTestPermDef = {
     .permissionName = "ohos.permission.ACCELEROMETER",
     .bundleName = "accesstoken_test",
     .grantMode = 1,
@@ -48,7 +48,7 @@ PermissionDef infoManagerTestPermDef_ = {
     .availableLevel = APL_NORMAL
 };
 
-PermissionStateFull infoManagerTestState_ = {
+PermissionStateFull g_infoManagerTestState = {
     .grantFlags = {1},
     .grantStatus = {PermissionState::PERMISSION_GRANTED},
     .isGeneral = true,
@@ -56,14 +56,14 @@ PermissionStateFull infoManagerTestState_ = {
     .resDeviceID = {"local"}
 };
 
-HapPolicyParams infoManagerTestPolicyPrams_ = {
+HapPolicyParams g_infoManagerTestPolicyPrams = {
     .apl = APL_NORMAL,
     .domain = "test.domain",
-    .permList = {infoManagerTestPermDef_},
-    .permStateList = {infoManagerTestState_}
+    .permList = {g_infoManagerTestPermDef},
+    .permStateList = {g_infoManagerTestState}
 };
 
-HapInfoParams infoManagerTestInfoParms_ = {
+HapInfoParams g_infoManagerTestInfoParms = {
     .bundleName = "sensoragent_test",
     .userID = 1,
     .instIndex = 0,
@@ -86,7 +86,7 @@ AccessTokenID SensorAgentTest::tokenID_ = 0;
 void SensorAgentTest::SetUpTestCase()
 {
     AccessTokenIDEx tokenIdEx = {0};
-    tokenIdEx = AccessTokenKit::AllocHapToken(infoManagerTestInfoParms_, infoManagerTestPolicyPrams_);
+    tokenIdEx = AccessTokenKit::AllocHapToken(g_infoManagerTestInfoParms, g_infoManagerTestPolicyPrams);
     tokenID_ = tokenIdEx.tokenIdExStruct.tokenID;
     ASSERT_NE(0, tokenID_);
     ASSERT_EQ(0, SetSelfTokenID(tokenID_));
@@ -355,7 +355,7 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level1)
     ret = ActivateSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 
     ret = DeactivateSensor(SENSOR_ID, &user);

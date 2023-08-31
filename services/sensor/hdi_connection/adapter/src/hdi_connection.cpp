@@ -20,8 +20,8 @@
 
 #include "hisysevent.h"
 #include "iproxy_broker.h"
+#include "sensor_errors.h"
 #include "sensor_event_callback.h"
-#include "sensors_errors.h"
 #include "v1_1/isensor_interface.h"
 
 namespace OHOS {
@@ -66,7 +66,7 @@ int32_t HdiConnection::ConnectHdi()
     return ERR_NO_INIT;
 }
 
-int32_t HdiConnection::GetSensorList(std::vector<Sensor>& sensorList)
+int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     CALL_LOG_ENTER;
     CHKPR(sensorInterface_, ERR_NO_INIT);

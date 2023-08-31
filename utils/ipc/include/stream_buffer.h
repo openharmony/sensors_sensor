@@ -23,7 +23,7 @@
 #include "securec.h"
 
 #include "proto.h"
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 #ifdef OHOS_BUILD_ENABLE_RUST
 #include "rust_binding.h"
@@ -46,7 +46,7 @@ public:
     bool Write(const std::string &buf);
     bool Write(const StreamBuffer &buf);
     virtual bool Write(const char *buf, size_t size);
-    const std::string& GetErrorStatusRemark() const;
+    const std::string &GetErrorStatusRemark() const;
     bool ChkRWError() const;
 #ifndef OHOS_BUILD_ENABLE_RUST
     bool SeekReadPos(size_t n);
@@ -54,7 +54,7 @@ public:
     size_t Size() const;
     size_t UnreadSize() const;
     size_t GetAvailableBufSize() const;
-    const char* Data() const;
+    const char *Data() const;
     const char *WriteBuf() const;
 #endif // OHOS_BUILD_ENABLE_RUST
     template<typename T>
@@ -99,7 +99,7 @@ bool StreamBuffer::Read(T &data)
 {
     if (!Read(reinterpret_cast<char *>(&data), sizeof(data))) {
 #ifdef OHOS_BUILD_ENABLE_RUST
-        const char* s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
+        const char *s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
         SEN_HILOGE("[%{public}s] size:%{public}zu count:%{public}d",
             s, sizeof(data), StreamBufferGetRcount(streamBufferPtr_.get()) + 1);
 #else
@@ -116,7 +116,7 @@ bool StreamBuffer::Write(const T &data)
 {
     if (!Write(reinterpret_cast<const char *>(&data), sizeof(data))) {
 #ifdef OHOS_BUILD_ENABLE_RUST
-        const char* s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
+        const char *s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
         SEN_HILOGE("[%{public}s] size:%{public}zu,count:%{public}d",
             s, sizeof(data), StreamBufferGetWcount(streamBufferPtr_.get()) + 1);
 #else

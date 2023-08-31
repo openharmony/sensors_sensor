@@ -15,7 +15,7 @@
 
 #include "active_info.h"
 
-#include "sensors_errors.h"
+#include "sensor_errors.h"
 
 namespace OHOS {
 namespace Sensors {

@@ -25,8 +25,8 @@
 #include "message_parcel.h"
 #include "permission_util.h"
 #include "sensor_client_proxy.h"
+#include "sensor_errors.h"
 #include "sensor_parcel.h"
-#include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -238,6 +238,11 @@ ErrCode SensorServiceStub::GetActiveInfoListInner(MessageParcel &data, MessagePa
 
 ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, MessageParcel &reply)
 {
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     CHKPR(sensorClient, INVALID_POINTER);
     int32_t clientFd = -1;
@@ -257,6 +262,11 @@ ErrCode SensorServiceStub::CreateSocketChannelInner(MessageParcel &data, Message
 
 ErrCode SensorServiceStub::DestroySocketChannelInner(MessageParcel &data, MessageParcel &reply)
 {
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     sptr<IRemoteObject> sensorClient = data.ReadRemoteObject();
     CHKPR(sensorClient, INVALID_POINTER);
     int32_t ret = DestroySocketChannel(sensorClient);

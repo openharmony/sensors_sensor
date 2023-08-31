@@ -18,8 +18,8 @@
 #include "errors.h"
 
 #include "fd_listener.h"
+#include "sensor_errors.h"
 #include "sensor_file_descriptor_listener.h"
-#include "sensors_errors.h"
 
 namespace OHOS {
 namespace Sensors {
