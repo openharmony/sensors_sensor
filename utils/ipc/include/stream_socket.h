@@ -44,8 +44,12 @@ public:
     DISALLOW_COPY_AND_MOVE(StreamSocket);
 protected:
 #ifdef OHOS_BUILD_ENABLE_RUST
-    std::unique_ptr<struct RustStreamSocket, void(*)(RustStreamSocket*)> streamSocketPtr_ { StreamSocketCreate(),
-        StreamSocketDelete };
+    struct RustDelete {
+        void operator() (RustStreamSocket* raw) {
+            StreamSocketDelete(raw);
+        }
+    };
+    std::unique_ptr<RustStreamSocket, RustDelete> streamSocketPtr_ { StreamSocketCreate() };
 #else
     int32_t fd_ { -1 };
     int32_t epollFd_ { -1 };
