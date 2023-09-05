@@ -305,6 +305,10 @@ std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorDa
     SEN_HILOGD("sensorId:%{public}u", sensorId);
     std::string str;
     int32_t dataLen = GetDataDimension(sensorId);
+    if (sensorData.dataLen < sizeof(float)) {
+        SEN_HILOGE("SensorData dataLen less than float size.");
+        return str;
+    }
     auto data = reinterpret_cast<float *>(sensorData.data);
     for (int32_t i = 0; i < dataLen; ++i) {
         str.append(std::to_string(*data));

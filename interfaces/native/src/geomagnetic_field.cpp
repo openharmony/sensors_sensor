@@ -142,6 +142,9 @@ std::vector<std::vector<float>> GeomagneticField::GetSchmidtQuasiNormalFactors(i
 void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis)
 {
     float yearsSinceBase = (timeMillis - WMM_BASE_TIME) / (365.0f * 24.0f * 60.0f * 60.0f * 1000.0f);
+    if (std::fabs(static_cast<float>(cos(geocentricLatitude))) < std::numeric_limits<float>::epsilon()) {
+        return;
+    }
     float inverseCosLatitude = DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
     GetLongitudeTrigonometric();
     float gcX = 0.0f;
@@ -205,6 +208,9 @@ void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float long
     double gdLatRad = ToRadians(latitude);
     float clat = static_cast<float>(cos(gdLatRad));
     float slat = static_cast<float>(sin(gdLatRad));
+    if (std::fabs(clat) < std::numeric_limits<float>::epsilon()) {
+        return;
+    }
     float tlat = slat / clat;
     float latRad = static_cast<float>(sqrt(a2 * clat * clat + b2 * slat * slat));
     geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
