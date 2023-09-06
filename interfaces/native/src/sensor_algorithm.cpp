@@ -127,7 +127,8 @@ int32_t SensorAlgorithm::GetAltitude(float seaPressure, float currentPressure, f
     float coef = 1.0f / RECIPROCAL_COEFFICIENT;
     if (std::fabs(seaPressure) < std::numeric_limits<float>::epsilon()) {
         SEN_HILOGE("Invalid parameter, seaPressure is 0.");
-        return OHOS::Sensors::PARAMETER_ERROR;
+        *altitude = 0;
+        return OHOS::Sensors::SUCCESS;
     }
     float rationOfStandardPressure = currentPressure / seaPressure;
     float difference = pow(rationOfStandardPressure, coef);
