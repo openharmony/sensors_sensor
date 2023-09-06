@@ -126,8 +126,7 @@ int32_t SensorAlgorithm::GetAltitude(float seaPressure, float currentPressure, f
     }
     float coef = 1.0f / RECIPROCAL_COEFFICIENT;
     if (std::fabs(seaPressure) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("seaPressure is 0.");
-        *altitude = 0;
+        SEN_HILOGE("Divide by 0 error, seaPressure is 0.");
         return OHOS::Sensors::SUCCESS;
     }
     float rationOfStandardPressure = currentPressure / seaPressure;
@@ -316,8 +315,8 @@ int32_t SensorAlgorithm::CreateRotationAndInclination(std::vector<float> gravity
 
     if (std::fabs(static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2) +
         pow(geomagnetic[2], 2)))) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("Invalid input parameter, geomagnetic[0], geomagnetic[1], geomagnetic[2] is 0");
-        return OHOS::Sensors::PARAMETER_ERROR;
+        SEN_HILOGE("Divide by 0 error, geomagnetic[0], geomagnetic[1], geomagnetic[2] is 0.");
+        return OHOS::Sensors::SUCCESS;
     }
     float reciprocalE = 1.0f / static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2)
         + pow(geomagnetic[2], 2)));
