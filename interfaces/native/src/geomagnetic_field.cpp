@@ -18,8 +18,12 @@
 #include <cmath>
 #include <mutex>
 
+#include "sensor_errors.h"
+
 using namespace std;
+using namespace OHOS::HiviewDFX;
 namespace {
+constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "GeomagneticField" };
 constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
 constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
 constexpr float EARTH_REFERENCE_RADIUS = 6371.2f;
@@ -111,10 +115,17 @@ std::vector<float> cosMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
 
 GeomagneticField::GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis)
 {
+    SEN_HILOGE("ZMH, latitude:%{public}f, longitude:%{public}f, altitude:%{public}f, timeMillis:%{public}lld",
+        latitude, longitude, altitude, timeMillis);
     std::lock_guard<std::mutex> geomagneticLock(mutex_);
     schmidtQuasiNormalFactors = GetSchmidtQuasiNormalFactors(GAUSSIAN_COEFFICIENT_DIMENSION);
     float gcLatitude = fmax(LATITUDE_MIN + PRECISION, fmin(LATITUDE_MAX - PRECISION, latitude));
     CalibrateGeocentricCoordinates(gcLatitude, longitude, altitude);
+
+    if (std::fabs(2.0 - geocentricLatitude) < std::numeric_limits<float>::epsilon()) {
+        SEN_HILOGE("ZMH, 2.0 - geocentricLatitude is 0");
+    }
+
     InitLegendreTable(GAUSSIAN_COEFFICIENT_DIMENSION - 1, static_cast<float>(M_PI / 2.0 - geocentricLatitude));
     GetRelativeRadiusPower();
     double latDiffRad = ToRadians(gcLatitude) - geocentricLatitude;
@@ -143,6 +154,7 @@ void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t 
 {
     float yearsSinceBase = (timeMillis - WMM_BASE_TIME) / (365.0f * 24.0f * 60.0f * 60.0f * 1000.0f);
     if (std::fabs(static_cast<float>(cos(geocentricLatitude))) < std::numeric_limits<float>::epsilon()) {
+        SEN_HILOGE("ZMH, static_cast<float>(cos(geocentricLatitude)) is 0");
         return;
     }
     float inverseCosLatitude = DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
@@ -194,6 +206,11 @@ void GeomagneticField::GetLongitudeTrigonometric()
 void GeomagneticField::GetRelativeRadiusPower()
 {
     relativeRadiusPower[0] = 1.0f;
+    SEN_HILOGE("ZMH, geocentricRadius:%{public}f", geocentricRadius);
+    if (std::fabs(geocentricRadius) < std::numeric_limits<float>::epsilon()) {
+        SEN_HILOGE("ZMH, geocentricRadius is 0");
+        return;
+    }
     relativeRadiusPower[1] = EARTH_REFERENCE_RADIUS / geocentricRadius;
     for (int32_t index = 2; index < static_cast<int32_t>(relativeRadiusPower.size()); ++index) {
         relativeRadiusPower[index] = relativeRadiusPower[index - 1] * relativeRadiusPower[1];
@@ -202,6 +219,8 @@ void GeomagneticField::GetRelativeRadiusPower()
 
 void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float longitude, float altitude)
 {
+    SEN_HILOGE("ZMH, latitude:%{public}f, longitude:%{public}f, altitude:%{public}f",
+        latitude, longitude, altitude);
     float altitudeKm = altitude / CONVERSION_FACTOR;
     float a2 = EARTH_MAJOR_AXIS_RADIUS * EARTH_MAJOR_AXIS_RADIUS;
     float b2 = EARTH_MINOR_AXIS_RADIUS * EARTH_MINOR_AXIS_RADIUS;
@@ -209,17 +228,24 @@ void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float long
     float clat = static_cast<float>(cos(gdLatRad));
     float slat = static_cast<float>(sin(gdLatRad));
     if (std::fabs(clat) < std::numeric_limits<float>::epsilon()) {
+        SEN_HILOGE("ZMH, clat is 0");
         return;
     }
     float tlat = slat / clat;
+    SEN_HILOGE("ZMH, tlat:%{public}f", tlat);
     float latRad = static_cast<float>(sqrt(a2 * clat * clat + b2 * slat * slat));
+    SEN_HILOGE("ZMH, latRad:%{public}f", latRad);
     geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
         / (latRad * altitudeKm + a2)));
+    SEN_HILOGE("ZMH, 1, geocentricLatitude:%{public}f", geocentricLatitude);
     geocentricLongitude = static_cast<float>(ToRadians(longitude));
+    SEN_HILOGE("ZMH, 2, geocentricLongitude:%{public}f", geocentricLongitude);
     float radSq = altitudeKm * altitudeKm + 2 * altitudeKm
         * latRad + (a2 * a2 * clat * clat + b2 * b2 * slat * slat)
         / (a2 * clat * clat + b2 * slat * slat);
+    SEN_HILOGE("ZMH, radSq:%{public}f", radSq);
     geocentricRadius = static_cast<float>(sqrt(radSq));
+    SEN_HILOGE("ZMH, geocentricRadius:%{public}f", geocentricRadius);
 }
 
 void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad)
