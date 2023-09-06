@@ -23,7 +23,7 @@
 using namespace std;
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "GeomagneticField" };
+constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "GeomagneticField" };
 constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
 constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
 constexpr float EARTH_REFERENCE_RADIUS = 6371.2f;
