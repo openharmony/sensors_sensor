@@ -19,6 +19,8 @@ declare_args() {
 
 SUBSYSTEM_DIR = "//base/sensors/sensor"
 
+FUZZ_MODULE_OUT_PATH = "sensor/sensor"
+
 sensor_default_defines = []
 
 if (rust_socket_ipc) {
