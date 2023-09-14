@@ -27,16 +27,16 @@ namespace Sensors {
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorAgentProxy" };
 constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
-}  // namespace
-
-#define SenClient SensorServiceClient::GetInstance()
-std::recursive_mutex SensorAgentProxy::subscribeMutex_;
-std::mutex SensorAgentProxy::chanelMutex_;
 std::mutex sensorInfoMutex_;
 SensorInfo *sensorInfos_ = nullptr;
 std::mutex sensorActiveInfoMutex_;
 SensorActiveInfo *sensorActiveInfos_ = nullptr;
 int32_t sensorInfoCount_ = 0;
+}  // namespace
+
+#define SenClient SensorServiceClient::GetInstance()
+std::recursive_mutex SensorAgentProxy::subscribeMutex_;
+std::mutex SensorAgentProxy::chanelMutex_;
 
 SensorAgentProxy::SensorAgentProxy()
     : dataChannel_(new (std::nothrow) SensorDataChannel())
