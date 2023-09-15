@@ -65,7 +65,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     }
     int32_t receiveFd = GetReceiveDataFd();
     auto inResult = eventHandler_->AddFileDescriptorListener(receiveFd,
-        AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+        AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener, "SensorTask");
     if (inResult != 0) {
         SEN_HILOGE("AddFileDescriptorListener fail");
         return ERROR;
@@ -101,7 +101,8 @@ int32_t SensorDataChannel::AddFdListener(int32_t fd, ReceiveMessageFun receiveMe
     }
     auto listener = std::make_shared<FdListener>();
     listener->SetChannel(this);
-    auto errCode = eventHandler_->AddFileDescriptorListener(fd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener);
+    auto errCode = eventHandler_->AddFileDescriptorListener(fd, AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT, listener,
+        "SensorTask");
     if (errCode != ERR_OK) {
         SEN_HILOGE("Add fd listener failed, fd:%{public}d, errCode:%{public}u", fd, errCode);
         return ERROR;
