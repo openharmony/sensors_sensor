@@ -55,6 +55,12 @@ enum WindowType {
     WND_TYPE_HANNING = 3,
 };
 
+enum FilterMethod{
+	LOW_RESONANT_FILTER = 1,
+	HIGH_RESONANT_FILTER = 2,
+	BAND_PASS_FILTER = 3,
+};
+
 bool IsPowerOfTwo(uint32_t x);
 uint32_t ObtainNumberOfBits(uint32_t powerOfTwo);
 uint32_t ReverseBits(uint32_t index, uint32_t numBits);
@@ -146,114 +152,34 @@ inline double ConvertSlaneyHz(double mel)
     return HZ_COEF * (pow(LOG_BASE, mel / MEL_COEF) - 1.0);
 }
 
-inline bool IsLessOrEqual(double left, double right, const double epsilon)
+template<typename T>
+inline bool IsLessOrEqual(const T& left, const T& right)
 {
-    return (left - right) < epsilon;
+    return (left - right) < std::numeric_limits<T>::epsilon();
 }
 
 template<typename T>
-constexpr bool IsLessOrEqual(const T& left, const T& right);
-
-template<>
-inline bool IsLessOrEqual<float>(const float& left, const float& right)
+inline bool IsGreatOrEqual(const T& left, const T& right)
 {
-    constexpr double epsilon = std::numeric_limits<float>::epsilon();
-    return IsLessOrEqual(left, right, epsilon);
-}
-
-template<>
-inline bool IsLessOrEqual<double>(const double& left, const double& right)
-{
-    constexpr double epsilon = std::numeric_limits<double>::epsilon();
-    return IsLessOrEqual(left, right, epsilon);
-}
-
-inline bool IsGreatOrEqual(double left, double right, const double epsilon)
-{
-    return (left - right) > epsilon;
+    return (left - right) > -std::numeric_limits<T>::epsilon();
 }
 
 template<typename T>
-constexpr bool IsGreatOrEqual(const T& left, const T& right);
-
-template<>
-inline bool IsGreatOrEqual<float>(const float& left, const float& right)
+inline bool IsLessNotEqual(const T& left, const T& right)
 {
-    constexpr double epsilon = -std::numeric_limits<float>::epsilon();
-    return IsGreatOrEqual(left, right, epsilon);
-}
-
-template<>
-inline bool IsGreatOrEqual<double>(const double& left, const double& right)
-{
-    constexpr double epsilon = -std::numeric_limits<double>::epsilon();
-    return IsGreatOrEqual(left, right, epsilon);
-}
-
-inline bool IsLessNotEqual(double left, double right, const double epsilon)
-{
-    return (left - right) < epsilon;
+    return (left - right) < -std::numeric_limits<T>::epsilon();
 }
 
 template<typename T>
-constexpr bool IsLessNotEqual(const T& left, const T& right);
-
-template<>
-inline bool IsLessNotEqual<float>(const float& left, const float& right)
+inline bool IsGreatNotEqual(const T& left, const T& right)
 {
-    constexpr double epsilon = -std::numeric_limits<float>::epsilon();
-    return IsLessNotEqual(left, right, epsilon);
-}
-
-template<>
-inline bool IsLessNotEqual<double>(const double& left, const double& right)
-{
-    constexpr double epsilon = -std::numeric_limits<double>::epsilon();
-    return IsLessNotEqual(left, right, epsilon);
-}
-
-inline bool IsGreatNotEqual(double left, double right, const double epsilon)
-{
-    return (left - right) > epsilon;
+    return (left - right) > std::numeric_limits<T>::epsilon();
 }
 
 template<typename T>
-constexpr bool IsGreatNotEqual(const T& left, const T& right);
-
-template<>
-inline bool IsGreatNotEqual<float>(const float& left, const float& right)
+inline bool IsEqual(const T& left, const T& right)
 {
-    constexpr double epsilon = std::numeric_limits<float>::epsilon();
-    return IsGreatNotEqual(left, right, epsilon);
-}
-
-template<>
-inline bool IsGreatNotEqual<double>(const double& left, const double& right)
-{
-    constexpr double epsilon = std::numeric_limits<double>::epsilon();
-    return IsGreatNotEqual(left, right, epsilon);
-}
-
-inline bool IsEqual(double left, double right, const double epsilon)
-{
-    return (std::abs(left - right) <= epsilon);
-}
-
-template<typename T>
-constexpr bool IsEqual(const T& left, const T& right);
-
-template<>
-inline bool IsEqual<float>(const float& left, const float& right)
-{
-    constexpr double epsilon = std::numeric_limits<float>::epsilon();
-    return IsEqual(left, right, epsilon);
-}
-
-template<>
-inline bool IsEqual<double>(const double& left, const double& right)
-{
-    constexpr double epsilon = std::numeric_limits<double>::epsilon();
-    return IsEqual(left, right, epsilon);
+    return (std::abs(left - right) <= std::numeric_limits<T>::epsilon());
 }
 
 inline double ConvertHtkMel(double frequencies)
@@ -275,4 +201,4 @@ inline double ConvertHtkHz(double mels)
 }
 }  // namespace Sensors
 }  // namespace OHOS
-#endif
+#endif  // CONVERSION_UTILS_H

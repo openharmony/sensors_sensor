@@ -88,8 +88,8 @@ public:
     int32_t FiltersMel(int32_t nFft, MfccInputPara para, size_t &frmCount, std::vector<double> &melBasis);
 
 private:
-    void HandleDiscreteCosineTransform(std::vector<double> &mfccs);
-    int32_t MelFilterAndLogSquare(const std::vector<float> &powerSpectrum);
+    int32_t HandleDiscreteCosineTransform();
+    int32_t HandleMelFilterAndLogSquare(const std::vector<float> &powerSpectrum);
     int32_t CalcMelFilterBank(double sampleRate);
     int32_t CreateDCTCoeffs();
     int32_t SetMelFilters(uint32_t idx, double binFreq, double prevFreq, double thisFreq, double nextFreq);
