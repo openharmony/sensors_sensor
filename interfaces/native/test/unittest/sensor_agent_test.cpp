@@ -109,23 +109,39 @@ void SensorAgentTest::TearDown()
 void SensorDataCallbackImpl(SensorEvent *event)
 {
     if (event == nullptr) {
-        SEN_HILOGE("SensorEvent is null");
+        SEN_HILOGE("event is null");
         return;
     }
-    float *sensorData = (float *)event[0].data;
-    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, data:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
+    if (event[0].data == nullptr) {
+        SEN_HILOGE("event[0].data is nullptr");
+        return;
+    }
+    if (event[0].dataLen < sizeof(AccelData)) {
+        SEN_HILOGE("Event dataLen less than acc data size, event.dataLen:%{public}u", event[0].dataLen);
+        return;
+    }
+    AccelData *accelData = reinterpret_cast<AccelData *>(event[0].data);
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, x:%{public}f, y:%{public}f, z:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, accelData->x, accelData->y, accelData->z);
 }
 
 void SensorDataCallbackImpl2(SensorEvent *event)
 {
     if (event == nullptr) {
-        SEN_HILOGE("SensorEvent is null");
+        SEN_HILOGE("event is null");
         return;
     }
-    float *sensorData = (float *)event[0].data;
-    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, data:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, *(sensorData));
+    if (event[0].data == nullptr) {
+        SEN_HILOGE("event[0].data is nullptr");
+        return;
+    }
+    if (event[0].dataLen < sizeof(AccelData)) {
+        SEN_HILOGE("Event dataLen less than acc data size, event.dataLen:%{public}u", event[0].dataLen);
+        return;
+    }
+    AccelData *accelData = reinterpret_cast<AccelData *>(event[0].data);
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, x:%{public}f, y:%{public}f, z:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, accelData->x, accelData->y, accelData->z);
 }
 
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)
