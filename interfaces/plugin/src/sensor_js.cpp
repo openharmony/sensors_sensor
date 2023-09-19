@@ -445,6 +445,29 @@ static napi_value Off(napi_env env, napi_callback_info info)
     return nullptr;
 }
 
+static napi_value EmitAsyncWork(napi_value param, sptr<AsyncCallbackInfo> info)
+{
+    CHKPP(info);
+    napi_status status = napi_generic_failure;
+    if (param != nullptr) {
+        status = napi_create_reference(info->env, param, 1, &info->callback[0]);
+        if (status != napi_ok) {
+            SEN_HILOGE("napi_create_reference fail");
+            return nullptr;
+        }
+        EmitAsyncCallbackWork(info);
+        return nullptr;
+    }
+    napi_value promise = nullptr;
+    status = napi_create_promise(info->env, &info->deferred, &promise);
+    if (status != napi_ok) {
+        SEN_HILOGE("napi_create_promise fail");
+        return nullptr;
+    }
+    EmitPromiseWork(info);
+    return promise;
+}
+
 static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -508,23 +531,10 @@ static napi_value GetGeomagneticField(napi_env env, napi_callback_info info)
         .levelIntensity = geomagneticField.ObtainLevelIntensity(),
         .totalIntensity = geomagneticField.ObtainTotalIntensity(),
     };
-    if (argc >=3 && IsMatchType(env, args[2], napi_function)) {
-        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+    if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
+        return EmitAsyncWork(args[2], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetAxisX(napi_env env, napi_value value)
@@ -598,22 +608,9 @@ static napi_value TransformCoordinateSystem(napi_env env, napi_callback_info inf
         asyncCallbackInfo->data.reserveData.length = static_cast<int32_t>(length);
     }
     if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
-        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[2], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetAngleModify(napi_env env, napi_callback_info info)
@@ -661,22 +658,9 @@ static napi_value GetAngleModify(napi_env env, napi_callback_info info)
         }
     }
     if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
-        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[2], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetDirection(napi_env env, napi_callback_info info)
@@ -715,22 +699,9 @@ static napi_value GetDirection(napi_env env, napi_callback_info info)
         }
     }
     if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
-        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[1], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
@@ -769,22 +740,9 @@ static napi_value CreateQuaternion(napi_env env, napi_callback_info info)
         }
     }
     if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
-        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[1], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetAltitude(napi_env env, napi_callback_info info)
@@ -825,22 +783,9 @@ static napi_value GetAltitude(napi_env env, napi_callback_info info)
         asyncCallbackInfo->data.reserveData.reserve[0] = altitude;
     }
     if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
-        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[2], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
@@ -876,22 +821,9 @@ static napi_value GetGeomagneticDip(napi_env env, napi_callback_info info)
         asyncCallbackInfo->data.reserveData.reserve[0] = geomagneticDip;
     }
     if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
-        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[1], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value CreateRotationAndInclination(const napi_env &env, napi_value args[], size_t argc)
@@ -930,24 +862,10 @@ static napi_value CreateRotationAndInclination(const napi_env &env, napi_value a
             asyncCallbackInfo->data.rationMatrixData.inclinationMatrix[i] = inclination[i];
         }
     }
-    napi_status status;
     if (argc >= 3 && IsMatchType(env, args[2], napi_function)) {
-        status = napi_create_reference(env, args[2], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[2], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size_t argc)
@@ -977,24 +895,10 @@ static napi_value GetRotationMatrix(const napi_env &env, napi_value args[], size
             asyncCallbackInfo->data.reserveData.reserve[i] = rotationMatrix[i];
         }
     }
-    napi_status status;
     if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
-        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[1], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value CreateRotationMatrix(napi_env env, napi_callback_info info)
@@ -1046,22 +950,9 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
         }
     }
     if (argc >= 1 && IsMatchType(env, args[0], napi_function)) {
-        status = napi_create_reference(env, args[0], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[0], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
@@ -1103,22 +994,9 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
         }
     }
     if (argc >= 2 && IsMatchType(env, args[1], napi_function)) {
-        status = napi_create_reference(env, args[1], 1, &asyncCallbackInfo->callback[0]);
-        if (status != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
-            return nullptr;
-        }
-        EmitAsyncCallbackWork(asyncCallbackInfo);
-        return nullptr;
+        return EmitAsyncWork(args[1], asyncCallbackInfo);
     }
-    napi_value promise = nullptr;
-    status = napi_create_promise(env, &asyncCallbackInfo->deferred, &promise);
-    if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_promise fail");
-        return nullptr;
-    }
-    EmitPromiseWork(asyncCallbackInfo);
-    return promise;
+    return EmitAsyncWork(nullptr, asyncCallbackInfo);
 }
 
 napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type)
