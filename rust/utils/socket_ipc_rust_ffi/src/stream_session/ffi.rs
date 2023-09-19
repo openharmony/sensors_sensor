@@ -32,6 +32,7 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionCreate() -> *mut StreamSession {
+    info!(LOG_LABEL, "enter StreamSessionCreate");
     let stream_session: Box::<StreamSession> = Box::default();
     Box::into_raw(stream_session)
 }
@@ -46,6 +47,7 @@ pub unsafe extern "C" fn StreamSessionCreate() -> *mut StreamSession {
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSessionDelete(raw: *mut StreamSession) {
+    info!(LOG_LABEL, "enter StreamSessionDelete");
     if !raw.is_null() {
         drop(Box::from_raw(raw));
     }

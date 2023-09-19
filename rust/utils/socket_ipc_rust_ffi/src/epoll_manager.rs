@@ -34,10 +34,8 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 /// struct EpollManager
 #[repr(C)]
 pub struct EpollManager {
-    /// socket_fd
-    pub socket_fd: i32,
-    /// epoll_fd
-    pub epoll_fd: i32,
+    socket_fd: i32,
+    epoll_fd: i32,
 }
 
 impl Default for EpollManager {

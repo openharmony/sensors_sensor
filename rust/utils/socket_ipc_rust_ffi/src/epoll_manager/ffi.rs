@@ -35,6 +35,7 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketCreate() -> *mut EpollManager {
+    info!(LOG_LABEL, "enter StreamSocketCreate");
     let epoll_manager: Box::<EpollManager> = Box::default();
     Box::into_raw(epoll_manager)
 }
@@ -49,6 +50,7 @@ pub unsafe extern "C" fn StreamSocketCreate() -> *mut EpollManager {
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamSocketDelete(raw: *mut EpollManager) {
+    info!(LOG_LABEL, "enter StreamSocketDelete");
     if !raw.is_null() {
         drop(Box::from_raw(raw));
     }

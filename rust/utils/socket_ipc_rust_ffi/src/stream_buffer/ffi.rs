@@ -32,6 +32,7 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamBufferCreate() -> *mut StreamBuffer {
+    info!(LOG_LABEL, "enter StreamBufferCreate");
     let stream_buffer: Box::<StreamBuffer> = Box::default();
     Box::into_raw(stream_buffer)
 }
@@ -46,6 +47,7 @@ pub unsafe extern "C" fn StreamBufferCreate() -> *mut StreamBuffer {
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
 pub unsafe extern "C" fn StreamBufferDelete(raw: *mut StreamBuffer) {
+    info!(LOG_LABEL, "enter StreamBufferDelete");
     if !raw.is_null() {
         drop(Box::from_raw(raw));
     }
