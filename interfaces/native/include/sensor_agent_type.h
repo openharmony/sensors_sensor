@@ -175,8 +175,8 @@ typedef enum SensorMode {
 } SensorMode;
 
 /**
- * @brief Defines the accelerometer data structure. Measures the acceleration applied to
- * the device on three physical axes (x, y, and z) in m/s2.
+ * @brief Defines the struct of the data reported by the acceleration sensor.
+ * This sensor measures the acceleration applied to the device on three physical axes (x, y, and z), in m/s2.
  *
  */
 typedef struct AccelData {
@@ -186,8 +186,8 @@ typedef struct AccelData {
 } AccelData;
 
 /**
- * @brief Defines the linear accelerometer data structure. Measures the linear acceleration applied to
- * the device on three physical axes (x, y, and z) in m/s2.
+ * @brief Defines the struct of the data reported by the linear acceleration sensor.
+ * This sensor measures the linear acceleration applied to the device on three physical axes (x, y, and z), in m/s2.
  */
 typedef struct LinearAccelData {
     float x;
@@ -196,8 +196,8 @@ typedef struct LinearAccelData {
 } LinearAccelData;
 
 /**
- * @brief Defines the gyroscope sensor data structure. Measures the rotational angular velocity of the
- * device on three physical axes (x, y, and z) in rad/s.
+ * @brief Defines the struct of the data reported by the gyroscope sensor.
+ * This sensor measures the angular velocity of the device on three physical axes (x, y, and z), in rad/s.
  */
 typedef struct GyroscopeData {
     float x;
@@ -206,8 +206,8 @@ typedef struct GyroscopeData {
 } GyroscopeData;
 
 /**
- * @brief Defines the gravity sensor data structure. Measures the acceleration of gravity applied
- * to the device on three physical axes (x, y, and z) in m/s2.
+ * @brief Defines the struct of the data reported by the gravity sensor.
+ * This sensor measures the acceleration of gravity applied to the device on three physical axes (x, y, and z), in m/s2.
  */
 typedef struct GravityData {
     float x;
@@ -216,8 +216,9 @@ typedef struct GravityData {
 } GravityData;
 
 /**
- * @brief Defines the uncalibrated accelerometer data structure. Measures the uncalibrated accelerometer applied to
- * the device on three physical axes (x, y, and z) in m/s2.
+ * @brief Defines the struct of the data reported by the uncalibrated acceleration sensor.
+ * This sensor measures the uncalibrated acceleration applied to the device on three physical axes (x, y, and z),
+ * in m/s2.
  */
 typedef struct AccelUncalibratedData {
     float x;
@@ -229,8 +230,8 @@ typedef struct AccelUncalibratedData {
 } AccelUncalibratedData;
 
 /**
- * @brief Defines the uncalibrated gyroscope sensor data structure. Measures the uncalibrated rotational angular velocity of the
- * device on three physical axes (x, y, and z) in rad/s.
+ * @brief Defines the struct of the data reported by the uncalibrated gyroscope sensor.
+ * This sensor measures the uncalibrated angular velocity of the device on three physical axes (x, y, and z), in rad/s.
  */
 typedef struct GyroUncalibratedData {
     float x;
@@ -242,38 +243,42 @@ typedef struct GyroUncalibratedData {
 } GyroUncalibratedData;
 
 /**
- * @brief Defines the significant Motion sensor data structure. Measures whether there is substantial motion in the device on
- * the three physical axes (x, y, and z); a value of 1 indicates the presence of large motion; and a value of 0 indicates that
- * there is no large movement.
+ * @brief Defines the struct of the data reported by the significant motion sensor.
+ * This sensor detects whether there is substantial motion in the device on the three physical axes (x, y, and z).
+ * The value <b>1</b> means that there is substantial motion, and <b>0</b> means the opposite.
  */
 typedef struct SignificantMotionData {
     float scalar;
 } SignificantMotionData;
 
 /**
- * @brief Defines the pedometer detection sensor data structure. Detects the user's step counting action; if the value is 1, it
- * means that the user has generated the action of counting walking; if the value is 0, it means that the user has not moved.
+ * @brief Defines the struct of the data reported by the pedometer detection sensor.
+ * This sensor detects whether a user is walking.
+ * The value <b>1</b> means that the user is walking, and <b>0</b> means the opposite.
  */
 typedef struct PedometerDetectData {
     float scalar;
 } PedometerDetectData;
 
 /**
- * @brief Defines the pedometer sensor data structure. Counts the number of steps taken by the user.
+ * @brief Defines the struct of the data reported by the pedometer sensor.
+ * This sensor counts the number of steps taken by a user.
  */
 typedef struct PedometerData {
     float steps;
 } PedometerData;
 
 /**
- * @brief Defines the ambient temperature sensor data structure. Measures ambient temperature in degrees Celsius (°C)
+ * @brief Defines the struct of the data reported by the ambient temperature sensor.
+ * This sensor measures the ambient temperature, in degrees Celsius (°C).
  */
 typedef struct AmbientTemperatureData {
     float temperature;
 } AmbientTemperatureData;
 
 /**
- * @brief Define the humidity sensor data structure. Measures the relative humidity of the environment,
+ * @brief Defines the struct of the data reported by the humidity sensor.
+ * This sensor measures the relative humidity of the environment,
  * expressed as a percentage (%).
  */
 typedef struct HumidityData {
@@ -281,16 +286,16 @@ typedef struct HumidityData {
 } HumidityData;
 
 /**
- * @brief Define the temperature sensor data structure. Measures the relative temperature of the environment
- * in degrees Celsius (°C)
+ * @brief Defines the struct of the data reported by the temperature sensor.
+ * This sensor measures the relative temperature of the environment, in degrees Celsius (°C).
  */
 typedef struct TemperatureData {
     float temperature;
 } TemperatureData;
 
 /**
- * @brief Defines the magnetic field sensor data structure. Measure the ambient geomagnetic field in three
- * physical axes (x, y, z) in μT.
+ * @brief Defines the struct of the data reported by the magnetic field sensor.
+ * This sensor measures the ambient geomagnetic field in three physical axes (x, y, z), in μT.
  */
 typedef struct MagneticFieldData {
     float x;
@@ -299,8 +304,8 @@ typedef struct MagneticFieldData {
 } MagneticFieldData;
 
 /**
- * @brief Defines the uncalibrated magnetic field sensor data structure. Measure the uncalibrated ambient geomagnetic field in three
- * physical axes (x, y, z) in μT.
+ * @brief Defines the struct of the data reported by the uncalibrated magnetic field sensor.
+ * This sensor measures the uncalibrated ambient geomagnetic field in three physical axes (x, y, z), in μT.
  */
 typedef struct MagneticFieldUncalibratedData {
     float x;
@@ -312,32 +317,35 @@ typedef struct MagneticFieldUncalibratedData {
 } MagneticFieldUncalibratedData;
 
 /**
- * @brief Defines the barometer sensor data structure. Measures ambient air pressure in : hPa or mbar.
+ * @brief Defines the struct of the data reported by the barometer sensor.
+ * This sensor measures the atmospheric pressure, in hPa or mb.
  */
 typedef struct BarometerData {
     float pressure;
 } BarometerData;
 
 /**
- * @brief Defines the device orientation sensor data structure. Measure the direction of rotation of the device in rad.
+ * @brief Defines the struct of the data reported by the device orientation sensor.
+ * This sensor measures the direction of rotation of the device, in rad.
  */
 typedef struct DeviceOrientationData {
     float scalar;
 } DeviceOrientationData;
 
 /**
- * @brief Defines the orientation sensor data structure. Measures the angle value of the rotation of the device
- * around all three physical axes (z, x, y), in rad.
+ * @brief Defines the struct of the data reported by the orientation sensor.
+ * This sensor measures the angle of rotation of the device around all three physical axes (z, x, y), in rad.
  */
 typedef struct OrientationData {
-    float alpha; /**< The device rotates at an angle around the Z axis */
-    float beta;  /**< The device rotates at an angle around the X axis */
-    float gamma; /**< The device rotates at an angle around the Y axis */
+    float alpha; /**< The device rotates at an angle around the Z axis. */
+    float beta;  /**< The device rotates at an angle around the X axis. */
+    float gamma; /**< The device rotates at an angle around the Y axis. */
 } OrientationData;
 
 /**
- * @brief Defines the rotation vector sensor data structure. Measuring device game rotation vector, composite sensor:
- * synthesized by acceleration sensor, gyroscope sensor.
+ * @brief Defines the struct of the data reported by the rotation vector sensor.
+ * This sensor measures the rotation vector of the device.
+ * It is synthesized by the acceleration sensor and gyroscope sensor.
  */
 typedef struct RotationVectorData {
     float x;
@@ -347,8 +355,9 @@ typedef struct RotationVectorData {
 } RotationVectorData;
 
 /**
- * @brief Defines the game rotation vector sensor data structure. Measuring device game rotation vector, composite sensor:
- * synthesized by acceleration sensor, gyroscope sensor.
+ * @brief Defines the struct of the data reported by the game rotation vector sensor.
+ * This sensor measures the game rotation vector of the device.
+ * It is synthesized by the acceleration sensor and gyroscope sensor.
  */
 typedef struct GameRotationVectorData {
     float x;
@@ -358,8 +367,9 @@ typedef struct GameRotationVectorData {
 } GameRotationVectorData;
 
 /**
- * @brief Defines the geomagnetic rotation vector sensor data structure. Measuring device geomagnetic rotation vector, composite
- *  sensor: synthesized by acceleration sensor and magnetic field sensor.
+ * @brief Defines the struct of the data reported by the geomagnetic rotation vector sensor.
+ * This sensor measures the geomagnetic rotation vector of the device.
+ * It is synthesized by the acceleration sensor and magnetic field sensor.
  */
 typedef struct GeomagneticRotaVectorData {
     float x;
@@ -369,45 +379,51 @@ typedef struct GeomagneticRotaVectorData {
 } GeomagneticRotaVectorData;
 
 /**
- * @brief Defines the proximity light sensor data structure. Measures the proximity or distance of visible objects relative to
- * the device display, where 0 indicates proximity and 1 indicates distance.
+ * @brief Defines the struct of the data reported by the proximity light sensor.
+ * This sensor measures the proximity or distance of visible objects relative to the device display,
+ * where 0 indicates proximity and 1 indicates distance.
  */
 typedef struct ProximityData {
     float distance;
 } ProximityData;
 
 /**
- * @brief Defines the ambient light sensor data structure. Measures the intensity of light around the device in lux.
+ * @brief Defines the struct of the data reported by the ambient light sensor.
+ * This sensor measures the intensity of light around the device, in lux.
  */
 typedef struct AmbientLightData {
     float intensity;
 } AmbientLightData;
 
 /**
- * @brief Defines the hall sensor data structure. Measure whether there is magnetic attraction around the device,
- * 0 means no magnet attraction, and 1 means there is magnet attraction.
+ * @brief Defines the struct of the data reported by the hall effect sensor.
+ * This sensor measures whether there is magnetic attraction around the device.
+ * The value <b>1</b> means that there is magnet attraction, and <b>0</b> means the opposite.
  */
 typedef struct HallData {
     float status;
 } HallData;
 
 /**
- * @brief Define the heart rate sensor data structure. Measures the user's heart rate, in bpm.
+ * @brief Defines the struct of the data reported by the heart rate sensor.
+ * This sensor measures a user's heart rate, in bpm.
  */
 typedef struct HeartRateData {
     float heartRate;
 } HeartRateData;
 
 /**
- * @brief Defines the wear detection sensor data structure. To detect whether the user is wearing it,
- * 0 means not wearing it, while 1 means wearing it
+ * @brief Defines the struct of the data reported by the wear detection sensor.
+ * This sensor detects whether a user is wearing a wearable device.
+ * The value <b>1</b> means that the user is wearing a wearable device, and <b>0</b> means the opposite.
  */
 typedef struct WearDetectionData {
     float value;
 } WearDetectionData;
 
 /**
- * @brief 定义颜色传感器数据结构。测量光强，单位勒克斯；色温，单位开尔文。
+ * @brief Defines the struct of the data reported by the color sensor.
+ * This sensor is used to measure the luminous intensity (in lux) and color temperature (in Kelvin).
  */
 typedef struct ColorData {
     float lightIntensity;
@@ -415,14 +431,16 @@ typedef struct ColorData {
 } ColorData;
 
 /**
- * @brief 定义比吸收率传感器数据结构。测量比吸收率，单位W/kg。
+ * @brief Defines the struct of the data reported by the SAR sensor.
+ * This sensor measures the SAR, in W/kg.
  */
 typedef struct SarData {
     float absorptionRatio;
 } SarData;
 
 /**
- * @brief 定义姿态传感器数据结构。测量两块屏幕之间的夹角，单位度，取值范围0~180。
+ * @brief Defines the struct of the data reported by the posture sensor.
+ * This sensor measures the angle between two screens, in degrees. The angle ranges from 0 to 180.
  */
 typedef struct PostureData {
     float gxm; /**< The main screen acceleration on the x axis */
@@ -431,7 +449,7 @@ typedef struct PostureData {
     float gxs; /**< The second screen acceleration on the x axis */
     float gys; /**< The second screen acceleration on the y axis */
     float gzs; /**< The second screen acceleration on the z axis */
-    float angle; /**< The angle between two screens，the angle range is 0~180 degrees */
+    float angle; /**< The angle between two screens. The angle ranges from 0 to 180 degrees. */
 } PostureData;
 
 typedef struct SensorActiveInfo {
