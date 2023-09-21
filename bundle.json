@@ -22,7 +22,6 @@
         "c_utils",
         "hilog",
         "build_framework",
-        "common",
         "hisysevent",
         "napi",
         "drivers_interface_sensor",
