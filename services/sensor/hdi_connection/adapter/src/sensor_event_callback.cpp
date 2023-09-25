@@ -45,7 +45,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         .dataLen = event.dataLen
     };
     CHKPR(sensorData.data, ERR_NO_INIT);
-    for (int32_t i = 0; i < static_cast<int32_t>(dataSize); i++) {
+    for (int32_t i = 0; i < dataSize; i++) {
         sensorData.data[i] = event.data[i];
     }
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);

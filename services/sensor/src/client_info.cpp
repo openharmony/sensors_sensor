@@ -19,8 +19,8 @@
 
 #include "permission_util.h"
 #include "securec.h"
-#include "sensor_manager.h"
 #include "sensor_errors.h"
+#include "sensor_manager.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
@@ -59,7 +59,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
         return false;
     }
     for (const auto &pidIt : it->second) {
-        if (pidIt.second.GetSensorState() == true) {
+        if (pidIt.second.GetSensorState()) {
             return true;
         }
     }
@@ -115,6 +115,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
             continue;
         }
         if (pidIt.first != pid) {
+            SEN_HILOGE("Current sensor is also used by other pid");
             return false;
         }
         ret = true;
@@ -154,7 +155,7 @@ void ClientInfo::DestroyAppThreadInfo(int32_t pid)
     std::lock_guard<std::mutex> uidLock(uidMutex_);
     auto appThreadInfoItr = appThreadInfoMap_.find(pid);
     if (appThreadInfoItr == appThreadInfoMap_.end()) {
-        SEN_HILOGD("uid not exist, no need to destroy it");
+        SEN_HILOGD("pid not exist, no need to destroy it");
         return;
     }
     appThreadInfoMap_.erase(appThreadInfoItr);
@@ -269,7 +270,7 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     CALL_LOG_ENTER;
     CHKPR(channel, false);
     if (pid <= INVALID_PID) {
-        SEN_HILOGE("pid or channel is invalid or channel cannot be null");
+        SEN_HILOGE("pid is invalid");
         return false;
     }
     std::lock_guard<std::mutex> channelLock(channelMutex_);
@@ -552,6 +553,10 @@ AppThreadInfo ClientInfo::GetAppInfoByChannel(const sptr<SensorBasicDataChannel>
 {
     CALL_LOG_ENTER;
     AppThreadInfo appThreadInfo;
+    if (channel == nullptr) {
+        SEN_HILOGE("channel is nullptr");
+        return appThreadInfo;
+    }
     {
         std::lock_guard<std::mutex> channelLock(channelMutex_);
         for (auto channelIt = channelMap_.begin(); channelIt != channelMap_.end(); channelIt++) {
