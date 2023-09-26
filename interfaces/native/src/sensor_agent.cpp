@@ -25,7 +25,9 @@ using OHOS::Sensors::SERVICE_EXCEPTION;
 using OHOS::Sensors::PARAMETER_ERROR;
 using OHOS::Sensors::PERMISSION_DENIED;
 
-static const HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorNativeAPI"};
+namespace {
+constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorNativeAPI"};
+}  // namespace
 
 static int32_t NormalizeErrCode(int32_t code)
 {

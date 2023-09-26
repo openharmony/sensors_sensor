@@ -24,7 +24,8 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
-}
+}  // namespace
+
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 {
     ReportDataCb reportDataCb_ = HdiConnection_->GetReportDataCb();

@@ -111,7 +111,7 @@ std::vector<std::vector<float>> polynomialsDerivative(GAUSSIAN_COEFFICIENT_DIMEN
 std::vector<float> relativeRadiusPower(GAUSSIAN_COEFFICIENT_DIMENSION + 2);
 std::vector<float> sinMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
 std::vector<float> cosMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
-}
+}  // namespace
 
 GeomagneticField::GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis)
 {
