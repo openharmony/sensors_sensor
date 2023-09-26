@@ -26,7 +26,7 @@ using namespace OHOS::AppExecFwk;
 namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FdListener" };
 constexpr int32_t MAX_DATA_BUF_SIZE = 256;
-}
+}  // namespace
 
 void FdListener::SetChannel(SensorDataChannel *channel)
 {

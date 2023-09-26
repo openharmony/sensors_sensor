@@ -22,7 +22,9 @@
 using OHOS::HiviewDFX::HiLog;
 using OHOS::HiviewDFX::HiLogLabel;
 
+namespace {
 static constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorAlgorithmAPI"};
+}  // namespace
 
 int32_t SensorAlgorithm::CreateQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion)
 {
