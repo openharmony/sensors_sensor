@@ -121,8 +121,10 @@ void SensorDataCallbackImpl(SensorEvent *event)
         return;
     }
     AccelData *accelData = reinterpret_cast<AccelData *>(event[0].data);
-    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, x:%{public}f, y:%{public}f, z:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, accelData->x, accelData->y, accelData->z);
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d,"
+        "x:%{public}f, y:%{public}f,z:%{public}f, option:%{public}d",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen,
+        accelData->x, accelData->y, accelData->z, event[0].option);
 }
 
 void SensorDataCallbackImpl2(SensorEvent *event)
@@ -140,8 +142,10 @@ void SensorDataCallbackImpl2(SensorEvent *event)
         return;
     }
     AccelData *accelData = reinterpret_cast<AccelData *>(event[0].data);
-    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d, x:%{public}f, y:%{public}f, z:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, accelData->x, accelData->y, accelData->z);
+    SEN_HILOGI("sensorId:%{public}d, version:%{public}d, dataLen:%{public}d,"
+        "x:%{public}f, y:%{public}f,z:%{public}f, option:%{public}d",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen,
+        accelData->x, accelData->y, accelData->z, event[0].option);
 }
 
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)

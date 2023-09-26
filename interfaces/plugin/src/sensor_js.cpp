@@ -71,6 +71,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
     callbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
     callbackInfo->data.sensorData.dataLength = event->dataLen;
     callbackInfo->data.sensorData.timestamp = event->timestamp;
+    callbackInfo->data.sensorData.sensorAccuracy = event->option;
     CHKPF(event->data);
     if (event->dataLen < sizeof(float)) {
         SEN_HILOGE("Event dataLen less than float size.");
@@ -1214,6 +1215,22 @@ static napi_value CreateEnumSensorId(napi_env env, napi_value exports)
     return exports;
 }
 
+static napi_value CreateEnumSensorAccuracy(napi_env env, napi_value exports)
+{
+    napi_property_descriptor desc[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("ACCURACY_UNRELIABLE", GetNapiInt32(env, ACCURACY_UNRELIABLE)),
+        DECLARE_NAPI_STATIC_PROPERTY("ACCURACY_LOW", GetNapiInt32(env, ACCURACY_LOW)),
+        DECLARE_NAPI_STATIC_PROPERTY("ACCURACY_MEDIUM", GetNapiInt32(env, ACCURACY_MEDIUM)),
+        DECLARE_NAPI_STATIC_PROPERTY("ACCURACY_HIGH", GetNapiInt32(env, ACCURACY_HIGH)),
+    };
+    napi_value result = nullptr;
+    CHKNRP(env, napi_define_class(env, "SensorAccuracy", NAPI_AUTO_LENGTH, EnumClassConstructor, nullptr,
+        sizeof(desc) / sizeof(*desc), desc, &result), "napi_define_class");
+    CHKNRP(env, napi_set_named_property(env, exports, "SensorAccuracy", result), "napi_set_named_property fail");
+    return exports;
+
+}
+
 static napi_value Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor desc[] = {
@@ -1270,6 +1287,7 @@ static napi_value Init(napi_env env, napi_value exports)
         "napi_define_properties");
     CHKCP(CreateEnumSensorType(env, exports), "Create enum sensor type fail");
     CHKCP(CreateEnumSensorId(env, exports), "Create enum sensor id fail");
+    CHKCP(CreateEnumSensorAccuracy(env, exports), "Create enum sensor accuracy fail");
     return exports;
 }
 
