@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "sensor_errors.h"
+#include "sensor_utils.h"
 
 using OHOS::HiviewDFX::HiLog;
 using OHOS::HiviewDFX::HiLogLabel;
@@ -310,9 +311,8 @@ int32_t SensorAlgorithm::CreateRotationAndInclination(std::vector<float> gravity
         SEN_HILOGE("Invalid input parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
-    float reciprocalE = IsEqual(static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2) +
-         pow(geomagnetic[2], 2))), 0.0f) ? std::numeric_limits<float>::max() : 1.0f /
-         static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2) + pow(geomagnetic[2], 2)));
+    float e = static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2) + pow(geomagnetic[2], 2)));
+    float reciprocalE = IsEqual(e, 0.0f) ? std::numeric_limits<float>::max() : 1.0f / e;
     float c = (geomagnetic[0] * measuredValue[0] + geomagnetic[1] * measuredValue[1]
         + geomagnetic[2] * measuredValue[2]) * reciprocalE;
     float s = (geomagnetic[0] * gravity[0] + geomagnetic[1] * gravity[1] + geomagnetic[2] * gravity[2]) * reciprocalE;

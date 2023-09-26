@@ -19,6 +19,7 @@
 #include <mutex>
 
 #include "sensor_errors.h"
+#include "sensor_utils.h"
 
 using namespace std;
 using namespace OHOS::Sensors;

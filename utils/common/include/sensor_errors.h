@@ -123,11 +123,6 @@ enum {
     SENSOR_NATIVE_REGSITER_CB_ERR = SENSOR_NATIVE_GET_SERVICE_ERR + 1,
 };
 
-template<typename T>
-bool IsEqual(const T &left, const T &right) {
-    return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
-}
-
 class InnerFunctionTracer {
 public:
     InnerFunctionTracer(const OHOS::HiviewDFX::HiLogLabel &label, const char *func)
