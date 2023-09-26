@@ -71,7 +71,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     return ERR_OK;
 }
 
-bool SensorPowerPolicy::Suspend(int32_t pid, std::vector<int32_t> &sensorIdList,
+bool SensorPowerPolicy::Suspend(int32_t pid, const std::vector<int32_t> &sensorIdList,
     std::unordered_map<int32_t, SensorBasicInfo> &sensorInfoMap)
 {
     CALL_LOG_ENTER;
@@ -226,7 +226,11 @@ std::vector<ActiveInfo> SensorPowerPolicy::GetActiveInfoList(int32_t pid)
             sensorInfo.GetMaxReportDelayNs());
         activeInfoList.push_back(activeInfo);
     }
-    SEN_HILOGI("Get active info list success, pid:%{public}d", pid);
+    if (activeInfoList.size() > 0) {
+        SEN_HILOGI("Get active info list success, pid:%{public}d", pid);
+    } else {
+        SEN_HILOGW("activeInfoList is empty");
+    }
     return activeInfoList;
 }
 
@@ -234,6 +238,10 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
     const std::vector<SessionPtr> &sessionList)
 {
     CALL_LOG_ENTER;
+    if (activeInfo.GetPid() < 0 || activeInfo.GetSensorId() < 0) {
+        SEN_HILOGE("Invalid activeInfo");
+        return;
+    }
     NetPacket pkt(MessageId::ACTIVE_INFO);
     pkt << activeInfo.GetPid() << activeInfo.GetSensorId() <<
         activeInfo.GetSamplingPeriodNs() << activeInfo.GetMaxReportDelayNs();

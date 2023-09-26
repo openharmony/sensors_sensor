@@ -29,7 +29,6 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
-constexpr int32_t CONVERT_MULTIPLES = 1000;
 constexpr float TARGET_SUM = 9.8F * 9.8F;
 constexpr float MAX_RANGE = 9999.0F;
 std::vector<SensorInfo> g_sensorInfos = {
@@ -136,7 +135,7 @@ void HdiServiceImpl::DataReportThread()
     CALL_LOG_ENTER;
     while (true) {
         GenerateEvent();
-        usleep(samplingInterval_ / CONVERT_MULTIPLES);
+        std::this_thread::sleep_for(std::chrono::nanoseconds(samplingInterval_));
         for (const auto &it : callbacks_) {
             if (it == nullptr) {
                 SEN_HILOGW("RecordSensorCallback is null");
