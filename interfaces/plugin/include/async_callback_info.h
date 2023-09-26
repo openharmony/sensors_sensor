@@ -75,6 +75,7 @@ struct SensorData {
     uint32_t dataLength;
     float data[DATA_LENGTH];
     int64_t timestamp;
+    int32_t sensorAccuracy;
 };
 
 struct ReserveData {

@@ -119,6 +119,22 @@ typedef struct SensorInfo {
 } SensorInfo;
 
 /**
+ * @brief Enumerates the accuracy levels of data reported by a sensor.
+ *
+ * @since 11
+ */
+typedef enum SensorAccuracy {
+    /**< The sensor data is unreliable. It is possible that the sensor does not contact with the device to measure. */
+    ACCURACY_UNRELIABLE = 0,
+    /**< The sensor data is at a low accuracy level. You are required to calibrate the data based on the environment before using it. */
+    ACCURACY_LOW = 1,
+    /**< The sensor data is at a medium accuracy level. You are advised to calibrate the data based on the environment before using it. */
+    ACCURACY_MEDIUM = 2,
+    /**< The sensor data is at a high accuracy level. The data can be used directly. */
+    ACCURACY_HIGH = 3,
+} SensorAccuracy;
+
+/**
  * @brief Defines the data reported by the sensor.
  *
  * @since 5
@@ -127,7 +143,7 @@ typedef struct SensorEvent {
     int32_t sensorTypeId;  /**< Sensor type ID */
     int32_t version;       /**< Sensor algorithm version */
     int64_t timestamp;     /**< Time when sensor data was reported */
-    uint32_t option;       /**< Sensor data options, including the measurement range and accuracy */
+    int32_t option;       /**< Sensor data options, including the measurement range and accuracy */
     int32_t mode;          /**< Sensor data reporting mode (described in {@link SensorMode}) */
     uint8_t *data = nullptr;         /**< Sensor data */
     uint32_t dataLen;      /**< Sensor data length */

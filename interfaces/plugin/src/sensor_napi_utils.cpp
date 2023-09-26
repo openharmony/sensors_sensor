@@ -337,6 +337,10 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
     CHKNRF(env, napi_create_int64(env, asyncCallbackInfo->data.sensorData.timestamp, &message),
         "napi_create_int64");
     CHKNRF(env, napi_set_named_property(env, result[1], "timestamp", message), "napi_set_named_property");
+    message = nullptr;
+    CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->data.sensorData.sensorAccuracy, &message),
+        "napi_create_int32");
+    CHKNRF(env, napi_set_named_property(env, result[1], "accuracy", message), "napi_set_named_property");
     return true;
 }
 
