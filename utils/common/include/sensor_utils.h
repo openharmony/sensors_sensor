@@ -20,7 +20,8 @@ namespace OHOS {
 namespace Sensors {
 
 template<typename T>
-bool IsEqual(const T &left, const T &right) {
+bool IsEqual(const T &left, const T &right)
+{
     return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
 }
 
