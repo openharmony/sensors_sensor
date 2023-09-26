@@ -229,7 +229,7 @@ std::vector<ActiveInfo> SensorPowerPolicy::GetActiveInfoList(int32_t pid)
     if (activeInfoList.size() > 0) {
         SEN_HILOGI("Get active info list success, pid:%{public}d", pid);
     } else {
-        SEN_HILOGW("activeInfoList is empty")；
+        SEN_HILOGW("activeInfoList is empty");
     }
     return activeInfoList;
 }
@@ -239,7 +239,7 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
 {
     CALL_LOG_ENTER;
     if (activeInfo.GetPid() < 0 || activeInfo.GetSensorId() < 0) {
-        SEN_HILOGE(Invalid activeInfo);
+        SEN_HILOGE("Invalid activeInfo");
         return;
     }
     NetPacket pkt(MessageId::ACTIVE_INFO);
