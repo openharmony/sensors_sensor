@@ -206,31 +206,35 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
 {
     CALL_LOG_ENTER;
     (void)object;
-    CHKPV(dataChannel_);
-    // STEP1 : Destroy previous data channel
-    dataChannel_->DestroySensorDataChannel();
-    // STEP2 : Restore data channel
-    dataChannel_->RestoreSensorDataChannel();
-    // STEP3 : Clear sensorlist and sensorServer_
-    sensorList_.clear();
-    sensorServer_ = nullptr;
-    // STEP4 : ReGet sensors  3601 service
-    int32_t ret = InitServiceClient();
-    if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+    if (dataChannel_ == nullptr) {
+        SEN_HILOGI("dataChannel_ is nullptr");
+        sensorList_.clear();
+        sensorServer_ = nullptr;
+        int32_t ret = InitServiceClient();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+            return;
+        }
+    } else {
+        SEN_HILOGI("dataChannel_ is not nullptr");
         dataChannel_->DestroySensorDataChannel();
-        return;
+        dataChannel_->RestoreSensorDataChannel();
+        sensorList_.clear();
+        sensorServer_ = nullptr;
+        int32_t ret = InitServiceClient();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+            dataChannel_->DestroySensorDataChannel();
+            return;
+        }
+        auto remoteObject = sensorClientStub_->AsObject();
+        CHKPV(remoteObject);
+        sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
     }
-    // STEP5 : Retransfer new channel to sensors
-    auto remoteObject = sensorClientStub_->AsObject();
-    CHKPV(remoteObject);
-    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
-    // STEP6 : Restore Sensor status
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {
         sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
     }
-
     if (!isConnected_) {
         SEN_HILOGD("Previous socket channel status is false, not need retry creat socket channel");
         return;
