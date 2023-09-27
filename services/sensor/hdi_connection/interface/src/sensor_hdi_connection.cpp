@@ -107,6 +107,7 @@ bool SensorHdiConnection::CheckTargetSensors() const
 
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
+    CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
     sensorList.assign(sensorList_.begin(), sensorList_.end());
     if (CheckTargetSensors()) {
         return ERR_OK;
