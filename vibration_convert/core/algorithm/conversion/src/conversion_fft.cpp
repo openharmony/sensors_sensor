@@ -93,7 +93,7 @@ int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frame
     frameCount = 0;
     bool isFrameFull = false;
     size_t valuesSize = values.size();
-    for (size_t j = 0; j < valuesSize; j++) {
+    for (size_t j = 0; j < valuesSize; ++j) {
         // add value to buffer at current pos
         if (pos_ < static_cast<int32_t>(fftResult_.buffer.size())) {
             fftResult_.buffer[pos_++] = static_cast<float>(values[j]);
@@ -111,7 +111,7 @@ int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frame
         // reset pos to start of hop
         pos_ = para_.windowSize - para_.hopSize;
         /** shift buffer back by one hop size. */
-        for (int32_t i = 0; i < pos_; i++) {
+        for (int32_t i = 0; i < pos_; ++i) {
             fftResult_.buffer[i] = fftResult_.buffer[i + para_.hopSize];
         }
         isFftCalcFinish_ = true;
@@ -138,7 +138,7 @@ float ConversionFFT::GetSpectralFlatness() const
     }
     float geometricMean = 0.0F;
     float arithmaticMean = 0.0F;
-    for (int32_t i = 0; i < bins_; i++) {
+    for (int32_t i = 0; i < bins_; ++i) {
         if (fftResult_.magnitudes[i] != 0) {
             geometricMean += logf(fftResult_.magnitudes[i]);
         }
@@ -154,7 +154,7 @@ float ConversionFFT::GetSpectralCentroid() const
 {
     float x = 0.0F;
     float y = 0.0F;
-    for (int32_t i = 0; i < bins_; i++) {
+    for (int32_t i = 0; i < bins_; ++i) {
         x += fabs(fftResult_.magnitudes[i]) * i;
         y += fabs(fftResult_.magnitudes[i]);
     }
@@ -195,15 +195,15 @@ float ConversionIFFT::Process(const std::vector<float> &mags, const std::vector<
         }
         // add to output
         // shift back by one hop
-        for (int32_t i = 0; i < (para_.fftSize - para_.hopSize); i++) {
+        for (int32_t i = 0; i < (para_.fftSize - para_.hopSize); ++i) {
             fftResult_.buffer[i] = fftResult_.buffer[i + para_.hopSize];
         }
         // clear the end chunk
-        for (int32_t i = 0; i < para_.hopSize; i++) {
+        for (int32_t i = 0; i < para_.hopSize; ++i) {
             fftResult_.buffer[i + para_.fftSize - para_.hopSize] = 0.0F;
         }
         // merge new output
-        for (int32_t i = 0; i < para_.fftSize; i++) {
+        for (int32_t i = 0; i < para_.fftSize; ++i) {
             fftResult_.buffer[i] += ifftOut_[i];
         }
     }
@@ -234,17 +234,14 @@ int32_t ConversionOctave::Init(float samplingRate, int32_t nBandsInTheFFT, int32
     // this isn't currently configurable (used once here then no effect), but here's some reasoning
     firstOctaveFrequency_ = 55.0F;
     // for each spectrum[] bin, calculate the mapping into the appropriate average[] bin.
-    auto spe2avg = new (std::nothrow) int32_t[nSpectrum_];
-    CHKPR(spe2avg, Sensors::ERROR);
-    std::shared_ptr<int32_t> spe2avgShared(spe2avg, std::default_delete<int32_t[]>());
-    spe2avg_ = std::move(spe2avgShared);
+    spe2avg_ = MakeSharedArray<int32_t>(static_cast<size_t>(nSpectrum_));
     int32_t avgIdx = 0;
     float averageFreq = firstOctaveFrequency_; // the "top" of the first averaging bin
     // we're looking for the "top" of the first spectrum bin, and i'm just sort of
     // guessing that this is where it is (or possibly spectrumFrequencySpan/2?)
     // ... either way it's probably close enough for these purposes
     float spectrumFreq = spectrumFrequencySpan_;
-    for (int32_t speIdx = 0; speIdx < nSpectrum_; speIdx++) {
+    for (int32_t speIdx = 0; speIdx < nSpectrum_; ++speIdx) {
         while (spectrumFreq > averageFreq) {
             ++avgIdx;
             averageFreq *= averageFrequencyIncrement_;
@@ -253,19 +250,9 @@ int32_t ConversionOctave::Init(float samplingRate, int32_t nBandsInTheFFT, int32
         spectrumFreq += spectrumFrequencySpan_;
     }
     nAverages_ = avgIdx;
-    auto averages = new (std::nothrow) float[nAverages_];
-    CHKPR(averages, Sensors::ERROR);
-    std::shared_ptr<float> averagesShared(averages, std::default_delete<float[]>());
-    averages_ = std::move(averagesShared);
-    auto peaks = new (std::nothrow) float[nAverages_];
-    CHKPR(peaks, Sensors::ERROR);
-    std::shared_ptr<float> peaksShared(peaks, std::default_delete<float[]>());
-    peaks_ = std::move(peaksShared);
-    auto peakHoldTimes = new (std::nothrow) int32_t[nAverages_];
-    CHKPR(peakHoldTimes, Sensors::ERROR);
-    std::shared_ptr<int32_t> peakHoldTimesShared(peakHoldTimes, std::default_delete<int32_t[]>());
-    peakHoldTimes_ = std::move(peakHoldTimesShared);
-
+    averages_ = MakeSharedArray<float>(static_cast<size_t>(nAverages_));
+    peaks_ = MakeSharedArray<float>(static_cast<size_t>(nAverages_));
+    peakHoldTimes_ = MakeSharedArray<int32_t>(static_cast<size_t>(nAverages_));
     peakHoldTime_ = 0;
     peakDecayRate_ = 0.9F;
     linearEQIntercept_ = 1.0F;
@@ -286,12 +273,12 @@ int32_t ConversionOctave::Calculate(const std::vector<float> &fftData)
     int32_t lastAvgIdx = 0; // tracks when we've crossed into a new averaging bin, so store current average
     float sum = 0.0F;        // running total of spectrum data
     int32_t count = 0;       // count of spectrums accumulated (for averaging)
-    for (int32_t speIdx = 0; speIdx < nSpectrum_; speIdx++) {
+    for (int32_t speIdx = 0; speIdx < nSpectrum_; ++speIdx) {
         ++count;
         sum += (fftData[speIdx] * (linearEQIntercept_ + speIdx * linearEQSlope_));
         int32_t avgIdx = *(spe2avg_.get() + speIdx);
         if (avgIdx != lastAvgIdx) {
-            for (int32_t j = lastAvgIdx; j < avgIdx; j++) {
+            for (int32_t j = lastAvgIdx; j < avgIdx; ++j) {
                 *(averages_.get() + j) = sum / static_cast<float>(count);
             }
             count = 0;
@@ -304,7 +291,7 @@ int32_t ConversionOctave::Calculate(const std::vector<float> &fftData)
         *(averages_.get() + lastAvgIdx) = sum / count;
     }
     // update the peaks separately
-    for (int32_t i = 0; i < nAverages_; i++) {
+    for (int32_t i = 0; i < nAverages_; ++i) {
         if (IsGreatOrEqual(*(averages_.get() + i), *(peaks_.get() + i))) {
             // save new peak level, also reset the hold timer
             *(peaks_.get() + i) = *(averages_.get() + i);
