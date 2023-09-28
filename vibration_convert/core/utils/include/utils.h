@@ -182,6 +182,12 @@ inline bool IsEqual(const T& left, const T& right)
     return (std::abs(left - right) <= std::numeric_limits<T>::epsilon());
 }
 
+template<typename T>
+decltype(auto) MakeSharedArray(size_t size)
+{
+    return std::shared_ptr<T>(new T[size], std::default_delete<T[]>());
+}
+
 inline double ConvertHtkMel(double frequencies)
 {
     double mels = (frequencies - MIN_F) / FSP;
