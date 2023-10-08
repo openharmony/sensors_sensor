@@ -41,12 +41,18 @@ private:
     DISALLOW_COPY_AND_MOVE(SensorHdiConnection);
     std::unique_ptr<ISensorHdiConnection> iSensorHdiConnection_ { nullptr };
     std::unique_ptr<ISensorHdiConnection> iSensorCompatibleHdiConnection_ { nullptr };
+    std::mutex sensorMutex_;
     std::vector<Sensor> sensorList_;
+    std::unordered_set<int32_t> sensorSet_;
+    std::unordered_set<int32_t> mockSet_;
     int32_t ConnectHdiService();
     int32_t ConnectCompatibleHdi();
-    bool FindTargetSensors(const std::unordered_set<int32_t> &targetSensors);
-    bool CheckTargetSensors() const;
-    std::atomic_bool existTargetSensors_ = false;
+    bool FindAllInSensorSet(const std::unordered_set<int32_t> &sensors);
+    bool FindOneInMockSet(int32_t sensorId);
+    Sensor GenerateColorSensor();
+    Sensor GenerateSarSensor();
+    Sensor GenerateHeadPostureSensor();
+    std::atomic_bool hdiConnectionStatus_ = false;
 };
 }  // namespace Sensors
 }  // namespace OHOS

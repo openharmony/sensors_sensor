@@ -32,27 +32,37 @@ constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr float TARGET_SUM = 9.8F * 9.8F;
 constexpr float MAX_RANGE = 9999.0F;
 std::vector<SensorInfo> g_sensorInfos = {
-    {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
+    {"sensor_test", "default", "1.0.0", "1.0.0", 1, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
 std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_ACCELEROMETER,
     SENSOR_TYPE_ID_COLOR,
-    SENSOR_TYPE_ID_SAR
+    SENSOR_TYPE_ID_SAR,
+    SENSOR_TYPE_ID_HEADPOSTURE
 };
 float g_accData[3];
 float g_colorData[2];
 float g_sarData[1];
+float g_headPostureData[3];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
+    .option = 3,
     .dataLen = 12
 };
 SensorEvent g_colorEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_COLOR,
+    .option = 3,
     .dataLen = 8
 };
 SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
+    .option = 3,
     .dataLen = 4
+};
+SensorEvent g_headPostureEvent = {
+    .sensorTypeId = SENSOR_TYPE_ID_HEADPOSTURE,
+    .option = 3,
+    .dataLen = 12
 };
 }
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -73,6 +83,9 @@ void HdiServiceImpl::GenerateEvent()
                 break;
             case SENSOR_TYPE_ID_SAR:
                 GenerateSarEvent();
+                break;
+            case SENSOR_TYPE_ID_HEADPOSTURE:
+                GenerateHeadPostureEvent();
                 break;
             default:
                 SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
@@ -123,6 +136,14 @@ void HdiServiceImpl::GenerateSarEvent()
     g_sarEvent.data = reinterpret_cast<uint8_t *>(g_sarData);
 }
 
+void HdiServiceImpl::GenerateHeadPostureEvent()
+{
+    g_headPostureData[0] = 9.8;
+    g_headPostureData[1] = 0;
+    g_headPostureData[2] = 0;
+    g_headPostureEvent.data = reinterpret_cast<uint8_t *>(g_headPostureData);
+}
+
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
 {
     CALL_LOG_ENTER;
@@ -151,6 +172,9 @@ void HdiServiceImpl::DataReportThread()
                         break;
                     case SENSOR_TYPE_ID_SAR:
                         it(&g_sarEvent);
+                        break;
+                    case SENSOR_TYPE_ID_HEADPOSTURE:
+                        it(&g_headPostureEvent);
                         break;
                     default:
                         SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);

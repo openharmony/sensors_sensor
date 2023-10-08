@@ -121,9 +121,34 @@ ohos_unittest("PostureTest") {
   ]
 }
 
+ohos_unittest("HeadPostureTest") {
+  module_out_path = "sensors/sensor/interfaces"
+
+  sources = [ "unittest/head_posture_test.cpp" ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/interfaces/native/include",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/interfaces/native:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [
+    ":HeadPostureTest",
     ":PostureTest",
     ":SensorAgentTest",
     ":SensorAlgorithmTest",
