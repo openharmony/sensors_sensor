@@ -49,9 +49,9 @@ int32_t SensorHdiConnection::ConnectHdi()
             SEN_HILOGE("Connect compatible connection failed, ret:%{public}d", ret);
             return ret;
         }
-        hdiConnectionStatus_ = false; // 此时iSensorHdiConnection_连接的是打桩流程
+        hdiConnectionStatus_ = false;
     } else {
-        hdiConnectionStatus_ = true; // 此时iSensorHdiConnection_连接的是真正的HDI
+        hdiConnectionStatus_ = true;
     }
     if (hdiConnectionStatus_ && !FindAllInSensorSet(g_supportMockSensors)) {
         SEN_HILOGD("SensorList not contain all mock sensors, connect mock sensors compatible connection");
@@ -175,7 +175,7 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     sensorList.assign(sensorList_.begin(), sensorList_.end());
     if (!hdiConnectionStatus_) {
-        return ERR_OK; // 如果iSensorHdiConnection_连接的是打桩流程，那直接返回
+        return ERR_OK;
     }
     for (const auto &sensorId : mockSet_) {
         switch (sensorId) {
