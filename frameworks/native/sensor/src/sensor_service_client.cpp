@@ -245,12 +245,9 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
                 dataChannel_->DestroySensorDataChannel();
                 return;
             }
-            {
-                std::lock_guard<std::mutex> clientLock(clientMutex_);
-                auto remoteObject = sensorClientStub_->AsObject();
-                CHKPV(remoteObject);
-                sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
-            }
+            auto remoteObject = sensorClientStub_->AsObject();
+            CHKPV(remoteObject);
+            sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
         }
     }
     {
