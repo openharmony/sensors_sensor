@@ -45,7 +45,8 @@ public:
 protected:
 #ifdef OHOS_BUILD_ENABLE_RUST
     struct RustDelete {
-        void operator() (RustStreamSocket* raw) {
+        void operator() (RustStreamSocket* raw)
+        {
             StreamSocketDelete(raw);
         }
     };
