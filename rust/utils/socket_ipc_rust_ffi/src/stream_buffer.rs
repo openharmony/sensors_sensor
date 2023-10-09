@@ -162,11 +162,11 @@ impl StreamBuffer {
             MAX_STREAM_BUF_SIZE - self.w_pos
         }
     }
-    fn get_error_status_remark(&self) -> *const u8 {
-        let s: &[u8] = match self.rw_error_status {
-            ErrorStatus::Ok => b"OK\0",
-            ErrorStatus::Read => b"READ_ERROR\0",
-            ErrorStatus::Write => b"WRITE_ERROR\0",
+    fn get_error_status_remark(&self) -> *const c_char {
+        let s: CString = match self.rw_error_status {
+            ErrorStatus::Ok => CString::new("OK"),
+            ErrorStatus::Read => CString::new("READ_ERROR"),
+            ErrorStatus::Write => CString::new("WRITE_ERROR"),
         };
         s.as_ptr()
     }
