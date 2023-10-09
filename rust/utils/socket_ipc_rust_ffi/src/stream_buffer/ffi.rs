@@ -173,7 +173,7 @@ pub unsafe extern "C" fn StreamBufferChkRWError(object: *const StreamBuffer) -> 
 /// The pointer which pointed the memory already initialized must be valid.
 /// Makesure the memory shouldn't be dropped while whose pointer is being used.
 #[no_mangle]
-pub unsafe extern "C" fn StreamBufferGetErrorStatusRemark(object: *const StreamBuffer) -> *const c_char {
+pub unsafe extern "C" fn StreamBufferGetErrorStatusRemark(object: *const StreamBuffer) -> *const u8 {
     info!(LOG_LABEL, "enter StreamBufferGetErrorStatusRemark");
     if let Some(obj) = StreamBuffer::as_ref(object) {
         obj.get_error_status_remark()
