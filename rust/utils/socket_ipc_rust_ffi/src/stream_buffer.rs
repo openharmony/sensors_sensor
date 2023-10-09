@@ -163,7 +163,7 @@ impl StreamBuffer {
         }
     }
     fn get_error_status_remark(&self) -> *const c_char {
-        // SAFETY: Creating a new C-compatible string will never fail,
+        // Creating a new C-compatible string will never fail,
         // because the supplied bytes always contain greater than 0.
         let s: CString = match self.rw_error_status {
             ErrorStatus::Ok => CString::new("OK").unwrap_or_default(),
