@@ -28,7 +28,7 @@ ohos_shared_library("libsensor_native") {
 
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
-    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
@@ -58,6 +58,54 @@ ohos_shared_library("libsensor_native") {
   innerapi_tags = [ "platformsdk_indirect" ]
   part_name = "sensor"
   subsystem_name = "sensors"
+}
+ohos_ndk_library("libsensor_ndk") {
+  output_name = "sensor"
+  ndk_description_file = "./libsensor.json"
+  min_compact_version = "6"
+}
+
+config("sensor_private_config") {
+  include_dirs = [
+    "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+ config("sensor_public_config") {
+  include_dirs = [ "include" ]
+}
+
+ohos_shared_library("sensor_interface_native") {
+  output_name = "sensor_agent"
+  sources = [
+    "src/geomagnetic_field.cpp",
+    "src/sensor_agent.cpp",
+    "src/sensor_algorithm.cpp",
+  ]
+
+  configs = [ ":sensor_private_config" ]
+  public_configs = [ ":sensor_public_config" ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native/sensor:libsensor_native",
+    "$SUBSYSTEM_DIR/frameworks/native/sensor:libsensor_ndk",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+  ]
+
+  part_name = "sensor"
+  innerapi_tags = [ "platformsdk" ]
+  subsystem_name = "sensors"
+}
+
+group("sensor_ndk_target") {
+  deps = [ ":sensor_interface_native" ]
+}   "$SUBSYSTEM_DIR/utils/common/include",
+  ]
 }
 
 group("sensor_native_target") {

@@ -29,7 +29,7 @@ ohos_shared_library("libsensor_service") {
 
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
-    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/services/sensor/include",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
@@ -97,7 +97,7 @@ ohos_shared_library("libsensor_service_static") {
 
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
-    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/services/sensor/include",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
