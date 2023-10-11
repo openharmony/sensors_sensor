@@ -39,17 +39,17 @@
         "base_group": [],
         "fwk_group": [
           "//base/sensors/sensor/frameworks/js/napi:sensor_js_target",
-          "//base/sensors/sensor/frameworks/native/sensor:sensor_target",
+          "//base/sensors/sensor/frameworks/native:sensor_target",
           "//base/sensors/sensor/utils:sensor_utils_target"
         ],
         "service_group": [ 
-          "//base/sensors/sensor/services/sensor:sensor_service_target",
+          "//base/sensors/sensor/services:sensor_service_target",
           "//base/sensors/sensor/sa_profile:sensors_sa_profiles"
         ]
       },
       "inner_kits": [
         {
-          "name": "//base/sensors/sensor/frameworks/native/sensor:sensor_interface_native",
+          "name": "//base/sensors/sensor/frameworks/native:sensor_interface_native",
           "header": {
             "header_files": [
               "sensor_agent_type.h",
@@ -60,9 +60,9 @@
         }
       ],
       "test": [
-          "//base/sensors/sensor/test/unittest/napi:unittest",
-          "//base/sensors/sensor/test/fuzztest/sensor:fuzztest",
-          "//base/sensors/sensor/test/unittest/sensor:unittest",
+          "//base/sensors/sensor/test/unittest/interfaces/js:unittest",
+          "//base/sensors/sensor/test/fuzztest/interfaces:fuzztest",
+          "//base/sensors/sensor/test/unittest/interfaces/inner_api:unittest",
           "//base/sensors/sensor/test/fuzztest/services:fuzztest"
       ]
     }

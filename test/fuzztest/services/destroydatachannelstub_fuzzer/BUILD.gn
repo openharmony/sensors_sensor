@@ -23,12 +23,12 @@ ohos_fuzztest("DestroyDataChannelStubFuzzTest") {
       "$SUBSYSTEM_DIR/test/fuzztest/services/destroydatachannelstub_fuzzer"
 
   include_dirs = [
-    "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
     "$SUBSYSTEM_DIR/interfaces/inner_api",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
-    "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",
-    "$SUBSYSTEM_DIR/services/sensor/include",
+    "$SUBSYSTEM_DIR/services/hdi_connection/interface/include",
+    "$SUBSYSTEM_DIR/services/hdi_connection/adapter/include",
+    "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include",
+    "$SUBSYSTEM_DIR/services/include",
     "$SUBSYSTEM_DIR/test/fuzztest/services/destroydatachannelstub_fuzzer",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
@@ -46,8 +46,8 @@ ohos_fuzztest("DestroyDataChannelStubFuzzTest") {
   defines = sensor_default_defines
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_interface_native",
-    "$SUBSYSTEM_DIR/services/sensor:libsensor_service_static",
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
+    "$SUBSYSTEM_DIR/services:libsensor_service_static",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]

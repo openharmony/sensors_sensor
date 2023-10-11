@@ -16,22 +16,17 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("./../../../../sensor.gni")
 
-ohos_fuzztest("EnableActiveInfoCBStubFuzzTest") {
+ohos_fuzztest("GetActiveSensorInfosFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH
 
   fuzz_config_file =
-      "$SUBSYSTEM_DIR/test/fuzztest/services/enableactiveinfocbstub_fuzzer"
+      "$SUBSYSTEM_DIR/test/fuzztest/interfaces/getactivesensorinfos_fuzzer"
 
   include_dirs = [
-    "$SUBSYSTEM_DIR/frameworks/native/include",
     "$SUBSYSTEM_DIR/interfaces/inner_api",
-    "$SUBSYSTEM_DIR/services/hdi_connection/interface/include",
-    "$SUBSYSTEM_DIR/services/hdi_connection/adapter/include",
-    "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include",
-    "$SUBSYSTEM_DIR/services/include",
-    "$SUBSYSTEM_DIR/test/fuzztest/services/enableactiveinfocbstub_fuzzer",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+    "$SUBSYSTEM_DIR/test/fuzztest/interfaces/getactivesensorinfos_fuzzer",
     "$SUBSYSTEM_DIR/utils/common/include",
-    "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
   cflags = [
@@ -41,16 +36,9 @@ ohos_fuzztest("EnableActiveInfoCBStubFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
 
-  sources = [ "enableactiveinfocbstub_fuzzer.cpp" ]
+  sources = [ "getactivesensorinfos_fuzzer.cpp" ]
 
-  defines = sensor_default_defines
-
-  deps = [
-    "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
-    "$SUBSYSTEM_DIR/services:libsensor_service_static",
-    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
-  ]
+  deps = [ "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native" ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
@@ -58,15 +46,14 @@ ohos_fuzztest("EnableActiveInfoCBStubFuzzTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
-    "samgr:samgr_proxy",
   ]
 }
 
 group("fuzztest") {
   testonly = true
-  deps = [
+  deps = []
+  deps += [
     # deps file
-    ":EnableActiveInfoCBStubFuzzTest",
+    ":GetActiveSensorInfosFuzzTest",
   ]
 }
