@@ -19,7 +19,8 @@ import("./../../../../sensor.gni")
 ohos_fuzztest("GetActiveInfoListStubFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH
 
-  fuzz_config_file = "$SUBSYSTEM_DIR/test/fuzztest/services/getactiveinfoliststub_fuzzer"
+  fuzz_config_file =
+      "$SUBSYSTEM_DIR/test/fuzztest/services/getactiveinfoliststub_fuzzer"
 
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",

@@ -19,8 +19,7 @@ import("./../../../../sensor.gni")
 ohos_fuzztest("ResumeSensorsFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH
 
-  fuzz_config_file =
-      "$SUBSYSTEM_DIR/test/fuzztest/sensor/resumesensors_fuzzer"
+  fuzz_config_file = "$SUBSYSTEM_DIR/test/fuzztest/sensor/resumesensors_fuzzer"
 
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/inner_api",

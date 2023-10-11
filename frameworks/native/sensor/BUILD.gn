@@ -72,7 +72,7 @@ config("sensor_private_config") {
     "$SUBSYSTEM_DIR/utils/common/include",
   ]
 }
- config("sensor_public_config") {
+config("sensor_public_config") {
   include_dirs = [ "$SUBSYSTEM_DIR/interfaces/inner_api" ]
 }
 
@@ -106,7 +106,8 @@ ohos_shared_library("sensor_interface_native") {
 }
 
 group("sensor_target") {
-  deps = [ ":sensor_interface_native",
-  ":libsensor_native"  ]
+  deps = [
+    ":libsensor_native",
+    ":sensor_interface_native",
+  ]
 }
-
