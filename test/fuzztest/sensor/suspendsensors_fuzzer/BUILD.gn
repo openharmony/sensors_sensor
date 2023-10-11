@@ -14,7 +14,7 @@
 import("//build/config/features.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
-import("./../../../../../sensor.gni")
+import("./../../../../sensor.gni")
 
 ohos_fuzztest("SuspendSensorsFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH

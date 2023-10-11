@@ -69,6 +69,9 @@ config("sensor_private_config") {
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
     "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/utils/common/include",
+  ]
+}
  config("sensor_public_config") {
   include_dirs = [ "include" ]
 }
@@ -102,12 +105,8 @@ ohos_shared_library("sensor_interface_native") {
   subsystem_name = "sensors"
 }
 
-group("sensor_ndk_target") {
-  deps = [ ":sensor_interface_native" ]
-}   "$SUBSYSTEM_DIR/utils/common/include",
-  ]
+group("sensor_target") {
+  deps = [ ":sensor_interface_native",
+  ":libsensor_native"  ]
 }
 
-group("sensor_native_target") {
-  deps = [ ":libsensor_native" ]
-}

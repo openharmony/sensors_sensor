@@ -14,7 +14,7 @@
 import("//build/config/features.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
-import("./../../../../../sensor.gni")
+import("./../../../../sensor.gni")
 
 ohos_fuzztest("CreateSocketChannelStubFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH
@@ -23,6 +23,7 @@ ohos_fuzztest("CreateSocketChannelStubFuzzTest") {
 
   include_dirs = [
     "$SUBSYSTEM_DIR/frameworks/native/sensor/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/services/sensor/hdi_connection/interface/include",
     "$SUBSYSTEM_DIR/services/sensor/hdi_connection/adapter/include",
     "$SUBSYSTEM_DIR/services/sensor/hdi_connection/hardware/include",

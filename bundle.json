@@ -39,8 +39,7 @@
         "base_group": [],
         "fwk_group": [
           "//base/sensors/sensor/frameworks/js/napi:sensor_js_target",
-          "//base/sensors/sensor/frameworks/native/sensor:sensor_ndk_target",
-          "//base/sensors/sensor/frameworks/native/sensor:sensor_native_target",
+          "//base/sensors/sensor/frameworks/native/sensor:sensor_target",
           "//base/sensors/sensor/utils:sensor_utils_target"
         ],
         "service_group": [ 
@@ -62,7 +61,7 @@
       ],
       "test": [
           "//base/sensors/sensor/test/unittest/napi:unittest",
-          "//base/sensors/sensortest/fuzztest/sensor:fuzztest",
+          "//base/sensors/sensor/test/fuzztest/sensor:fuzztest",
           "//base/sensors/sensor/test/unittest/sensor:unittest",
           "//base/sensors/sensor/test/fuzztest/services:fuzztest"
       ]

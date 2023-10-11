@@ -15,7 +15,7 @@ import("//build/test.gni")
 import("./../../../sensor.gni")
 
 ohos_unittest("SensorAgentTest") {
-  module_out_path = "sensors/sensor/frameworks"
+  module_out_path = "sensors/sensor/interfaces"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/sensor/sensor_agent_test.cpp",
@@ -30,7 +30,7 @@ ohos_unittest("SensorAgentTest") {
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -47,7 +47,7 @@ ohos_unittest("SensorAgentTest") {
 }
 
 ohos_unittest("SensorAlgorithmTest") {
-  module_out_path = "sensors/sensor/frameworks"
+  module_out_path = "sensors/sensor/interfaces"
 
   sources = ["$SUBSYSTEM_DIR/test/unittest/sensor/sensor_algorithm_test.cpp" ]
 
@@ -59,7 +59,7 @@ ohos_unittest("SensorAlgorithmTest") {
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -73,7 +73,7 @@ ohos_unittest("SensorAlgorithmTest") {
 }
 
 ohos_unittest("SensorPowerTest") {
-  module_out_path = "sensors/sensor/frameworks"
+  module_out_path = "sensors/sensor/interfaces"
 
   sources = [ "$SUBSYSTEM_DIR/test/unittest/sensor/sensor_power_test.cpp" ]
 
@@ -84,7 +84,7 @@ ohos_unittest("SensorPowerTest") {
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -112,7 +112,7 @@ ohos_unittest("PostureTest") {
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/frameworks/native/sensor:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",

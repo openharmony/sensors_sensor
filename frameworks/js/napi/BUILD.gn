@@ -12,7 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("./../../sensor.gni")
+import("./../../../sensor.gni")
 
 ohos_shared_library("libsensor") {
   include_dirs = [
