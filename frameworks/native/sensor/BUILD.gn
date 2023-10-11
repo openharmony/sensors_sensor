@@ -73,7 +73,7 @@ config("sensor_private_config") {
   ]
 }
  config("sensor_public_config") {
-  include_dirs = [ "include" ]
+  include_dirs = [ "$SUBSYSTEM_DIR/interfaces/inner_api" ]
 }
 
 ohos_shared_library("sensor_interface_native") {
