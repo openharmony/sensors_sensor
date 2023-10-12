@@ -163,10 +163,12 @@ impl StreamBuffer {
         }
     }
     fn get_error_status_remark(&self) -> *const c_char {
-        let s: &[c_char] = match self.rw_error_status {
-            ErrorStatus::Ok => b"OK\0",
-            ErrorStatus::Read => b"READ_ERROR\0",
-            ErrorStatus::Write => b"WRITE_ERROR\0",
+        // Creating a new C-compatible string will never fail,
+        // because the supplied bytes always contain greater than 0.
+        let s: CString = match self.rw_error_status {
+            ErrorStatus::Ok => CString::new("OK").unwrap_or_default(),
+            ErrorStatus::Read => CString::new("READ_ERROR").unwrap_or_default(),
+            ErrorStatus::Write => CString::new("WRITE_ERROR").unwrap_or_default(),
         };
         s.as_ptr()
     }

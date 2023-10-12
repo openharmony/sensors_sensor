@@ -18,9 +18,11 @@
 #include <vector>
 
 #include "sensor_errors.h"
+#include "sensor_utils.h"
 
 using OHOS::HiviewDFX::HiLog;
 using OHOS::HiviewDFX::HiLogLabel;
+using namespace OHOS::Sensors;
 
 namespace {
 constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorAlgorithmAPI"};
@@ -127,11 +129,8 @@ int32_t SensorAlgorithm::GetAltitude(float seaPressure, float currentPressure, f
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     float coef = 1.0f / RECIPROCAL_COEFFICIENT;
-    if (std::fabs(seaPressure) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("Divide by 0 error, seaPressure is 0.");
-        return OHOS::Sensors::SUCCESS;
-    }
-    float rationOfStandardPressure = currentPressure / seaPressure;
+    float rationOfStandardPressure = IsEqual(seaPressure, 0.0f) ?
+        std::numeric_limits<float>::max() : currentPressure / seaPressure;
     float difference = pow(rationOfStandardPressure, coef);
     *altitude = ZERO_PRESSURE_ALTITUDE * (1.0f - difference);
     return OHOS::Sensors::SUCCESS;
@@ -314,14 +313,8 @@ int32_t SensorAlgorithm::CreateRotationAndInclination(std::vector<float> gravity
         SEN_HILOGE("Invalid input parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
-
-    if (std::fabs(static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2) +
-        pow(geomagnetic[2], 2)))) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("Divide by 0 error, geomagnetic[0], geomagnetic[1], geomagnetic[2] is 0.");
-        return OHOS::Sensors::SUCCESS;
-    }
-    float reciprocalE = 1.0f / static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2)
-        + pow(geomagnetic[2], 2)));
+    float e = static_cast<float>(std::sqrt(pow(geomagnetic[0], 2) + pow(geomagnetic[1], 2) + pow(geomagnetic[2], 2)));
+    float reciprocalE = IsEqual(e, 0.0f) ? std::numeric_limits<float>::max() : 1.0f / e;
     float c = (geomagnetic[0] * measuredValue[0] + geomagnetic[1] * measuredValue[1]
         + geomagnetic[2] * measuredValue[2]) * reciprocalE;
     float s = (geomagnetic[0] * gravity[0] + geomagnetic[1] * gravity[1] + geomagnetic[2] * gravity[2]) * reciprocalE;
