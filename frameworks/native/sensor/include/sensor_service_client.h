@@ -64,6 +64,7 @@ private:
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
     sptr<ISensorService> sensorServer_ = nullptr;
     std::vector<Sensor> sensorList_;
+    std::mutex channelMutex_;
     sptr<SensorDataChannel> dataChannel_ = nullptr;
     sptr<SensorClientStub> sensorClientStub_ = nullptr;
     std::mutex mapMutex_;
