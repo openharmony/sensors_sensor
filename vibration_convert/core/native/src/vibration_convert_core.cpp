@@ -202,7 +202,7 @@ int32_t VibrationConvertCore::PreprocessParameter(const std::vector<double> &dat
         SEN_HILOGE("CheckOnset Failed");
         return Sensors::ERROR;
     }
-    std::vector<int32_t> newDrwIdx = MapOnsetHop(onsetInfo.idx, onsetHopLength);
+    std::vector<int32_t> newDrwIdx = MapOnsetHop(onsetInfo.idxs, onsetHopLength);
     lowerDelta = CalcRmsLowerData(data.size(), rmse, newDrwIdx);
     double rmseMax = *std::max_element(rmse.begin(),rmse.end());
     size_t newDrwIdxLen = newDrwIdx.size();
@@ -581,10 +581,10 @@ std::vector<UnionTransientEvent> VibrationConvertCore::DetectOnset(const std::ve
         SEN_HILOGE("CheckOnset Failed");
         return {};
     }
-    onsetInfo.idx = MapOnsetHop(onsetInfo.idx, onsetHopLength);
+    onsetInfo.idxs = MapOnsetHop(onsetInfo.idxs, onsetHopLength);
     std::vector<int32_t> newIdx;
     std::vector<double> newTime;
-    UniqueIdx(onsetInfo.idx, onsetInfo.time, newIdx, newTime);
+    UniqueIdx(onsetInfo.idxs, onsetInfo.times, newIdx, newTime);
     int32_t minSkip = ONSET_MINSKIP_MAX;
     if (newIdx.size() > 1) {
         std::vector<int32_t> idxDiff;
