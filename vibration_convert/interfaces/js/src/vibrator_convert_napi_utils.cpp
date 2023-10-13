@@ -216,7 +216,7 @@ napi_value GetAudioDataInfo(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKCP((napi_create_double(env, datas.max, &max) == napi_ok), "napi_create_double max failed");
     CHKCP((napi_set_named_property(env, object, "dataMax", max) == napi_ok), "napi_set_named_property dataMax failed");
     napi_value data = nullptr;
-    if (!CreateArray(env, datas.audioData, data)) {
+    if (!CreateArray(env, datas.audioDatas, data)) {
         SEN_HILOGE("CreateArray failed");
         return nullptr;
     }
