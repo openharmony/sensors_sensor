@@ -176,6 +176,7 @@ pub unsafe extern "C" fn StreamBufferChkRWError(object: *const StreamBuffer) -> 
 pub unsafe extern "C" fn StreamBufferGetErrorStatusRemark(object: *const StreamBuffer) -> *const c_char {
     info!(LOG_LABEL, "enter StreamBufferGetErrorStatusRemark");
     if let Some(obj) = StreamBuffer::as_ref(object) {
+        // SAFETY: The Rust side creates a CString string and this function should be called only here
         obj.get_error_status_remark()
     } else {
         std::ptr::null()

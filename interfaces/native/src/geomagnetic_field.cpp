@@ -19,11 +19,11 @@
 #include <mutex>
 
 #include "sensor_errors.h"
+#include "sensor_utils.h"
 
 using namespace std;
-using namespace OHOS::HiviewDFX;
+using namespace OHOS::Sensors;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "GeomagneticField" };
 constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
 constexpr float EARTH_MINOR_AXIS_RADIUS = 6356.7523142f;
 constexpr float EARTH_REFERENCE_RADIUS = 6371.2f;
@@ -146,11 +146,8 @@ std::vector<std::vector<float>> GeomagneticField::GetSchmidtQuasiNormalFactors(i
 void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis)
 {
     float yearsSinceBase = (timeMillis - WMM_BASE_TIME) / (365.0f * 24.0f * 60.0f * 60.0f * 1000.0f);
-    if (std::fabs(static_cast<float>(cos(geocentricLatitude))) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("Divide by 0 error, cos(geocentricLatitude) is 0.");
-        return;
-    }
-    float inverseCosLatitude = DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
+    float inverseCosLatitude = IsEqual(static_cast<float>(cos(geocentricLatitude)), 0.0f) ?
+        std::numeric_limits<float>::max() : DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
     GetLongitudeTrigonometric();
     float gcX = 0.0f;
     float gcY = 0.0f;
@@ -199,11 +196,8 @@ void GeomagneticField::GetLongitudeTrigonometric()
 void GeomagneticField::GetRelativeRadiusPower()
 {
     relativeRadiusPower[0] = 1.0f;
-    if (std::fabs(geocentricRadius) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("Divide by 0 error, geocentricRadius is 0.");
-        return;
-    }
-    relativeRadiusPower[1] = EARTH_REFERENCE_RADIUS / geocentricRadius;
+    relativeRadiusPower[1] = IsEqual(geocentricRadius, 0.0f) ? std::numeric_limits<float>::max() :
+        EARTH_REFERENCE_RADIUS / geocentricRadius;
     for (int32_t index = 2; index < static_cast<int32_t>(relativeRadiusPower.size()); ++index) {
         relativeRadiusPower[index] = relativeRadiusPower[index - 1] * relativeRadiusPower[1];
     }
@@ -217,11 +211,7 @@ void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float long
     double gdLatRad = ToRadians(latitude);
     float clat = static_cast<float>(cos(gdLatRad));
     float slat = static_cast<float>(sin(gdLatRad));
-    if (std::fabs(clat) < std::numeric_limits<float>::epsilon()) {
-        SEN_HILOGE("Divide by 0 error, clat is 0.");
-        return;
-    }
-    float tlat = slat / clat;
+    float tlat = IsEqual(clat, 0.0f) ? std::numeric_limits<float>::max() : slat / clat;
     float latRad = static_cast<float>(sqrt(a2 * clat * clat + b2 * slat * slat));
     geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
         / (latRad * altitudeKm + a2)));

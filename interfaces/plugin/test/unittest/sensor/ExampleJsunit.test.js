@@ -655,7 +655,7 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetGeomagneticField_004', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_004----------------------------------");
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
+        let geomagneticComponent = [1824.141845703125, 2.9950538714314696e+33, 56727.7734375, 1.0852099087396978e-27, 90, 2.9950538714314696e+33, Infinity]
         sensor.getGeomagneticInfo({'latitude':Number.MAX_VALUE, 'longitude':0, 'altitude':0}, timeMillis[0], (error, data) => {
             if (error) {
                 console.info('Sensor_GetGeomagneticField_004 failed');
@@ -669,7 +669,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
                 expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+                expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
             }
             setTimeout(() => {
                 done()
@@ -687,7 +687,7 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetGeomagneticField_005', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_005----------------------------------");
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
+        let geomagneticComponent = [1824.141845703125, 2.9950538714314696e+33, 56727.7734375, 1.0852099087396978e-27, 90, 2.9950538714314696e+33, Infinity]
         sensor.getGeomagneticInfo({'latitude':Number.NaN, 'longitude':0, 'altitude':0}, timeMillis[0], (error, data) => {
             if (error) {
                 console.info('Sensor_GetGeomagneticField_005 failed');
@@ -701,7 +701,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
                 expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+                expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
             }
             setTimeout(() => {
                 done()
@@ -719,7 +719,7 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetGeomagneticField_006', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_006----------------------------------");
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
+        let geomagneticComponent = [14425.57421875, -4.4076765967073136e+35, -52023.21484375, -6.76254414480036e-30, -90, 4.4076765967073136e+35, Infinity]
         sensor.getGeomagneticInfo({'latitude':Number.NEGATIVE_INFINITY, 'longitude':0, 'altitude':0}, timeMillis[0], (error, data) => {
             if (error) {
                 console.info('Sensor_GetGeomagneticField_006 failed');
@@ -733,7 +733,7 @@ describe("SensorJsTest", function () {
                 expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
                 expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
                 expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+                expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
             }
             setTimeout(() => {
                 done()
@@ -1263,7 +1263,7 @@ describe("SensorJsTest", function () {
      */
     it("Sensor_GetGeomagneticField_027", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_027---------------------------');
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
+        let geomagneticComponent = [1824.141845703125, 2.9950538714314696e+33, 56727.7734375, 1.0852099087396978e-27, 90, 2.9950538714314696e+33, Infinity]
         await sensor.getGeomagneticInfo({'latitude':Number.MAX_VALUE, 'longitude':0, 'altitude':0}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_027 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
@@ -1273,7 +1273,7 @@ describe("SensorJsTest", function () {
             expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
             expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
             expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+            expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
         }).catch((error) => {
             console.info("promise::catch", error)
         });
@@ -1290,7 +1290,7 @@ describe("SensorJsTest", function () {
      */
     it("Sensor_GetGeomagneticField_028", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_028---------------------------');
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
+        let geomagneticComponent = [1824.141845703125, 2.9950538714314696e+33, 56727.7734375, 1.0852099087396978e-27, 90, 2.9950538714314696e+33, Infinity]
         await sensor.getGeomagneticInfo({'latitude':Number.NaN, 'longitude':0, 'altitude':0}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_028 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
@@ -1300,7 +1300,7 @@ describe("SensorJsTest", function () {
             expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
             expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
             expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+            expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
         }).catch((error) => {
             console.info("promise::catch", error)
         });
@@ -1315,7 +1315,7 @@ describe("SensorJsTest", function () {
      */
     it("Sensor_GetGeomagneticField_029", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_029---------------------------');
-        let geomagneticComponent = [27779.234375, -6214.9794921875, -14924.6611328125, -27.667943954467773, -12.610970497131348, 28465.9765625, 32141.2109375]
+        let geomagneticComponent = [14425.57421875, -4.4076765967073136e+35, -52023.21484375, -6.76254414480036e-30, -90, 4.4076765967073136e+35, Infinity]
         await sensor.getGeomagneticInfo({'latitude':Number.NEGATIVE_INFINITY, 'longitude':0, 'altitude':0}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_029 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
@@ -1325,7 +1325,7 @@ describe("SensorJsTest", function () {
             expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
             expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
             expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+            expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
         }).catch((error) => {
             console.info("promise::catch", error)
         });
@@ -3513,7 +3513,7 @@ describe("SensorJsTest", function () {
         })
     })
 
-    const getGeomagneticDipResult = [ 0.8760581016540527, 0.862170, 0, 44330];
+    const getGeomagneticDipResult = [ 0.8760581016540527, 0.862170, -953042337792, 44330];
 
     /*
     * @tc.name: Sensor_GetGeomagneticDip_001
