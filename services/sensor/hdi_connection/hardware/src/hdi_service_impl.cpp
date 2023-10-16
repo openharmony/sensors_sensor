@@ -140,7 +140,7 @@ void HdiServiceImpl::GenerateHeadPostureEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
-    std::uniform_real_distribution<float> distr(0.0, TARGET_SUM);
+    std::uniform_real_distribution<float> distr(0.0, 1.0);
     std::vector<float> nums(3);
     while (true) {
         nums[0] = distr(eng);
