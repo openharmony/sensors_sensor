@@ -81,9 +81,9 @@ void HeadPostureDataCallbackImpl(SensorEvent *event)
         return;
     }
     HeadPostureData *headPostureData = reinterpret_cast<HeadPostureData *>(event[0].data);
-    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, x:%{public}f, y:%{public}f, z:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, headPostureData->x,
-        headPostureData->y, headPostureData->z);
+    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, "
+        "w:%{public}f, x:%{public}f, y:%{public}f, z:%{public}f", event[0].sensorTypeId, event[0].version,
+        event[0].dataLen, headPostureData->w, headPostureData->x, headPostureData->y, headPostureData->z);
 }
 
 void HeadPostureDataCallbackImpl2(SensorEvent *event)
@@ -101,9 +101,9 @@ void HeadPostureDataCallbackImpl2(SensorEvent *event)
         return;
     }
     HeadPostureData *headPostureData = reinterpret_cast<HeadPostureData *>(event[0].data);
-    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, x:%{public}f, y:%{public}f, z:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, headPostureData->x,
-        headPostureData->y, headPostureData->z);
+    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, "
+        "w:%{public}f, x:%{public}f, y:%{public}f, z:%{public}f", event[0].sensorTypeId, event[0].version,
+        event[0].dataLen, headPostureData->w, headPostureData->x, headPostureData->y, headPostureData->z);
 }
 
 HWTEST_F(HeadPostureTest, HeadPostureTest_001, TestSize.Level1)

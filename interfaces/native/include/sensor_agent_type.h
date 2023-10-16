@@ -475,11 +475,13 @@ typedef struct PostureData {
 
 /**
  * @brief Defines the struct of the data reported by the head posture sensor.
+ * This sensor measures the head posture of user.
  */
 typedef struct HeadPostureData {
-    float x;
-    float y;
-    float z;
+    float w = 0.0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
 } HeadPostureData;
 
 typedef struct SensorActiveInfo {
