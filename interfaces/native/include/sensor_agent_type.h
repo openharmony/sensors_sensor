@@ -111,9 +111,9 @@ typedef struct SensorInfo {
     char hardwareVersion[VERSION_MAX_LEN];  /**< Sensor hardware version */
     int32_t sensorTypeId = -1;  /**< Sensor type ID */
     int32_t sensorId = -1;      /**< Sensor ID */
-    float maxRange = -1;        /**< Maximum measurement range of the sensor */
-    float precision = -1;       /**< Sensor accuracy */
-    float power = -1;           /**< Sensor power */
+    float maxRange = 0.0;        /**< Maximum measurement range of the sensor */
+    float precision = 0.0;       /**< Sensor accuracy */
+    float power = 0.0;           /**< Sensor power */
     int64_t minSamplePeriod = -1; /**< Minimum sample period allowed, in ns */
     int64_t maxSamplePeriod = -1; /**< Maximum sample period allowed, in ns */
 } SensorInfo;
@@ -200,9 +200,9 @@ typedef enum SensorMode {
  *
  */
 typedef struct AccelData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
 } AccelData;
 
 /**
@@ -210,9 +210,9 @@ typedef struct AccelData {
  * This sensor measures the linear acceleration applied to the device on three physical axes (x, y, and z), in m/s2.
  */
 typedef struct LinearAccelData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
 } LinearAccelData;
 
 /**
@@ -220,9 +220,9 @@ typedef struct LinearAccelData {
  * This sensor measures the angular velocity of the device on three physical axes (x, y, and z), in rad/s.
  */
 typedef struct GyroscopeData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
 } GyroscopeData;
 
 /**
@@ -230,9 +230,9 @@ typedef struct GyroscopeData {
  * This sensor measures the acceleration of gravity applied to the device on three physical axes (x, y, and z), in m/s2.
  */
 typedef struct GravityData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
 } GravityData;
 
 /**
@@ -241,12 +241,12 @@ typedef struct GravityData {
  * in m/s2.
  */
 typedef struct AccelUncalibratedData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float biasX = 0;
-    float biasY = 0;
-    float biasZ = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    float biasX = 0.0;
+    float biasY = 0.0;
+    float biasZ = 0.0;
 } AccelUncalibratedData;
 
 /**
@@ -254,12 +254,12 @@ typedef struct AccelUncalibratedData {
  * This sensor measures the uncalibrated angular velocity of the device on three physical axes (x, y, and z), in rad/s.
  */
 typedef struct GyroUncalibratedData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float biasX = 0;
-    float biasY = 0;
-    float biasZ = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    float biasX = 0.0;
+    float biasY = 0.0;
+    float biasZ = 0.0;
 } GyroUncalibratedData;
 
 /**
@@ -268,7 +268,7 @@ typedef struct GyroUncalibratedData {
  * The value <b>1</b> means that there is substantial motion, and <b>0</b> means the opposite.
  */
 typedef struct SignificantMotionData {
-    float scalar = 0;
+    float scalar = 0.0;
 } SignificantMotionData;
 
 /**
@@ -277,7 +277,7 @@ typedef struct SignificantMotionData {
  * The value <b>1</b> means that the user is walking, and <b>0</b> means the opposite.
  */
 typedef struct PedometerDetectData {
-    float scalar = 0;
+    float scalar = 0.0;
 } PedometerDetectData;
 
 /**
@@ -285,7 +285,7 @@ typedef struct PedometerDetectData {
  * This sensor counts the number of steps taken by a user.
  */
 typedef struct PedometerData {
-    float steps = 0;
+    float steps = 0.0;
 } PedometerData;
 
 /**
@@ -293,7 +293,7 @@ typedef struct PedometerData {
  * This sensor measures the ambient temperature, in degrees Celsius (°C).
  */
 typedef struct AmbientTemperatureData {
-    float temperature = 0;
+    float temperature = 0.0;
 } AmbientTemperatureData;
 
 /**
@@ -302,7 +302,7 @@ typedef struct AmbientTemperatureData {
  * expressed as a percentage (%).
  */
 typedef struct HumidityData {
-    float humidity = 0;
+    float humidity = 0.0;
 } HumidityData;
 
 /**
@@ -310,7 +310,7 @@ typedef struct HumidityData {
  * This sensor measures the relative temperature of the environment, in degrees Celsius (°C).
  */
 typedef struct TemperatureData {
-    float temperature = 0;
+    float temperature = 0.0;
 } TemperatureData;
 
 /**
@@ -318,9 +318,9 @@ typedef struct TemperatureData {
  * This sensor measures the ambient geomagnetic field in three physical axes (x, y, z), in μT.
  */
 typedef struct MagneticFieldData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
 } MagneticFieldData;
 
 /**
@@ -328,12 +328,12 @@ typedef struct MagneticFieldData {
  * This sensor measures the uncalibrated ambient geomagnetic field in three physical axes (x, y, z), in μT.
  */
 typedef struct MagneticFieldUncalibratedData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float biasX = 0;
-    float biasY = 0;
-    float biasZ = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    float biasX = 0.0;
+    float biasY = 0.0;
+    float biasZ = 0.0;
 } MagneticFieldUncalibratedData;
 
 /**
@@ -341,7 +341,7 @@ typedef struct MagneticFieldUncalibratedData {
  * This sensor measures the atmospheric pressure, in hPa or mb.
  */
 typedef struct BarometerData {
-    float pressure = 0;
+    float pressure = 0.0;
 } BarometerData;
 
 /**
@@ -349,7 +349,7 @@ typedef struct BarometerData {
  * This sensor measures the direction of rotation of the device, in rad.
  */
 typedef struct DeviceOrientationData {
-    float scalar = 0;
+    float scalar = 0.0;
 } DeviceOrientationData;
 
 /**
@@ -357,9 +357,9 @@ typedef struct DeviceOrientationData {
  * This sensor measures the angle of rotation of the device around all three physical axes (z, x, y), in rad.
  */
 typedef struct OrientationData {
-    float alpha = 0; /**< The device rotates at an angle around the Z axis. */
-    float beta = 0;  /**< The device rotates at an angle around the X axis. */
-    float gamma = 0; /**< The device rotates at an angle around the Y axis. */
+    float alpha = 0.0; /**< The device rotates at an angle around the Z axis. */
+    float beta = 0.0;  /**< The device rotates at an angle around the X axis. */
+    float gamma = 0.0; /**< The device rotates at an angle around the Y axis. */
 } OrientationData;
 
 /**
@@ -368,10 +368,10 @@ typedef struct OrientationData {
  * It is synthesized by the acceleration sensor and gyroscope sensor.
  */
 typedef struct RotationVectorData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float w = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    float w = 0.0;
 } RotationVectorData;
 
 /**
@@ -380,10 +380,10 @@ typedef struct RotationVectorData {
  * It is synthesized by the acceleration sensor and gyroscope sensor.
  */
 typedef struct GameRotationVectorData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float w = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    float w = 0.0;
 } GameRotationVectorData;
 
 /**
@@ -392,10 +392,10 @@ typedef struct GameRotationVectorData {
  * It is synthesized by the acceleration sensor and magnetic field sensor.
  */
 typedef struct GeomagneticRotaVectorData {
-    float x = 0;
-    float y = 0;
-    float z = 0;
-    float w = 0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+    float w = 0.0;
 } GeomagneticRotaVectorData;
 
 /**
@@ -404,7 +404,7 @@ typedef struct GeomagneticRotaVectorData {
  * where 0 indicates proximity and 1 indicates distance.
  */
 typedef struct ProximityData {
-    float distance = 0;
+    float distance = 0.0;
 } ProximityData;
 
 /**
@@ -412,7 +412,7 @@ typedef struct ProximityData {
  * This sensor measures the intensity of light around the device, in lux.
  */
 typedef struct AmbientLightData {
-    float intensity = 0;
+    float intensity = 0.0;
 } AmbientLightData;
 
 /**
@@ -421,7 +421,7 @@ typedef struct AmbientLightData {
  * The value <b>1</b> means that there is magnet attraction, and <b>0</b> means the opposite.
  */
 typedef struct HallData {
-    float status = 0;
+    float status = 0.0;
 } HallData;
 
 /**
@@ -429,7 +429,7 @@ typedef struct HallData {
  * This sensor measures a user's heart rate, in bpm.
  */
 typedef struct HeartRateData {
-    float heartRate = 0;
+    float heartRate = 0.0;
 } HeartRateData;
 
 /**
@@ -438,7 +438,7 @@ typedef struct HeartRateData {
  * The value <b>1</b> means that the user is wearing a wearable device, and <b>0</b> means the opposite.
  */
 typedef struct WearDetectionData {
-    float value = 0;
+    float value = 0.0;
 } WearDetectionData;
 
 /**
@@ -446,8 +446,8 @@ typedef struct WearDetectionData {
  * This sensor is used to measure the luminous intensity (in lux) and color temperature (in Kelvin).
  */
 typedef struct ColorData {
-    float lightIntensity = 0;
-    float colorTemperature = 0;
+    float lightIntensity = 0.0;
+    float colorTemperature = 0.0;
 } ColorData;
 
 /**
@@ -455,7 +455,7 @@ typedef struct ColorData {
  * This sensor measures the SAR, in W/kg.
  */
 typedef struct SarData {
-    float absorptionRatio = 0;
+    float absorptionRatio = 0.0;
 } SarData;
 
 /**
@@ -463,13 +463,13 @@ typedef struct SarData {
  * This sensor measures the angle between two screens, in degrees. The angle ranges from 0 to 180.
  */
 typedef struct PostureData {
-    float gxm = 0; /**< The main screen acceleration on the x axis */
-    float gym = 0; /**< The main screen acceleration on the y axis */
-    float gzm = 0; /**< The main screen acceleration on the z axis */
-    float gxs = 0; /**< The second screen acceleration on the x axis */
-    float gys = 0; /**< The second screen acceleration on the y axis */
-    float gzs = 0; /**< The second screen acceleration on the z axis */
-    float angle = 0; /**< The angle between two screens. The angle ranges from 0 to 180 degrees. */
+    float gxm = 0.0; /**< The main screen acceleration on the x axis */
+    float gym = 0.0; /**< The main screen acceleration on the y axis */
+    float gzm = 0.0; /**< The main screen acceleration on the z axis */
+    float gxs = 0.0; /**< The second screen acceleration on the x axis */
+    float gys = 0.0; /**< The second screen acceleration on the y axis */
+    float gzs = 0.0; /**< The second screen acceleration on the z axis */
+    float angle = 0.0; /**< The angle between two screens. The angle ranges from 0 to 180 degrees. */
 } PostureData;
 
 typedef struct SensorActiveInfo {
