@@ -62,7 +62,7 @@ SensorEvent g_sarEvent = {
 SensorEvent g_headPostureEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_HEADPOSTURE,
     .option = 3,
-    .dataLen = 12
+    .dataLen = 16
 };
 }
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -152,10 +152,10 @@ void HdiServiceImpl::GenerateHeadPostureEvent()
             break;
         }
     }
-    g_headPostureData[0] = static_cast<float>(sqrt(num1));
-    g_headPostureData[1] = static_cast<float>(sqrt(num2 - num1));
-    g_headPostureData[2] = static_cast<float>(sqrt(num3 - num2));
-    g_headPostureData[3] = static_cast<float>(sqrt(1.0 - num3));
+    g_headPostureData[0] = static_cast<float>(sqrt(nums[0]));
+    g_headPostureData[1] = static_cast<float>(sqrt(nums[1] - nums[0]));
+    g_headPostureData[2] = static_cast<float>(sqrt(nums[2] - nums[1]));
+    g_headPostureData[3] = static_cast<float>(sqrt(1.0 - nums[2]));
     g_headPostureEvent.data = reinterpret_cast<uint8_t *>(g_headPostureData);
 }
 

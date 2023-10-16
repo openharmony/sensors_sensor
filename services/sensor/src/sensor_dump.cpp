@@ -288,6 +288,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_COLOR:
             return TWO_DIMENSION;
         case SENSOR_TYPE_ID_ROTATION_VECTOR:
+        case SENSOR_TYPE_ID_HEADPOSTURE
             return VECTOR_DIMENSION;
         case SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED:
         case SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED:
