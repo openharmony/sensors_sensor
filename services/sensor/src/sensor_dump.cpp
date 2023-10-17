@@ -79,6 +79,7 @@ std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_COLOR, "COLOR" },
     { SENSOR_TYPE_ID_SAR, "SAR" },
     { SENSOR_TYPE_ID_POSTURE, "POSTURE" },
+    { SENSOR_TYPE_ID_HEADPOSTURE, "HEAD POSTURE" },
 };
 
 void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
@@ -289,6 +290,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_COLOR:
             return TWO_DIMENSION;
         case SENSOR_TYPE_ID_ROTATION_VECTOR:
+        case SENSOR_TYPE_ID_HEADPOSTURE:
             return VECTOR_DIMENSION;
         case SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED:
         case SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED:

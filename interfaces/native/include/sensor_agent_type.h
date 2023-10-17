@@ -92,6 +92,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_PEDOMETER_DETECTION = 265,   /**< Pedometer detection sensor */
     SENSOR_TYPE_ID_PEDOMETER = 266,             /**< Pedometer sensor */
     SENSOR_TYPE_ID_POSTURE = 267,               /**< Posture sensor */
+    SENSOR_TYPE_ID_HEADPOSTURE = 268,           /**< Head posture sensor */
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR = 277,  /**< Geomagnetic rotation vector sensor */
     SENSOR_TYPE_ID_HEART_RATE = 278,            /**< Heart rate sensor */
     SENSOR_TYPE_ID_DEVICE_ORIENTATION = 279,    /**< Device orientation sensor */
@@ -472,6 +473,17 @@ typedef struct PostureData {
     float gzs = 0.0; /**< The second screen acceleration on the z axis */
     float angle = 0.0; /**< The angle between two screens. The angle ranges from 0 to 180 degrees. */
 } PostureData;
+
+/**
+ * @brief Defines the struct of the data reported by the head posture sensor.
+ * This sensor measures the head posture of user.
+ */
+typedef struct HeadPostureData {
+    float w = 0.0;
+    float x = 0.0;
+    float y = 0.0;
+    float z = 0.0;
+} HeadPostureData;
 
 typedef struct SensorActiveInfo {
     int32_t pid = -1;        /**< PID */
