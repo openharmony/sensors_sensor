@@ -105,6 +105,7 @@ bool SensorServiceClient::IsValid(int32_t sensorId)
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return false;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorList_.empty()) {
         SEN_HILOGE("sensorList_ cannot be empty");
         return false;
@@ -125,6 +126,7 @@ int32_t SensorServiceClient::EnableSensor(int32_t sensorId, int64_t samplingPeri
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
@@ -143,6 +145,7 @@ int32_t SensorServiceClient::DisableSensor(int32_t sensorId)
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     ret = sensorServer_->DisableSensor(sensorId);
@@ -161,6 +164,7 @@ std::vector<Sensor> SensorServiceClient::GetSensorList()
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return {};
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorList_.empty()) {
         SEN_HILOGE("sensorList_ cannot be empty");
     }
@@ -170,14 +174,20 @@ std::vector<Sensor> SensorServiceClient::GetSensorList()
 int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel)
 {
     CALL_LOG_ENTER;
-    dataChannel_ = sensorDataChannel;
+    CHKPR(sensorDataChannel, INVALID_POINTER);
+    {
+        std::lock_guard<std::mutex> channelLock(channelMutex_);
+        dataChannel_ = sensorDataChannel;
+    }
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "TransferDataChannel");
+    CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->TransferDataChannel(sensorDataChannel, remoteObject);
@@ -193,8 +203,10 @@ int32_t SensorServiceClient::DestroyDataChannel()
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "DestroyDataChannel");
+    CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->DestroySensorChannel(remoteObject);
@@ -205,32 +217,47 @@ int32_t SensorServiceClient::DestroyDataChannel()
 void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
     CALL_LOG_ENTER;
-    (void)object;
-    CHKPV(dataChannel_);
-    // STEP1 : Destroy previous data channel
-    dataChannel_->DestroySensorDataChannel();
-    // STEP2 : Restore data channel
-    dataChannel_->RestoreSensorDataChannel();
-    // STEP3 : Clear sensorlist and sensorServer_
-    sensorList_.clear();
-    sensorServer_ = nullptr;
-    // STEP4 : ReGet sensors  3601 service
-    int32_t ret = InitServiceClient();
-    if (ret != ERR_OK) {
-        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
-        dataChannel_->DestroySensorDataChannel();
-        return;
+    {
+        std::lock_guard<std::mutex> channelLock(channelMutex_);
+        if (dataChannel_ == nullptr) {
+            SEN_HILOGI("dataChannel_ is nullptr");
+            {
+                std::lock_guard<std::mutex> clientLock(clientMutex_);
+                sensorList_.clear();
+                sensorServer_ = nullptr;
+            }
+            if (InitServiceClient() != ERR_OK) {
+                SEN_HILOGE("InitServiceClient failed");
+                return;
+            }
+        } else {
+            SEN_HILOGI("dataChannel_ is not nullptr");
+            dataChannel_->DestroySensorDataChannel();
+            dataChannel_->RestoreSensorDataChannel();
+            {
+                std::lock_guard<std::mutex> clientLock(clientMutex_);
+                sensorList_.clear();
+                sensorServer_ = nullptr;
+            }
+            if (InitServiceClient() != ERR_OK) {
+                SEN_HILOGE("InitServiceClient failed");
+                dataChannel_->DestroySensorDataChannel();
+                return;
+            }
+            if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
+                auto remoteObject = sensorClientStub_->AsObject();
+                if (remoteObject != nullptr) {
+                    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
+                }
+            }
+        }
     }
-    // STEP5 : Retransfer new channel to sensors
-    auto remoteObject = sensorClientStub_->AsObject();
-    CHKPV(remoteObject);
-    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
-    // STEP6 : Restore Sensor status
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {
-        sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+        if (sensorServer_ != nullptr) {
+            sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+        }
     }
-
     if (!isConnected_) {
         SEN_HILOGD("Previous socket channel status is false, not need retry creat socket channel");
         return;
@@ -242,11 +269,11 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
 void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> mapLock(mapMutex_);
     SensorBasicInfo sensorInfo;
     sensorInfo.SetSamplingPeriodNs(samplingPeriod);
     sensorInfo.SetMaxReportDelayNs(maxReportDelay);
     sensorInfo.SetSensorState(true);
+    std::lock_guard<std::mutex> mapLock(mapMutex_);
     sensorInfoMap_[sensorId] = sensorInfo;
     return;
 }
@@ -270,6 +297,7 @@ int32_t SensorServiceClient::SuspendSensors(int32_t pid)
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "SuspendSensors");
     ret = sensorServer_->SuspendSensors(pid);
@@ -285,12 +313,14 @@ int32_t SensorServiceClient::ResumeSensors(int32_t pid)
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "ResumeSensors");
     ret = sensorServer_->ResumeSensors(pid);
     FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
+
 int32_t SensorServiceClient::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
 {
     CALL_LOG_ENTER;
@@ -299,6 +329,7 @@ int32_t SensorServiceClient::GetActiveInfoList(int32_t pid, std::vector<ActiveIn
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "GetActiveInfoList");
     ret = sensorServer_->GetActiveInfoList(pid, activeInfoList);
@@ -311,7 +342,10 @@ int32_t SensorServiceClient::Register(SensorActiveInfoCB callback, sptr<SensorDa
     CALL_LOG_ENTER;
     if (!isConnected_) {
         CHKPR(sensorDataChannel, INVALID_POINTER);
-        dataChannel_ = sensorDataChannel;
+        {
+            std::lock_guard<std::mutex> channelLock(channelMutex_);
+            dataChannel_ = sensorDataChannel;
+        }
         int32_t ret = CreateSocketChannel();
         if (ret != ERR_OK) {
             SEN_HILOGE("Register sensor active info callback failed, ret:%{public}d", ret);
@@ -338,6 +372,7 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "DisableActiveInfoCB");
     ret = sensorServer_->DisableActiveInfoCB();
@@ -348,6 +383,7 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
     }
     Disconnect();
     StartTrace(HITRACE_TAG_SENSORS, "DestroySocketChannel");
+    CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->DestroySocketChannel(remoteObject);
@@ -368,6 +404,7 @@ int32_t SensorServiceClient::ResetSensors()
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     StartTrace(HITRACE_TAG_SENSORS, "ResetSensors");
     ret = sensorServer_->ResetSensors();
@@ -425,10 +462,14 @@ void SensorServiceClient::Disconnect()
     if (fd < 0) {
         return;
     }
-    CHKPV(dataChannel_);
-    int32_t ret = dataChannel_->DelFdListener(fd);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("Delete fd listener failed, fd:%{public}d, ret:%{public}d", fd, ret);
+    {
+        std::lock_guard<std::mutex> channelLock(channelMutex_);
+        if (dataChannel_ != nullptr) {
+            int32_t ret = dataChannel_->DelFdListener(fd);
+            if (ret != ERR_OK) {
+                SEN_HILOGE("Delete fd listener failed, fd:%{public}d, ret:%{public}d", fd, ret);
+            }
+        }
     }
     Close();
 }
@@ -441,9 +482,11 @@ int32_t SensorServiceClient::CreateSocketChannel()
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
         return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     int32_t clientFd = -1;
     StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
+    CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->CreateSocketChannel(remoteObject, clientFd);
@@ -458,12 +501,15 @@ int32_t SensorServiceClient::CreateSocketChannel()
 #else
     fd_ = clientFd;
 #endif // OHOS_BUILD_ENABLE_RUST
-    if (dataChannel_->AddFdListener(GetFd(),
-        std::bind(&SensorServiceClient::ReceiveMessage, this, std::placeholders::_1, std::placeholders::_2),
-        std::bind(&SensorServiceClient::Disconnect, this)) != ERR_OK) {
-        Close();
-        SEN_HILOGE("Add fd listener failed, fd:%{public}d", GetFd());
-        return ERROR;
+    {
+        std::lock_guard<std::mutex> channelLock(channelMutex_);
+        if (dataChannel_->AddFdListener(GetFd(),
+            std::bind(&SensorServiceClient::ReceiveMessage, this, std::placeholders::_1, std::placeholders::_2),
+            std::bind(&SensorServiceClient::Disconnect, this)) != ERR_OK) {
+            Close();
+            SEN_HILOGE("Add fd listener failed, fd:%{public}d", GetFd());
+            return ERROR;
+        }
     }
     StartTrace(HITRACE_TAG_SENSORS, "EnableActiveInfoCB");
     ret = sensorServer_->EnableActiveInfoCB();

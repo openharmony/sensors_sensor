@@ -44,14 +44,17 @@ float g_colorData[2];
 float g_sarData[1];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
+    .option = 3,
     .dataLen = 12
 };
 SensorEvent g_colorEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_COLOR,
+    .option = 3,
     .dataLen = 8
 };
 SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
+    .option = 3,
     .dataLen = 4
 };
 }

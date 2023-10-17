@@ -56,7 +56,7 @@ inline uint32_t Fft::FastReverseBits(uint32_t pos, uint32_t numBits)
 {
     if (numBits <= MAX_FAST_BITS && numBits >= 1) {
         return fftBitTable_[numBits - 1][pos];
-    } 
+    }
     return ReverseBits(pos, numBits);
 }
 
@@ -87,34 +87,13 @@ int32_t Fft::AlgFFT(bool inverseTransform, FftParaAndResult &paraRes)
         SEN_HILOGE("The parameter is invalid,numSamples:%{public}d", numSamples);
         return Sensors::PARAMETER_ERROR;
     }
-    if (fftBitTable_ == nullptr) {
-        if (AlgInitFFT() != Sensors::SUCCESS) {
-            SEN_HILOGE("fftBitTable_ failed to allocate memory");
-            return Sensors::ERROR;
-        }
-    }
-    double angleNumerator = 2 * M_PI;
-    if (inverseTransform) {
-        angleNumerator = -angleNumerator;
-    }
-    uint32_t numBits = ObtainNumberOfBits(numSamples);
-    if (numBits < 1) {
-        SEN_HILOGE("numBits is an invalid value");
+    if (PreprocessData(numSamples, paraRes) != Sensors::SUCCESS) {
+        SEN_HILOGE("PreprocessData failed");
         return Sensors::ERROR;
     }
-    /*
-     *   Do simultaneous data copy and bit-reversal ordering into outputs...
-     */
-    for (uint32_t i = 0; i < numSamples; ++i) {
-        uint32_t j = FastReverseBits(i, numBits);
-        paraRes.realOut[j] = paraRes.realIn[i];
-        paraRes.imagOut[j] = (paraRes.imagIn.empty()) ? 0.0F : paraRes.imagIn[i];
-    }
-
-    /*
-     *   Do the FFT itself...
-     */
+    // Do the FFT itself...
     int32_t blockEnd = 1;
+    double angleNumerator = inverseTransform ? -(2 * M_PI) : (2 * M_PI);
     for (int32_t blockSize = 2; blockSize <= paraRes.numSamples; blockSize <<= 1) {
         double deltaAngle = angleNumerator / static_cast<double>(blockSize);
         float twoSinMagnitude = sin(-2 * deltaAngle);
@@ -145,16 +124,38 @@ int32_t Fft::AlgFFT(bool inverseTransform, FftParaAndResult &paraRes)
         }
         blockEnd = blockSize;
     }
-
-    /*
-     **   Need to normalize if inverse transform...
-     */
+    // Need to normalize if inverse transform
     if (inverseTransform) {
-        float denom = static_cast<float>(paraRes.numSamples);
-        for (int32_t i = 0; i < paraRes.numSamples; ++i) {
-            paraRes.realOut[i] /= denom;
-            paraRes.imagOut[i] /= denom;
-        }
+        Normalize(paraRes);
+    }
+    return Sensors::SUCCESS;
+}
+
+void Fft::Normalize(FftParaAndResult &paraRes)
+{
+    float denom = static_cast<float>(paraRes.numSamples);
+    for (int32_t i = 0; i < paraRes.numSamples; ++i) {
+        paraRes.realOut[i] /= denom;
+        paraRes.imagOut[i] /= denom;
+    }
+}
+
+int32_t Fft::PreprocessData(uint32_t numSamples, FftParaAndResult &paraRes)
+{
+    if ((fftBitTable_ == nullptr) && (AlgInitFFT() != Sensors::SUCCESS)) {
+        SEN_HILOGE("fftBitTable_ failed to allocate memory");
+        return Sensors::ERROR;
+    }
+    uint32_t numBits = ObtainNumberOfBits(numSamples);
+    if (numBits < 1) {
+        SEN_HILOGE("numBits is an invalid value");
+        return Sensors::ERROR;
+    }
+    // Do simultaneous data copy and bit-reversal ordering into outputs...
+    for (uint32_t i = 0; i < numSamples; ++i) {
+        uint32_t j = FastReverseBits(i, numBits);
+        paraRes.realOut[j] = paraRes.realIn[i];
+        paraRes.imagOut[j] = (paraRes.imagIn.empty()) ? 0.0F : paraRes.imagIn[i];
     }
     return Sensors::SUCCESS;
 }
