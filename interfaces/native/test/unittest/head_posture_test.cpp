@@ -298,7 +298,6 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_018, TestSize.Level1)
         ASSERT_EQ(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user2, 20000000, 20000000), OHOS::Sensors::SUCCESS);
         ASSERT_EQ(ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
         ASSERT_EQ(DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
         ASSERT_EQ(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
     }
