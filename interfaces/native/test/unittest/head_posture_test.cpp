@@ -81,6 +81,10 @@ void HeadPostureDataCallbackImpl(SensorEvent *event)
         return;
     }
     HeadPostureData *headPostureData = reinterpret_cast<HeadPostureData *>(event[0].data);
+    if (headPostureData == nullptr) {
+        SEN_HILOGE("headPostureData is nullptr");
+        return;
+    }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, "
         "w:%{public}f, x:%{public}f, y:%{public}f, z:%{public}f", event[0].sensorTypeId, event[0].version,
         event[0].dataLen, headPostureData->w, headPostureData->x, headPostureData->y, headPostureData->z);
@@ -101,6 +105,10 @@ void HeadPostureDataCallbackImpl2(SensorEvent *event)
         return;
     }
     HeadPostureData *headPostureData = reinterpret_cast<HeadPostureData *>(event[0].data);
+    if (headPostureData == nullptr) {
+        SEN_HILOGE("headPostureData is nullptr");
+        return;
+    }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, "
         "w:%{public}f, x:%{public}f, y:%{public}f, z:%{public}f", event[0].sensorTypeId, event[0].version,
         event[0].dataLen, headPostureData->w, headPostureData->x, headPostureData->y, headPostureData->z);
@@ -110,8 +118,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_001, TestSize.Level1)
 {
     SEN_HILOGI("HeadPostureTest_001 enter");
     if (g_existHeadPosture) {
-        int32_t ret = ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -121,8 +128,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_002, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = ActivateSensor(-1, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(ActivateSensor(-1, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -132,8 +138,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_003, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = nullptr;
-        int32_t ret = ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -141,8 +146,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_004, TestSize.Level1)
 {
     SEN_HILOGI("HeadPostureTest_004 enter");
     if (g_existHeadPosture) {
-        int32_t ret = DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -152,8 +156,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_005, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = DeactivateSensor(-1, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(DeactivateSensor(-1, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -163,8 +166,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_006, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = nullptr;
-        int32_t ret = DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -172,8 +174,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_007, TestSize.Level1)
 {
     SEN_HILOGI("HeadPostureTest_007 enter");
     if (g_existHeadPosture) {
-        int32_t ret = SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, nullptr, 10000000, 10000000);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, nullptr, 10000000, 10000000), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -183,8 +184,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_008, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = SetBatch(-1, &user, 10000000, 10000000);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SetBatch(-1, &user, 10000000, 10000000), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -194,8 +194,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_009, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = nullptr;
-        int32_t ret = SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, 10000000, 10000000);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, 10000000, 10000000), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -205,8 +204,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_010, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, -1, -1);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, -1, -1), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -214,8 +212,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_011, TestSize.Level1)
 {
     SEN_HILOGI("HeadPostureTest_011 enter");
     if (g_existHeadPosture) {
-        int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -225,8 +222,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_012, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = SubscribeSensor(-1, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SubscribeSensor(-1, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -236,8 +232,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_013, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = nullptr;
-        int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -245,8 +240,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_014, TestSize.Level1)
 {
     SEN_HILOGI("HeadPostureTest_014 enter");
     if (g_existHeadPosture) {
-        int32_t ret = UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, nullptr), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -256,8 +250,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_015, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = UnsubscribeSensor(-1, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(UnsubscribeSensor(-1, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -267,8 +260,7 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_016, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = nullptr;
-        int32_t ret = UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_NE(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -278,18 +270,12 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_017, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, 10000000, 10000000);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, 10000000, 10000000), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
     }
 }
 
@@ -299,33 +285,22 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_018, TestSize.Level1)
     if (g_existHeadPosture) {
         SensorUser user;
         user.callback = HeadPostureDataCallbackImpl;
-        int32_t ret = SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, 10000000, 10000000);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user, 10000000, 10000000), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user), OHOS::Sensors::SUCCESS);
 
         SensorUser user2;
         user2.callback = HeadPostureDataCallbackImpl2;
-        ret = SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user2, 20000000, 20000000);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(SubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(SetBatch(SENSOR_TYPE_ID_HEADPOSTURE, &user2, 20000000, 20000000), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(ActivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
-        ret = UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2);
-        ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(DeactivateSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
+        ASSERT_EQ(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
     }
 }
 }  // namespace Sensors

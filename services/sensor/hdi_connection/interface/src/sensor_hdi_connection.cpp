@@ -112,10 +112,7 @@ bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &
 bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
-    if (mockSet_.find(sensorId) == mockSet_.end()) {
-        return false;
-    }
-    return true;
+    return mockSet_.find(sensorId) != mockSet_.end();
 }
 
 Sensor SensorHdiConnection::GenerateColorSensor()
