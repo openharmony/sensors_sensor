@@ -947,6 +947,10 @@ static napi_value GetSensorList(napi_env env, napi_callback_info info)
         asyncCallbackInfo->error.code = ret;
     } else {
         for (int32_t i = 0; i < count; ++i) {
+            if (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) {
+                SEN_HILOGD("This sensor is secondary ambient light");
+                continue;
+            }
             asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
         }
     }
@@ -984,6 +988,10 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
         asyncCallbackInfo->error.code = ret;
     } else {
         for (int32_t i = 0; i < count; ++i) {
+            if (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) {
+                SEN_HILOGD("This sensor is secondary ambient light");
+                continue;
+            }
             if (sensorInfos[i].sensorTypeId == sensorTypeId) {
                 asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
                 break;
