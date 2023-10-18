@@ -128,15 +128,16 @@ ohos_unittest("PostureTest") {
 ohos_unittest("HeadPostureTest") {
   module_out_path = "sensors/sensor/interfaces"
 
-  sources = [ "unittest/head_posture_test.cpp" ]
+  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//head_posture_test.cpp" ]
 
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
-    "$SUBSYSTEM_DIR/interfaces/native/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/interfaces/native:sensor_ndk_target",
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
