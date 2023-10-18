@@ -32,16 +32,18 @@ constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr float TARGET_SUM = 9.8F * 9.8F;
 constexpr float MAX_RANGE = 9999.0F;
 std::vector<SensorInfo> g_sensorInfos = {
-    {"sensor_test", "default", "1.0.0", "1.0.0", 0, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
+    {"sensor_test", "default", "1.0.0", "1.0.0", 1, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
 std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_ACCELEROMETER,
     SENSOR_TYPE_ID_COLOR,
-    SENSOR_TYPE_ID_SAR
+    SENSOR_TYPE_ID_SAR,
+    SENSOR_TYPE_ID_HEADPOSTURE
 };
 float g_accData[3];
 float g_colorData[2];
 float g_sarData[1];
+float g_headPostureData[4];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
     .option = 3,
@@ -56,6 +58,11 @@ SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
     .option = 3,
     .dataLen = 4
+};
+SensorEvent g_headPostureEvent = {
+    .sensorTypeId = SENSOR_TYPE_ID_HEADPOSTURE,
+    .option = 3,
+    .dataLen = 16
 };
 }
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -77,6 +84,9 @@ void HdiServiceImpl::GenerateEvent()
             case SENSOR_TYPE_ID_SAR:
                 GenerateSarEvent();
                 break;
+            case SENSOR_TYPE_ID_HEADPOSTURE:
+                GenerateHeadPostureEvent();
+                break;
             default:
                 SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
                 break;
@@ -88,9 +98,9 @@ void HdiServiceImpl::GenerateAccelerometerEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
-    std::uniform_real_distribution<float> distr(0, TARGET_SUM);
-    float num1 = 0;
-    float num2 = 0;
+    std::uniform_real_distribution<float> distr(0.0, TARGET_SUM);
+    float num1 = 0.0;
+    float num2 = 0.0;
     while (true) {
         num1 = distr(eng);
         num2 = distr(eng);
@@ -111,7 +121,7 @@ void HdiServiceImpl::GenerateColorEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
-    std::uniform_real_distribution<float> distr(0, MAX_RANGE);
+    std::uniform_real_distribution<float> distr(0.0, MAX_RANGE);
     g_colorData[0] = distr(eng);
     g_colorData[1] = distr(eng);
     g_colorEvent.data = reinterpret_cast<uint8_t *>(g_colorData);
@@ -121,9 +131,32 @@ void HdiServiceImpl::GenerateSarEvent()
 {
     std::random_device rd;
     std::default_random_engine eng(rd());
-    std::uniform_real_distribution<float> distr(0, MAX_RANGE);
+    std::uniform_real_distribution<float> distr(0.0, MAX_RANGE);
     g_sarData[0] = distr(eng);
     g_sarEvent.data = reinterpret_cast<uint8_t *>(g_sarData);
+}
+
+void HdiServiceImpl::GenerateHeadPostureEvent()
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0.0, 1.0);
+    std::vector<float> nums(3);
+    while (true) {
+        nums[0] = distr(eng);
+        nums[1] = distr(eng);
+        nums[2] = distr(eng);
+        sort(nums.begin(), nums.end());
+        if ((std::fabs(nums[1] - nums[0]) > std::numeric_limits<float>::epsilon()) &&
+            (std::fabs(nums[2] - nums[1]) > std::numeric_limits<float>::epsilon())) {
+            break;
+        }
+    }
+    g_headPostureData[0] = static_cast<float>(sqrt(nums[0]));
+    g_headPostureData[1] = static_cast<float>(sqrt(nums[1] - nums[0]));
+    g_headPostureData[2] = static_cast<float>(sqrt(nums[2] - nums[1]));
+    g_headPostureData[3] = static_cast<float>(sqrt(1.0 - nums[2]));
+    g_headPostureEvent.data = reinterpret_cast<uint8_t *>(g_headPostureData);
 }
 
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
@@ -154,6 +187,9 @@ void HdiServiceImpl::DataReportThread()
                         break;
                     case SENSOR_TYPE_ID_SAR:
                         it(&g_sarEvent);
+                        break;
+                    case SENSOR_TYPE_ID_HEADPOSTURE:
+                        it(&g_headPostureEvent);
                         break;
                     default:
                         SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);

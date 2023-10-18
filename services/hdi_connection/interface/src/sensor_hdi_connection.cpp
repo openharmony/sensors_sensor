@@ -30,7 +30,11 @@ constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
 const std::string VERSION_NAME = "1.0.1";
-std::unordered_set<int32_t> g_targetSensors = { SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR };
+std::unordered_set<int32_t> g_supportMockSensors = {
+    SENSOR_TYPE_ID_COLOR,
+    SENSOR_TYPE_ID_SAR,
+    SENSOR_TYPE_ID_HEADPOSTURE
+};
 }
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -45,12 +49,15 @@ int32_t SensorHdiConnection::ConnectHdi()
             SEN_HILOGE("Connect compatible connection failed, ret:%{public}d", ret);
             return ret;
         }
+        hdiConnectionStatus_ = false;
+    } else {
+        hdiConnectionStatus_ = true;
     }
-    if (!FindTargetSensors(g_targetSensors)) {
-        SEN_HILOGD("SensorList not contain target sensors, connect target sensors compatible connection");
+    if (hdiConnectionStatus_ && !FindAllInSensorSet(g_supportMockSensors)) {
+        SEN_HILOGD("SensorList not contain all mock sensors, connect mock sensors compatible connection");
         ret = ConnectCompatibleHdi();
         if (ret != ERR_OK) {
-            SEN_HILOGE("Connect target sensors compatible connection failed, ret:%{public}d", ret);
+            SEN_HILOGE("Connect mock sensors compatible connection failed, ret:%{public}d", ret);
         }
         return ret;
     }
@@ -60,14 +67,18 @@ int32_t SensorHdiConnection::ConnectHdi()
 int32_t SensorHdiConnection::ConnectHdiService()
 {
     int32_t ret = iSensorHdiConnection_->ConnectHdi();
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGE("Connect hdi service failed");
         return CONNECT_SENSOR_HDF_ERR;
     }
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     ret = iSensorHdiConnection_->GetSensorList(sensorList_);
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGE("Get sensor list failed");
         return GET_SENSOR_LIST_ERR;
+    }
+    for (const auto &sensor : sensorList_) {
+        sensorSet_.insert(sensor.GetSensorId());
     }
     return ERR_OK;
 }
@@ -85,33 +96,27 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     return ERR_OK;
 }
 
-bool SensorHdiConnection::FindTargetSensors(const std::unordered_set<int32_t> &targetSensors)
+bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &sensors)
 {
-    std::unordered_set<int32_t> sensorSet;
-    for (const auto &sensor : sensorList_) {
-        sensorSet.insert(sensor.GetSensorId());
-    }
-    for (const auto &sensorId : targetSensors) {
-        if (sensorSet.find(sensorId) == sensorSet.end()) {
-            return false;
+    int32_t count = 0;
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    for (const auto &sensorId : sensors) {
+        if (sensorSet_.find(sensorId) == sensorSet_.end()) {
+            mockSet_.insert(sensorId);
+            count++;
         }
     }
-    existTargetSensors_ = true;
-    return true;
+    return count == 0 ? true : false;
 }
 
-bool SensorHdiConnection::CheckTargetSensors() const
+bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
 {
-    return existTargetSensors_;
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    return mockSet_.find(sensorId) != mockSet_.end();
 }
 
-int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
+Sensor SensorHdiConnection::GenerateColorSensor()
 {
-    CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
-    sensorList.assign(sensorList_.begin(), sensorList_.end());
-    if (CheckTargetSensors()) {
-        return ERR_OK;
-    }
     Sensor sensorColor;
     sensorColor.SetSensorId(SENSOR_TYPE_ID_COLOR);
     sensorColor.SetSensorTypeId(SENSOR_TYPE_ID_COLOR);
@@ -124,7 +129,11 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     sensorColor.SetPower(POWER);
     sensorColor.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorColor.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
-    sensorList.push_back(sensorColor);
+    return sensorColor;
+}
+
+Sensor SensorHdiConnection::GenerateSarSensor()
+{
     Sensor sensorSar;
     sensorSar.SetSensorId(SENSOR_TYPE_ID_SAR);
     sensorSar.SetSensorTypeId(SENSOR_TYPE_ID_SAR);
@@ -137,7 +146,49 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     sensorSar.SetPower(POWER);
     sensorSar.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorSar.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
-    sensorList.push_back(sensorSar);
+    return sensorSar;
+}
+
+Sensor SensorHdiConnection::GenerateHeadPostureSensor()
+{
+    Sensor sensorHeadPosture;
+    sensorHeadPosture.SetSensorId(SENSOR_TYPE_ID_HEADPOSTURE);
+    sensorHeadPosture.SetSensorTypeId(SENSOR_TYPE_ID_HEADPOSTURE);
+    sensorHeadPosture.SetFirmwareVersion(VERSION_NAME);
+    sensorHeadPosture.SetHardwareVersion(VERSION_NAME);
+    sensorHeadPosture.SetMaxRange(MAX_RANGE);
+    sensorHeadPosture.SetSensorName("sensor_headPosture");
+    sensorHeadPosture.SetVendorName("default_headPosture");
+    sensorHeadPosture.SetResolution(RESOLITION);
+    sensorHeadPosture.SetPower(POWER);
+    sensorHeadPosture.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
+    sensorHeadPosture.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
+    return sensorHeadPosture;
+}
+
+int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
+{
+    CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    sensorList.assign(sensorList_.begin(), sensorList_.end());
+    if (!hdiConnectionStatus_) {
+        return ERR_OK;
+    }
+    for (const auto &sensorId : mockSet_) {
+        switch (sensorId) {
+            case SENSOR_TYPE_ID_COLOR:
+                sensorList.push_back(GenerateColorSensor());
+                break;
+            case SENSOR_TYPE_ID_SAR:
+                sensorList.push_back(GenerateSarSensor());
+                break;
+            case SENSOR_TYPE_ID_HEADPOSTURE:
+                sensorList.push_back(GenerateHeadPostureSensor());
+                break;
+            default:
+                break;
+        }
+    }
     return ERR_OK;
 }
 
@@ -145,7 +196,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     int32_t ret = ENABLE_SENSOR_ERR;
-    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
+    if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -158,7 +209,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
     CHKPR(iSensorHdiConnection_, ENABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->EnableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGI("Enable sensor failed, sensorId:%{public}d", sensorId);
         return ENABLE_SENSOR_ERR;
     }
@@ -169,7 +220,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     int32_t ret = DISABLE_SENSOR_ERR;
-    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
+    if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -182,7 +233,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
     CHKPR(iSensorHdiConnection_, DISABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->DisableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGI("Disable sensor failed, sensorId:%{public}d", sensorId);
         return DISABLE_SENSOR_ERR;
     }
@@ -193,7 +244,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
     int32_t ret = SET_SENSOR_CONFIG_ERR;
-    if (!CheckTargetSensors() && g_targetSensors.find(sensorId) != g_targetSensors.end()) {
+    if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
         ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -206,7 +257,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
     CHKPR(iSensorHdiConnection_, SET_SENSOR_CONFIG_ERR);
     ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
     FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGI("Set batch failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_CONFIG_ERR;
     }
@@ -216,10 +267,21 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     StartTrace(HITRACE_TAG_SENSORS, "SetMode");
+    int32_t ret = SET_SENSOR_MODE_ERR;
+    if (FindOneInMockSet(sensorId)) {
+        CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_MODE_ERR);
+        ret = iSensorCompatibleHdiConnection_->SetMode(sensorId, mode);
+        FinishTrace(HITRACE_TAG_SENSORS);
+        if (ret != ERR_OK) {
+            SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
+            return SET_SENSOR_MODE_ERR;
+        }
+        return ret;
+    }
     CHKPR(iSensorHdiConnection_, SET_SENSOR_MODE_ERR);
-    int32_t ret = iSensorHdiConnection_->SetMode(sensorId, mode);
+    ret = iSensorHdiConnection_->SetMode(sensorId, mode);
     FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_MODE_ERR;
     }
@@ -231,16 +293,18 @@ int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportData
     StartTrace(HITRACE_TAG_SENSORS, "RegisterDataReport");
     CHKPR(iSensorHdiConnection_, REGIST_CALLBACK_ERR);
     int32_t ret = iSensorHdiConnection_->RegisterDataReport(cb, reportDataCallback);
-    CHKPR(iSensorCompatibleHdiConnection_, REGIST_CALLBACK_ERR);
-    int32_t compatibleRet = iSensorCompatibleHdiConnection_->RegisterDataReport(cb, reportDataCallback);
-    if (compatibleRet != ERR_OK) {
-        SEN_HILOGE("Registe dataReport failed in compatible");
-    }
-    FinishTrace(HITRACE_TAG_SENSORS);
-    if (ret != 0) {
-        SEN_HILOGI("Registe dataReport failed");
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Registe dataReport failed");
         return REGIST_CALLBACK_ERR;
     }
+    if (iSensorCompatibleHdiConnection_ != nullptr) {
+        ret = iSensorCompatibleHdiConnection_->RegisterDataReport(cb, reportDataCallback);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Registe dataReport failed in compatible");
+            return REGIST_CALLBACK_ERR;
+        }
+    }
+    FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
 
@@ -248,14 +312,16 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
 {
     CHKPR(iSensorHdiConnection_, DEVICE_ERR);
     int32_t ret = iSensorHdiConnection_->DestroyHdiConnection();
-    if (ret != 0) {
-        SEN_HILOGI("Destroy hdi connection failed");
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Destroy hdi connection failed");
         return DEVICE_ERR;
     }
-    CHKPR(iSensorCompatibleHdiConnection_, DEVICE_ERR);
-    int32_t compatibleRet = iSensorCompatibleHdiConnection_->DestroyHdiConnection();
-    if (compatibleRet != ERR_OK) {
-        SEN_HILOGE("Destroy hdi connection failed in compatible");
+    if (iSensorCompatibleHdiConnection_ != nullptr) {
+        ret = iSensorCompatibleHdiConnection_->DestroyHdiConnection();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Destroy hdi connection failed in compatible");
+        }
+        return DEVICE_ERR;
     }
     return ret;
 }

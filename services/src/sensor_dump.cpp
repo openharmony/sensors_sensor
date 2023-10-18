@@ -72,12 +72,14 @@ std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR, "GEOMAGNETIC ROTATION VECTOR" },
     { SENSOR_TYPE_ID_PROXIMITY, "PROXIMITY" },
     { SENSOR_TYPE_ID_AMBIENT_LIGHT, "AMBIENT LIGHT" },
+    { SENSOR_TYPE_ID_AMBIENT_LIGHT1, "SECONDARY AMBIENT LIGHT" },
     { SENSOR_TYPE_ID_HALL, "HALL" },
     { SENSOR_TYPE_ID_HEART_RATE, "HEART RATE" },
     { SENSOR_TYPE_ID_WEAR_DETECTION, "WEAR DETECTION" },
     { SENSOR_TYPE_ID_COLOR, "COLOR" },
     { SENSOR_TYPE_ID_SAR, "SAR" },
     { SENSOR_TYPE_ID_POSTURE, "POSTURE" },
+    { SENSOR_TYPE_ID_HEADPOSTURE, "HEAD POSTURE" },
 };
 
 void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
@@ -271,6 +273,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
 {
     switch (sensorId) {
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
+        case SENSOR_TYPE_ID_AMBIENT_LIGHT1:
         case SENSOR_TYPE_ID_BAROMETER:
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_TEMPERATURE:
@@ -287,6 +290,7 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_COLOR:
             return TWO_DIMENSION;
         case SENSOR_TYPE_ID_ROTATION_VECTOR:
+        case SENSOR_TYPE_ID_HEADPOSTURE:
             return VECTOR_DIMENSION;
         case SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED:
         case SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED:
