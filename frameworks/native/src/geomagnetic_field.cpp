@@ -96,14 +96,14 @@ constexpr float DELTA_GAUSS_COEFFICIENT_H[13][13] = {
     {0.0f, 0.0f, 0.0f, -0.1f, 0.1f, 0.0f, 0.0f, 0.0f, 0.1f, 0.0f, 0.0f, 0.0f, -0.1f}
 };
 constexpr int32_t GAUSSIAN_COEFFICIENT_DIMENSION = 13;
-std::mutex mutex_;
+std::mutex g_mutex;
 
-float northComponent;
-float eastComponent;
-float downComponent;
-float geocentricLatitude;
-float geocentricLongitude;
-float geocentricRadius;
+float g_northComponent;
+float g_eastComponent;
+float g_downComponent;
+float g_geocentricLatitude;
+float g_geocentricLongitude;
+float g_geocentricRadius;
 
 std::vector<std::vector<float>> schmidtQuasiNormalFactors;
 std::vector<std::vector<float>> polynomials(GAUSSIAN_COEFFICIENT_DIMENSION);
@@ -115,13 +115,13 @@ std::vector<float> cosMLongitude(GAUSSIAN_COEFFICIENT_DIMENSION);
 
 GeomagneticField::GeomagneticField(float latitude, float longitude, float altitude, int64_t timeMillis)
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
     schmidtQuasiNormalFactors = GetSchmidtQuasiNormalFactors(GAUSSIAN_COEFFICIENT_DIMENSION);
     float gcLatitude = fmax(LATITUDE_MIN + PRECISION, fmin(LATITUDE_MAX - PRECISION, latitude));
     CalibrateGeocentricCoordinates(gcLatitude, longitude, altitude);
-    InitLegendreTable(GAUSSIAN_COEFFICIENT_DIMENSION - 1, static_cast<float>(M_PI / 2.0 - geocentricLatitude));
+    InitLegendreTable(GAUSSIAN_COEFFICIENT_DIMENSION - 1, static_cast<float>(M_PI / 2.0 - g_geocentricLatitude));
     GetRelativeRadiusPower();
-    double latDiffRad = ToRadians(gcLatitude) - geocentricLatitude;
+    double latDiffRad = ToRadians(gcLatitude) - g_geocentricLatitude;
     CalculateGeomagneticComponent(latDiffRad, timeMillis);
 }
 
@@ -146,8 +146,8 @@ std::vector<std::vector<float>> GeomagneticField::GetSchmidtQuasiNormalFactors(i
 void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t timeMillis)
 {
     float yearsSinceBase = (timeMillis - WMM_BASE_TIME) / (365.0f * 24.0f * 60.0f * 60.0f * 1000.0f);
-    float inverseCosLatitude = IsEqual(static_cast<float>(cos(geocentricLatitude)), 0.0f) ?
-        std::numeric_limits<float>::max() : DERIVATIVE_FACTOR / static_cast<float>(cos(geocentricLatitude));
+    float inverseCosLatitude = IsEqual(static_cast<float>(cos(g_geocentricLatitude)), 0.0f) ?
+        std::numeric_limits<float>::max() : DERIVATIVE_FACTOR / static_cast<float>(cos(g_geocentricLatitude));
     GetLongitudeTrigonometric();
     float gcX = 0.0f;
     float gcY = 0.0f;
@@ -172,9 +172,9 @@ void GeomagneticField::CalculateGeomagneticComponent(double latDiffRad, int64_t 
                 * polynomials[row][column]
                 * schmidtQuasiNormalFactors[row][column];
         }
-        northComponent = static_cast<float>(gcX * cos(latDiffRad) + gcZ * sin(latDiffRad));
-        eastComponent = gcY;
-        downComponent = static_cast<float>(-gcX * sin(latDiffRad) + gcZ * cos(latDiffRad));
+        g_northComponent = static_cast<float>(gcX * cos(latDiffRad) + gcZ * sin(latDiffRad));
+        g_eastComponent = gcY;
+        g_downComponent = static_cast<float>(-gcX * sin(latDiffRad) + gcZ * cos(latDiffRad));
     }
 }
 
@@ -182,8 +182,8 @@ void GeomagneticField::GetLongitudeTrigonometric()
 {
     sinMLongitude[0] = 0.0f;
     cosMLongitude[0] = 1.0f;
-    sinMLongitude[1] = static_cast<float>(sin(geocentricLongitude));
-    cosMLongitude[1] = static_cast<float>(cos(geocentricLongitude));
+    sinMLongitude[1] = static_cast<float>(sin(g_geocentricLongitude));
+    cosMLongitude[1] = static_cast<float>(cos(g_geocentricLongitude));
     for (uint32_t index = 2; index < GAUSSIAN_COEFFICIENT_DIMENSION; ++index) {
         uint32_t x = index >> 1;
         sinMLongitude[index] = (sinMLongitude[index - x] * cosMLongitude[x]
@@ -196,8 +196,8 @@ void GeomagneticField::GetLongitudeTrigonometric()
 void GeomagneticField::GetRelativeRadiusPower()
 {
     relativeRadiusPower[0] = 1.0f;
-    relativeRadiusPower[1] = IsEqual(geocentricRadius, 0.0f) ? std::numeric_limits<float>::max() :
-        EARTH_REFERENCE_RADIUS / geocentricRadius;
+    relativeRadiusPower[1] = IsEqual(g_geocentricRadius, 0.0f) ? std::numeric_limits<float>::max() :
+        EARTH_REFERENCE_RADIUS / g_geocentricRadius;
     for (int32_t index = 2; index < static_cast<int32_t>(relativeRadiusPower.size()); ++index) {
         relativeRadiusPower[index] = relativeRadiusPower[index - 1] * relativeRadiusPower[1];
     }
@@ -213,13 +213,13 @@ void GeomagneticField::CalibrateGeocentricCoordinates(float latitude, float long
     float slat = static_cast<float>(sin(gdLatRad));
     float tlat = IsEqual(clat, 0.0f) ? std::numeric_limits<float>::max() : slat / clat;
     float latRad = static_cast<float>(sqrt(a2 * clat * clat + b2 * slat * slat));
-    geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
+    g_geocentricLatitude = static_cast<float>(atan(tlat * (latRad * altitudeKm + b2)
         / (latRad * altitudeKm + a2)));
-    geocentricLongitude = static_cast<float>(ToRadians(longitude));
+    g_geocentricLongitude = static_cast<float>(ToRadians(longitude));
     float radSq = altitudeKm * altitudeKm + 2 * altitudeKm
         * latRad + (a2 * a2 * clat * clat + b2 * b2 * slat * slat)
         / (a2 * clat * clat + b2 * slat * slat);
-    geocentricRadius = static_cast<float>(sqrt(radSq));
+    g_geocentricRadius = static_cast<float>(sqrt(radSq));
 }
 
 void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad)
@@ -257,27 +257,27 @@ void GeomagneticField::InitLegendreTable(int32_t expansionDegree, float thetaRad
 
 float GeomagneticField::ObtainX()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    return northComponent;
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    return g_northComponent;
 }
 
 float GeomagneticField::ObtainY()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    return eastComponent;
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    return g_eastComponent;
 }
 
 float GeomagneticField::ObtainZ()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    return downComponent;
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    return g_downComponent;
 }
 
 float GeomagneticField::ObtainGeomagneticDip()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    float horizontalIntensity = hypot(northComponent, eastComponent);
-    return static_cast<float>(ToDegrees(atan2(downComponent, horizontalIntensity)));
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    float horizontalIntensity = hypot(g_northComponent, g_eastComponent);
+    return static_cast<float>(ToDegrees(atan2(g_downComponent, horizontalIntensity)));
 }
 
 double GeomagneticField::ToDegrees(double angrad)
@@ -292,22 +292,22 @@ double GeomagneticField::ToRadians(double angdeg)
 
 float GeomagneticField::ObtainDeflectionAngle()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    return static_cast<float>(ToDegrees(atan2(eastComponent, northComponent)));
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    return static_cast<float>(ToDegrees(atan2(g_eastComponent, g_northComponent)));
 }
 
 float GeomagneticField::ObtainLevelIntensity()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    float horizontalIntensity = hypot(northComponent, eastComponent);
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    float horizontalIntensity = hypot(g_northComponent, g_eastComponent);
     return horizontalIntensity;
 }
 
 float GeomagneticField::ObtainTotalIntensity()
 {
-    std::lock_guard<std::mutex> geomagneticLock(mutex_);
-    float sumOfSquares = northComponent * northComponent + eastComponent * eastComponent
-        + downComponent * downComponent;
+    std::lock_guard<std::mutex> geomagneticLock(g_mutex);
+    float sumOfSquares = g_northComponent * g_northComponent + g_eastComponent * g_eastComponent
+        + g_downComponent * g_downComponent;
     float totalIntensity = static_cast<float>(sqrt(sumOfSquares));
     return totalIntensity;
 }

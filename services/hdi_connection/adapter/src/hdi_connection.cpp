@@ -35,7 +35,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 sptr<ISensorInterface> sensorInterface_ = nullptr;
 sptr<ISensorCallback> eventCallback_ = nullptr;
 std::map<int32_t, SensorBasicInfo> sensorBasicInfoMap_;
-std::mutex sensorBasicInfoMutex_;
+std::mutex g_sensorBasicInfoMutex;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 5;
 constexpr uint32_t WAIT_MS = 200;
 }  // namespace
@@ -208,7 +208,7 @@ sptr<ReportDataCallback> HdiConnection::GetReportDataCallback()
 
 void HdiConnection::UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
+    std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     SensorBasicInfo sensorBasicInfo;
     sensorBasicInfo.SetSamplingPeriodNs(samplingPeriodNs);
     sensorBasicInfo.SetMaxReportDelayNs(maxReportDelayNs);
@@ -217,7 +217,7 @@ void HdiConnection::UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
 
 void HdiConnection::SetSensorBasicInfoState(int32_t sensorId, bool state)
 {
-    std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
+    std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = sensorBasicInfoMap_.find(sensorId);
     if (it == sensorBasicInfoMap_.end()) {
         SEN_HILOGW("Should set batch first");
@@ -228,7 +228,7 @@ void HdiConnection::SetSensorBasicInfoState(int32_t sensorId, bool state)
 
 void HdiConnection::DeleteSensorBasicInfoState(int32_t sensorId)
 {
-    std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
+    std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = sensorBasicInfoMap_.find(sensorId);
     if (it != sensorBasicInfoMap_.end()) {
         sensorBasicInfoMap_.erase(sensorId);
@@ -284,7 +284,7 @@ void HdiConnection::Reconnect()
         SEN_HILOGE("Get sensor list fail");
         return;
     }
-    std::lock_guard<std::mutex> sensorInfoLock(sensorBasicInfoMutex_);
+    std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     for (const auto &sensorInfo: sensorBasicInfoMap_) {
         int32_t sensorTypeId = sensorInfo.first;
         SensorBasicInfo info = sensorInfo.second;

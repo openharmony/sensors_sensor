@@ -389,9 +389,9 @@ HWTEST_F(SensorAgentTest, GetProcCpuUsageTest_001, TestSize.Level1)
 {
     SEN_HILOGI("GetProcCpuUsageTest_001 in");
     SYSTEM_INFO::CpuInfo cpuInfo;
-    const std::string process_name = "sensors";
-    auto usage = cpuInfo.GetProcCpuUsage(process_name);
-    SEN_HILOGD("The CPU usage of the %{public}s process is %{public}.2f", process_name.c_str(), usage);
+    const std::string processName = "sensors";
+    auto usage = cpuInfo.GetProcCpuUsage(processName);
+    SEN_HILOGD("The CPU usage of the %{public}s process is %{public}.2f", processName.c_str(), usage);
     ASSERT_TRUE(usage < SYSTEM_INFO::CPU_USAGE_LOAD && usage != SYSTEM_INFO::CPU_USAGE_UNKNOWN);
 }
 

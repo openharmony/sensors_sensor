@@ -34,7 +34,7 @@ SensorActiveInfo *sensorActiveInfos_ = nullptr;
 int32_t sensorInfoCount_ = 0;
 }  // namespace
 
-#define SenClient SensorServiceClient::GetInstance()
+#define SEN_CLIENT SensorServiceClient::GetInstance()
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
 
@@ -85,7 +85,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         SEN_HILOGE("Create data channel failed, ret:%{public}d", ret);
         return ret;
     }
-    ret = SenClient.TransferDataChannel(dataChannel_);
+    ret = SEN_CLIENT.TransferDataChannel(dataChannel_);
     if (ret != ERR_OK) {
         auto destroyRet = dataChannel_->DestroySensorDataChannel();
         SEN_HILOGE("Transfer data channel failed, ret:%{public}d, destroyRet:%{public}d", ret, destroyRet);
@@ -109,7 +109,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
         SEN_HILOGE("Destroy data channel failed, ret:%{public}d", ret);
         return ret;
     }
-    ret = SenClient.DestroyDataChannel();
+    ret = SEN_CLIENT.DestroyDataChannel();
     if (ret != ERR_OK) {
         SEN_HILOGE("Destroy service data channel fail, ret:%{public}d", ret);
         return ret;
@@ -126,7 +126,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         SEN_HILOGE("SamplingPeriod or reportInterval_ is invalid");
         return ERROR;
     }
-    if (!SenClient.IsValid(sensorId)) {
+    if (!SEN_CLIENT.IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
@@ -135,7 +135,7 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         SEN_HILOGE("Subscribe sensorId first");
         return ERROR;
     }
-    int32_t ret = SenClient.EnableSensor(sensorId, samplingInterval_, reportInterval_);
+    int32_t ret = SEN_CLIENT.EnableSensor(sensorId, samplingInterval_, reportInterval_);
     samplingInterval_ = -1;
     reportInterval_ = -1;
     if (ret != 0) {
@@ -150,7 +150,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SenClient.IsValid(sensorId)) {
+    if (!SEN_CLIENT.IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
@@ -161,7 +161,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     }
     subscribeMap_.erase(sensorId);
     unsubscribeMap_[sensorId] = user;
-    int32_t ret = SenClient.DisableSensor(sensorId);
+    int32_t ret = SEN_CLIENT.DisableSensor(sensorId);
     if (ret != 0) {
         SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
         return ret;
@@ -173,7 +173,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
                                    int64_t reportInterval)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
-    if (!SenClient.IsValid(sensorId)) {
+    if (!SEN_CLIENT.IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
@@ -196,7 +196,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SenClient.IsValid(sensorId)) {
+    if (!SEN_CLIENT.IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
@@ -215,7 +215,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SenClient.IsValid(sensorId)) {
+    if (!SEN_CLIENT.IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
@@ -239,7 +239,7 @@ int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int3
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SenClient.IsValid(sensorId)) {
+    if (!SEN_CLIENT.IsValid(sensorId)) {
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return ERROR;
     }
@@ -265,7 +265,7 @@ void SensorAgentProxy::ClearSensorInfos() const
 int32_t SensorAgentProxy::ConvertSensorInfos() const
 {
     CALL_LOG_ENTER;
-    std::vector<Sensor> sensorList = SenClient.GetSensorList();
+    std::vector<Sensor> sensorList = SEN_CLIENT.GetSensorList();
     if (sensorList.empty()) {
         SEN_HILOGE("Get sensor lists failed");
         return ERROR;
@@ -329,7 +329,7 @@ int32_t SensorAgentProxy::SuspendSensors(int32_t pid)
         SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
-    int32_t ret = SenClient.SuspendSensors(pid);
+    int32_t ret = SEN_CLIENT.SuspendSensors(pid);
     if (ret != ERR_OK) {
         SEN_HILOGE("Suspend sensors failed, ret:%{public}d", ret);
     }
@@ -343,7 +343,7 @@ int32_t SensorAgentProxy::ResumeSensors(int32_t pid)
         SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
-    int32_t ret = SenClient.ResumeSensors(pid);
+    int32_t ret = SEN_CLIENT.ResumeSensors(pid);
     if (ret != ERR_OK) {
         SEN_HILOGE("Resume sensors failed, ret:%{public}d", ret);
     }
@@ -366,7 +366,7 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid,
         sensorActiveInfos_ = nullptr;
     }
     std::vector<ActiveInfo> activeInfoList;
-    int32_t ret = SenClient.GetActiveInfoList(pid, activeInfoList);
+    int32_t ret = SEN_CLIENT.GetActiveInfoList(pid, activeInfoList);
     if (ret != ERR_OK) {
         SEN_HILOGE("Get active info list failed, ret:%{public}d", ret);
         return ret;
@@ -400,7 +400,7 @@ int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback)
 {
     CHKPR(callback, OHOS::Sensors::ERROR);
     CHKPR(dataChannel_, INVALID_POINTER);
-    int32_t ret = SenClient.Register(callback, dataChannel_);
+    int32_t ret = SEN_CLIENT.Register(callback, dataChannel_);
     if (ret != ERR_OK) {
         SEN_HILOGE("Register sensor active info callback failed, ret:%{public}d", ret);
     }
@@ -410,7 +410,7 @@ int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback)
 int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
 {
     CHKPR(callback, OHOS::Sensors::ERROR);
-    int32_t ret = SenClient.Unregister(callback);
+    int32_t ret = SEN_CLIENT.Unregister(callback);
     if (ret != ERR_OK) {
         SEN_HILOGE("Unregister sensor active info callback failed, ret:%{public}d", ret);
     }
@@ -419,7 +419,7 @@ int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
 
 int32_t SensorAgentProxy::ResetSensors() const
 {
-    int32_t ret = SenClient.ResetSensors();
+    int32_t ret = SEN_CLIENT.ResetSensors();
     if (ret != ERR_OK) {
         SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
     }

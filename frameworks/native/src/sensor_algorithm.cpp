@@ -77,13 +77,16 @@ int32_t SensorAlgorithm::TransformCoordinateSystemImpl(std::vector<float> inRota
         int32_t offset = j * matrixDimension;
         for (int32_t i = 0; i < 3; i++) {
             if (x == i) {
-                outRotationMatrix[offset + i] = (axisX >= 0x80) ? -inRotationMatrix[offset + 0] : inRotationMatrix[offset + 0];
+                outRotationMatrix[offset + i] = (axisX >= 0x80) ? -inRotationMatrix[offset + 0] :
+                    inRotationMatrix[offset + 0];
             }
             if (y == i) {
-                outRotationMatrix[offset + i] = (axisY >= 0x80) ? -inRotationMatrix[offset + 1] : inRotationMatrix[offset + 1];
+                outRotationMatrix[offset + i] = (axisY >= 0x80) ? -inRotationMatrix[offset + 1] : 
+                    inRotationMatrix[offset + 1];
             }
             if (z == i) {
-                outRotationMatrix[offset + i] = (axisZ >= 0x80) ? -inRotationMatrix[offset + 2] : inRotationMatrix[offset + 2];
+                outRotationMatrix[offset + i] = (axisZ >= 0x80) ? -inRotationMatrix[offset + 2] : 
+                    inRotationMatrix[offset + 2];
             }
         }
     }
@@ -103,14 +106,16 @@ int32_t SensorAlgorithm::TransformCoordinateSystem(std::vector<float> inRotation
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     int32_t inRotationMatrixLength = static_cast<int32_t>(inRotationMatrix.size());
-    if (((inRotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH) && (inRotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH))
-        || (inRotationMatrixLength != static_cast<int32_t>(outRotationMatrix.size()))) {
+    if (((inRotationMatrixLength != THREE_DIMENSIONAL_MATRIX_LENGTH) && 
+        (inRotationMatrixLength != FOUR_DIMENSIONAL_MATRIX_LENGTH)) || 
+        (inRotationMatrixLength != static_cast<int32_t>(outRotationMatrix.size()))) {
         SEN_HILOGE("Invalid input parameter");
         return OHOS::Sensors::PARAMETER_ERROR;
     }
     if (inRotationMatrix == outRotationMatrix) {
         std::vector<float> tempRotationMatrix(inRotationMatrixLength);
-        if (TransformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, tempRotationMatrix) != OHOS::Sensors::SUCCESS) {
+        if (TransformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, tempRotationMatrix) 
+            != OHOS::Sensors::SUCCESS) {
             SEN_HILOGE("TransformCoordinateSystemImpl failed");
             return OHOS::Sensors::PARAMETER_ERROR;
         }
@@ -250,7 +255,7 @@ int32_t SensorAlgorithm::CreateRotationMatrix(std::vector<float> rotationVector,
     rotationMatrix[0] = 1 - squareOfY - squareOfZ;
     rotationMatrix[1] = productOfXY - productOfWZ;
     rotationMatrix[2] = productOfXZ + productOfWY;
-    rotationMatrix[3 % ROTATION_VECTOR_LENGTH + (3 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension]
+    rotationMatrix[3 % ROTATION_VECTOR_LENGTH + (3 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] 
         = productOfXY + productOfWZ;
     rotationMatrix[4 % ROTATION_VECTOR_LENGTH + (4 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension]
         = 1 - squareOfX - squareOfZ;
@@ -326,9 +331,12 @@ int32_t SensorAlgorithm::CreateRotationAndInclination(std::vector<float> gravity
     rotationMatrix[0] = componentH[0];
     rotationMatrix[1] = componentH[1];
     rotationMatrix[2] = componentH[2];
-    rotationMatrix[3 % ROTATION_VECTOR_LENGTH + (3 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = measuredValue[0];
-    rotationMatrix[4 % ROTATION_VECTOR_LENGTH + (4 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = measuredValue[1];
-    rotationMatrix[5 % ROTATION_VECTOR_LENGTH + (5 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = measuredValue[2];
+    rotationMatrix[3 % ROTATION_VECTOR_LENGTH + (3 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = 
+        measuredValue[0];
+    rotationMatrix[4 % ROTATION_VECTOR_LENGTH + (4 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = 
+        measuredValue[1];
+    rotationMatrix[5 % ROTATION_VECTOR_LENGTH + (5 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = 
+        measuredValue[2];
     rotationMatrix[6 % ROTATION_VECTOR_LENGTH + (6 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = gravity[0];
     rotationMatrix[7 % ROTATION_VECTOR_LENGTH + (7 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = gravity[1];
     rotationMatrix[8 % ROTATION_VECTOR_LENGTH + (8 / ROTATION_VECTOR_LENGTH) * rotationMatrixDimension] = gravity[2];

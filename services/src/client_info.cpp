@@ -759,8 +759,7 @@ int32_t ClientInfo::GetPidByTokenId(AccessTokenID tokenId)
     auto iter = std::find_if(appThreadInfoMap_.begin(), appThreadInfoMap_.end(),
         [tokenId] (auto appThreadInfo) {
             return appThreadInfo.second.callerToken == tokenId;
-        }
-    );
+        });
     if (iter != appThreadInfoMap_.end()) {
         pid = iter->second.pid;
     }

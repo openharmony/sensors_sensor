@@ -1228,7 +1228,6 @@ static napi_value CreateEnumSensorAccuracy(napi_env env, napi_value exports)
         sizeof(desc) / sizeof(*desc), desc, &result), "napi_define_class");
     CHKNRP(env, napi_set_named_property(env, exports, "SensorAccuracy", result), "napi_set_named_property fail");
     return exports;
-
 }
 
 static napi_value Init(napi_env env, napi_value exports)

@@ -57,7 +57,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "GetActiveSensorInfosFuzzTest",
+        .process_name = "GetActiveSensorInfosFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
