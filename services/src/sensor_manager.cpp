@@ -203,7 +203,7 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
                 SEN_HILOGE("Get native token info fail");
                 return;
             }
-            packageName = tokenInfo.process_name;
+            packageName = tokenInfo.processName;
             break;
         }
         default: {

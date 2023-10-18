@@ -63,7 +63,7 @@ void SensorPowerTest::SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .process_name = "SensorPowerTest",
+        .processName = "SensorPowerTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
