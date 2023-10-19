@@ -34,8 +34,7 @@ bool CheckSensorTypeId(int32_t sensorTypeId)
     if (ret != 0) {
         return false;
     }
-    for (int32_t i = 0; i < count; i++)
-    {
+    for (int32_t i = 0; i < count; i++) {
         if ((sensorInfo + i)->sensorTypeId == sensorTypeId) {
             return true;
         }
