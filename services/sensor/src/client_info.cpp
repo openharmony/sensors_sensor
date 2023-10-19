@@ -55,7 +55,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Can't find sensorId:%{public}d", sensorId);
         return false;
     }
     for (const auto &pidIt : it->second) {
@@ -63,7 +63,7 @@ bool ClientInfo::GetSensorState(int32_t sensorId)
             return true;
         }
     }
-    SEN_HILOGE("Cannot find sensorInfo, sensorId:%{public}d", sensorId);
+    SEN_HILOGE("Can't find sensorInfo, sensorId:%{public}d", sensorId);
     return false;
 }
 
@@ -82,7 +82,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(int32_t sensorId)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Can't find sensorId:%{public}d", sensorId);
         return sensorInfo;
     }
     for (const auto &pidIt : it->second) {
@@ -106,7 +106,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Can't find sensorId:%{public}d", sensorId);
         return false;
     }
     bool ret = false;
@@ -374,12 +374,12 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(int32_t sensorId, int32_t pid)
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Cannot find sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Can't find sensorId:%{public}d", sensorId);
         return sensorInfo;
     }
     auto pidIt = it->second.find(pid);
     if (pidIt == it->second.end()) {
-        SEN_HILOGE("Cannot find pid:%{public}d", pid);
+        SEN_HILOGE("Can't find pid:%{public}d", pid);
         return sensorInfo;
     }
     sensorInfo.SetSamplingPeriodNs(pidIt->second.GetSamplingPeriodNs());
