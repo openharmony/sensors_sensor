@@ -114,7 +114,7 @@ int32_t SensorAlgorithm::TransformCoordinateSystem(std::vector<float> inRotation
     }
     if (inRotationMatrix == outRotationMatrix) {
         std::vector<float> tempRotationMatrix(inRotationMatrixLength);
-        if (TransformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, tempRotationMatrix) 
+        if (TransformCoordinateSystemImpl(inRotationMatrix, axisX, axisY, tempRotationMatrix)
             != OHOS::Sensors::SUCCESS) {
             SEN_HILOGE("TransformCoordinateSystemImpl failed");
             return OHOS::Sensors::PARAMETER_ERROR;
