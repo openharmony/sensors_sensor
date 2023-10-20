@@ -62,7 +62,7 @@ int32_t HdiConnection::ConnectHdi()
     }
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "ConnectHdi", "ERROR_CODE", CONNECT_SENSOR_HDF_ERR);
-    SEN_HILOGE("connect v1_1 hdi failed");
+    SEN_HILOGE("Connect v1_1 hdi failed");
     return ERR_NO_INIT;
 }
 
@@ -108,7 +108,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
     if (ret != 0) {
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
-        SEN_HILOGE("connect v1_1 hdi failed");
+        SEN_HILOGE("Connect v1_1 hdi failed");
         return ret;
     }
     SetSensorBasicInfoState(sensorId, true);
