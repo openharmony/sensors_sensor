@@ -272,7 +272,8 @@ impl StreamBuffer {
         self.write_char_usize(buf, size)
     }
 
-    pub unsafe fn read_client_packets(&mut self, client: *const CSensorServiceClient, callback_fun: ClientPacketCallBackFun) {
+    pub unsafe fn read_client_packets(&mut self, client: *const CSensorServiceClient, callback_fun: 
+        ClientPacketCallBackFun) {
         const HEAD_SIZE: usize = size_of::<PackHead>();
         for _i in 0..ONCE_PROCESS_NETPACKET_LIMIT {
             let unread_size = self.unread_size();
