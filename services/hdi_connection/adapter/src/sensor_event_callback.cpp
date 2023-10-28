@@ -15,6 +15,7 @@
 #include "sensor_event_callback.h"
 
 #include "hdi_connection.h"
+#include "sensor_agent_type.h"
 #include "sensor_data_event.h"
 #include "sensor_errors.h"
 
@@ -45,6 +46,9 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         .mode = event.mode,
         .dataLen = event.dataLen
     };
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY) {
+        sensorData.mode = SENSOR_ON_CHANGE;
+    }
     CHKPR(sensorData.data, ERR_NO_INIT);
     for (int32_t i = 0; i < dataSize; i++) {
         sensorData.data[i] = event.data[i];
