@@ -25,6 +25,12 @@ ohos_shared_library("libsensor_utils") {
     "src/sensor_channel_info.cpp",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/frameworks/native/include",

@@ -33,6 +33,12 @@ ohos_shared_library("libsensor_native") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   defines = sensor_default_defines
 
   deps = [
@@ -86,6 +92,12 @@ ohos_shared_library("sensor_interface_native") {
 
   configs = [ ":sensor_private_config" ]
   public_configs = [ ":sensor_public_config" ]
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:libsensor_native",
