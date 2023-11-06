@@ -96,7 +96,7 @@ int32_t SensorDataChannel::AddFdListener(int32_t fd, ReceiveMessageFun receiveMe
     disconnect_ = disconnect;
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     if (eventHandler_ == nullptr) {
-        auto myRunner = AppExecFwk::EventRunner::Create(true);
+        auto myRunner = AppExecFwk::EventRunner::Create(LISTENER_THREAD_NAME);
         CHKPR(myRunner, ERROR);
         eventHandler_ = std::make_shared<SensorEventHandler>(myRunner);
     }
