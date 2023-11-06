@@ -23,6 +23,7 @@
 #include "securec.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor_errors.h"
+#include "sensor_utils.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
@@ -31,6 +32,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataProcesser" };
+const std::string SENSOR_REPORT_THREAD_NAME = "OS_SensorReportThread";
 }  // namespace
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<int32_t, Sensor> &sensorMap)
@@ -291,6 +293,7 @@ int32_t SensorDataProcesser::SendEvents(sptr<SensorBasicDataChannel> &channel, S
 int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
     CALL_LOG_ENTER;
+    SetThreadName(SENSOR_REPORT_THREAD_NAME);
     do {
         if (dataProcesser->ProcessEvents(dataCallback) == INVALID_POINTER) {
             SEN_HILOGE("Callback cannot be null");

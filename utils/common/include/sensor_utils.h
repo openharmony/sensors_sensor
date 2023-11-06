@@ -16,6 +16,8 @@
 #ifndef SENSOR_UTILS_H
 #define SENSOR_UTILS_H
 
+#include <sys/prctl.h>
+
 namespace OHOS {
 namespace Sensors {
 
@@ -25,6 +27,10 @@ bool IsEqual(const T &left, const T &right)
     return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
 }
 
+void SetThreadName(const std::string &name)
+{
+    prctl(PR_SET_NAME, name.c_str());
+}
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // SENSOR_UTILS_H
