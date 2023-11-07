@@ -43,7 +43,7 @@ std::vector<int32_t> g_supportSensors = {
 float g_accData[3];
 float g_colorData[2];
 float g_sarData[1];
-float g_headPostureData[4];
+float g_headPostureData[5];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
     .option = 3,
@@ -62,7 +62,7 @@ SensorEvent g_sarEvent = {
 SensorEvent g_headPostureEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_HEADPOSTURE,
     .option = 3,
-    .dataLen = 16
+    .dataLen = 20
 };
 }
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -141,21 +141,24 @@ void HdiServiceImpl::GenerateHeadPostureEvent()
     std::random_device rd;
     std::default_random_engine eng(rd());
     std::uniform_real_distribution<float> distr(0.0, 1.0);
-    std::vector<float> nums(3);
+    std::vector<float> nums(4);
     while (true) {
         nums[0] = distr(eng);
         nums[1] = distr(eng);
         nums[2] = distr(eng);
+        nums[3] = distr(eng);
         sort(nums.begin(), nums.end());
         if ((std::fabs(nums[1] - nums[0]) > std::numeric_limits<float>::epsilon()) &&
-            (std::fabs(nums[2] - nums[1]) > std::numeric_limits<float>::epsilon())) {
+            (std::fabs(nums[2] - nums[1]) > std::numeric_limits<float>::epsilon()) &&
+            (std::fabs(nums[3] - nums[2]) > std::numeric_limits<float>::epsilon())) {
             break;
         }
     }
     g_headPostureData[0] = static_cast<float>(sqrt(nums[0]));
     g_headPostureData[1] = static_cast<float>(sqrt(nums[1] - nums[0]));
     g_headPostureData[2] = static_cast<float>(sqrt(nums[2] - nums[1]));
-    g_headPostureData[3] = static_cast<float>(sqrt(1.0 - nums[2]));
+    g_headPostureData[3] = static_cast<float>(sqrt(nums[3] - nums[2]));
+    g_headPostureData[4] = static_cast<float>(sqrt(1.0 - nums[3]));
     g_headPostureEvent.data = reinterpret_cast<uint8_t *>(g_headPostureData);
 }
 

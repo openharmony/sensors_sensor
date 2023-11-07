@@ -25,6 +25,10 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
+constexpr int32_t HEADPOSTURE_ORDER_OFFSET = 4;
+constexpr int32_t HEADPOSTURE_ORDER_SIZE = 4;
+constexpr int32_t HEADPOSTURE_DATA_OFFSET = 12;
+constexpr int32_t HEADPOSTURE_DATA_SIZE = 16;
 }  // namespace
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
@@ -50,8 +54,18 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         sensorData.mode = SENSOR_ON_CHANGE;
     }
     CHKPR(sensorData.data, ERR_NO_INIT);
-    for (int32_t i = 0; i < dataSize; i++) {
-        sensorData.data[i] = event.data[i];
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
+        sensorData.dataLen = HEADPOSTURE_DATA_SIZE + HEADPOSTURE_ORDER_SIZE;
+        for (int32_t i = 0; i < HEADPOSTURE_ORDER_SIZE; ++i) {
+            sensorData.data[i] = event.data[i + HEADPOSTURE_ORDER_OFFSET];       
+        }
+        for (int32_t i = 0; i < HEADPOSTURE_DATA_SIZE; ++i) {
+            sensorData.data[i + HEADPOSTURE_ORDER_SIZE] = event.data[i + HEADPOSTURE_DATA_OFFSET];
+        }
+    } else {
+        for (int32_t i = 0; i < dataSize; i++) {
+            sensorData.data[i] = event.data[i];
+        }
     }
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
