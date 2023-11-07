@@ -33,6 +33,11 @@ ohos_shared_library("libsensor") {
     "src/sensor_napi_utils.cpp",
     "src/sensor_system_js.cpp",
   ]
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
   deps = [ "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native" ]
   external_deps = [
     "c_utils:utils",

@@ -35,6 +35,12 @@ ohos_shared_library("libsensor_service") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   defines = sensor_default_defines
 
   deps = [
@@ -102,6 +108,12 @@ ohos_shared_library("libsensor_service_static") {
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   defines = sensor_default_defines
 
