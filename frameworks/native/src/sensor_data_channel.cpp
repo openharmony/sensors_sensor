@@ -27,7 +27,7 @@ using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataChannel" };
-const std::string LISTENER_THREAD_NAME = "OS_SensorListenerThread";
+const std::string LISTENER_THREAD_NAME = "OS_SenConsumer";
 }  // namespace
 
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
