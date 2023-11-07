@@ -22,7 +22,7 @@
 #include "sensor_errors.h"
 #include "sensor_agent_type.h"
 #include "i_sensor_hdi_connection.h"
-std::mutex OHOS::Sensors::dataMutex_;
+std::mutex OHOS::Sensors::ISensorHdiConnection::dataMutex_;
 std::condition_variable OHOS::Sensors::ISensorHdiConnection::dataCondition_;
 
 namespace OHOS {
