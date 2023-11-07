@@ -16,12 +16,11 @@
 
 #include <cmath>
 #include <random>
+#include <sys/prctl.h>
 #include <thread>
-
 #include <unistd.h>
 
 #include "sensor_errors.h"
-
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
@@ -31,6 +30,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiServiceImpl" };
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr float TARGET_SUM = 9.8F * 9.8F;
 constexpr float MAX_RANGE = 9999.0F;
+const std::string SENSOR_PRODUCE_THREAD_NAME = "OS_SenMock";
 std::vector<SensorInfo> g_sensorInfos = {
     {"sensor_test", "default", "1.0.0", "1.0.0", 1, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
 };
@@ -169,6 +169,7 @@ int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
 void HdiServiceImpl::DataReportThread()
 {
     CALL_LOG_ENTER;
+    prctl(PR_SET_NAME, SENSOR_PRODUCE_THREAD_NAME.c_str());
     while (true) {
         GenerateEvent();
         std::this_thread::sleep_for(std::chrono::nanoseconds(samplingInterval_));
