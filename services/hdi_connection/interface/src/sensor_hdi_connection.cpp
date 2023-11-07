@@ -14,10 +14,16 @@
  */
 #include "sensor_hdi_connection.h"
 
+#ifdef BUILD_VARIANT_ENG 
 #include "compatible_connection.h"
+#endif
 #include "hdi_connection.h"
 #include "hitrace_meter.h"
 #include "sensor_errors.h"
+#include "sensor_agent_type.h"
+#include "i_sensor_hdi_connection.h"
+std::mutex OHOS::Sensors::dataMutex_;
+std::condition_variable OHOS::Sensors::ISensorHdiConnection::dataCondition_;
 
 namespace OHOS {
 namespace Sensors {
@@ -43,6 +49,7 @@ int32_t SensorHdiConnection::ConnectHdi()
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
         SEN_HILOGE("Connect hdi service failed, try to connect compatible connection, ret:%{public}d", ret);
+#ifdef BUILD_VARIANT_ENG
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
         ret = ConnectHdiService();
         if (ret != ERR_OK) {
@@ -50,16 +57,19 @@ int32_t SensorHdiConnection::ConnectHdi()
             return ret;
         }
         hdiConnectionStatus_ = false;
+#endif
     } else {
         hdiConnectionStatus_ = true;
     }
     if (hdiConnectionStatus_ && !FindAllInSensorSet(g_supportMockSensors)) {
         SEN_HILOGD("SensorList not contain all mock sensors, connect mock sensors compatible connection");
+#ifdef BUILD_VARIANT_ENG
         ret = ConnectCompatibleHdi();
         if (ret != ERR_OK) {
             SEN_HILOGE("Connect mock sensors compatible connection failed, ret:%{public}d", ret);
         }
         return ret;
+#endif
     }
     return ERR_OK;
 }
@@ -83,6 +93,7 @@ int32_t SensorHdiConnection::ConnectHdiService()
     return ERR_OK;
 }
 
+#ifdef BUILD_VARIANT_ENG
 int32_t SensorHdiConnection::ConnectCompatibleHdi()
 {
     if (iSensorCompatibleHdiConnection_ == nullptr) {
@@ -95,6 +106,7 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     }
     return ERR_OK;
 }
+#endif
 
 bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &sensors)
 {
@@ -197,6 +209,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
     int32_t ret = ENABLE_SENSOR_ERR;
     if (FindOneInMockSet(sensorId)) {
+#ifdef BUILD_VARIANT_ENG
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -205,6 +218,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
             return ENABLE_SENSOR_ERR;
         }
         return ret;
+#endif
     }
     CHKPR(iSensorHdiConnection_, ENABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->EnableSensor(sensorId);
@@ -221,6 +235,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
     int32_t ret = DISABLE_SENSOR_ERR;
     if (FindOneInMockSet(sensorId)) {
+#ifdef BUILD_VARIANT_ENG
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -229,6 +244,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
             return DISABLE_SENSOR_ERR;
         }
         return ret;
+#endif
     }
     CHKPR(iSensorHdiConnection_, DISABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->DisableSensor(sensorId);
@@ -245,6 +261,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
     int32_t ret = SET_SENSOR_CONFIG_ERR;
     if (FindOneInMockSet(sensorId)) {
+#ifdef BUILD_VARIANT_ENG
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
         ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -253,6 +270,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
             return SET_SENSOR_CONFIG_ERR;
         }
         return ret;
+#endif
     }
     CHKPR(iSensorHdiConnection_, SET_SENSOR_CONFIG_ERR);
     ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
@@ -269,6 +287,7 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
     StartTrace(HITRACE_TAG_SENSORS, "SetMode");
     int32_t ret = SET_SENSOR_MODE_ERR;
     if (FindOneInMockSet(sensorId)) {
+#ifdef BUILD_VARIANT_ENG
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_MODE_ERR);
         ret = iSensorCompatibleHdiConnection_->SetMode(sensorId, mode);
         FinishTrace(HITRACE_TAG_SENSORS);
@@ -277,6 +296,7 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
             return SET_SENSOR_MODE_ERR;
         }
         return ret;
+#endif
     }
     CHKPR(iSensorHdiConnection_, SET_SENSOR_MODE_ERR);
     ret = iSensorHdiConnection_->SetMode(sensorId, mode);
@@ -297,6 +317,7 @@ int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportData
         SEN_HILOGE("Registe dataReport failed");
         return REGIST_CALLBACK_ERR;
     }
+#ifdef BUILD_VARIANT_ENG
     if (iSensorCompatibleHdiConnection_ != nullptr) {
         ret = iSensorCompatibleHdiConnection_->RegisterDataReport(cb, reportDataCallback);
         if (ret != ERR_OK) {
@@ -304,6 +325,7 @@ int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportData
             return REGIST_CALLBACK_ERR;
         }
     }
+#endif
     FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
@@ -316,6 +338,7 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
         SEN_HILOGE("Destroy hdi connection failed");
         return DEVICE_ERR;
     }
+#ifdef BUILD_VARIANT_ENG
     if (iSensorCompatibleHdiConnection_ != nullptr) {
         ret = iSensorCompatibleHdiConnection_->DestroyHdiConnection();
         if (ret != ERR_OK) {
@@ -323,6 +346,7 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
         }
         return DEVICE_ERR;
     }
+#endif
     return ret;
 }
 }  // namespace Sensors

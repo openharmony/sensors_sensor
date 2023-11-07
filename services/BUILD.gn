@@ -59,7 +59,6 @@ ohos_shared_library("libsensor_service") {
 
   if (hdf_drivers_interface_sensor) {
     sources += [
-      "hdi_connection/adapter/src/compatible_connection.cpp",
       "hdi_connection/adapter/src/hdi_connection.cpp",
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
       "hdi_connection/hardware/src/hdi_service_impl.cpp",
@@ -72,6 +71,10 @@ ohos_shared_library("libsensor_service") {
       "$SUBSYSTEM_DIR/services/hdi_connection/adapter/include",
       "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include",
     ]
+
+    if (sensor_build_eng) {
+      sources += [ "hdi_connection/adapter/src/compatible_connection.cpp" ]
+    }
 
     external_deps += [ "drivers_interface_sensor:libsensor_proxy_1.1" ]
   }
@@ -127,7 +130,6 @@ ohos_shared_library("libsensor_service_static") {
 
   if (hdf_drivers_interface_sensor) {
     sources += [
-      "hdi_connection/adapter/src/compatible_connection.cpp",
       "hdi_connection/adapter/src/hdi_connection.cpp",
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
       "hdi_connection/hardware/src/hdi_service_impl.cpp",
@@ -140,6 +142,10 @@ ohos_shared_library("libsensor_service_static") {
       "$SUBSYSTEM_DIR/services/hdi_connection/adapter/include",
       "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include",
     ]
+
+    if (sensor_build_eng) {
+      sources += [ "hdi_connection/adapter/src/compatible_connection.cpp" ]
+    }
 
     external_deps += [ "drivers_interface_sensor:libsensor_proxy_1.1" ]
   }
