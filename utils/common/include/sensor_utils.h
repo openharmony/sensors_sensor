@@ -15,6 +15,7 @@
 
 #ifndef SENSOR_UTILS_H
 #define SENSOR_UTILS_H
+
 namespace OHOS {
 namespace Sensors {
 
@@ -23,6 +24,7 @@ bool IsEqual(const T &left, const T &right)
 {
     return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
 }
+
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // SENSOR_UTILS_H

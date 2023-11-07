@@ -24,7 +24,6 @@
 #include "securec.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor_errors.h"
-#include "sensor_utils.h"
 #include "system_ability_definition.h"
 
 namespace OHOS {
