@@ -35,6 +35,7 @@ ohos_shared_library("libsensor_service") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -109,6 +110,7 @@ ohos_shared_library("libsensor_service_static") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
