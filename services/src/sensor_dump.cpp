@@ -32,7 +32,9 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDump" };
 constexpr int32_t MAX_DUMP_PARAMETERS = 32;
+#ifdef BUILD_VARIANT_ENG
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
+#endif
 constexpr uint32_t MS_NS = 1000000;
 
 enum {

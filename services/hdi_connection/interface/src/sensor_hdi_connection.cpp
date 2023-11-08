@@ -30,11 +30,13 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorHdiConnection" };
+#ifdef BUILD_VARIANT_ENG
 constexpr float MAX_RANGE = 9999.0;
 constexpr float POWER = 20.0;
 constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
+#endif
 const std::string VERSION_NAME = "1.0.1";
 std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_COLOR,
