@@ -75,7 +75,9 @@ ohos_unittest("SensorAlgorithmTest") {
 ohos_unittest("SensorPowerTest") {
   module_out_path = "sensor/interfaces/inner_api"
 
-  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/sensor_power_test.cpp" ]
+  sources = [
+    "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/sensor_power_test.cpp",
+  ]
 
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
@@ -103,7 +105,8 @@ ohos_unittest("SensorPowerTest") {
 ohos_unittest("PostureTest") {
   module_out_path = "sensor/interfaces/inner_api"
 
-  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/posture_test.cpp" ]
+  sources =
+      [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/posture_test.cpp" ]
 
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
@@ -126,9 +129,11 @@ ohos_unittest("PostureTest") {
 }
 
 ohos_unittest("HeadPostureTest") {
-  module_out_path = "sensors/sensor/interfaces"
+  module_out_path = "sensor/interfaces/inner_api"
 
-  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//head_posture_test.cpp" ]
+  sources = [
+    "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//head_posture_test.cpp",
+  ]
 
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
@@ -149,10 +154,34 @@ ohos_unittest("HeadPostureTest") {
     "ipc:ipc_core",
   ]
 }
+ohos_unittest("DropDetectionTest") {
+  module_out_path = "sensor/interfaces/inner_api"
 
+  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//drop_detection_test.cpp" ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+  ]
+}
 group("unittest") {
   testonly = true
   deps = [
+    ":DropDetectionTest",
     ":HeadPostureTest",
     ":PostureTest",
     ":SensorAgentTest",

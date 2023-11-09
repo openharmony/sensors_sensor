@@ -99,6 +99,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_WEAR_DETECTION = 280,        /**< Wear detection sensor */
     SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED = 281,   /**< Uncalibrated acceleration sensor */
     SENSOR_TYPE_ID_MAX = 30,      /**< Maximum number of sensor type IDs*/
+    SENSOR_TYPE_ID_DROP_DETECTION = 269,       /**< Drop detection sensor */
 } SensorTypeId;
 
 /**
@@ -484,6 +485,10 @@ typedef struct HeadPostureData {
     float y = 0.0;
     float z = 0.0;
 } HeadPostureData;
+
+typedef struct DropDetectionData {
+    float status = 0.0;
+} DropDetectionData;
 
 typedef struct SensorActiveInfo {
     int32_t pid = -1;        /**< PID */
