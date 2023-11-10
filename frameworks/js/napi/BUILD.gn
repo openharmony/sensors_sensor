@@ -33,6 +33,7 @@ ohos_shared_library("libsensor") {
     "src/sensor_napi_utils.cpp",
     "src/sensor_system_js.cpp",
   ]
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true

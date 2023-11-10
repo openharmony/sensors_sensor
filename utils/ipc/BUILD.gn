@@ -28,6 +28,7 @@ ohos_shared_library("libsensor_ipc") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
