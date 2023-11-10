@@ -93,13 +93,13 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_PEDOMETER = 266,             /**< Pedometer sensor */
     SENSOR_TYPE_ID_POSTURE = 267,               /**< Posture sensor */
     SENSOR_TYPE_ID_HEADPOSTURE = 268,           /**< Head posture sensor */
+    SENSOR_TYPE_ID_DROP_DETECTION = 269,       /**< Drop detection sensor */
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR = 277,  /**< Geomagnetic rotation vector sensor */
     SENSOR_TYPE_ID_HEART_RATE = 278,            /**< Heart rate sensor */
     SENSOR_TYPE_ID_DEVICE_ORIENTATION = 279,    /**< Device orientation sensor */
     SENSOR_TYPE_ID_WEAR_DETECTION = 280,        /**< Wear detection sensor */
     SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED = 281,   /**< Uncalibrated acceleration sensor */
     SENSOR_TYPE_ID_MAX = 30,      /**< Maximum number of sensor type IDs*/
-    SENSOR_TYPE_ID_DROP_DETECTION = 269,       /**< Drop detection sensor */
 } SensorTypeId;
 
 /**
