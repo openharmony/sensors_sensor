@@ -241,7 +241,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     return true;
 }
 
-#ifdef BUILD_VARIANT_ENG
+#ifdef BUILD_VARIANT_ENG 
 bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
 {
     dprintf(fd, "Last 10 packages sensor data:\n");

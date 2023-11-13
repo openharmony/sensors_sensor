@@ -14,14 +14,13 @@
  */
 #include "sensor_hdi_connection.h"
 
-#ifdef BUILD_VARIANT_ENG 
+#ifdef BUILD_VARIANT_ENG
 #include "compatible_connection.h"
 #endif
+
 #include "hdi_connection.h"
 #include "hitrace_meter.h"
 #include "sensor_errors.h"
-#include "sensor_agent_type.h"
-#include "i_sensor_hdi_connection.h"
 std::mutex OHOS::Sensors::ISensorHdiConnection::dataMutex_;
 std::condition_variable OHOS::Sensors::ISensorHdiConnection::dataCondition_;
 
@@ -53,7 +52,7 @@ int32_t SensorHdiConnection::ConnectHdi()
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
         SEN_HILOGE("Connect hdi service failed, try to connect compatible connection, ret:%{public}d", ret);
-#ifdef BUILD_VARIANT_ENG
+#ifdef BUILD_VARIANT_ENG 
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
         ret = ConnectHdiService();
         if (ret != ERR_OK) {
