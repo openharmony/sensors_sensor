@@ -85,8 +85,8 @@ void DropDetectionDataCallbackImpl(SensorEvent *event)
         SEN_HILOGE("dropDetectionData is nullptr");
         return;
     }
-    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, status:%{public}f", event[0].sensorTypeId, event[0].version,
-        event[0].dataLen,dropDetectionData->status);
+    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, status:%{public}f", event[0].sensorTypeId,
+        event[0].version, event[0].dataLen, dropDetectionData->status);
 }
 
 void DropDetectionDataCallbackImpl2(SensorEvent *event)
@@ -108,8 +108,8 @@ void DropDetectionDataCallbackImpl2(SensorEvent *event)
         SEN_HILOGE("dropDetectionData is nullptr");
         return;
     }
-    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, status:%{public}f ", event[0].sensorTypeId, event[0].version,
-        event[0].dataLen,dropDetectionData->status);
+    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, status:%{public}f", event[0].sensorTypeId,
+        event[0].version, event[0].dataLen, dropDetectionData->status);
 }
 
 HWTEST_F(DropDetectionTest, DropDetectionTest_001, TestSize.Level1)
