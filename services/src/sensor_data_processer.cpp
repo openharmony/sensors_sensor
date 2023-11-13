@@ -15,6 +15,7 @@
 
 #include "sensor_data_processer.h"
 
+#include <sys/prctl.h>
 #include <sys/socket.h>
 #include <thread>
 
@@ -31,6 +32,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataProcesser" };
+const std::string SENSOR_REPORT_THREAD_NAME = "OS_SenProducer";
 }  // namespace
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<int32_t, Sensor> &sensorMap)
@@ -291,6 +293,7 @@ int32_t SensorDataProcesser::SendEvents(sptr<SensorBasicDataChannel> &channel, S
 int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
     CALL_LOG_ENTER;
+    prctl(PR_SET_NAME, SENSOR_REPORT_THREAD_NAME.c_str());
     do {
         if (dataProcesser->ProcessEvents(dataCallback) == INVALID_POINTER) {
             SEN_HILOGE("Callback cannot be null");
