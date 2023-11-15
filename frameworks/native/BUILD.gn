@@ -33,6 +33,7 @@ ohos_shared_library("libsensor_native") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -93,6 +94,7 @@ ohos_shared_library("sensor_interface_native") {
   configs = [ ":sensor_private_config" ]
   public_configs = [ ":sensor_public_config" ]
 
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true

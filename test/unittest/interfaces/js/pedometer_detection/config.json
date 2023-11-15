@@ -37,8 +37,7 @@
       "name": ".myapplication",
       "deviceType": [
         "default",
-        "tablet",
-        "2in1"
+        "tablet"
       ],
       "distro": {
         "deliveryWithInstall": true,

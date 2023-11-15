@@ -25,6 +25,7 @@ ohos_shared_library("libsensor_utils") {
     "src/sensor_channel_info.cpp",
   ]
 
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
