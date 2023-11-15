@@ -35,8 +35,8 @@ constexpr float POWER = 20.0;
 constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
-#endif // BUILD_VARIANT_ENG
 const std::string VERSION_NAME = "1.0.1";
+#endif // BUILD_VARIANT_ENG
 #ifdef BUILD_VARIANT_ENG
 std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_COLOR,
@@ -107,9 +107,7 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     }
     return ERR_OK;
 }
-#endif // BUILD_VARIANT_ENG
 
-#ifdef BUILD_VARIANT_ENG
 bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &sensors)
 {
     int32_t count = 0;
@@ -122,17 +120,13 @@ bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &
     }
     return count == 0 ? true : false;
 }
-#endif // BUILD_VARIANT_ENG
 
-#ifdef BUILD_VARIANT_ENG
 bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     return mockSet_.find(sensorId) != mockSet_.end();
 }
-#endif // BUILD_VARIANT_ENG
 
-#ifdef BUILD_VARIANT_ENG
 Sensor SensorHdiConnection::GenerateColorSensor()
 {
     Sensor sensorColor;
@@ -149,9 +143,7 @@ Sensor SensorHdiConnection::GenerateColorSensor()
     sensorColor.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     return sensorColor;
 }
-#endif // BUILD_VARIANT_ENG
 
-#ifdef BUILD_VARIANT_ENG
 Sensor SensorHdiConnection::GenerateSarSensor()
 {
     Sensor sensorSar;
@@ -168,9 +160,7 @@ Sensor SensorHdiConnection::GenerateSarSensor()
     sensorSar.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     return sensorSar;
 }
-#endif // BUILD_VARIANT_ENG
 
-#ifdef BUILD_VARIANT_ENG
 Sensor SensorHdiConnection::GenerateHeadPostureSensor()
 {
     Sensor sensorHeadPosture;
