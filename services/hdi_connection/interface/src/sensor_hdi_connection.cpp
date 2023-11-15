@@ -36,8 +36,6 @@ constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
 const std::string VERSION_NAME = "1.0.1";
-#endif // BUILD_VARIANT_ENG
-#ifdef BUILD_VARIANT_ENG
 std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_COLOR,
     SENSOR_TYPE_ID_SAR,
