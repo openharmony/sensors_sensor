@@ -16,7 +16,7 @@
 
 #ifdef BUILD_VARIANT_ENG
 #include "compatible_connection.h"
-#endif
+#endif // BUILD_VARIANT_ENG
 
 #include "hdi_connection.h"
 #include "hitrace_meter.h"
@@ -35,7 +35,7 @@ constexpr float POWER = 20.0;
 constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
-#endif
+#endif // BUILD_VARIANT_ENG
 const std::string VERSION_NAME = "1.0.1";
 #ifdef BUILD_VARIANT_ENG
 std::unordered_set<int32_t> g_supportMockSensors = {
@@ -43,7 +43,7 @@ std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_SAR,
     SENSOR_TYPE_ID_HEADPOSTURE
 };
-#endif
+#endif // BUILD_VARIANT_ENG
 }
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -69,7 +69,7 @@ int32_t SensorHdiConnection::ConnectHdi()
         if (ret != ERR_OK) {
             SEN_HILOGE("Connect mock sensors compatible connection failed, ret:%{public}d", ret);
         }
-#endif
+#endif // BUILD_VARIANT_ENG
         return ret;
     }
     return ERR_OK;
@@ -107,7 +107,7 @@ int32_t SensorHdiConnection::ConnectCompatibleHdi()
     }
     return ERR_OK;
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 #ifdef BUILD_VARIANT_ENG
 bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &sensors)
@@ -122,7 +122,7 @@ bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &
     }
     return count == 0 ? true : false;
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 #ifdef BUILD_VARIANT_ENG
 bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
@@ -130,7 +130,7 @@ bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     return mockSet_.find(sensorId) != mockSet_.end();
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 #ifdef BUILD_VARIANT_ENG
 Sensor SensorHdiConnection::GenerateColorSensor()
@@ -149,7 +149,7 @@ Sensor SensorHdiConnection::GenerateColorSensor()
     sensorColor.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     return sensorColor;
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 #ifdef BUILD_VARIANT_ENG
 Sensor SensorHdiConnection::GenerateSarSensor()
@@ -168,7 +168,7 @@ Sensor SensorHdiConnection::GenerateSarSensor()
     sensorSar.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     return sensorSar;
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 #ifdef BUILD_VARIANT_ENG
 Sensor SensorHdiConnection::GenerateHeadPostureSensor()
@@ -187,7 +187,7 @@ Sensor SensorHdiConnection::GenerateHeadPostureSensor()
     sensorHeadPosture.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     return sensorHeadPosture;
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
@@ -213,7 +213,7 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
                 break;
         }
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     return ERR_OK;
 }
 
@@ -232,7 +232,7 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
         }
         return ret;
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, ENABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->EnableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
@@ -258,7 +258,7 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
         }
         return ret;
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, DISABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->DisableSensor(sensorId);
     FinishTrace(HITRACE_TAG_SENSORS);
@@ -284,7 +284,7 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
         }
         return ret;
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, SET_SENSOR_CONFIG_ERR);
     ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
     FinishTrace(HITRACE_TAG_SENSORS);
@@ -310,7 +310,7 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
         }
         return ret;
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, SET_SENSOR_MODE_ERR);
     ret = iSensorHdiConnection_->SetMode(sensorId, mode);
     FinishTrace(HITRACE_TAG_SENSORS);
@@ -338,7 +338,7 @@ int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportData
             return REGIST_CALLBACK_ERR;
         }
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     FinishTrace(HITRACE_TAG_SENSORS);
     return ret;
 }
@@ -359,7 +359,7 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
         }
         return DEVICE_ERR;
     }
-#endif
+#endif // BUILD_VARIANT_ENG
     return ret;
 }
 }  // namespace Sensors

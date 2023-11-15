@@ -34,7 +34,7 @@ constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDump" };
 constexpr int32_t MAX_DUMP_PARAMETERS = 32;
 #ifdef BUILD_VARIANT_ENG
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
-#endif
+#endif // BUILD_VARIANT_ENG
 constexpr uint32_t MS_NS = 1000000;
 
 enum {
@@ -108,7 +108,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         {"channel", no_argument, 0, 'c'},
 #ifdef BUILD_VARIANT_ENG 
         {"data", no_argument, 0, 'd'},
-#endif
+#endif // BUILD_VARIANT_ENG
         {"open", no_argument, 0, 'o'},
         {"help", no_argument, 0, 'h'},
         {"list", no_argument, 0, 'l'},
@@ -145,7 +145,7 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
                 DumpSensorData(fd, clientInfo);
                 break;
             }
-#endif
+#endif // BUILD_VARIANT_ENG
             case 'o': {
                 DumpOpeningSensor(fd, sensors, clientInfo);
                 break;
@@ -182,7 +182,7 @@ void SensorDump::DumpHelp(int32_t fd)
     dprintf(fd, "      -o, --open: dump the opening sensors\n");
 #ifdef BUILD_VARIANT_ENG 
     dprintf(fd, "      -d, --data: dump the last 10 packages sensor data\n");
-#endif
+#endif // BUILD_VARIANT_ENG
 }
 
 bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
@@ -267,7 +267,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
     }
     return true;
 }
-#endif
+#endif // BUILD_VARIANT_ENG
 
 void SensorDump::DumpCurrentTime(int32_t fd)
 {
