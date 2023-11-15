@@ -93,6 +93,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_PEDOMETER = 266,             /**< Pedometer sensor */
     SENSOR_TYPE_ID_POSTURE = 267,               /**< Posture sensor */
     SENSOR_TYPE_ID_HEADPOSTURE = 268,           /**< Head posture sensor */
+    SENSOR_TYPE_ID_DROP_DETECTION = 269,       /**< Drop detection sensor */
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR = 277,  /**< Geomagnetic rotation vector sensor */
     SENSOR_TYPE_ID_HEART_RATE = 278,            /**< Heart rate sensor */
     SENSOR_TYPE_ID_DEVICE_ORIENTATION = 279,    /**< Device orientation sensor */
@@ -484,6 +485,10 @@ typedef struct HeadPostureData {
     float y = 0.0;
     float z = 0.0;
 } HeadPostureData;
+
+typedef struct DropDetectionData {
+    float status = 0.0;
+} DropDetectionData;
 
 typedef struct SensorActiveInfo {
     int32_t pid = -1;        /**< PID */
