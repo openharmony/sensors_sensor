@@ -33,7 +33,7 @@ constexpr int32_t INVALID_SENSOR_ID = -1;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;
-constexpr int64_t MAX_EVENT_COUNT = 1;
+constexpr int64_t MAX_EVENT_COUNT = 1000;
 }  // namespace
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
