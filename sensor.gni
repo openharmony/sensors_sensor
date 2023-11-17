@@ -34,3 +34,10 @@ if (!defined(global_parts_info) ||
 } else {
   hdf_drivers_interface_sensor = false
 }
+
+if (build_variant == "root") {
+  sensor_default_defines += [ "BUILD_VARIANT_ENG" ]
+  sensor_build_eng = true
+} else {
+  sensor_build_eng = false
+}
