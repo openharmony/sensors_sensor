@@ -25,6 +25,7 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
+constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
 }  // namespace
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
@@ -50,8 +51,23 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         sensorData.mode = SENSOR_ON_CHANGE;
     }
     CHKPR(sensorData.data, ERR_NO_INIT);
-    for (int32_t i = 0; i < dataSize; i++) {
-        sensorData.data[i] = event.data[i];
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
+        sensorData.dataLen = HEADPOSTURE_DATA_SIZE;
+        const float *inputFloatPtr = reinterpret_cast<const float *>(event.data.data());
+        float *outputFloatPtr = reinterpret_cast<float *>(sensorData.data);
+        int32_t *outputIntPtr = reinterpret_cast<int32_t *>(sensorData.data);
+        outputIntPtr[0] = static_cast<int32_t>(*(inputFloatPtr + 1));
+        if (outputIntPtr[0] < 0) {
+            SEN_HILOGE("The order of head posture sensor is invalid");
+        }
+        outputFloatPtr[1] = *(inputFloatPtr + 3);
+        outputFloatPtr[2] = *(inputFloatPtr + 4);
+        outputFloatPtr[3] = *(inputFloatPtr + 5);
+        outputFloatPtr[4] = *(inputFloatPtr + 6);
+    } else {
+        for (int32_t i = 0; i < dataSize; i++) {
+            sensorData.data[i] = event.data[i];
+        }
     }
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);

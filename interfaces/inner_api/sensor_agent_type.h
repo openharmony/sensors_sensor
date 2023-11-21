@@ -480,6 +480,7 @@ typedef struct PostureData {
  * This sensor measures the head posture of user.
  */
 typedef struct HeadPostureData {
+    int32_t order = 0;
     float w = 0.0;
     float x = 0.0;
     float y = 0.0;
