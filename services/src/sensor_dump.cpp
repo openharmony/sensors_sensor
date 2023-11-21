@@ -32,7 +32,9 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDump" };
 constexpr int32_t MAX_DUMP_PARAMETERS = 32;
+#ifdef BUILD_VARIANT_ENG
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
+#endif // BUILD_VARIANT_ENG
 constexpr uint32_t MS_NS = 1000000;
 
 enum {
@@ -104,7 +106,9 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
     int32_t optionIndex = 0;
     struct option dumpOptions[] = {
         {"channel", no_argument, 0, 'c'},
+#ifdef BUILD_VARIANT_ENG 
         {"data", no_argument, 0, 'd'},
+#endif // BUILD_VARIANT_ENG
         {"open", no_argument, 0, 'o'},
         {"help", no_argument, 0, 'h'},
         {"list", no_argument, 0, 'l'},
@@ -136,10 +140,12 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
                 DumpSensorChannel(fd, clientInfo);
                 break;
             }
+#ifdef BUILD_VARIANT_ENG 
             case 'd': {
                 DumpSensorData(fd, clientInfo);
                 break;
             }
+#endif // BUILD_VARIANT_ENG
             case 'o': {
                 DumpOpeningSensor(fd, sensors, clientInfo);
                 break;
@@ -174,7 +180,9 @@ void SensorDump::DumpHelp(int32_t fd)
     dprintf(fd, "      -l, --list: dump the sensor list\n");
     dprintf(fd, "      -c, --channel: dump the sensor data channel info\n");
     dprintf(fd, "      -o, --open: dump the opening sensors\n");
+#ifdef BUILD_VARIANT_ENG 
     dprintf(fd, "      -d, --data: dump the last 10 packages sensor data\n");
+#endif // BUILD_VARIANT_ENG
 }
 
 bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
@@ -233,6 +241,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     return true;
 }
 
+#ifdef BUILD_VARIANT_ENG 
 bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
 {
     dprintf(fd, "Last 10 packages sensor data:\n");
@@ -258,6 +267,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
     }
     return true;
 }
+#endif // BUILD_VARIANT_ENG
 
 void SensorDump::DumpCurrentTime(int32_t fd)
 {
