@@ -57,6 +57,9 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         float *outputFloatPtr = reinterpret_cast<float *>(sensorData.data);
         int32_t *outputIntPtr = reinterpret_cast<int32_t *>(sensorData.data);
         outputIntPtr[0] = static_cast<int32_t>(*(inputFloatPtr + 1));
+        if (outputIntPtr[0] < 0) {
+            SEN_HILOGE("The order of head posture sensor is invalid");
+        }
         outputFloatPtr[1] = *(inputFloatPtr + 3);
         outputFloatPtr[2] = *(inputFloatPtr + 4);
         outputFloatPtr[3] = *(inputFloatPtr + 5);
