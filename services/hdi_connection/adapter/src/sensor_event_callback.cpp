@@ -53,13 +53,14 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
     CHKPR(sensorData.data, ERR_NO_INIT);
     if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
         sensorData.dataLen = HEADPOSTURE_DATA_SIZE;
-        const float *inputPtr = reinterpret_cast<const float *>(event.data.data());
-        float *outputPtr = reinterpret_cast<float *>(sensorData.data);
-        outputPtr[0] = *(inputPtr + 1);
-        outputPtr[1] = *(inputPtr + 3);
-        outputPtr[2] = *(inputPtr + 4);
-        outputPtr[3] = *(inputPtr + 5);
-        outputPtr[4] = *(inputPtr + 6);
+        const float *inputFloatPtr = reinterpret_cast<const float *>(event.data.data());
+        float *outputFloatPtr = reinterpret_cast<float *>(sensorData.data);
+        int32_t *outputIntPtr = reinterpret_cast<int32_t *>(sensorData.data);
+        outputIntPtr[0] = static_cast<int32_t>(*(inputFloatPtr + 1));
+        outputFloatPtr[1] = *(inputFloatPtr + 3);
+        outputFloatPtr[2] = *(inputFloatPtr + 4);
+        outputFloatPtr[3] = *(inputFloatPtr + 5);
+        outputFloatPtr[4] = *(inputFloatPtr + 6);
     } else {
         for (int32_t i = 0; i < dataSize; i++) {
             sensorData.data[i] = event.data[i];
