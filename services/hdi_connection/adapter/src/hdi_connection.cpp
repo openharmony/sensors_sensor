@@ -96,6 +96,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
+        sensor.SetFifoMaxEventCount(sensorInfos[i].fifoMaxEventCount);
         sensorList.push_back(sensor);
     }
     return ERR_OK;
