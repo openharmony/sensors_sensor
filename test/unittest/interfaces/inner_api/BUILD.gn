@@ -79,6 +79,12 @@ ohos_unittest("SensorPowerTest") {
     "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/sensor_power_test.cpp",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/interfaces/inner_api",
