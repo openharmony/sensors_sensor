@@ -17,13 +17,15 @@
  * @addtogroup Sensor
  * @{
  *
- * @brief 为您提供标准的开放api，以使用传感器的常用功能。比如，您可以调用这些api来获取传感器属性信息、订阅或取消订阅传感器数据等。
+ * @brief Provides APIs to use common sensor features. For example, you can call the APIs to obtain sensor information
+ * and subscribe to or unsubscribe from sensor data.
  * @since 11
  */
 /**
- * @file sensor.h
+ * @file native_sensor.h
  *
- * @brief 声明操作传感器的常用api，用于获取传感器信息、订阅或取消订阅传感器数据等。
+ * @brief Declares the APIs for operating sensors, including obtaining sensor information and subscribing to or
+ * unsubscribing from sensor data.
  * @library libsensor_native.z.so
  * @syscap SystemCapability.Sensors.Sensor
  * @since 11
@@ -32,47 +34,52 @@
 #ifndef OH_NATIVE_SENSOR_H
 #define OH_NATIVE_SENSOR_H
 
-#include <cstddef>
-
 #include "native_sensor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /**
- * @brief 获取设备上的所有传感器信息。
+ * @brief Obtains information about all sensors on the device.
  *
- * @param sensorInfo - 出参，返回设备上的所有传感器信息，详情请参见{@Link Sensor_Sensor}。
- * @param count - 出参，返回设备上的传感器数量。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensors - Double pointer to the information about all sensors on the device.
+ * For details, see {@link Sensor_Sensor}.
+ * @param count - Pointer to the number of sensors on the device.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  *
  * @since 11
  */
 Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
 
 /**
- * @brief 订阅传感器数据，系统将按照用户指定的上报频率向用户报告传感器数据。
+ * @brief Subscribes to sensor data. The system will report sensor data to the subscriber at the specified frequency.
  *
- * @param id - 标识要订阅的传感器, 详情请参见{@link Sensor_SensorSubscribeId}。
- * @param attribute - 订阅属性，可用于指定传感器的上报频率等，详情请参见{@Link Sensor_SubscribeAttribute}。
- * @param user - 订阅者信息，用于指定传感器数据回调函数等，详情请参见{@Link Sensor_SubscribeUser}。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscribeId}.
+ * @param attribute - Pointer to the subscription attribute, which is used to specify the data reporting frequency.
+ * For details, see {@link Sensor_SubscribeAttribute}.
+ * @param user - Pointer to the subscriber information, which is used to specify the callback function for reporting
+ * the sensor data. For details, see {@link Sensor_SubscribeUser}.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *subscribeId, const Sensor_SubscribeAttribute *attribute,
+Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id, const Sensor_SubscribeAttribute *attribute,
     const Sensor_SubscribeUser *user);
 
 /**
- * @brief 取消订阅传感器数据。
+ * @brief Unsubscribes from sensor data.
  *
- * @param id - 标识要订阅的传感器, 详情请参见{@link Sensor_SensorSubscribeId}。
- * @param user - 订阅者信息，用于指定传感器数据回调函数等，详情请参见{@Link Sensor_SubscribeUser}。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscribeId}.
+ * @param user - Pointer to the subscriber information, which is used to specify the callback function for reporting
+ * the sensor data. For details, see {@link Sensor_SubscribeUser}.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscribeId *subscribeId, const Sensor_SubscribeUser *user);
+Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscribeId *id, const Sensor_SubscribeUser *user);
 #ifdef __cplusplus
 }
 #endif

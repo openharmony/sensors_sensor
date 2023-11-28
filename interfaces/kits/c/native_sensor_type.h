@@ -17,7 +17,7 @@
  * @addtogroup Sensor
  * @{
  *
- * @brief 为您提供标准的开放api，定义常用传感器属性。
+ * @brief Provides APIs to define common sensor attributes.
  *
  * @since 11
  */
@@ -25,9 +25,8 @@
 /**
  * @file native_sensor_type.h
  *
- * @brief 定义常用传感器属性。
- * @library libohsensor.z.so
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Declares the common sensor attributes.
+ * @library libsensor_native.z.so
  *
  * @since 11
  */
@@ -42,121 +41,102 @@ extern "C" {
 #endif
 
 /**
- * @brief 传感器类型。
- * @syscap SystemCapability.Sensors.Sensor
- * 
+ * @brief Enumerates the sensor types.
+ *
  * @since 11
  */
 typedef enum Sensor_SensorType {
     /**
-     * 加速度传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Acceleration sensor.
      * @since 11
      */
     SENSOR_TYPE_ACCELEROMETER = 1,
     /**
-     * 陀螺仪传感测器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Gyroscope sensor.
      * @since 11
      */
     SENSOR_TYPE_GYROSCOPE = 2,
     /**
-     * 环境光传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Ambient light sensor.
      * @since 11
      */
     SENSOR_TYPE_AMBIENT_LIGHT = 5,
     /**
-     * 地磁传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Magnetic field sensor.
      * @since 11
      */
     SENSOR_TYPE_MAGNETIC_FIELD = 6,
     /**
-     * 气压计传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Barometer sensor.
      * @since 11
      */
     SENSOR_TYPE_BAROMETER = 8,
     /**
-     * 霍尔传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Hall effect sensor.
      * @since 11
      */
     SENSOR_TYPE_HALL = 10,
     /**
-     * 接近光传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Proximity sensor.
      * @since 11
      */
     SENSOR_TYPE_PROXIMITY = 12,
     /**
-     * 方向传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Orientation sensor.
      * @since 11
      */
     SENSOR_TYPE_ORIENTATION = 256,
     /**
-     * 重力传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Gravity sensor.
      * @since 11
      */
     SENSOR_TYPE_GRAVITY = 257,
     /**
-     * 旋转矢量传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Rotation vector sensor.
      * @since 11
      */
     SENSOR_TYPE_ROTATION_VECTOR = 259,
     /**
-     * 计步器检测传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Pedometer detection sensor.
      * @since 11
      */
     SENSOR_TYPE_PEDOMETER_DETECTION = 265,
     /**
-     * 计步器传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Pedometer sensor.
      * @since 11
      */
     SENSOR_TYPE_PEDOMETER = 266,
     /**
-     * 心率传感器
-     * @syscap SystemCapability.Sensors.Sensor
+     * Heart rate sensor.
      * @since 11
      */
     SENSOR_TYPE_HEART_RATE = 278,
 } Sensor_SensorType;
 
 /**
- * @brief 定义传感器错误码。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Enumerates the sensor result codes.
  *
  * @since 11
  */
 typedef enum Sensor_Result {
     /**
-     * 操作成功。
-     * @syscap SystemCapability.Sensors.Sensor
+     * The operation is successful.
      * @since 11
      */
     SENSOR_SUCCESS = 0,
     /**
      * Permission verification failed.
-     * @syscap SystemCapability.Sensors.Sensor
      * @since 11
      */
     SENSOR_PERMISSION_DENIED = 201,
     /**
      * Parameter check failed. For example, a mandatory parameter is not passed in,
      * or the parameter type passed in is incorrect.
-     * @syscap SystemCapability.Sensors.Sensor
      * @since 11
      */
     SENSOR_PARAMETER_ERROR = 401,
     /**
-     * 传感器服务异常。
-     * @syscap SystemCapability.Sensors.Sensor
+     * The sensor service is abnormal.
      * @since 11
      */
     SENSOR_SERVICE_EXCEPTION = 14500101,
@@ -164,40 +144,34 @@ typedef enum Sensor_Result {
 
 /**
  * @brief Enumerates the accuracy levels of data reported by a sensor.
- * @syscap SystemCapability.Sensors.Sensor
  *
  * @since 11
  */
 typedef enum Sensor_SensorAccuracy {
     /**
      * The sensor data is unreliable. It is possible that the sensor does not contact with the device to measure.
-     * @syscap SystemCapability.Sensors.Sensor
      * @since 11
      */
     SENSOR_ACCURACY_UNRELIABLE = 0,
     /**
      * The sensor data is at a low accuracy level. The data must be calibrated based on the environment before being used.
-     * @syscap SystemCapability.Sensors.Sensor
      * @since 11
      */
     SENSOR_ACCURACY_LOW = 1,
     /**
      * The sensor data is at a medium accuracy level. You are advised to calibrate the data based on the environment before using it.
-     * @syscap SystemCapability.Sensors.Sensor
      * @since 11
      */
     SENSOR_ACCURACY_MEDIUM = 2,
     /**
      * The sensor data is at a high accuracy level. The data can be used directly.
-     * @syscap SystemCapability.Sensors.Sensor
      * @since 11
      */
     SENSOR_ACCURACY_HIGH = 3
 } Sensor_SensorAccuracy;
 
 /**
- * @brief 传感器信息。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Defines the sensor information.
  * @since 11
  */
 typedef struct Sensor_Sensor Sensor_Sensor;
@@ -222,131 +196,149 @@ Sensor_Sensor **OH_Sensor_CreateSensors(uint32_t count);
 int32_t OH_Sensor_DestroySensors(Sensor_Sensor **sensors, uint32_t count);
 
 /**
- * @brief 获取传感器名称.
+ * @brief Obtains the sensor name.
  *
- * @param sensor - 传感器信息.
- * @param sensorName - 出参，传感器名称.
- * @param length - 出参，字节数.
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensor - Pointer to the sensor information.
+ * @param sensorName - Pointer to the sensor name.
+ * @param length - Pointer to the length, in bytes.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorName(Sensor_Sensor* sensor, char *sensorName, uint32_t *length);
 
 /**
- * @brief 获取传感器厂商名称.
+ * @brief Obtains the sensor's vendor name.
  *
- * @param sensor - 传感器信息.
- * @param vendorName - 出参，厂商名称.
- * @param length - 出参，字节数.
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensor - Pointer to the sensor information.
+ * @param vendorName - Pointer to the vendor name.
+ * @param length - Pointer to the length, in bytes.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetVendorName(Sensor_Sensor* sensor, char *vendorName, uint32_t *length);
 
 /**
- * @brief 获取传感器类型。
+ * @brief Obtains the sensor type.
  *
- * @param sensor - 传感器信息。
- * @param sensorType - 出参，传感器类型。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensor - Pointer to the sensor information.
+ * @param sensorType - Pointer to the sensor type.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorType(Sensor_Sensor* sensor, Sensor_SensorType *sensorType);
 
 /**
- * @brief 获取传感器分辨率。
+ * @brief Obtains the sensor resolution.
  *
- * @param sensor - 传感器信息。
- * @param resolution - 出参，传感器分辨率。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensor - Pointer to the sensor information.
+ * @param resolution - Pointer to the sensor resolution.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorResolution(Sensor_Sensor* sensor, float *resolution);
 
 /**
- * @brief 获取传感器最小上报时间间隔。
+ * @brief Obtains the minimum data reporting interval of a sensor.
  *
- * @param sensor - 传感器信息。
- * @param minSamplePeriod - 出参，传感器最小上报时间间隔，单位纳秒。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensor - Pointer to the sensor information.
+ * @param minSamplePeriod - Pointer to the minimum data reporting interval, in nanoseconds.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorMinSamplePeriod(Sensor_Sensor* sensor, int64_t *minSamplePeriod);
 
 /**
- * @brief 获取传感器最大上报时间间隔。
+ * @brief Obtains the maximum data reporting interval of a sensor.
  *
- * @param sensor - 传感器信息。
- * @param maxSamplePeriod - 出参，传感器最大上报时间间隔，单位纳秒。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensor - Pointer to the sensor information.
+ * @param maxSamplePeriod - Pointer to the maximum data reporting interval, in nanoseconds.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorMaxSamplePeriod(Sensor_Sensor* sensor, int64_t *maxSamplePeriod);
 
 /**
- * @brief 传感器数据信息。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Defines the sensor data information.
  * @since 11
  */
 typedef struct Sensor_SensorEvent Sensor_SensorEvent;
 
 /**
- * @brief 获取传感器类型。
+ * @brief Obtains the sensor type.
  *
- * @param sensor - 传感器数据信息。
- * @param sensorType - 出参，传感器类型。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensorEvent - Pointer to the sensor data information.
+ * @param sensorType - Pointer to the sensor type.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetEventSensorType(Sensor_SensorEvent* sensorEvent, Sensor_SensorType *sensorType);
 
 /**
- * @brief 获取时间戳。
+ * @brief Obtains the timestamp of sensor data.
  *
- * @param sensor - 传感器数据信息。
- * @param timestamp - 出参，时间戳。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensorEvent - Pointer to the sensor data information.
+ * @param timestamp - Pointer to the timestamp.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetEventTimestamp(Sensor_SensorEvent* sensorEvent, int64_t *timestamp);
 
 /**
- * @brief 获取传感器数据精度。
+ * @brief Obtains the accuracy of sensor data.
  *
- * @param sensor - 传感器数据信息。
- * @param accuracy - 出参，传感器数据精度。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensorEvent - Pointer to the sensor data information.
+ * @param accuracy - Pointer to the accuracy.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetEventAccuracy(Sensor_SensorEvent* sensorEvent, Sensor_SensorAccuracy *accuracy);
 
 /**
- * @brief 获取传感器数据。数据的长度和内容依赖于监听的传感器类型，传感器上报的数据格式如下：
- * SENSOR_TYPE_ACCELEROMETER: data[0]、data[1]、data[2]分别表示设备x、y、z轴的加速度分量，单位m/s2；
- * SENSOR_TYPE_GYROSCOPE: data[0]、data[1]、data[2]分别表示设备x、y、z轴的旋转角速度，单位弧度/s；
- * SENSOR_TYPE_AMBIENT_LIGHT: data[0]表示环境光强度，in lux；
- * SENSOR_TYPE_MAGNETIC_FIELD: data[0]、data[1]、data[2]分别表示设备x、y、z轴的地磁分量，单位微特斯拉；
- * SENSOR_TYPE_BAROMETER：data[0]表示气压值，单位hPa;
- * SENSOR_TYPE_HALL: data[0]表示皮套吸合状态，0表示打开，大于0表示吸附;
- * SENSOR_TYPE_PROXIMITY：data[0]表示接近状态，0表示接近，大于0表示远离；
- * SENSOR_TYPE_ORIENTATION:data[0]、data[1]、data[2]分别表示设备绕z、x、y轴的角度，单位度；
- * SENSOR_TYPE_GRAVITY：data[0]、data[1]、data[2]分别表示设备x、y、z轴的重力加速度分量，单位m/s2;
- * SENSOR_TYPE_ROTATION_VECTOR:data[0]、data[1]、data[2]分别表示设备x、y、z轴的旋转角度，单位度，data[3]表示旋转向量元素;
- * SENSOR_TYPE_PEDOMETER_DETECTION:data[0]表示几步检测状态，1表示检测到了步数变化
- * SENSOR_TYPE_PEDOMETER:data[0]表示步数；
- * SENSOR_TYPE_HEART_RATE：data[0]表示心率数值；
- * 
- * @param sensor - 传感器数据信息。
- * @param data - 出参，传感器数据。
- * @param length - 出参，数组长度。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @brief Obtains sensor data. The data length and content depend on the sensor type.
+ * The format of the sensor data reported is as follows:
+ * SENSOR_TYPE_ACCELEROMETER: data[0], data[1], and data[2], indicating the acceleration around
+ * the x, y, and z axes of the device, respectively, in m/s2.
+ * SENSOR_TYPE_GYROSCOPE: data[0], data[1], and data[2], indicating the angular velocity of rotation around
+ *  the x, y, and z axes of the device, respectively, in rad/s.
+ * SENSOR_TYPE_AMBIENT_LIGHT: data[0], indicating the ambient light intensity, in lux.
+ * SENSOR_TYPE_MAGNETIC_FIELD: data[0], data[1], and data[2], indicating the magnetic field strength around
+ * the x, y, and z axes of the device, respectively, in μT.
+ * SENSOR_TYPE_BAROMETER: data[0], indicating the atmospheric pressure, in hPa.
+ * SENSOR_TYPE_HALL: data[0], indicating the opening/closing state of the flip cover. The value <b>0</b> means that
+ * the flip cover is opened, and a value greater than <b>0</b> means that the flip cover is closed.
+ * SENSOR_TYPE_PROXIMITY: data[0], indicates the approaching state. The value <b>0</b> means the two objects are close
+ * to each other, and a value greater than <b>0</b> means that they are far away from each other.
+ * SENSOR_TYPE_ORIENTATION: data[0], data[1], and data[2], indicating the rotation angles of a device around
+ * the z, x, and y axes, respectively, in degree.
+ * SENSOR_TYPE_GRAVITY: data[0], data[1], and data[2], indicating the gravitational acceleration around
+ * the x, y, and z axes of a device, respectively, in m/s2.
+ * SENSOR_TYPE_ROTATION_VECTOR: data[0], data[1] and data[2], indicating the rotation angles of a device around
+ * the x, y, and z axes, respectively, in degree. data[3] indicates the rotation vector.
+ * SENSOR_TYPE_PEDOMETER_DETECTION: data[0], indicating the pedometer detection status.
+ * The value <b>1</b> means that the number of detected steps changes.
+ * SENSOR_TYPE_PEDOMETER: data[0], indicating the number of steps a user has walked.
+ * SENSOR_TYPE_HEART_RATE: data[0], indicating the heart rate value.
+ *
+ * @param sensorEvent - Pointer to the sensor data information.
+ * @param data - Double pointer to the sensor data.
+ * @param length - Pointer to the array length.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorData(Sensor_SensorEvent* sensorEvent, float **data, uint32_t *length);
 
 /**
- * @brief 传感器订阅Id，唯一标识传感器。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Defines the sensor subscription ID, which uniquely identifies a sensor.
  * @since 11
  */
 typedef struct Sensor_SensorSubscribeId Sensor_SensorSubscribeId;
@@ -369,28 +361,29 @@ Sensor_SensorSubscribeId *OH_Sensor_CreateSubscribeId();
 int32_t OH_Sensor_DestroySubscribeId(Sensor_SensorSubscribeId *subscribeId);
 
 /**
- * @brief 获取传感器类型。
+ * @brief Obtains the sensor type.
  *
- * @param subscribeId - 传感器订阅Id。
- * @param sensorType - 出参，传感器类型。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param subscribeId - Pointer to the sensor subscription ID.
+ * @param sensorType - Pointer to the sensor type.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, Sensor_SensorType *sensorType);
 
 /**
- * @brief 设置传感器类型。
+ * @brief Sets the sensor type.
  *
- * @param subscribeId - 传感器订阅Id。
- * @param sensorType - 传感器类型。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param subscribeId - Pointer to the sensor subscription ID.
+ * @param sensorType - Sensor type to set.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_SetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, const Sensor_SensorType sensorType);
 
 /**
- * @brief 传感器订阅属性。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Defines the sensor subscription attribute.
  * @since 11
  */
 typedef struct Sensor_SubscribeAttribute Sensor_SubscribeAttribute;
@@ -413,35 +406,35 @@ Sensor_SubscribeAttribute *OH_Sensor_CreateAttribute();
 int32_t OH_Sensor_DestroyAttribute(Sensor_SubscribeAttribute *attribute);
 
 /**
- * @brief 设置上报时间间隔。
+ * @brief Sets the sensor data reporting interval.
  *
- * @param attribute - 传感器订阅属性。
- * @param samplingInterval - 上报时间间隔，单位ns。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param attribute - Pointer to the sensor subscription attribute.
+ * @param samplingInterval - Data reporting interval to set, in nanoseconds.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscribeAttribute* attribute, const int64_t samplingInterval);
 
 /**
- * @brief 获取上报时间间隔。
+ * @brief Obtains the sensor data reporting interval.
  *
- * @param attribute - 传感器订阅属性。
- * @param samplingInterval - 出参，上报时间间隔，单位ns。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param attribute - Pointer to the sensor subscription attribute.
+ * @param samplingInterval - Pointer to the data reporting interval, in nanoseconds.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscribeAttribute* attribute, int64_t *samplingInterval);
 
 /**
- * @brief 传感器数据的回调函数。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Defines the callback function used to report sensor data.
  * @since 11
  */
 typedef void (*Sensor_RecordSensorCallback)(Sensor_SensorEvent *event);
 
 /**
- * @brief 传感器订阅者信息。
- * @syscap SystemCapability.Sensors.Sensor
+ * @brief Defines the sensor subscriber information.
  * @since 11
  */
 typedef struct Sensor_SubscribeUser Sensor_SubscribeUser;
@@ -464,21 +457,23 @@ Sensor_SubscribeUser *OH_Sensor_CreateUser();
 int32_t OH_Sensor_DestroyUser(Sensor_SubscribeUser *user);
 
 /**
- * @brief 设置传感器数据的回调函数。
+ * @brief Sets a callback function to report sensor data.
  *
- * @param user - 传感器订阅者信息。
- * @param callback - 传感器数据的回调函数。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param user - Pointer to the sensor subscriber information.
+ * @param callback - Callback function to set.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_SetSensorCallback(Sensor_SubscribeUser* user, const Sensor_RecordSensorCallback callback);
 
 /**
- * @brief 获取传感器数据的回调函数。
+ * @brief Obtains the callback function used to report sensor data.
  *
- * @param user - 传感器订阅者信息。
- * @param callback - 出参，传感器数据的回调函数。
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param user - Pointer to the sensor subscriber information.
+ * @param callback - Pointer to the callback function.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_GetSensorCallback(Sensor_SubscribeUser* user, Sensor_RecordSensorCallback *callback);
