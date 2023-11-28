@@ -168,7 +168,7 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, Sens
         return;
     }
     auto fifoCount = clientInfo_.ComputeBestFifoCount(sensorId, channel);
-    if (fifoCount <= 0) {
+    if (fifoCount <= 1) {
         SendNoneFifoCacheData(cacheBuf, channel, data, periodCount);
         return;
     }
