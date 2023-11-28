@@ -141,4 +141,4 @@ struct RawFileDescriptor {
 #ifdef __cplusplus
 };
 #endif
-#endif  // VIBRATION_CONVERT_TYPE_H
+#endif // VIBRATION_CONVERT_TYPE_H

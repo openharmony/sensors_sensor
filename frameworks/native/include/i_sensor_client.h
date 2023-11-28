@@ -28,4 +28,4 @@ public:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // I_SENSOR_CLIENT_H
+#endif // I_SENSOR_CLIENT_H

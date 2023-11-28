@@ -51,4 +51,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_SERVICE_STUB_H
+#endif // SENSOR_SERVICE_STUB_H

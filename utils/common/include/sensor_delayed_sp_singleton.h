@@ -70,4 +70,4 @@ void SensorDelayedSpSingleton<T>::DestroyInstance()
 }
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_DELAYED_SP_SINGLETON_H
+#endif // SENSOR_DELAYED_SP_SINGLETON_H

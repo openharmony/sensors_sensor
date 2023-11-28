@@ -48,4 +48,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // AUDIO_PARSING_H
+#endif // AUDIO_PARSING_H

@@ -43,4 +43,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // COMPATIBLE_CONNECTION_H
+#endif // COMPATIBLE_CONNECTION_H

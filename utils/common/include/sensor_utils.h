@@ -27,4 +27,4 @@ bool IsEqual(const T &left, const T &right)
 
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_UTILS_H
+#endif // SENSOR_UTILS_H

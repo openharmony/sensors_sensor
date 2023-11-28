@@ -35,4 +35,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // DEATH_RECIPIENT_TEMPLATE_H
+#endif // DEATH_RECIPIENT_TEMPLATE_H

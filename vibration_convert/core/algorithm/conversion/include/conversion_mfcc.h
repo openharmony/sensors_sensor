@@ -108,4 +108,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // CONVERSION_MFCC_H
+#endif // CONVERSION_MFCC_H

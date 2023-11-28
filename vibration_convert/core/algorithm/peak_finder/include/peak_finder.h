@@ -186,4 +186,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // PEAK_FINDER_H
+#endif // PEAK_FINDER_H

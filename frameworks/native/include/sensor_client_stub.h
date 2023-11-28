@@ -32,4 +32,4 @@ public:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_CLIENT_STUB_H
+#endif // SENSOR_CLIENT_STUB_H

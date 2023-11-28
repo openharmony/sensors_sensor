@@ -36,4 +36,4 @@ enum class SensorInterfaceCode {
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSORS_IPC_INTERFACE_CODE_H
+#endif // SENSORS_IPC_INTERFACE_CODE_H

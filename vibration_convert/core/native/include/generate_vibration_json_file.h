@@ -35,4 +35,4 @@ public:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // GENERATE_VIBRATION_JSON_FILE_H
+#endif // GENERATE_VIBRATION_JSON_FILE_H

@@ -35,4 +35,4 @@ enum class MessageId : int32_t {
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // PROTO_H
+#endif // PROTO_H

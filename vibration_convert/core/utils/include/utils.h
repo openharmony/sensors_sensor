@@ -46,7 +46,7 @@ constexpr double F_HALF = 0.5;
 constexpr double F_THREE = 3.0;
 constexpr double SAMPLE_IN_MS = 1000.0;
 constexpr double INTERSITY_BOUNDARY_POINT = 0.25;
-constexpr double INTERSITY_NUMBER_BOUNDARY_POINT  = 0.75;
+constexpr double INTERSITY_NUMBER_BOUNDARY_POINT = 0.75;
 }  // namespace
 
 enum WindowType {
@@ -207,4 +207,4 @@ inline double ConvertHtkHz(double mels)
 }
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // CONVERSION_UTILS_H
+#endif // CONVERSION_UTILS_H

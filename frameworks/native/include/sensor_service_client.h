@@ -76,4 +76,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_SERVICE_CLIENT_H
+#endif // SENSOR_SERVICE_CLIENT_H

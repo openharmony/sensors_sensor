@@ -50,4 +50,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_SERVICE_PROXY_H
+#endif // SENSOR_SERVICE_PROXY_H

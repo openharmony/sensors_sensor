@@ -38,4 +38,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_FILE_DESCRIPTOR_LISTENER_H
+#endif // SENSOR_FILE_DESCRIPTOR_LISTENER_H

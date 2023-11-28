@@ -64,4 +64,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // FREQUENCY_ESTIMATION_H
+#endif // FREQUENCY_ESTIMATION_H

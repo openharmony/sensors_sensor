@@ -205,4 +205,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // VIBRATION_CONVERT_CORE_H
+#endif // VIBRATION_CONVERT_CORE_H

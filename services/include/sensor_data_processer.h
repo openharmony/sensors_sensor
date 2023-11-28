@@ -64,4 +64,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // endif SENSORS_DATA_PROCESSER_H
+#endif // endif SENSORS_DATA_PROCESSER_H
