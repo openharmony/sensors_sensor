@@ -17,7 +17,8 @@ import("./../../../../sensor.gni")
 ohos_unittest("SensorNativeTest") {
   module_out_path = "sensor/interfaces"
 
-  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/kits/sensor_native_test.cpp" ]
+  sources =
+      [ "$SUBSYSTEM_DIR/test/unittest/interfaces/kits/sensor_native_test.cpp" ]
 
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
@@ -33,17 +34,15 @@ ohos_unittest("SensorNativeTest") {
   ]
 
   external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
-    "ipc:ipc_core",
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
   ]
 }
 group("unittest") {
   testonly = true
-  deps = [
-    ":SensorNativeTest"
-  ]
+  deps = [ ":SensorNativeTest" ]
 }
