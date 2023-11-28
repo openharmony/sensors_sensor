@@ -43,4 +43,4 @@ protected:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // STREAM_SERVER_H
+#endif // STREAM_SERVER_H

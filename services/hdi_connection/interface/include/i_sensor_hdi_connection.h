@@ -43,4 +43,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // I_SENSOR_HDI_CONNECTION_H
+#endif // I_SENSOR_HDI_CONNECTION_H

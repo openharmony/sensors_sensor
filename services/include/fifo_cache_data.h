@@ -45,4 +45,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // FIFO_CACHE_DATA_H
+#endif // FIFO_CACHE_DATA_H

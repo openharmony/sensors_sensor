@@ -31,4 +31,4 @@ struct AppThreadInfo {
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // APP_THREAD_INFO_H
+#endif // APP_THREAD_INFO_H

@@ -33,4 +33,4 @@ public:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_EVENT_HANDLER_H
+#endif // SENSOR_EVENT_HANDLER_H

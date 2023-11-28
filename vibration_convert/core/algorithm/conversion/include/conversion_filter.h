@@ -130,4 +130,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // CONVERSION_FILTER_H
+#endif // CONVERSION_FILTER_H

@@ -117,4 +117,4 @@ private:
 #define POWER_POLICY SensorPowerPolicy::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_SERVICE_H
+#endif // SENSOR_SERVICE_H

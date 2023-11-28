@@ -191,4 +191,4 @@ StreamBuffer &StreamBuffer::operator<<(const T &data)
 }
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // STREAM_BUFFER_H
+#endif // STREAM_BUFFER_H

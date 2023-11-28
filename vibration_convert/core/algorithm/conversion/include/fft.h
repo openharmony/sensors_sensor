@@ -122,4 +122,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // FFT_H
+#endif // FFT_H

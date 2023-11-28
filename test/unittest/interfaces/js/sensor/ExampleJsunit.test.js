@@ -540,7 +540,7 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetGeomagneticField_001', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_001----------------------------------");
-        let  promiseArray = []
+        let promiseArray = []
         for (let i = 0; i < timeMillis.length; i++) {
             promiseArray.push(new Promise((resolve, reject) => {
                 let j = i
@@ -581,7 +581,7 @@ describe("SensorJsTest", function () {
      */
     it('Sensor_GetGeomagneticField_002', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_002----------------------------------");
-        let  promiseArray = []
+        let promiseArray = []
         for (let i = 0; i < GEOMAGNETIC_COORDINATES.length; i++) {
             promiseArray.push(new Promise((resolve, reject) => {
                 let j = i
@@ -2502,7 +2502,7 @@ describe("SensorJsTest", function () {
      * @tc.author:
      */
     it('Sensor_GetDirection_005', 0, async function (done) {
-        try  {
+        try {
             sensor.getOrientation([1,2,3,1,2,3,1,2,3,0]).then((data) => {
                 for (let i = 0; i < data.length; i++) {
                     console.info("Sensor_GetDirection_005 failed")

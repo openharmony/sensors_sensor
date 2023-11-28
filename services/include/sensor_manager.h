@@ -62,4 +62,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_MANAGER_H
+#endif // SENSOR_MANAGER_H

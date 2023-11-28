@@ -25,7 +25,7 @@ constexpr int32_t CIRCULAR_BUF_LEN = 1024;
 constexpr int32_t SENSOR_DATA_LENGTH = 64;
 
 struct CircularEventBuf {
-    struct  SensorData *circularBuf;
+    struct SensorData *circularBuf;
     int32_t readPos;
     int32_t writePosition;
     int32_t eventNum;
@@ -43,4 +43,4 @@ public:
 using ReportDataCb = int32_t (ReportDataCallback::*)(SensorData *sensorData, sptr<ReportDataCallback> cb);
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // REPORT_DATA_CALLBACK_H
+#endif // REPORT_DATA_CALLBACK_H

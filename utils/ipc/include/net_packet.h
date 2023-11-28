@@ -47,4 +47,4 @@ protected:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // NET_PACKET_H
+#endif // NET_PACKET_H

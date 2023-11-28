@@ -37,4 +37,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // FD_LISTENER_H
+#endif // FD_LISTENER_H

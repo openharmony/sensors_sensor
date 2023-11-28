@@ -44,4 +44,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // ACTIVE_INFO_H
+#endif // ACTIVE_INFO_H

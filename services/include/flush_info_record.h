@@ -66,4 +66,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // FLUSH_INFO_RECORD_H
+#endif // FLUSH_INFO_RECORD_H

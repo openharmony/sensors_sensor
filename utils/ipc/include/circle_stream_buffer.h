@@ -34,4 +34,4 @@ protected:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // CIRCLE_STREAM_BUFFER_H
+#endif // CIRCLE_STREAM_BUFFER_H

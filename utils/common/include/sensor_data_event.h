@@ -56,4 +56,4 @@ struct ExtraSensorInfo {
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSOR_DATA_EVENT_H
+#endif // SENSOR_DATA_EVENT_H

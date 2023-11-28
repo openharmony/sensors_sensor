@@ -80,7 +80,7 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
         }
     }
 }
-#endif  // OHOS_BUILD_ENABLE_RUST
+#endif // OHOS_BUILD_ENABLE_RUST
 
 void StreamSocket::Close()
 {

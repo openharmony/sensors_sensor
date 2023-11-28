@@ -53,4 +53,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // HDI_SERVICE_IMPL_H
+#endif // HDI_SERVICE_IMPL_H

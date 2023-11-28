@@ -139,7 +139,7 @@ private:
     const char *func_ { nullptr };
 };
 
-#define CALL_LOG_ENTER   InnerFunctionTracer ___innerFuncTracer___ { LABEL, __FUNCTION__ }
+#define CALL_LOG_ENTER InnerFunctionTracer ___innerFuncTracer___ { LABEL, __FUNCTION__ }
 
 #ifdef DEBUG_CODE_TEST
 #define CHKPL(cond, ...) \
@@ -310,4 +310,4 @@ private:
 #endif
 }  // namespace Sensors
 }  // namespace OHOS
-#endif  // SENSORS_ERRORS_H
+#endif // SENSORS_ERRORS_H
