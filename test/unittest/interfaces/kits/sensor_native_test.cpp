@@ -128,7 +128,7 @@ void SensorDataCallbackImpl(Sensor_SensorEvent *event)
     ret = OH_Sensor_GetEventAccuracy(event, &accuracy);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
     float *data = nullptr;
-    size_t length = 0;
+    uint32_t length = 0;
     ret = OH_Sensor_GetSensorData(event, &data, &length);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
     SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d"
@@ -148,7 +148,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetAllSensors_001, TestSize.Level1)
     ASSERT_EQ(ret, SENSOR_SUCCESS);
     for (uint32_t i = 0; i < count; ++i) {
         char sensorName[SENSOR_NAME_LENGTH_MAX] = {};
-        size_t length = SENSOR_NAME_LENGTH_MAX;
+        uint32_t length = SENSOR_NAME_LENGTH_MAX;
         ret = OH_Sensor_GetSensorName(sensors[i], sensorName, &length);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
         char vendorName[SENSOR_NAME_LENGTH_MAX] = {};
