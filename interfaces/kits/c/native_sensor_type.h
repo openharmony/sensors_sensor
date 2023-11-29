@@ -349,7 +349,7 @@ typedef struct Sensor_SensorSubscribeId Sensor_SensorSubscribeId;
  * @return 如果创建成功，则返回指向{@link Sensor_SensorSubscribeId} 结构实例的指针，否则返回NULL.
  * @since 11
  */
-Sensor_SensorSubscribeId *OH_Sensor_CreateSubscribeId();
+Sensor_SensorSubscribeId *OH_Sensor_CreateSubscribeId(void);
 
 /**
  * @brief 销毁{@link Sensor_SensorSubscribeId}实例并回收内存。
@@ -394,7 +394,7 @@ typedef struct Sensor_SubscribeAttribute Sensor_SubscribeAttribute;
  * @return 如果创建成功，则返回指向{@link Sensor_SubscribeAttribute} 结构实例的指针，否则返回NULL.
  * @since 11
  */
-Sensor_SubscribeAttribute *OH_Sensor_CreateAttribute();
+Sensor_SubscribeAttribute *OH_Sensor_CreateAttribute(void);
 
 /**
  * @brief 销毁{@link Sensor_SubscribeAttribute}实例并回收内存。
@@ -445,7 +445,7 @@ typedef struct Sensor_SubscribeUser Sensor_SubscribeUser;
  * @return 如果创建成功，则返回指向{@link Sensor_SubscribeUser} 结构实例的指针，否则返回NULL.
  * @since 11
  */
-Sensor_SubscribeUser *OH_Sensor_CreateUser();
+Sensor_SubscribeUser *OH_Sensor_CreateUser(void);
 
 /**
  * @brief 销毁{@link Sensor_SubscribeUser}实例并回收内存。
