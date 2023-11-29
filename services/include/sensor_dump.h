@@ -47,6 +47,6 @@ private:
     std::string GetDataBySensorId(int32_t sensorId, SensorData &sensorData);
     static std::unordered_map<int32_t, std::string> sensorMap_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_DUMP_H

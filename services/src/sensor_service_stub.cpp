@@ -33,7 +33,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceStub" };
-}  // namespace
+} // namespace
 
 SensorServiceStub::SensorServiceStub()
 {
@@ -311,5 +311,5 @@ ErrCode SensorServiceStub::ResetSensorsInner(MessageParcel &data, MessageParcel 
     }
     return ResetSensors();
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

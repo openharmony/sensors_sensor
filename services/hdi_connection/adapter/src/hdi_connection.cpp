@@ -309,5 +309,5 @@ void HdiConnection::Reconnect()
         }
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

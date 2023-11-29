@@ -33,7 +33,7 @@ constexpr int32_t INVALID_SENSOR_ID = -1;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
 constexpr uint32_t PROXIMITY_SENSOR_ID = 50331904;
 constexpr float PROXIMITY_FAR = 5.0;
-}  // namespace
+} // namespace
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 void SensorManager::InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap,
@@ -212,5 +212,5 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
         }
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

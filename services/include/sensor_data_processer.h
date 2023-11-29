@@ -62,6 +62,6 @@ private:
     std::mutex sensorMutex_;
     std::unordered_map<int32_t, Sensor> sensorMap_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // endif SENSORS_DATA_PROCESSER_H

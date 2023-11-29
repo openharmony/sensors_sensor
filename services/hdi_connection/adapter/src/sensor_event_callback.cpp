@@ -26,7 +26,7 @@ namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
-}  // namespace
+} // namespace
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 {
@@ -74,5 +74,5 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

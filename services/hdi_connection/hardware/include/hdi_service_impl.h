@@ -51,6 +51,6 @@ private:
     static int64_t reportInterval_;
     static std::atomic_bool isStop_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // HDI_SERVICE_IMPL_H

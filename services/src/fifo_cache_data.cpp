@@ -60,5 +60,5 @@ sptr<SensorBasicDataChannel> FifoCacheData::GetChannel() const
 {
     return channel_.promote();
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

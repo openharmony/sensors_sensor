@@ -105,6 +105,6 @@ private:
     std::unordered_set<int32_t> activeInfoCBPidSet_;
     static std::unordered_map<std::string, std::set<int32_t>> userGrantPermMap_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // CLIENT_INFO_H

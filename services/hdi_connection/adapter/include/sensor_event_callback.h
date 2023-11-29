@@ -29,6 +29,6 @@ public:
     virtual ~SensorEventCallback() {}
     int32_t OnDataEvent(const HdfSensorEvents &event) override;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_EVENT_CALLBACK_H

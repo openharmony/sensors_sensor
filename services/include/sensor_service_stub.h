@@ -49,6 +49,6 @@ private:
     ErrCode ResetSensorsInner(MessageParcel &data, MessageParcel &reply);
     std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_SERVICE_STUB_H

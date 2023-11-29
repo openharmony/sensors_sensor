@@ -39,7 +39,7 @@ const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_sensorSer
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
-}  // namespace
+} // namespace
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -582,5 +582,5 @@ void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessT
     server_->clientInfo_.ChangeSensorPerm(result.tokenID, result.permissionName,
         (result.permStateChangeType != 0));
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

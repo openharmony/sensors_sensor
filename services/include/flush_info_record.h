@@ -64,6 +64,6 @@ private:
     std::unordered_map<int32_t, std::vector<FlushInfo>> flushInfo_;
     std::mutex flushInfoMutex_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // FLUSH_INFO_RECORD_H
