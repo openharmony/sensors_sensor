@@ -54,6 +54,6 @@ private:
     Sensor GenerateHeadPostureSensor();
     std::atomic_bool hdiConnectionStatus_ = false;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_HDI_CONNECTION_H

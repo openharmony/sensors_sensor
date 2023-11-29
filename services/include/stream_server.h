@@ -41,6 +41,6 @@ protected:
     std::map<int32_t, int32_t> idxPidMap_;
     std::map<int32_t, SessionPtr> sessionsMap_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // STREAM_SERVER_H

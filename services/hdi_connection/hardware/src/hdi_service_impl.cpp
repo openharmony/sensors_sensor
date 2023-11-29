@@ -287,5 +287,5 @@ int32_t HdiServiceImpl::Unregister()
     isStop_ = true;
     return ERR_OK;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

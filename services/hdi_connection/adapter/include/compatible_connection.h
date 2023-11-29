@@ -41,6 +41,6 @@ private:
     static sptr<ReportDataCallback> reportDataCallback_;
     HdiServiceImpl &hdiServiceImpl_ = HdiServiceImpl::GetInstance();
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // COMPATIBLE_CONNECTION_H

@@ -33,7 +33,7 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataProcesser" };
 const std::string SENSOR_REPORT_THREAD_NAME = "OS_SenProducer";
-}  // namespace
+} // namespace
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<int32_t, Sensor> &sensorMap)
 {
@@ -301,5 +301,5 @@ int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser,
         }
     } while (1);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

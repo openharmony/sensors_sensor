@@ -38,7 +38,7 @@ std::map<int32_t, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 5;
 constexpr uint32_t WAIT_MS = 200;
-}  // namespace
+} // namespace
 
 ReportDataCb HdiConnection::reportDataCb_ = nullptr;
 sptr<ReportDataCallback> HdiConnection::reportDataCallback_ = nullptr;
@@ -303,5 +303,5 @@ void HdiConnection::Reconnect()
         }
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

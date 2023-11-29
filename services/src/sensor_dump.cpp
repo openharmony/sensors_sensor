@@ -47,7 +47,7 @@ enum {
     POSE_6DOF_DIMENSION = 15,
     DEFAULT_DIMENSION = 16,
 };
-}  // namespace
+} // namespace
 
 std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_ACCELEROMETER, "ACCELEROMETER" },
@@ -334,5 +334,5 @@ std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorDa
     str.append("\n");
     return str;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

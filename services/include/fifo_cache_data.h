@@ -43,6 +43,6 @@ private:
     wptr<SensorBasicDataChannel> channel_;
     std::vector<SensorData> fifoCacheData_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // FIFO_CACHE_DATA_H

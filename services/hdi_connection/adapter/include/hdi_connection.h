@@ -50,6 +50,6 @@ private:
     void SetSensorBasicInfoState(int32_t sensorId, bool state);
     void DeleteSensorBasicInfoState(int32_t sensorId);
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // HDI_CONNECTION_H

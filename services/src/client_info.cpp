@@ -38,7 +38,7 @@ constexpr int32_t MIN_MAP_SIZE = 0;
 constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
-}  // namespace
+} // namespace
 
 std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
     { ACTIVITY_MOTION_PERMISSION, { SENSOR_TYPE_ID_PEDOMETER_DETECTION, SENSOR_TYPE_ID_PEDOMETER } },
@@ -795,5 +795,5 @@ void ClientInfo::ChangeSensorPerm(AccessTokenID tokenId, const std::string &perm
         UpdatePermState(pid, sensorId, state);
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

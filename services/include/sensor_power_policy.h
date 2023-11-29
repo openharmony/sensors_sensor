@@ -51,6 +51,6 @@ private:
     std::mutex pidSensorInfoMutex_;
     std::unordered_map<int32_t, std::unordered_map<int32_t, SensorBasicInfo>> pidSensorInfoMap_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_POWER_POLICY_H

@@ -41,6 +41,6 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(ISensorHdiConnection);
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // I_SENSOR_HDI_CONNECTION_H

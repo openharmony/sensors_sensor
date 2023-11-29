@@ -34,7 +34,7 @@ SensorManager &sensorManager_ = SensorManager::GetInstance();
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-}  // namespace
+} // namespace
 
 bool SensorPowerPolicy::CheckFreezingSensor(int32_t sensorId)
 {
@@ -260,5 +260,5 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
         }
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

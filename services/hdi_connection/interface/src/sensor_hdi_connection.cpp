@@ -350,5 +350,5 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
 #endif // BUILD_VARIANT_ENG
     return ret;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

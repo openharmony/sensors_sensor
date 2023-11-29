@@ -163,5 +163,5 @@ int32_t CompatibleConnection::DestroyHdiConnection()
     }
     return ERR_OK;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

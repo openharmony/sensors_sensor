@@ -27,7 +27,7 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamServer" };
 constexpr int32_t INVALID_PID = -1;
 constexpr int32_t INVALID_FD = -1;
-}  // namespace
+} // namespace
 
 StreamServer::~StreamServer()
 {
@@ -169,5 +169,5 @@ void StreamServer::DelSession(int32_t pid)
         }
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
