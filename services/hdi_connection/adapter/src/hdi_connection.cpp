@@ -20,9 +20,11 @@
 
 #include "hisysevent.h"
 #include "iproxy_broker.h"
+#include "v1_1/isensor_interface.h"
+
+#include "sensor_agent_type.h"
 #include "sensor_errors.h"
 #include "sensor_event_callback.h"
-#include "v1_1/isensor_interface.h"
 
 namespace OHOS {
 namespace Sensors {
@@ -38,6 +40,7 @@ std::map<int32_t, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 5;
 constexpr uint32_t WAIT_MS = 200;
+constexpr int32_t HEADPOSTURE_FIFO_COUNT = 5;
 }  // namespace
 
 ReportDataCb HdiConnection::reportDataCb_ = nullptr;
@@ -96,6 +99,9 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
+        if (sensorInfos[i].sensorId == SENSOR_TYPE_ID_HEADPOSTURE) {
+            sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
+        }
         sensorList.push_back(sensor);
     }
     return ERR_OK;
