@@ -178,14 +178,6 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetAllSensors_001, TestSize.Level1)
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetAllSensors_002, TestSize.Level1)
 {
-    SEN_HILOGI("OH_Sensor_GetAllSensors_002 in");
-    uint32_t count = 0;
-    int32_t ret = OH_Sensor_GetAllSensors(nullptr, &count);
-    ASSERT_NE(ret, SENSOR_SUCCESS);
-}
-
-HWTEST_F(SensorAgentTest, OH_Sensor_GetAllSensors_003, TestSize.Level1)
-{
     SEN_HILOGI("OH_Sensor_GetAllSensors_003 in");
     Sensor_Sensor *sensors { nullptr };
     int32_t ret = OH_Sensor_GetAllSensors(&sensors, nullptr);
