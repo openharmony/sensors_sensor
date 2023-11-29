@@ -154,12 +154,14 @@ typedef enum Sensor_SensorAccuracy {
      */
     SENSOR_ACCURACY_UNRELIABLE = 0,
     /**
-     * The sensor data is at a low accuracy level. The data must be calibrated based on the environment before being used.
+     * The sensor data is at a low accuracy level. The data must be calibrated based on
+     * the environment before being used.
      * @since 11
      */
     SENSOR_ACCURACY_LOW = 1,
     /**
-     * The sensor data is at a medium accuracy level. You are advised to calibrate the data based on the environment before using it.
+     * The sensor data is at a medium accuracy level. You are advised to calibrate the data
+     * based on the environment before using it.
      * @since 11
      */
     SENSOR_ACCURACY_MEDIUM = 2,
@@ -177,20 +179,22 @@ typedef enum Sensor_SensorAccuracy {
 typedef struct Sensor_Sensor Sensor_Sensor;
 
 /**
- * @brief 创建给定个数{@link Sensor_Sensor}实例的数组。
+ * @brief Creates an array of {@link Sensor_Sensor} instances with the given number.
  *
- * @param count - 表示要创建{@link Sensor_Sensor}实例的个数.
- * @return 如果创建成功，则返回{@link Sensor_Sensor}实例的数组，否则返回 NULL。。
+ * @param count - Number of {@link Sensor_Sensor} instances to create.
+ * @return Returns the double pointer to the array of {@link Sensor_Sensor} instances if the operation is successful;
+ * returns <b>NULL</b> otherwise.
  * @since 11
  */
 Sensor_Sensor **OH_Sensor_CreateSensors(uint32_t count);
 
 /**
- * @brief 销毁{@link Sensor_Sensor}实例的数组并回收内存。
+ * @brief Destroys an array of {@link Sensor_Sensor} instances and reclaims memory.
  *
- * @param sensors - 表示要销毁的{@link Sensor_Sensor}实例的数组.
- * @param count - 表示要销毁的{@link Sensor_Sensor}实例的个数.
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param sensors - Double pointer to the array of {@link Sensor_Sensor} instances.
+ * @param count - Number of {@link Sensor_Sensor} instances to destroy.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_DestroySensors(Sensor_Sensor **sensors, uint32_t count);
@@ -344,18 +348,20 @@ int32_t OH_Sensor_GetSensorData(Sensor_SensorEvent* sensorEvent, float **data, u
 typedef struct Sensor_SensorSubscribeId Sensor_SensorSubscribeId;
 
 /**
- * @brief 创建指向{@link Sensor_SensorSubscribeId}实例的指针。
+ * @brief Creates a {@link Sensor_SensorSubscribeId} instance.
  *
- * @return 如果创建成功，则返回指向{@link Sensor_SensorSubscribeId} 结构实例的指针，否则返回NULL.
+ * @return Returns the pointer to the {@link Sensor_SensorSubscribeId} instance if the operation is successful;
+ * returns <b>NULL</b> otherwise.
  * @since 11
  */
 Sensor_SensorSubscribeId *OH_Sensor_CreateSubscribeId(void);
 
 /**
- * @brief 销毁{@link Sensor_SensorSubscribeId}实例并回收内存。
+ * @brief Destroys a {@link Sensor_SensorSubscribeId} instance and reclaims memory.
  *
- * @param subscribeId - 表示指向 {@link Sensor_SensorSubscribeId} 实例的指针.
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param subscribeId - Pointer to the {@link Sensor_SensorSubscribeId} instance.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_DestroySubscribeId(Sensor_SensorSubscribeId *subscribeId);
@@ -389,18 +395,20 @@ int32_t OH_Sensor_SetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, 
 typedef struct Sensor_SubscribeAttribute Sensor_SubscribeAttribute;
 
 /**
- * @brief 创建指向{@link Sensor_SubscribeAttribute}实例的指针。
+ * @brief Creates a {@link Sensor_SubscribeAttribute} instance.
  *
- * @return 如果创建成功，则返回指向{@link Sensor_SubscribeAttribute} 结构实例的指针，否则返回NULL.
+ * @return Returns the pointer to the {@link Sensor_SubscribeAttribute} instance if the operation is successful;
+ * returns <b>NULL</b> otherwise.
  * @since 11
  */
 Sensor_SubscribeAttribute *OH_Sensor_CreateAttribute(void);
 
 /**
- * @brief 销毁{@link Sensor_SubscribeAttribute}实例并回收内存。
+ * @brief Destroys a {@link Sensor_SubscribeAttribute} instance and reclaims memory.
  *
- * @param attribute - 表示指向 {@link Sensor_SubscribeAttribute} 实例的指针.
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param attribute - Pointer to the {@link Sensor_SubscribeAttribute} instance.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_DestroyAttribute(Sensor_SubscribeAttribute *attribute);
@@ -440,18 +448,20 @@ typedef void (*Sensor_RecordSensorCallback)(Sensor_SensorEvent *event);
 typedef struct Sensor_SubscribeUser Sensor_SubscribeUser;
 
 /**
- * @brief 创建指向{@link Sensor_SubscribeUser}实例的指针。
+ * @brief Creates a {@link Sensor_SubscribeUser} instance.
  *
- * @return 如果创建成功，则返回指向{@link Sensor_SubscribeUser} 结构实例的指针，否则返回NULL.
+ * @return Returns the pointer to the {@link Sensor_SubscribeUser} instance
+ * if the operation is successful; returns <b>NULL</b> otherwise.
  * @since 11
  */
 Sensor_SubscribeUser *OH_Sensor_CreateUser(void);
 
 /**
- * @brief 销毁{@link Sensor_SubscribeUser}实例并回收内存。
+ * @brief Destroys a {@link Sensor_SubscribeUser} instance and reclaims memory.
  *
- * @param user - 表示指向{@link Sensor_SubscribeUser}实例的指针.
- * @return 成功返回SENSOR_SUCCESS，否则返回对应的错误码，详情请参见{@Link Sensor_Result}。
+ * @param user - Pointer to the {@link Sensor_SubscribeUser} instance.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
+ * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
 int32_t OH_Sensor_DestroyUser(Sensor_SubscribeUser *user);

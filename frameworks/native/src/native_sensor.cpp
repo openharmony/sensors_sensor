@@ -25,7 +25,7 @@ using OHOS::HiviewDFX::HiLog;
 using OHOS::HiviewDFX::HiLogLabel;
 namespace {
 const HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorCapiAPI"};
-const uint32_t FLOAT_SIZE= 4; 
+const uint32_t FLOAT_SIZE = 4;
 }
 
 Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count)
