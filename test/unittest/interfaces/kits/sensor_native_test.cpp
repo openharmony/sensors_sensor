@@ -35,6 +35,11 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorAgentTest" };
 constexpr Sensor_SensorType SENSOR_ID { SENSOR_TYPE_ACCELEROMETER };
+constexpr uint32_t SENSOR_NAME_LENGTH_MAX = 64;
+constexpr int64_t SENSOR_SAMPLE_PERIOD = 200000000;
+constexpr int32_t SLEEP_TIME_MS = 1000;
+constexpr int64_t INVALID_VALUE = -1;
+constexpr float INVALID_RESOLUTION = -1.0F;
 
 PermissionDef g_infoManagerTestPermDef = {
     .permissionName = "ohos.permission.ACCELEROMETER",
@@ -113,7 +118,7 @@ void SensorDataCallbackImpl(Sensor_SensorEvent *event)
         SEN_HILOGE("event is null");
         return;
     }
-    int64_t timestamp = -1;
+    int64_t timestamp = INVALID_VALUE;
     int32_t ret = OH_Sensor_GetEventTimestamp(event, &timestamp);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
     Sensor_SensorType sensorType;
@@ -126,9 +131,9 @@ void SensorDataCallbackImpl(Sensor_SensorEvent *event)
     size_t length = 0;
     ret = OH_Sensor_GetSensorData(event, &data, &length);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
-    SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d",
-        sensorType, length, accuracy);
-    SEN_HILOGI("x:%{public}f, y:%{public}f, z:%{public}f", data[0], data[1], data[2]);
+    SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d"
+        "x:%{public}f, y:%{public}f, z:%{public}f", sensorType, length, accuracy,
+        data[0], data[1], data[2]);
 }
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetAllSensors_001, TestSize.Level1)
@@ -142,24 +147,24 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetAllSensors_001, TestSize.Level1)
     ret = OH_Sensor_GetAllSensors(sensors, &count);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
     for (uint32_t i = 0; i < count; ++i) {
-        char sensorName[64] = {};
-        size_t length = 64;
+        char sensorName[SENSOR_NAME_LENGTH_MAX] = {};
+        size_t length = SENSOR_NAME_LENGTH_MAX;
         ret = OH_Sensor_GetSensorName(sensors[i], sensorName, &length);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
-        char vendorName[64] = {};
-        length = 64;
+        char vendorName[SENSOR_NAME_LENGTH_MAX] = {};
+        length = SENSOR_NAME_LENGTH_MAX;
         ret = OH_Sensor_GetVendorName(sensors[i], vendorName, &length);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
         Sensor_SensorType sensorType;
         ret = OH_Sensor_GetSensorType(sensors[i], &sensorType);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
-        float resolution = -1.0F;
+        float resolution = INVALID_RESOLUTION;
         ret = OH_Sensor_GetSensorResolution(sensors[i], &resolution);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
-        int64_t minSamplePeriod = -1;
+        int64_t minSamplePeriod = INVALID_VALUE;
         ret = OH_Sensor_GetSensorMinSamplePeriod(sensors[i], &minSamplePeriod);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
-        int64_t maxSamplePeriod = -1;
+        int64_t maxSamplePeriod = INVALID_VALUE;
         ret = OH_Sensor_GetSensorMaxSamplePeriod(sensors[i], &maxSamplePeriod);
         ASSERT_EQ(ret, SENSOR_SUCCESS);
         SEN_HILOGI("sensorType:%{public}d, sensorName:%{public}s, vendorName:%{public}s,"
@@ -199,13 +204,13 @@ HWTEST_F(SensorAgentTest, OH_Sensor_SubscribeSensor_001, TestSize.Level1)
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
     Sensor_SubscribeAttribute *attr = OH_Sensor_CreateAttribute();
-    ret = OH_Sensor_SetSamplingInterval(attr, 200000000);
+    ret = OH_Sensor_SetSamplingInterval(attr, SENSOR_SAMPLE_PERIOD);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
     ret = OH_Sensor_SubscribeSensor(id, attr, g_user);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
     ret = OH_Sensor_UnsubscribeSensor(id, g_user);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
     if (id != nullptr) {
@@ -228,7 +233,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_SubscribeSensor_002, TestSize.Level1)
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
     Sensor_SubscribeAttribute *attr = OH_Sensor_CreateAttribute();
-    ret = OH_Sensor_SetSamplingInterval(attr, 200000000);
+    ret = OH_Sensor_SetSamplingInterval(attr, SENSOR_SAMPLE_PERIOD);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
     ret = OH_Sensor_SubscribeSensor(id, attr, nullptr);
@@ -249,7 +254,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_SubscribeSensor_003, TestSize.Level1)
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
     Sensor_SubscribeAttribute *attr = OH_Sensor_CreateAttribute();
-    ret = OH_Sensor_SetSamplingInterval(attr, 200000000);
+    ret = OH_Sensor_SetSamplingInterval(attr, SENSOR_SAMPLE_PERIOD);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
 
     ret = OH_Sensor_SubscribeSensor(nullptr, attr, g_user);
@@ -343,7 +348,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetSubscribeSensorType_002, TestSize.Level1)
 HWTEST_F(SensorAgentTest, OH_Sensor_SetSamplingInterval_001, TestSize.Level1)
 {
     SEN_HILOGI("OH_Sensor_SetSamplingInterval_001 in");
-    int32_t ret = OH_Sensor_SetSamplingInterval(nullptr, 2000000000);
+    int32_t ret = OH_Sensor_SetSamplingInterval(nullptr, SENSOR_SAMPLE_PERIOD);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
 }
 
@@ -351,7 +356,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_SetSamplingInterval_002, TestSize.Level1)
 {
     SEN_HILOGI("OH_Sensor_SetSamplingInterval_002 in");
     Sensor_SubscribeAttribute *attr = OH_Sensor_CreateAttribute();
-    int32_t ret = OH_Sensor_SetSamplingInterval(attr, -1);
+    int32_t ret = OH_Sensor_SetSamplingInterval(attr, INVALID_VALUE);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
     if (attr != nullptr) {
         OH_Sensor_DestroyAttribute(attr);
