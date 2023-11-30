@@ -182,7 +182,8 @@ typedef struct Sensor_DeviceInfo Sensor_DeviceInfo;
  * @brief Creates an array of {@link Sensor_DeviceInfo} instances with the given number.
  *
  * @param count - Number of {@link Sensor_DeviceInfo} instances to create.
- * @return Returns the double pointer to the array of {@link Sensor_DeviceInfo} instances if the operation is successful;
+ * @return Returns the double pointer to the array of {@link Sensor_DeviceInfo} instances
+ * if the operation is successful;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
