@@ -33,18 +33,18 @@ struct Sensor_Sensor {
     int64_t maxSamplePeriod = -1; /**< Maximum sample period allowed, in ns */
 };
 
-struct Sensor_SubscribeAttribute {
+struct Sensor_SubscriptionAttribute {
     int64_t samplingInterval = -1;
     int64_t reportInterval = -1;
 };
 
-struct Sensor_SensorSubscribeId {
+struct Sensor_SensorSubscriptionId {
     int32_t sensorType = -1;
 };
 
-struct Sensor_SubscribeUser {
+struct Sensor_Subscriber {
     char name[NAME_MAX_LEN];
-    Sensor_RecordSensorCallback callback;
+    Sensor_SensorCallback callback;
     UserData *userData = nullptr;
 };
 

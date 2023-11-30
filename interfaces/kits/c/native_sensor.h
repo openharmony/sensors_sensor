@@ -60,18 +60,18 @@ Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
  * for ohos.permission.READ_HEALTH_DATA permission when subscribing to health-related sensors, such as heart rate sensors,
  * otherwise the subscription fails. Other sensors do not require permissions.
  *
- * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscribeId}.
+ * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscriptionId}.
  * @param attribute - Pointer to the subscription attribute, which is used to specify the data reporting frequency.
- * For details, see {@link Sensor_SubscribeAttribute}.
- * @param user - Pointer to the subscriber information, which is used to specify the callback function for reporting
- * the sensor data. For details, see {@link Sensor_SubscribeUser}.
+ * For details, see {@link Sensor_SubscriptionAttribute}.
+ * @param subscriber - Pointer to the subscriber information, which is used to specify the callback function for reporting
+ * the sensor data. For details, see {@link Sensor_Subscriber}.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @permission ohos.permission.ACCELEROMETER or ohos.permission.GYROSCOPE or ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  * @since 11
  */
-Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id, const Sensor_SubscribeAttribute *attribute,
-    const Sensor_SubscribeUser *user);
+Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscriptionId *id, const Sensor_SubscriptionAttribute *attribute,
+    const Sensor_Subscriber *subscriber);
 
 /**
  * @brief Unsubscribes from sensor data.
@@ -81,16 +81,16 @@ Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id, cons
  * unsubscribe from health-related sensors, such as heart rate sensors, apply for ohos.permission.READ_HEALTH_DATA permissions,
  * otherwise the subscription will fail. Other sensors do not require permissions.
  *
- * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscribeId}.
- * @param user - Pointer to the subscriber information, which is used to specify the callback function for reporting
- * the sensor data. For details, see {@link Sensor_SubscribeUser}.
+ * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscriptionId}.
+ * @param subscriber - Pointer to the subscriber information, which is used to specify the callback function for reporting
+ * the sensor data. For details, see {@link Sensor_Subscriber}.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @permission ohos.permission.ACCELEROMETER or ohos.permission.GYROSCOPE or ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscribeId *id, const Sensor_SubscribeUser *user);
+Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscriptionId *id, const Sensor_Subscriber *subscriber);
 #ifdef __cplusplus
 }
 #endif

@@ -151,7 +151,7 @@ int32_t OH_Sensor_GetSensorResolution(Sensor_Sensor* sensor, float *resolution)
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_GetSensorMinSamplePeriod(Sensor_Sensor* sensor, int64_t *minSamplePeriod)
+int32_t OH_Sensor_GetMinSamplingInterval(Sensor_Sensor* sensor, int64_t *minSamplePeriod)
 {
     if (sensor == nullptr || minSamplePeriod == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -161,7 +161,7 @@ int32_t OH_Sensor_GetSensorMinSamplePeriod(Sensor_Sensor* sensor, int64_t *minSa
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_GetSensorMaxSamplePeriod(Sensor_Sensor* sensor, int64_t *maxSamplePeriod)
+int32_t OH_Sensor_GetMaxSamplingInterval(Sensor_Sensor* sensor, int64_t *maxSamplePeriod)
 {
     if (sensor == nullptr || maxSamplePeriod == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -171,8 +171,8 @@ int32_t OH_Sensor_GetSensorMaxSamplePeriod(Sensor_Sensor* sensor, int64_t *maxSa
     return SENSOR_SUCCESS;
 }
 
-Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id,
-    const Sensor_SubscribeAttribute *attribute, const Sensor_SubscribeUser *user)
+Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscriptionId *id,
+    const Sensor_SubscriptionAttribute *attribute, const Sensor_Subscriber *user)
 {
     if (id == nullptr || attribute == nullptr || user == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -194,15 +194,15 @@ Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id,
     return static_cast<Sensor_Result>(ActivateSensor(sensorType, sensorUser));
 }
 
-Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscribeId *subscribeId,
-    const Sensor_SubscribeUser *user)
+Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscriptionId *id,
+    const Sensor_Subscriber *user)
 {
-    if (subscribeId == nullptr || user == nullptr) {
+    if (id == nullptr || user == nullptr) {
         SEN_HILOGE("Parameter error");
         return SENSOR_PARAMETER_ERROR;
     }
     const SensorUser *sensorUser = reinterpret_cast<const SensorUser *>(user);
-    int32_t sensorType = subscribeId->sensorType;
+    int32_t sensorType = id->sensorType;
     int32_t ret = DeactivateSensor(sensorType, sensorUser);
     if (ret != SENSOR_SUCCESS) {
         SEN_HILOGE("SetBatch failed, %{public}d", ret);
@@ -252,27 +252,27 @@ int32_t OH_Sensor_GetSensorData(Sensor_SensorEvent* sensorEvent, float **data, u
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_GetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, Sensor_SensorType *sensorType)
+int32_t OH_Sensor_GetSubscriptionSensorType(Sensor_SensorSubscriptionId* id, Sensor_SensorType *sensorType)
 {
-    if (subscribeId == nullptr || sensorType == nullptr) {
+    if (id == nullptr || sensorType == nullptr) {
         SEN_HILOGE("Parameter error");
         return SENSOR_PARAMETER_ERROR;
     }
-    *sensorType = static_cast<Sensor_SensorType>(subscribeId->sensorType);
+    *sensorType = static_cast<Sensor_SensorType>(id->sensorType);
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_SetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, const Sensor_SensorType sensorType)
+int32_t OH_Sensor_SetSubscriptionSensorType(Sensor_SensorSubscriptionId* id, const Sensor_SensorType sensorType)
 {
-    if (subscribeId == nullptr) {
+    if (id == nullptr) {
         SEN_HILOGE("Parameter error");
         return SENSOR_PARAMETER_ERROR;
     }
-    subscribeId->sensorType = sensorType;
+    id->sensorType = sensorType;
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscribeAttribute* attribute, const int64_t samplingInterval)
+int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute, const int64_t samplingInterval)
 {
     if (attribute == nullptr || samplingInterval < 0) {
         SEN_HILOGE("Parameter error");
@@ -282,7 +282,7 @@ int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscribeAttribute* attribute, cons
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscribeAttribute* attribute, int64_t *samplingInterval)
+int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscriptionAttribute* attribute, int64_t *samplingInterval)
 {
     if (attribute == nullptr || samplingInterval == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -292,7 +292,7 @@ int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscribeAttribute* attribute, int6
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_SetSensorCallback(Sensor_SubscribeUser* user, const Sensor_RecordSensorCallback callback)
+int32_t OH_Sensor_SetSensorCallback(Sensor_Subscriber* user, const Sensor_SensorCallback callback)
 {
     if (user == nullptr || callback == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -302,7 +302,7 @@ int32_t OH_Sensor_SetSensorCallback(Sensor_SubscribeUser* user, const Sensor_Rec
     return SENSOR_SUCCESS;
 }
 
-int32_t OH_Sensor_GetSensorCallback(Sensor_SubscribeUser* user, Sensor_RecordSensorCallback *callback)
+int32_t OH_Sensor_GetSensorCallback(Sensor_Subscriber* user, Sensor_SensorCallback *callback)
 {
     if (user == nullptr || callback == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -312,28 +312,28 @@ int32_t OH_Sensor_GetSensorCallback(Sensor_SubscribeUser* user, Sensor_RecordSen
     return SENSOR_SUCCESS;
 }
 
-Sensor_SensorSubscribeId *OH_Sensor_CreateSubscribeId()
+Sensor_SensorSubscriptionId *OH_Sensor_CreateSubscriptionId()
 {
-    return new (std::nothrow) Sensor_SensorSubscribeId();
+    return new (std::nothrow) Sensor_SensorSubscriptionId();
 }
 
-int32_t OH_Sensor_DestroySubscribeId(Sensor_SensorSubscribeId *subscribeId)
+int32_t OH_Sensor_DestroySubscriptionId(Sensor_SensorSubscriptionId *id)
 {
-    if (subscribeId == nullptr) {
+    if (id == nullptr) {
         SEN_HILOGE("Parameter error");
         return SENSOR_PARAMETER_ERROR;
     }
-    delete subscribeId;
-    subscribeId = nullptr;
+    delete id;
+    id = nullptr;
     return SENSOR_SUCCESS;
 }
 
-Sensor_SubscribeAttribute *OH_Sensor_CreateAttribute()
+Sensor_SubscriptionAttribute *OH_Sensor_CreateAttribute()
 {
-    return new (std::nothrow) Sensor_SubscribeAttribute();
+    return new (std::nothrow) Sensor_SubscriptionAttribute();
 }
 
-int32_t OH_Sensor_DestroyAttribute(Sensor_SubscribeAttribute *attribute)
+int32_t OH_Sensor_DestroyAttribute(Sensor_SubscriptionAttribute *attribute)
 {
     if (attribute == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -344,12 +344,12 @@ int32_t OH_Sensor_DestroyAttribute(Sensor_SubscribeAttribute *attribute)
     return SENSOR_SUCCESS;
 }
 
-Sensor_SubscribeUser *OH_Sensor_CreateUser()
+Sensor_Subscriber *OH_Sensor_CreateSubscriber()
 {
-    return new (std::nothrow) Sensor_SubscribeUser();
+    return new (std::nothrow) Sensor_Subscriber();
 }
 
-int32_t OH_Sensor_DestroyUser(Sensor_SubscribeUser *user)
+int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *user)
 {
     if (user == nullptr) {
         SEN_HILOGE("Parameter error");

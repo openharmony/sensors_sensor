@@ -249,23 +249,23 @@ int32_t OH_Sensor_GetSensorResolution(Sensor_Sensor* sensor, float *resolution);
  * @brief Obtains the minimum data reporting interval of a sensor.
  *
  * @param sensor - Pointer to the sensor information.
- * @param minSamplePeriod - Pointer to the minimum data reporting interval, in nanoseconds.
+ * @param minSamplingInterval - Pointer to the minimum data reporting interval, in nanoseconds.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorMinSamplePeriod(Sensor_Sensor* sensor, int64_t *minSamplePeriod);
+int32_t OH_Sensor_GetMinSamplingInterval(Sensor_Sensor* sensor, int64_t *minSamplingInterval);
 
 /**
  * @brief Obtains the maximum data reporting interval of a sensor.
  *
  * @param sensor - Pointer to the sensor information.
- * @param maxSamplePeriod - Pointer to the maximum data reporting interval, in nanoseconds.
+ * @param maxSamplingInterval - Pointer to the maximum data reporting interval, in nanoseconds.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorMaxSamplePeriod(Sensor_Sensor* sensor, int64_t *maxSamplePeriod);
+int32_t OH_Sensor_GetMaxSamplingInterval(Sensor_Sensor* sensor, int64_t *maxSamplingInterval);
 
 /**
  * @brief Defines the sensor data information.
@@ -345,73 +345,73 @@ int32_t OH_Sensor_GetSensorData(Sensor_SensorEvent* sensorEvent, float **data, u
  * @brief Defines the sensor subscription ID, which uniquely identifies a sensor.
  * @since 11
  */
-typedef struct Sensor_SensorSubscribeId Sensor_SensorSubscribeId;
+typedef struct Sensor_SensorSubscriptionId Sensor_SensorSubscriptionId;
 
 /**
- * @brief Creates a {@link Sensor_SensorSubscribeId} instance.
+ * @brief Creates a {@link Sensor_SensorSubscriptionId} instance.
  *
- * @return Returns the pointer to the {@link Sensor_SensorSubscribeId} instance if the operation is successful;
+ * @return Returns the pointer to the {@link Sensor_SensorSubscriptionId} instance if the operation is successful;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SensorSubscribeId *OH_Sensor_CreateSubscribeId(void);
+Sensor_SensorSubscriptionId *OH_Sensor_CreateSubscriptionId(void);
 
 /**
- * @brief Destroys a {@link Sensor_SensorSubscribeId} instance and reclaims memory.
+ * @brief Destroys a {@link Sensor_SensorSubscriptionId} instance and reclaims memory.
  *
- * @param subscribeId - Pointer to the {@link Sensor_SensorSubscribeId} instance.
+ * @param id - Pointer to the {@link Sensor_SensorSubscriptionId} instance.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroySubscribeId(Sensor_SensorSubscribeId *subscribeId);
+int32_t OH_Sensor_DestroySubscriptionId(Sensor_SensorSubscriptionId *id);
 
 /**
  * @brief Obtains the sensor type.
  *
- * @param subscribeId - Pointer to the sensor subscription ID.
- * @param sensorType - Pointer to the sensor type.
+ * @param id - Pointer to the sensor subscription ID.
+ * @param id - Pointer to the sensor type.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, Sensor_SensorType *sensorType);
+int32_t OH_Sensor_GetSubscriptionSensorType(Sensor_SensorSubscriptionId* id, Sensor_SensorType *sensorType);
 
 /**
  * @brief Sets the sensor type.
  *
- * @param subscribeId - Pointer to the sensor subscription ID.
+ * @param id - Pointer to the sensor subscription ID.
  * @param sensorType - Sensor type to set.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SetSubscribeSensorType(Sensor_SensorSubscribeId* subscribeId, const Sensor_SensorType sensorType);
+int32_t OH_Sensor_SetSubscriptionSensorType(Sensor_SensorSubscriptionId* id, const Sensor_SensorType sensorType);
 
 /**
  * @brief Defines the sensor subscription attribute.
  * @since 11
  */
-typedef struct Sensor_SubscribeAttribute Sensor_SubscribeAttribute;
+typedef struct Sensor_SubscriptionAttribute Sensor_SubscriptionAttribute;
 
 /**
- * @brief Creates a {@link Sensor_SubscribeAttribute} instance.
+ * @brief Creates a {@link Sensor_SubscriptionAttribute} instance.
  *
- * @return Returns the pointer to the {@link Sensor_SubscribeAttribute} instance if the operation is successful;
+ * @return Returns the pointer to the {@link Sensor_SubscriptionAttribute} instance if the operation is successful;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SubscribeAttribute *OH_Sensor_CreateAttribute(void);
+Sensor_SubscriptionAttribute *OH_Sensor_CreateAttribute(void);
 
 /**
- * @brief Destroys a {@link Sensor_SubscribeAttribute} instance and reclaims memory.
+ * @brief Destroys a {@link Sensor_SubscriptionAttribute} instance and reclaims memory.
  *
- * @param attribute - Pointer to the {@link Sensor_SubscribeAttribute} instance.
+ * @param attribute - Pointer to the {@link Sensor_SubscriptionAttribute} instance.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroyAttribute(Sensor_SubscribeAttribute *attribute);
+int32_t OH_Sensor_DestroyAttribute(Sensor_SubscriptionAttribute *attribute);
 
 /**
  * @brief Sets the sensor data reporting interval.
@@ -422,7 +422,7 @@ int32_t OH_Sensor_DestroyAttribute(Sensor_SubscribeAttribute *attribute);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscribeAttribute* attribute, const int64_t samplingInterval);
+int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute, const int64_t samplingInterval);
 
 /**
  * @brief Obtains the sensor data reporting interval.
@@ -433,60 +433,60 @@ int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscribeAttribute* attribute, cons
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscribeAttribute* attribute, int64_t *samplingInterval);
+int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscriptionAttribute* attribute, int64_t *samplingInterval);
 
 /**
  * @brief Defines the callback function used to report sensor data.
  * @since 11
  */
-typedef void (*Sensor_RecordSensorCallback)(Sensor_SensorEvent *event);
+typedef void (*Sensor_SensorCallback)(Sensor_SensorEvent *event);
 
 /**
  * @brief Defines the sensor subscriber information.
  * @since 11
  */
-typedef struct Sensor_SubscribeUser Sensor_SubscribeUser;
+typedef struct Sensor_Subscriber Sensor_Subscriber;
 
 /**
- * @brief Creates a {@link Sensor_SubscribeUser} instance.
+ * @brief Creates a {@link Sensor_Subscriber} instance.
  *
- * @return Returns the pointer to the {@link Sensor_SubscribeUser} instance
+ * @return Returns the pointer to the {@link Sensor_Subscriber} instance
  * if the operation is successful; returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SubscribeUser *OH_Sensor_CreateUser(void);
+Sensor_Subscriber *OH_Sensor_CreateSubscriber(void);
 
 /**
- * @brief Destroys a {@link Sensor_SubscribeUser} instance and reclaims memory.
+ * @brief Destroys a {@link Sensor_Subscriber} instance and reclaims memory.
  *
- * @param user - Pointer to the {@link Sensor_SubscribeUser} instance.
+ * @param subscriber - Pointer to the {@link Sensor_Subscriber} instance.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroyUser(Sensor_SubscribeUser *user);
+int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *subscriber);
 
 /**
  * @brief Sets a callback function to report sensor data.
  *
- * @param user - Pointer to the sensor subscriber information.
+ * @param subscriber - Pointer to the sensor subscriber information.
  * @param callback - Callback function to set.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SetSensorCallback(Sensor_SubscribeUser* user, const Sensor_RecordSensorCallback callback);
+int32_t OH_Sensor_SetSensorCallback(Sensor_Subscriber* subscriber, const Sensor_SensorCallback callback);
 
 /**
  * @brief Obtains the callback function used to report sensor data.
  *
- * @param user - Pointer to the sensor subscriber information.
+ * @param subscriber - Pointer to the sensor subscriber information.
  * @param callback - Pointer to the callback function.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorCallback(Sensor_SubscribeUser* user, Sensor_RecordSensorCallback *callback);
+int32_t OH_Sensor_GetSensorCallback(Sensor_Subscriber* subscriber, Sensor_SensorCallback *callback);
 #ifdef __cplusplus
 }
 #endif

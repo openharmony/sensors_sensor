@@ -21,10 +21,10 @@
         "name": "OH_Sensor_GetSensorResolution"
     },
     {
-        "name": "OH_Sensor_GetSensorMinSamplePeriod"
+        "name": "OH_Sensor_GetMinSamplingInterval"
     },
     {
-        "name": "OH_Sensor_GetSensorMaxSamplePeriod"
+        "name": "OH_Sensor_GetMaxSamplingInterval"
     },
     {
         "name": "OH_Sensor_GetEventSensorType"
@@ -39,10 +39,10 @@
         "name": "OH_Sensor_GetSensorData"
     },
     {
-        "name": "OH_Sensor_GetSubscribeSensorType"
+        "name": "OH_Sensor_GetSubscriptionSensorType"
     },
     {
-        "name": "OH_Sensor_SetSubscribeSensorType"
+        "name": "OH_Sensor_SetSubscriptionSensorType"
     },
     {
         "name": "OH_Sensor_SetSamplingInterval"
@@ -63,10 +63,10 @@
         "name": "OH_Sensor_DestroySensors"
     },
     {
-        "name": "OH_Sensor_CreateSubscribeId"
+        "name": "OH_Sensor_CreateSubscriptionId"
     },
     {
-        "name": "OH_Sensor_DestroySubscribeId"
+        "name": "OH_Sensor_DestroySubscriptionId"
     },
     {
         "name": "OH_Sensor_CreateAttribute"
@@ -75,9 +75,9 @@
         "name": "OH_Sensor_DestroyAttribute"
     },
     {
-        "name": "OH_Sensor_CreateUser"
+        "name": "OH_Sensor_CreateSubscriber"
     },
     {
-        "name": "OH_Sensor_DestroyUser"
+        "name": "OH_Sensor_DestroySubscriber"
     }
 ]
