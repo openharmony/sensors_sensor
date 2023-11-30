@@ -19,7 +19,7 @@
 #include "native_sensor.h"
 #include "sensor_agent_type.h"
 
-struct Sensor_Sensor {
+struct Sensor_DeviceInfo {
     char sensorName[NAME_MAX_LEN];   /**< Sensor name */
     char vendorName[NAME_MAX_LEN];   /**< Sensor vendor */
     char firmwareVersion[VERSION_MAX_LEN];  /**< Sensor firmware version */
@@ -38,17 +38,17 @@ struct Sensor_SubscriptionAttribute {
     int64_t reportInterval = -1;
 };
 
-struct Sensor_SensorSubscriptionId {
+struct Sensor_SubscriptionId {
     int32_t sensorType = -1;
 };
 
 struct Sensor_Subscriber {
     char name[NAME_MAX_LEN];
-    Sensor_SensorCallback callback;
+    Sensor_EventCallback callback;
     UserData *userData = nullptr;
 };
 
-struct Sensor_SensorEvent {
+struct Sensor_Event {
     int32_t sensorTypeId = -1;
     int32_t version = -1;
     int64_t timestamp = -1;

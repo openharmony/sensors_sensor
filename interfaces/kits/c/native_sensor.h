@@ -43,14 +43,14 @@ extern "C" {
  * @brief Obtains information about all sensors on the device.
  *
  * @param sensors - Double pointer to the information about all sensors on the device.
- * For details, see {@link Sensor_Sensor}.
+ * For details, see {@link Sensor_DeviceInfo}.
  * @param count - Pointer to the number of sensors on the device.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
+Sensor_Result OH_Sensor_GetAllSensors(Sensor_DeviceInfo **sensors, uint32_t *count);
 
 /**
  * @brief Subscribes to sensor data. The system will report sensor data to the subscriber at the specified frequency.
@@ -60,7 +60,7 @@ Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
  * for ohos.permission.READ_HEALTH_DATA permission when subscribing to health-related sensors, such as heart rate
  * sensors, otherwise the subscription fails. Other sensors do not require permissions.
  *
- * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscriptionId}.
+ * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SubscriptionId}.
  * @param attribute - Pointer to the subscription attribute, which is used to specify the data reporting frequency.
  * For details, see {@link Sensor_SubscriptionAttribute}.
  * @param subscriber - Pointer to the subscriber information, which is used to specify the callback function for
@@ -71,7 +71,7 @@ Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
  *             ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  * @since 11
  */
-Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscriptionId *id,
+Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SubscriptionId *id,
     const Sensor_SubscriptionAttribute *attribute, const Sensor_Subscriber *subscriber);
 
 /**
@@ -82,7 +82,7 @@ Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscriptionId *id,
  * unsubscribe from health-related sensors, such as heart rate sensors, apply for ohos.permission.READ_HEALTH_DATA
  * permissions, otherwise the subscription will fail. Other sensors do not require permissions.
  *
- * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscriptionId}.
+ * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SubscriptionId}.
  * @param subscriber - Pointer to the subscriber information, which is used to specify the callback function for
  * reporting the sensor data. For details, see {@link Sensor_Subscriber}.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
@@ -92,7 +92,7 @@ Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscriptionId *id,
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SensorSubscriptionId *id, const Sensor_Subscriber *subscriber);
+Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SubscriptionId *id, const Sensor_Subscriber *subscriber);
 #ifdef __cplusplus
 }
 #endif
