@@ -27,7 +27,7 @@
  *
  * @brief Declares the common sensor attributes.
  * @library libsensor_native.z.so
- *
+ * @syscap SystemCapability.Sensors.Sensor
  * @since 11
  */
 
