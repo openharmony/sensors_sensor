@@ -54,6 +54,11 @@ Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
 
 /**
  * @brief Subscribes to sensor data. The system will report sensor data to the subscriber at the specified frequency.
+ * If you need to apply for the ohos.permission.ACCELEROMETER permission when subscribing to the accelerometer sensor,
+ * you need to apply for the ohos.permission.GYROSCOPE permission when subscribing to the gyroscope sensor, and you need
+ * to apply for the ohos.permission.ACTIVITY_MOTION permission when subscribing to the pedometer related sensor. Apply
+ * for ohos.permission.READ_HEALTH_DATA permission when subscribing to health-related sensors, such as heart rate sensors,
+ * otherwise the subscription fails. Other sensors do not require permissions.
  *
  * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscribeId}.
  * @param attribute - Pointer to the subscription attribute, which is used to specify the data reporting frequency.
@@ -62,7 +67,7 @@ Sensor_Result OH_Sensor_GetAllSensors(Sensor_Sensor **sensors, uint32_t *count);
  * the sensor data. For details, see {@link Sensor_SubscribeUser}.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
- *
+ * @permission ohos.permission.ACCELEROMETER or ohos.permission.GYROSCOPE or ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  * @since 11
  */
 Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id, const Sensor_SubscribeAttribute *attribute,
@@ -70,12 +75,18 @@ Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SensorSubscribeId *id, cons
 
 /**
  * @brief Unsubscribes from sensor data.
+ * If you need to apply for the ohos.permission.ACCELEROMETER permission to unsubscribe from the accelerometer sensor,
+ * you need to request the ohos.permission.GYROSCOPE permission to unsubscribe from the gyroscope sensor, and you need
+ * to request the ohos.permission.ACTIVITY_MOTION permission to unsubscribe from the pedometer-related sensor. When you
+ * unsubscribe from health-related sensors, such as heart rate sensors, apply for ohos.permission.READ_HEALTH_DATA permissions,
+ * otherwise the subscription will fail. Other sensors do not require permissions.
  *
  * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SensorSubscribeId}.
  * @param user - Pointer to the subscriber information, which is used to specify the callback function for reporting
  * the sensor data. For details, see {@link Sensor_SubscribeUser}.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
+ * @permission ohos.permission.ACCELEROMETER or ohos.permission.GYROSCOPE or ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  *
  * @since 11
  */
