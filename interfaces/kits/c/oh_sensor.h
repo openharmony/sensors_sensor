@@ -22,19 +22,19 @@
  * @since 11
  */
 /**
- * @file native_sensor.h
+ * @file oh_sensor.h
  *
  * @brief Declares the APIs for operating sensors, including obtaining sensor information and subscribing to or
  * unsubscribing from sensor data.
- * @library libsensor_native.z.so
+ * @library libohsensor.so
  * @syscap SystemCapability.Sensors.Sensor
  * @since 11
  */
 
-#ifndef OH_NATIVE_SENSOR_H
-#define OH_NATIVE_SENSOR_H
+#ifndef OH_SENSOR_H
+#define OH_SENSOR_H
 
-#include "native_sensor_type.h"
+#include "oh_sensor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,15 +42,15 @@ extern "C" {
 /**
  * @brief Obtains information about all sensors on the device.
  *
- * @param sensors - Double pointer to the information about all sensors on the device.
- * For details, see {@link Sensor_DeviceInfo}.
+ * @param infos - Double pointer to the information about all sensors on the device.
+ * For details, see {@link Sensor_Info}.
  * @param count - Pointer to the number of sensors on the device.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_GetAllSensors(Sensor_DeviceInfo **sensors, uint32_t *count);
+Sensor_Result OH_Sensor_GetInfos(Sensor_Info **infos, uint32_t *count);
 
 /**
  * @brief Subscribes to sensor data. The system will report sensor data to the subscriber at the specified frequency.
@@ -71,7 +71,7 @@ Sensor_Result OH_Sensor_GetAllSensors(Sensor_DeviceInfo **sensors, uint32_t *cou
  *             ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  * @since 11
  */
-Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SubscriptionId *id,
+Sensor_Result OH_Sensor_Subscribe(const Sensor_SubscriptionId *id,
     const Sensor_SubscriptionAttribute *attribute, const Sensor_Subscriber *subscriber);
 
 /**
@@ -92,8 +92,8 @@ Sensor_Result OH_Sensor_SubscribeSensor(const Sensor_SubscriptionId *id,
  *
  * @since 11
  */
-Sensor_Result OH_Sensor_UnsubscribeSensor(const Sensor_SubscriptionId *id, const Sensor_Subscriber *subscriber);
+Sensor_Result OH_Sensor_Unsubscribe(const Sensor_SubscriptionId *id, const Sensor_Subscriber *subscriber);
 #ifdef __cplusplus
 }
 #endif
-#endif // OH_NATIVE_SENSOR_H
+#endif // OH_SENSOR_H

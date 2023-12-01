@@ -27,7 +27,7 @@ ohos_unittest("SensorNativeTest") {
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native:sensor_native",
+    "$SUBSYSTEM_DIR/frameworks/native:ohsensor",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",

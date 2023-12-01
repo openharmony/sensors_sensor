@@ -23,16 +23,16 @@
  */
 
 /**
- * @file native_sensor_type.h
+ * @file oh_sensor_type.h
  *
  * @brief Declares the common sensor attributes.
- * @library libsensor_native.z.so
+ * @library libohsensor.so
  * @syscap SystemCapability.Sensors.Sensor
  * @since 11
  */
 
-#ifndef OH_NATIVE_SENSOR_TYPE_H
-#define OH_NATIVE_SENSOR_TYPE_H
+#ifndef OH_SENSOR_TYPE_H
+#define OH_SENSOR_TYPE_H
 
 #include <stdint.h>
 
@@ -147,7 +147,7 @@ typedef enum Sensor_Result {
  *
  * @since 11
  */
-typedef enum Sensor_DataAccuracy {
+typedef enum Sensor_Accuracy {
     /**
      * The sensor data is unreliable. It is possible that the sensor does not contact with the device to measure.
      * @since 11
@@ -170,35 +170,35 @@ typedef enum Sensor_DataAccuracy {
      * @since 11
      */
     SENSOR_ACCURACY_HIGH = 3
-} Sensor_DataAccuracy;
+} Sensor_Accuracy;
 
 /**
  * @brief Defines the sensor information.
  * @since 11
  */
-typedef struct Sensor_DeviceInfo Sensor_DeviceInfo;
+typedef struct Sensor_Info Sensor_Info;
 
 /**
- * @brief Creates an array of {@link Sensor_DeviceInfo} instances with the given number.
+ * @brief Creates an array of {@link Sensor_Info} instances with the given number.
  *
- * @param count - Number of {@link Sensor_DeviceInfo} instances to create.
- * @return Returns the double pointer to the array of {@link Sensor_DeviceInfo} instances
+ * @param count - Number of {@link Sensor_Info} instances to create.
+ * @return Returns the double pointer to the array of {@link Sensor_Info} instances
  * if the operation is successful;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_DeviceInfo **OH_Sensor_CreateSensors(uint32_t count);
+Sensor_Info **OH_Sensor_Info_Create(uint32_t count);
 
 /**
- * @brief Destroys an array of {@link Sensor_DeviceInfo} instances and reclaims memory.
+ * @brief Destroys an array of {@link Sensor_Info} instances and reclaims memory.
  *
- * @param sensors - Double pointer to the array of {@link Sensor_DeviceInfo} instances.
- * @param count - Number of {@link Sensor_DeviceInfo} instances to destroy.
+ * @param sensors - Double pointer to the array of {@link Sensor_Info} instances.
+ * @param count - Number of {@link Sensor_Info} instances to destroy.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroySensors(Sensor_DeviceInfo **sensors, uint32_t count);
+int32_t OH_Sensor_Info_Destroy(Sensor_Info **sensors, uint32_t count);
 
 /**
  * @brief Obtains the sensor name.
@@ -210,7 +210,7 @@ int32_t OH_Sensor_DestroySensors(Sensor_DeviceInfo **sensors, uint32_t count);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorName(Sensor_DeviceInfo* sensor, char *sensorName, uint32_t *length);
+int32_t OH_Sensor_Info_GetName(Sensor_Info* sensor, char *sensorName, uint32_t *length);
 
 /**
  * @brief Obtains the sensor's vendor name.
@@ -222,7 +222,7 @@ int32_t OH_Sensor_GetSensorName(Sensor_DeviceInfo* sensor, char *sensorName, uin
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetVendorName(Sensor_DeviceInfo* sensor, char *vendorName, uint32_t *length);
+int32_t OH_Sensor_Info_GetVendorName(Sensor_Info* sensor, char *vendorName, uint32_t *length);
 
 /**
  * @brief Obtains the sensor type.
@@ -233,7 +233,7 @@ int32_t OH_Sensor_GetVendorName(Sensor_DeviceInfo* sensor, char *vendorName, uin
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorType(Sensor_DeviceInfo* sensor, Sensor_Type *sensorType);
+int32_t OH_Sensor_Info_GetType(Sensor_Info* sensor, Sensor_Type *sensorType);
 
 /**
  * @brief Obtains the sensor resolution.
@@ -244,7 +244,7 @@ int32_t OH_Sensor_GetSensorType(Sensor_DeviceInfo* sensor, Sensor_Type *sensorTy
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorResolution(Sensor_DeviceInfo* sensor, float *resolution);
+int32_t OH_Sensor_Info_GetResolution(Sensor_Info* sensor, float *resolution);
 
 /**
  * @brief Obtains the minimum data reporting interval of a sensor.
@@ -255,7 +255,7 @@ int32_t OH_Sensor_GetSensorResolution(Sensor_DeviceInfo* sensor, float *resoluti
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetMinSamplingInterval(Sensor_DeviceInfo* sensor, int64_t *minSamplingInterval);
+int32_t OH_Sensor_Info_GetMinSamplingInterval(Sensor_Info* sensor, int64_t *minSamplingInterval);
 
 /**
  * @brief Obtains the maximum data reporting interval of a sensor.
@@ -266,7 +266,7 @@ int32_t OH_Sensor_GetMinSamplingInterval(Sensor_DeviceInfo* sensor, int64_t *min
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetMaxSamplingInterval(Sensor_DeviceInfo* sensor, int64_t *maxSamplingInterval);
+int32_t OH_Sensor_Info_GetMaxSamplingInterval(Sensor_Info* sensor, int64_t *maxSamplingInterval);
 
 /**
  * @brief Defines the sensor data information.
@@ -277,35 +277,35 @@ typedef struct Sensor_Event Sensor_Event;
 /**
  * @brief Obtains the sensor type.
  *
- * @param sensorEvent - Pointer to the sensor data information.
+ * @param Sensor_Event - Pointer to the sensor data information.
  * @param sensorType - Pointer to the sensor type.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetEventSensorType(Sensor_Event* sensorEvent, Sensor_Type *sensorType);
+int32_t OH_Sensor_Event_GetType(Sensor_Event* Sensor_Event, Sensor_Type *sensorType);
 
 /**
  * @brief Obtains the timestamp of sensor data.
  *
- * @param sensorEvent - Pointer to the sensor data information.
+ * @param Sensor_Event - Pointer to the sensor data information.
  * @param timestamp - Pointer to the timestamp.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetEventTimestamp(Sensor_Event* sensorEvent, int64_t *timestamp);
+int32_t OH_Sensor_Event_GetTimestamp(Sensor_Event* Sensor_Event, int64_t *timestamp);
 
 /**
  * @brief Obtains the accuracy of sensor data.
  *
- * @param sensorEvent - Pointer to the sensor data information.
+ * @param Sensor_Event - Pointer to the sensor data information.
  * @param accuracy - Pointer to the accuracy.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetEventAccuracy(Sensor_Event* sensorEvent, Sensor_DataAccuracy *accuracy);
+int32_t OH_Sensor_Event_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy *accuracy);
 
 /**
  * @brief Obtains sensor data. The data length and content depend on the sensor type.
@@ -333,14 +333,14 @@ int32_t OH_Sensor_GetEventAccuracy(Sensor_Event* sensorEvent, Sensor_DataAccurac
  * SENSOR_TYPE_PEDOMETER: data[0], indicating the number of steps a user has walked.
  * SENSOR_TYPE_HEART_RATE: data[0], indicating the heart rate value.
  *
- * @param sensorEvent - Pointer to the sensor data information.
+ * @param Sensor_Event - Pointer to the sensor data information.
  * @param data - Double pointer to the sensor data.
  * @param length - Pointer to the array length.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorData(Sensor_Event* sensorEvent, float **data, uint32_t *length);
+int32_t OH_Sensor_Event_GetData(Sensor_Event* Sensor_Event, float **data, uint32_t *length);
 
 /**
  * @brief Defines the sensor subscription ID, which uniquely identifies a sensor.
@@ -355,7 +355,7 @@ typedef struct Sensor_SubscriptionId Sensor_SubscriptionId;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SubscriptionId *OH_Sensor_CreateSubscriptionId(void);
+Sensor_SubscriptionId *OH_Sensor_SubscriptionId_Create(void);
 
 /**
  * @brief Destroys a {@link Sensor_SubscriptionId} instance and reclaims memory.
@@ -365,7 +365,7 @@ Sensor_SubscriptionId *OH_Sensor_CreateSubscriptionId(void);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroySubscriptionId(Sensor_SubscriptionId *id);
+int32_t OH_Sensor_SubscriptionId_Destroy(Sensor_SubscriptionId *id);
 
 /**
  * @brief Obtains the sensor type.
@@ -376,7 +376,7 @@ int32_t OH_Sensor_DestroySubscriptionId(Sensor_SubscriptionId *id);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSubscriptionSensorType(Sensor_SubscriptionId* id, Sensor_Type *sensorType);
+int32_t OH_Sensor_SubscriptionId_GetType(Sensor_SubscriptionId* id, Sensor_Type *sensorType);
 
 /**
  * @brief Sets the sensor type.
@@ -387,7 +387,7 @@ int32_t OH_Sensor_GetSubscriptionSensorType(Sensor_SubscriptionId* id, Sensor_Ty
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SetSubscriptionSensorType(Sensor_SubscriptionId* id, const Sensor_Type sensorType);
+int32_t OH_Sensor_SubscriptionId_SetType(Sensor_SubscriptionId* id, const Sensor_Type sensorType);
 
 /**
  * @brief Defines the sensor subscription attribute.
@@ -402,7 +402,7 @@ typedef struct Sensor_SubscriptionAttribute Sensor_SubscriptionAttribute;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SubscriptionAttribute *OH_Sensor_CreateAttribute(void);
+Sensor_SubscriptionAttribute *OH_Sensor_SubscriptionAttribute_Create(void);
 
 /**
  * @brief Destroys a {@link Sensor_SubscriptionAttribute} instance and reclaims memory.
@@ -412,7 +412,7 @@ Sensor_SubscriptionAttribute *OH_Sensor_CreateAttribute(void);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroyAttribute(Sensor_SubscriptionAttribute *attribute);
+int32_t OH_Sensor_SubscriptionAttribute_Destroy(Sensor_SubscriptionAttribute *attribute);
 
 /**
  * @brief Sets the sensor data reporting interval.
@@ -423,7 +423,8 @@ int32_t OH_Sensor_DestroyAttribute(Sensor_SubscriptionAttribute *attribute);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute, const int64_t samplingInterval);
+int32_t OH_Sensor_SubscriptionAttribute_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute,
+    const int64_t samplingInterval);
 
 /**
  * @brief Obtains the sensor data reporting interval.
@@ -434,7 +435,8 @@ int32_t OH_Sensor_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute, c
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSamplingInterval(Sensor_SubscriptionAttribute* attribute, int64_t *samplingInterval);
+int32_t OH_Sensor_SubscriptionAttribute_GetSamplingInterval(Sensor_SubscriptionAttribute* attribute,
+    int64_t *samplingInterval);
 
 /**
  * @brief Defines the callback function used to report sensor data.
@@ -455,7 +457,7 @@ typedef struct Sensor_Subscriber Sensor_Subscriber;
  * if the operation is successful; returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_Subscriber *OH_Sensor_CreateSubscriber(void);
+Sensor_Subscriber *OH_Sensor_Subscriber_Create(void);
 
 /**
  * @brief Destroys a {@link Sensor_Subscriber} instance and reclaims memory.
@@ -465,7 +467,7 @@ Sensor_Subscriber *OH_Sensor_CreateSubscriber(void);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *subscriber);
+int32_t OH_Sensor_Subscriber_Destroy(Sensor_Subscriber *subscriber);
 
 /**
  * @brief Sets a callback function to report sensor data.
@@ -476,7 +478,7 @@ int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *subscriber);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SetSensorCallback(Sensor_Subscriber* subscriber, const Sensor_EventCallback callback);
+int32_t OH_Sensor_Subscriber_SetCallback(Sensor_Subscriber* subscriber, const Sensor_EventCallback callback);
 
 /**
  * @brief Obtains the callback function used to report sensor data.
@@ -487,8 +489,8 @@ int32_t OH_Sensor_SetSensorCallback(Sensor_Subscriber* subscriber, const Sensor_
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_GetSensorCallback(Sensor_Subscriber* subscriber, Sensor_EventCallback *callback);
+int32_t OH_Sensor_Subscriber_GetCallback(Sensor_Subscriber* subscriber, Sensor_EventCallback *callback);
 #ifdef __cplusplus
 }
 #endif
-#endif // OH_NATIVE_SENSOR_TYPE_H
+#endif // OH_SENSOR_TYPE_H

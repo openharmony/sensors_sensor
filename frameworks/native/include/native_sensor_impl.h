@@ -16,10 +16,10 @@
 #ifndef NATIVE_SENSOR_IMPL
 #define NATIVE_SENSOR_IMPL
 
-#include "native_sensor.h"
+#include "oh_sensor.h"
 #include "sensor_agent_type.h"
 
-struct Sensor_DeviceInfo {
+struct Sensor_Info {
     char sensorName[NAME_MAX_LEN];   /**< Sensor name */
     char vendorName[NAME_MAX_LEN];   /**< Sensor vendor */
     char firmwareVersion[VERSION_MAX_LEN];  /**< Sensor firmware version */
