@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 import("./../../sensor.gni")
 
-ohos_shared_library("libsensor_native") {
+ohos_shared_library("libsensor_client") {
   sources = [
     "src/fd_listener.cpp",
     "src/sensor_agent_proxy.cpp",
@@ -105,7 +105,7 @@ ohos_shared_library("sensor_interface_native") {
   }
 
   deps = [
-    "$SUBSYSTEM_DIR/frameworks/native:libsensor_native",
+    "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
     "$SUBSYSTEM_DIR/frameworks/native:libsensor_ndk",
   ]
 
@@ -122,9 +122,48 @@ ohos_shared_library("sensor_interface_native") {
   subsystem_name = "sensors"
 }
 
+config("ohsensor_public_config") {
+  include_dirs = [ "$SUBSYSTEM_DIR/interfaces/kits/c" ]
+}
+
+ohos_shared_library("ohsensor") {
+  sources = [ "src/native_sensor.cpp" ]
+
+  defines = [ "API_EXPORT=__attribute__((visibility (\"default\")))" ]
+
+  configs = [ ":sensor_private_config" ]
+  public_configs = [ ":ohsensor_public_config" ]
+
+  branch_protector_ret = "pac_ret"
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
+    "$SUBSYSTEM_DIR/frameworks/native:libsensor_ndk",
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
+    "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "eventhandler:libeventhandler",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "safwk:system_ability_fwk",
+  ]
+
+  relative_install_dir = "ndk"
+  part_name = "sensor"
+  subsystem_name = "sensors"
+}
+
 group("sensor_target") {
   deps = [
-    ":libsensor_native",
+    ":libsensor_client",
     ":sensor_interface_native",
   ]
 }
