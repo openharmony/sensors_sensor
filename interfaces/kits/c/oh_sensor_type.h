@@ -187,7 +187,7 @@ typedef struct Sensor_Info Sensor_Info;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_Info **OH_Sensor_Info_Create(uint32_t count);
+Sensor_Info **OH_Sensor_CreateInfos(uint32_t count);
 
 /**
  * @brief Destroys an array of {@link Sensor_Info} instances and reclaims memory.
@@ -198,7 +198,7 @@ Sensor_Info **OH_Sensor_Info_Create(uint32_t count);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_Destroy(Sensor_Info **sensors, uint32_t count);
+int32_t OH_Sensor_DestroyInfos(Sensor_Info **sensors, uint32_t count);
 
 /**
  * @brief Obtains the sensor name.
@@ -355,7 +355,7 @@ typedef struct Sensor_SubscriptionId Sensor_SubscriptionId;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SubscriptionId *OH_Sensor_SubscriptionId_Create(void);
+Sensor_SubscriptionId *OH_Sensor_CreateSubscriptionId(void);
 
 /**
  * @brief Destroys a {@link Sensor_SubscriptionId} instance and reclaims memory.
@@ -365,7 +365,7 @@ Sensor_SubscriptionId *OH_Sensor_SubscriptionId_Create(void);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SubscriptionId_Destroy(Sensor_SubscriptionId *id);
+int32_t OH_Sensor_DestroySubscriptionId(Sensor_SubscriptionId *id);
 
 /**
  * @brief Obtains the sensor type.
@@ -402,7 +402,7 @@ typedef struct Sensor_SubscriptionAttribute Sensor_SubscriptionAttribute;
  * returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_SubscriptionAttribute *OH_Sensor_SubscriptionAttribute_Create(void);
+Sensor_SubscriptionAttribute *OH_Sensor_CreateSubscriptionAttribute(void);
 
 /**
  * @brief Destroys a {@link Sensor_SubscriptionAttribute} instance and reclaims memory.
@@ -412,7 +412,7 @@ Sensor_SubscriptionAttribute *OH_Sensor_SubscriptionAttribute_Create(void);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SubscriptionAttribute_Destroy(Sensor_SubscriptionAttribute *attribute);
+int32_t OH_Sensor_DestroySubscriptionAttribute(Sensor_SubscriptionAttribute *attribute);
 
 /**
  * @brief Sets the sensor data reporting interval.
@@ -457,7 +457,7 @@ typedef struct Sensor_Subscriber Sensor_Subscriber;
  * if the operation is successful; returns <b>NULL</b> otherwise.
  * @since 11
  */
-Sensor_Subscriber *OH_Sensor_Subscriber_Create(void);
+Sensor_Subscriber *OH_Sensor_CreateSubscriber(void);
 
 /**
  * @brief Destroys a {@link Sensor_Subscriber} instance and reclaims memory.
@@ -467,7 +467,7 @@ Sensor_Subscriber *OH_Sensor_Subscriber_Create(void);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Subscriber_Destroy(Sensor_Subscriber *subscriber);
+int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *subscriber);
 
 /**
  * @brief Sets a callback function to report sensor data.
