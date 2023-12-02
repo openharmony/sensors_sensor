@@ -128,7 +128,7 @@ config("ohsensor_public_config") {
 
 ohos_shared_library("ohsensor") {
   sources = [ "src/native_sensor.cpp" ]
-
+  output_extension = "so"
   defines = [ "API_EXPORT=__attribute__((visibility (\"default\")))" ]
 
   configs = [ ":sensor_private_config" ]

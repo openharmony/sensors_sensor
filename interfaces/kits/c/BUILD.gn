@@ -25,5 +25,6 @@ ohos_ndk_headers("sensor_ndk_header") {
 ohos_ndk_library("libsensor_ndk") {
   ndk_description_file = "./libsensor.ndk.json"
   output_name = "ohsensor"
+  output_extension = "so"
   min_compact_version = "11"
 }

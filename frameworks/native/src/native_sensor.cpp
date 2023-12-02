@@ -74,7 +74,7 @@ Sensor_Result OH_Sensor_GetInfos(Sensor_Info **sensors, uint32_t *count)
     return SENSOR_SUCCESS;
 }
 
-Sensor_Info **OH_Sensor_Info_Create(uint32_t count)
+Sensor_Info **OH_Sensor_CreateInfos(uint32_t count)
 {
     auto sensors = new Sensor_Info *[count];
     for (uint32_t i = 0; i < count; ++i) {
@@ -83,7 +83,7 @@ Sensor_Info **OH_Sensor_Info_Create(uint32_t count)
     return sensors;
 }
 
-int32_t OH_Sensor_Info_Destroy(Sensor_Info **sensors, uint32_t count)
+int32_t OH_Sensor_DestroyInfos(Sensor_Info **sensors, uint32_t count)
 {
     for (uint32_t i = 0; i < count; ++i) {
         delete sensors[i];
@@ -314,12 +314,12 @@ int32_t OH_Sensor_Subscriber_GetCallback(Sensor_Subscriber* user, Sensor_EventCa
     return SENSOR_SUCCESS;
 }
 
-Sensor_SubscriptionId *OH_Sensor_SubscriptionId_Create()
+Sensor_SubscriptionId *OH_Sensor_CreateSubscriptionId()
 {
     return new (std::nothrow) Sensor_SubscriptionId();
 }
 
-int32_t OH_Sensor_SubscriptionId_Destroy(Sensor_SubscriptionId *id)
+int32_t OH_Sensor_DestroySubscriptionId(Sensor_SubscriptionId *id)
 {
     if (id == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -330,12 +330,12 @@ int32_t OH_Sensor_SubscriptionId_Destroy(Sensor_SubscriptionId *id)
     return SENSOR_SUCCESS;
 }
 
-Sensor_SubscriptionAttribute *OH_Sensor_SubscriptionAttribute_Create()
+Sensor_SubscriptionAttribute *OH_Sensor_CreateSubscriptionAttribute()
 {
     return new (std::nothrow) Sensor_SubscriptionAttribute();
 }
 
-int32_t OH_Sensor_SubscriptionAttribute_Destroy(Sensor_SubscriptionAttribute *attribute)
+int32_t OH_Sensor_DestroySubscriptionAttribute(Sensor_SubscriptionAttribute *attribute)
 {
     if (attribute == nullptr) {
         SEN_HILOGE("Parameter error");
@@ -346,12 +346,12 @@ int32_t OH_Sensor_SubscriptionAttribute_Destroy(Sensor_SubscriptionAttribute *at
     return SENSOR_SUCCESS;
 }
 
-Sensor_Subscriber *OH_Sensor_Subscriber_Create()
+Sensor_Subscriber *OH_Sensor_CreateSubscriber()
 {
     return new (std::nothrow) Sensor_Subscriber();
 }
 
-int32_t OH_Sensor_Subscriber_Destroy(Sensor_Subscriber *user)
+int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *user)
 {
     if (user == nullptr) {
         SEN_HILOGE("Parameter error");

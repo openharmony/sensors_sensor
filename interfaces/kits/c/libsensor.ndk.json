@@ -57,27 +57,27 @@
         "name": "OH_Sensor_Subscriber_GetCallback"
     },
     {
-        "name": "OH_Sensor_Info_Create"
+        "name": "OH_Sensor_CreateInfos"
     },
     {
-        "name": "OH_Sensor_Info_Destroy"
+        "name": "OH_Sensor_DestroyInfos"
     },
     {
-        "name": "OH_Sensor_SubscriptionId_Create"
+        "name": "OH_Sensor_CreateSubscriptionId"
     },
     {
-        "name": "OH_Sensor_SubscriptionId_Destroy"
+        "name": "OH_Sensor_DestroySubscriptionId"
     },
     {
-        "name": "OH_Sensor_SubscriptionAttribute_Create"
+        "name": "OH_Sensor_CreateSubscriptionAttribute"
     },
     {
-        "name": "OH_Sensor_SubscriptionAttribute_Destroy"
+        "name": "OH_Sensor_DestroySubscriptionAttribute"
     },
     {
-        "name": "OH_Sensor_Subscriber_Create"
+        "name": "OH_Sensor_CreateSubscriber"
     },
     {
-        "name": "OH_Sensor_Subscriber_Destroy"
+        "name": "OH_Sensor_DestroySubscriber"
     }
 ]
