@@ -210,7 +210,7 @@ int32_t OH_Sensor_DestroyInfos(Sensor_Info **sensors, uint32_t count);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_GetName(Sensor_Info* sensor, char *sensorName, uint32_t *length);
+int32_t OH_SensorInfo_GetName(Sensor_Info* sensor, char *sensorName, uint32_t *length);
 
 /**
  * @brief Obtains the sensor's vendor name.
@@ -222,7 +222,7 @@ int32_t OH_Sensor_Info_GetName(Sensor_Info* sensor, char *sensorName, uint32_t *
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_GetVendorName(Sensor_Info* sensor, char *vendorName, uint32_t *length);
+int32_t OH_SensorInfo_GetVendorName(Sensor_Info* sensor, char *vendorName, uint32_t *length);
 
 /**
  * @brief Obtains the sensor type.
@@ -233,7 +233,7 @@ int32_t OH_Sensor_Info_GetVendorName(Sensor_Info* sensor, char *vendorName, uint
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_GetType(Sensor_Info* sensor, Sensor_Type *sensorType);
+int32_t OH_SensorInfo_GetType(Sensor_Info* sensor, Sensor_Type *sensorType);
 
 /**
  * @brief Obtains the sensor resolution.
@@ -244,7 +244,7 @@ int32_t OH_Sensor_Info_GetType(Sensor_Info* sensor, Sensor_Type *sensorType);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_GetResolution(Sensor_Info* sensor, float *resolution);
+int32_t OH_SensorInfo_GetResolution(Sensor_Info* sensor, float *resolution);
 
 /**
  * @brief Obtains the minimum data reporting interval of a sensor.
@@ -255,7 +255,7 @@ int32_t OH_Sensor_Info_GetResolution(Sensor_Info* sensor, float *resolution);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_GetMinSamplingInterval(Sensor_Info* sensor, int64_t *minSamplingInterval);
+int32_t OH_SensorInfo_GetMinSamplingInterval(Sensor_Info* sensor, int64_t *minSamplingInterval);
 
 /**
  * @brief Obtains the maximum data reporting interval of a sensor.
@@ -266,7 +266,7 @@ int32_t OH_Sensor_Info_GetMinSamplingInterval(Sensor_Info* sensor, int64_t *minS
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Info_GetMaxSamplingInterval(Sensor_Info* sensor, int64_t *maxSamplingInterval);
+int32_t OH_SensorInfo_GetMaxSamplingInterval(Sensor_Info* sensor, int64_t *maxSamplingInterval);
 
 /**
  * @brief Defines the sensor data information.
@@ -283,7 +283,7 @@ typedef struct Sensor_Event Sensor_Event;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Event_GetType(Sensor_Event* Sensor_Event, Sensor_Type *sensorType);
+int32_t OH_SensorEvent_GetType(Sensor_Event* Sensor_Event, Sensor_Type *sensorType);
 
 /**
  * @brief Obtains the timestamp of sensor data.
@@ -294,7 +294,7 @@ int32_t OH_Sensor_Event_GetType(Sensor_Event* Sensor_Event, Sensor_Type *sensorT
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Event_GetTimestamp(Sensor_Event* Sensor_Event, int64_t *timestamp);
+int32_t OH_SensorEvent_GetTimestamp(Sensor_Event* Sensor_Event, int64_t *timestamp);
 
 /**
  * @brief Obtains the accuracy of sensor data.
@@ -305,7 +305,7 @@ int32_t OH_Sensor_Event_GetTimestamp(Sensor_Event* Sensor_Event, int64_t *timest
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Event_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy *accuracy);
+int32_t OH_SensorEvent_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy *accuracy);
 
 /**
  * @brief Obtains sensor data. The data length and content depend on the sensor type.
@@ -340,7 +340,7 @@ int32_t OH_Sensor_Event_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy 
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Event_GetData(Sensor_Event* Sensor_Event, float **data, uint32_t *length);
+int32_t OH_SensorEvent_GetData(Sensor_Event* Sensor_Event, float **data, uint32_t *length);
 
 /**
  * @brief Defines the sensor subscription ID, which uniquely identifies a sensor.
@@ -376,7 +376,7 @@ int32_t OH_Sensor_DestroySubscriptionId(Sensor_SubscriptionId *id);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SubscriptionId_GetType(Sensor_SubscriptionId* id, Sensor_Type *sensorType);
+int32_t OH_SensorSubscriptionId_GetType(Sensor_SubscriptionId* id, Sensor_Type *sensorType);
 
 /**
  * @brief Sets the sensor type.
@@ -387,7 +387,7 @@ int32_t OH_Sensor_SubscriptionId_GetType(Sensor_SubscriptionId* id, Sensor_Type 
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SubscriptionId_SetType(Sensor_SubscriptionId* id, const Sensor_Type sensorType);
+int32_t OH_SensorSubscriptionId_SetType(Sensor_SubscriptionId* id, const Sensor_Type sensorType);
 
 /**
  * @brief Defines the sensor subscription attribute.
@@ -423,7 +423,7 @@ int32_t OH_Sensor_DestroySubscriptionAttribute(Sensor_SubscriptionAttribute *att
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SubscriptionAttribute_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute,
+int32_t OH_SensorSubscriptionAttribute_SetSamplingInterval(Sensor_SubscriptionAttribute* attribute,
     const int64_t samplingInterval);
 
 /**
@@ -435,7 +435,7 @@ int32_t OH_Sensor_SubscriptionAttribute_SetSamplingInterval(Sensor_SubscriptionA
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_SubscriptionAttribute_GetSamplingInterval(Sensor_SubscriptionAttribute* attribute,
+int32_t OH_SensorSubscriptionAttribute_GetSamplingInterval(Sensor_SubscriptionAttribute* attribute,
     int64_t *samplingInterval);
 
 /**
@@ -478,7 +478,7 @@ int32_t OH_Sensor_DestroySubscriber(Sensor_Subscriber *subscriber);
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Subscriber_SetCallback(Sensor_Subscriber* subscriber, const Sensor_EventCallback callback);
+int32_t OH_SensorSubscriber_SetCallback(Sensor_Subscriber* subscriber, const Sensor_EventCallback callback);
 
 /**
  * @brief Obtains the callback function used to report sensor data.
@@ -489,7 +489,7 @@ int32_t OH_Sensor_Subscriber_SetCallback(Sensor_Subscriber* subscriber, const Se
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_Sensor_Subscriber_GetCallback(Sensor_Subscriber* subscriber, Sensor_EventCallback *callback);
+int32_t OH_SensorSubscriber_GetCallback(Sensor_Subscriber* subscriber, Sensor_EventCallback *callback);
 #ifdef __cplusplus
 }
 #endif

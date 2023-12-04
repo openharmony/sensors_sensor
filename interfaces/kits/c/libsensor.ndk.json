@@ -9,52 +9,52 @@
         "name": "OH_Sensor_Unsubscribe"
     },
     {
-        "name": "OH_Sensor_Info_GetName"
+        "name": "OH_SensorInfo_GetName"
     },
     {
-        "name": "OH_Sensor_Info_GetVendorName"
+        "name": "OH_SensorInfo_GetVendorName"
     },
     {
-        "name": "OH_Sensor_Info_GetType"
+        "name": "OH_SensorInfo_GetType"
     },
     {
-        "name": "OH_Sensor_Info_GetResolution"
+        "name": "OH_SensorInfo_GetResolution"
     },
     {
-        "name": "OH_Sensor_Info_GetMinSamplingInterval"
+        "name": "OH_SensorInfo_GetMinSamplingInterval"
     },
     {
-        "name": "OH_Sensor_Info_GetMaxSamplingInterval"
+        "name": "OH_SensorInfo_GetMaxSamplingInterval"
     },
     {
-        "name": "OH_Sensor_Event_GetType"
+        "name": "OH_SensorEvent_GetType"
     },
     {
-        "name": "OH_Sensor_Event_GetTimestamp"
+        "name": "OH_SensorEvent_GetTimestamp"
     },
     {
-        "name": "OH_Sensor_Event_GetAccuracy"
+        "name": "OH_SensorEvent_GetAccuracy"
     },
     {
-        "name": "OH_Sensor_Event_GetData"
+        "name": "OH_SensorEvent_GetData"
     },
     {
-        "name": "OH_Sensor_SubscriptionId_GetType"
+        "name": "OH_SensorSubscriptionId_GetType"
     },
     {
-        "name": "OH_Sensor_SubscriptionId_SetType"
+        "name": "OH_SensorSubscriptionId_SetType"
     },
     {
-        "name": "OH_Sensor_SubscriptionAttribute_SetSamplingInterval"
+        "name": "OH_SensorSubscriptionAttribute_SetSamplingInterval"
     },
     {
-        "name": "OH_Sensor_SubscriptionAttribute_GetSamplingInterval"
+        "name": "OH_SensorSubscriptionAttribute_GetSamplingInterval"
     },
     {
-        "name": "OH_Sensor_Subscriber_SetCallback"
+        "name": "OH_SensorSubscriber_SetCallback"
     },
     {
-        "name": "OH_Sensor_Subscriber_GetCallback"
+        "name": "OH_SensorSubscriber_GetCallback"
     },
     {
         "name": "OH_Sensor_CreateInfos"
