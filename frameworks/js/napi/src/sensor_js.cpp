@@ -317,6 +317,34 @@ static void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value c
     g_onCallbackInfos[sensorTypeId] = callbackInfos;
 }
 
+static bool GetInterval(napi_env env, napi_value value, int64_t &interval)
+{
+    napi_value napiInterval = GetNamedProperty(env, value, "interval");
+    if (IsMatchType(env, napiInterval, napi_number)) {
+        if (!GetNativeInt64(env, napiInterval, interval)) {
+            SEN_HILOGE("GetNativeInt64 failed");
+            return false;
+        }
+    } else if (IsMatchType(env, napiInterval, napi_string)) {
+        std::string mode;
+        if (!GetStringValue(env, napiInterval, mode)) {
+            SEN_HILOGE("GetStringValue failed");
+            return false;
+        }
+        auto iter = g_samplingPeriod.find(mode);
+        if (iter == g_samplingPeriod.end()) {
+            SEN_HILOGE("Find interval mode failed");
+            return false;
+        }
+        interval = iter->second;
+        SEN_HILOGI("%{public}s", mode.c_str());
+    } else {
+        SEN_HILOGE("Interval failed");
+        return false;
+    }
+    return true;
+}
+
 static napi_value On(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -339,9 +367,8 @@ static napi_value On(napi_env env, napi_callback_info info)
     }
     int64_t interval = REPORTING_INTERVAL;
     if (argc >= 3 && IsMatchType(env, args[2], napi_object)) {
-        napi_value value = GetNamedProperty(env, args[2], "interval");
-        if (IsMatchType(env, value, napi_number)) {
-            GetNativeInt64(env, value, interval);
+        if (!GetInterval(env, args[2], interval)) {
+            SEN_HILOGW("Get interval failed");
         }
     }
     SEN_HILOGD("Interval is %{public}" PRId64, interval);
