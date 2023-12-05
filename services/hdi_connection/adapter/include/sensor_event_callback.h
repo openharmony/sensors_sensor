@@ -19,8 +19,8 @@
 #include "v2_0/isensor_callback.h"
 #include "v2_0/sensor_types.h"
 
-using OHOS::HDI::Sensor::v2_0::HdfSensorEvents;
-using OHOS::HDI::Sensor::v2_0::ISensorCallback;
+using OHOS::HDI::Sensor::V2_0::HdfSensorEvents;
+using OHOS::HDI::Sensor::V2_0::ISensorCallback;
 
 namespace OHOS {
 namespace Sensors {
