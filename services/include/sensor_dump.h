@@ -46,6 +46,9 @@ private:
     int32_t GetDataDimension(int32_t sensorId);
     std::string GetDataBySensorId(int32_t sensorId, SensorData &sensorData);
     static std::unordered_map<int32_t, std::string> sensorMap_;
+    void RunSensorDump(int32_t fd, int32_t optionIndex, const std::vector<std::string> &args, char **argv);
+    std::vector<Sensor> sensors_;
+    ClientInfo &clientInfo_ = ClientInfo::GetInstance();
 };
 } // namespace Sensors
 } // namespace OHOS
