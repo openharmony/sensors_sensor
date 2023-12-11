@@ -84,6 +84,52 @@ std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_HEADPOSTURE, "HEAD POSTURE" },
 };
 
+void SensorDump::RunSensorDump(int32_t fd, int32_t optionIndex, const std::vector<std::string> &args, char **argv)
+{
+    struct option dumpOptions[] = {
+        {"channel", no_argument, 0, 'c'},
+#ifdef BUILD_VARIANT_ENG
+        {"data", no_argument, 0, 'd'},
+#endif // BUILD_VARIANT_ENG
+        {"open", no_argument, 0, 'o'},
+        {"help", no_argument, 0, 'h'},
+        {"list", no_argument, 0, 'l'},
+        {NULL, 0, 0, 0}
+    };
+    optind = 1;
+    int32_t c;
+    while ((c = getopt_long(args.size(), argv, "cdohl", dumpOptions, &optionIndex)) != -1) {
+        switch (c) {
+            case 'c': {
+                DumpSensorChannel(fd, clientInfo_);
+                break;
+            }
+#ifdef BUILD_VARIANT_ENG
+            case 'd': {
+                DumpSensorData(fd, clientInfo_);
+                break;
+            }
+#endif // BUILD_VARIANT_ENG
+            case 'o': {
+                DumpOpeningSensor(fd, sensors_, clientInfo_);
+                break;
+            }
+            case 'h': {
+                DumpHelp(fd);
+                break;
+            }
+            case 'l': {
+                DumpSensorList(fd, sensors_);
+                break;
+            }
+            default: {
+                dprintf(fd, "Unrecognized option, More info with: \"hidumper -s 3601 -a -h\"\n");
+                break;
+            }
+        }
+    }
+}
+
 void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, const std::vector<Sensor> &sensors,
     ClientInfo &clientInfo)
 {
@@ -104,16 +150,6 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
         return;
     }
     int32_t optionIndex = 0;
-    struct option dumpOptions[] = {
-        {"channel", no_argument, 0, 'c'},
-#ifdef BUILD_VARIANT_ENG 
-        {"data", no_argument, 0, 'd'},
-#endif // BUILD_VARIANT_ENG
-        {"open", no_argument, 0, 'o'},
-        {"help", no_argument, 0, 'h'},
-        {"list", no_argument, 0, 'l'},
-        {NULL, 0, 0, 0}
-    };
     char **argv = new (std::nothrow) char *[args.size()];
     CHKPV(argv);
     if (memset_s(argv, args.size() * sizeof(char *), 0, args.size() * sizeof(char *)) != EOK) {
@@ -132,38 +168,8 @@ void SensorDump::ParseCommand(int32_t fd, const std::vector<std::string> &args, 
             goto RELEASE_RES;
         }
     }
-    optind = 1;
-    int32_t c;
-    while ((c = getopt_long(args.size(), argv, "cdohl", dumpOptions, &optionIndex)) != -1) {
-        switch (c) {
-            case 'c': {
-                DumpSensorChannel(fd, clientInfo);
-                break;
-            }
-#ifdef BUILD_VARIANT_ENG 
-            case 'd': {
-                DumpSensorData(fd, clientInfo);
-                break;
-            }
-#endif // BUILD_VARIANT_ENG
-            case 'o': {
-                DumpOpeningSensor(fd, sensors, clientInfo);
-                break;
-            }
-            case 'h': {
-                DumpHelp(fd);
-                break;
-            }
-            case 'l': {
-                DumpSensorList(fd, sensors);
-                break;
-            }
-            default: {
-                dprintf(fd, "Unrecognized option, More info with: \"hidumper -s 3601 -a -h\"\n");
-                break;
-            }
-        }
-    }
+    sensors_ = sensors;
+    RunSensorDump(fd, optionIndex, args, argv);
     RELEASE_RES:
     for (size_t i = 0; i < args.size(); ++i) {
         if (argv[i] != nullptr) {
