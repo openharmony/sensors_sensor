@@ -56,6 +56,6 @@ protected:
     int32_t epollFd_ { -1 };
 #endif // OHOS_BUILD_ENABLE_RUST
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // STREAM_SOCKET_H

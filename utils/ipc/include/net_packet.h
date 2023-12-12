@@ -45,6 +45,6 @@ public:
 protected:
     MessageId msgId_ = MessageId::INVALID;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // NET_PACKET_H
