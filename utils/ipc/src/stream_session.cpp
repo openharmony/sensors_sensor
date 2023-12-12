@@ -220,5 +220,5 @@ int32_t StreamSession::GetTokenType() const
     return tokenType_;
 #endif // OHOS_BUILD_ENABLE_RUST
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

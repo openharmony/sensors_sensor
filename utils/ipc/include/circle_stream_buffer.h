@@ -32,6 +32,6 @@ public:
 protected:
     void CopyDataToBegin();
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // CIRCLE_STREAM_BUFFER_H

@@ -105,5 +105,5 @@ int32_t StreamSocket::GetFd() const
     return fd_;
 #endif // OHOS_BUILD_ENABLE_RUST
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

@@ -266,5 +266,5 @@ const char *StreamBuffer::WriteBuf() const
     return &szBuff_[wPos_];
 }
 #endif // OHOS_BUILD_ENABLE_RUST
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

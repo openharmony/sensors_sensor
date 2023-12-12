@@ -33,6 +33,6 @@ enum class MessageId : int32_t {
     INVALID,
     ACTIVE_INFO,
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // PROTO_H

@@ -70,6 +70,6 @@ protected:
     int32_t tokenType_ { ATokenTypeEnum::TOKEN_INVALID };
 #endif // OHOS_BUILD_ENABLE_RUST
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // STREAM_SESSION_H
