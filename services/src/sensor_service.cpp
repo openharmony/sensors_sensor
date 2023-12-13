@@ -68,15 +68,12 @@ void SensorService::OnStart()
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (!InitInterface()) {
         SEN_HILOGE("Init interface error");
-        return;
     }
     if (!InitDataCallback()) {
         SEN_HILOGE("Init data callback error");
-        return;
     }
     if (!InitSensorList()) {
         SEN_HILOGE("Init sensor list error");
-        return;
     }
     sensorDataProcesser_ = new (std::nothrow) SensorDataProcesser(sensorMap_);
     CHKPV(sensorDataProcesser_);
