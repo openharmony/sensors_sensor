@@ -82,6 +82,7 @@ std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_SAR, "SAR" },
     { SENSOR_TYPE_ID_POSTURE, "POSTURE" },
     { SENSOR_TYPE_ID_HEADPOSTURE, "HEAD POSTURE" },
+    { SENSOR_TYPE_ID_DROP_DETECTION, "DROP DETECTION" },
 };
 
 void SensorDump::RunSensorDump(int32_t fd, int32_t optionIndex, const std::vector<std::string> &args, char **argv)
