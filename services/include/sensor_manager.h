@@ -53,8 +53,8 @@ private:
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     std::thread dataThread_;
-    sptr<SensorDataProcesser> sensorDataProcesser_;
-    sptr<ReportDataCallback> reportDataCallback_;
+    sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
+    sptr<ReportDataCallback> reportDataCallback_ = nullptr;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     std::unordered_map<int32_t, Sensor> sensorMap_;
