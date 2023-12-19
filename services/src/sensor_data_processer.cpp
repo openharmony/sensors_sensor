@@ -295,6 +295,10 @@ int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser,
     CALL_LOG_ENTER;
     prctl(PR_SET_NAME, SENSOR_REPORT_THREAD_NAME.c_str());
     do {
+        if (dataProcesser == nullptr || dataCallback == nullptr) {
+            SEN_HILOGE("dataProcesser or dataCallback is nullptr");
+            return INVALID_POINTER;
+        }
         if (dataProcesser->ProcessEvents(dataCallback) == INVALID_POINTER) {
             SEN_HILOGE("Callback cannot be null");
             return INVALID_POINTER;
