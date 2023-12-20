@@ -47,6 +47,8 @@ private:
     ErrCode EnableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
     ErrCode DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
     ErrCode ResetSensorsInner(MessageParcel &data, MessageParcel &reply);
+    bool IsSystemServiceCalling();
+    bool IsSystemCalling();
     std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };
 } // namespace Sensors

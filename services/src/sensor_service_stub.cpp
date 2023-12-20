@@ -17,9 +17,11 @@
 
 #include <string>
 #include <sys/socket.h>
+#include <tokenid_kit.h>
 #include <unistd.h>
 #include <vector>
 
+#include "accesstoken_kit.h"
 #include "hisysevent.h"
 #include "ipc_skeleton.h"
 #include "message_parcel.h"
@@ -93,8 +95,32 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 
+bool SensorServiceStub::IsSystemServiceCalling()
+{
+    const auto tokenId = IPCSkeleton::GetCallingTokenID();
+    const auto flag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (flag == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE ||
+        flag == Security::AccessToken::ATokenTypeEnum::TOKEN_SHELL) {
+        SEN_HILOGD("system service calling, tokenId: %{public}u, flag: %{public}u", tokenId, flag);
+        return true;
+    }
+    return false;
+}
+
+bool SensorServiceStub::IsSystemCalling()
+{
+    if (IsSystemServiceCalling()) {
+        return true;
+    }
+    return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID());
+}
+
 ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel &reply)
 {
+    if (!IsSystemCalling()) {
+        SEN_HILOGE("The caller is not system hap");
+        return SERVICE_EXCEPTION;
+    }
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
@@ -115,6 +141,10 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
 
 ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel &reply)
 {
+    if (!IsSystemCalling()) {
+        SEN_HILOGE("The caller is not system hap");
+        return SERVICE_EXCEPTION;
+    }
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
