@@ -61,10 +61,6 @@ void SensorService::OnStart()
         SEN_HILOGW("SensorService has already started");
         return;
     }
-    if (clientDeathObserver_ == nullptr) {
-        clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
-        CHKPV(clientDeathObserver_);
-    }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (!InitInterface()) {
         SEN_HILOGE("Init interface error");
@@ -403,6 +399,10 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
 {
     CALL_LOG_ENTER;
     CHKPV(sensorClient);
+    if (clientDeathObserver_ == nullptr) {
+        clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
+        CHKPV(clientDeathObserver_);
+    }
     sensorClient->AddDeathRecipient(clientDeathObserver_);
     clientInfo_.SaveClientPid(sensorClient, pid);
 }
