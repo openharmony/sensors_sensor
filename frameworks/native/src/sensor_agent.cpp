@@ -24,7 +24,7 @@ using OHOS::Sensors::SensorAgentProxy;
 using OHOS::Sensors::SERVICE_EXCEPTION;
 using OHOS::Sensors::PARAMETER_ERROR;
 using OHOS::Sensors::PERMISSION_DENIED;
-
+using OHOS::Sensors::NON_SYSTEM_API;
 namespace {
 constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorNativeAPI"};
 }  // namespace
@@ -37,6 +37,9 @@ static int32_t NormalizeErrCode(int32_t code)
         }
         case PARAMETER_ERROR: {
             return PARAMETER_ERROR;
+        }
+        case NON_SYSTEM_API: {
+            return NON_SYSTEM_API;
         }
         default: {
             return SERVICE_EXCEPTION;

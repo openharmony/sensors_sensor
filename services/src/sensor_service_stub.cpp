@@ -117,13 +117,13 @@ bool SensorServiceStub::IsSystemCalling()
 
 ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel &reply)
 {
-    if (!IsSystemCalling()) {
-        SEN_HILOGE("The caller is not system hap");
-        return SERVICE_EXCEPTION;
-    }
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) && !IsSystemCalling()) {
+        SEN_HILOGE("Permission check failed. A non-system application uses the system API");
+        return NON_SYSTEM_API;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
@@ -141,13 +141,13 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
 
 ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel &reply)
 {
-    if (!IsSystemCalling()) {
-        SEN_HILOGE("The caller is not system hap");
-        return SERVICE_EXCEPTION;
-    }
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) && !IsSystemCalling()) {
+        SEN_HILOGE("Permission check failed. A non-system application uses the system API");
+        return NON_SYSTEM_API;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {

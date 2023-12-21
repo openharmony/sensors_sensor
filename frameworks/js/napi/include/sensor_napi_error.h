@@ -28,6 +28,7 @@ const std::map<int32_t, std::string> ERROR_MESSAGES = {
     {SERVICE_EXCEPTION,  "Service exception."},
     {PERMISSION_DENIED,  "Permission denied."},
     {PARAMETER_ERROR,  "The parameter invalid."},
+    {NON_SYSTEM_API,  "Non-system api."},
 };
 
 napi_value CreateBusinessError(const napi_env &env, const int32_t errCode, const std::string &errMessage);
