@@ -77,7 +77,9 @@ int32_t SensorServiceClient::InitServiceClient()
     CHKPR(systemAbilityManager, SENSOR_NATIVE_SAM_ERR);
     int32_t retry = 0;
     while (retry < GET_SERVICE_MAX_COUNT) {
-        sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
+        auto object = systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID);
+        CHKPR(object, SENSOR_NATIVE_GET_SERVICE_ERR);
+        sensorServer_ = iface_cast<ISensorService>(object);
         if (sensorServer_ != nullptr) {
             SEN_HILOGD("Get service success, retry:%{public}d", retry);
             serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
