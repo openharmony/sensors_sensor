@@ -631,14 +631,12 @@ void PeakFinder::SplitLongShortEnvelope(int32_t dataSize, const std::vector<int3
             envelopeList.demarcPos.push_back(toIndex);
             preFlag = flag;
         } else if (j == (countAssembleLen - 1)) {
-            if (flag == preFlag) {
-                envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = dataSize;
-            } else {
+            if (flag != preFlag) {
                 envelopeList.continuousEventFlag.push_back(flag);
                 envelopeList.demarcPos.push_back(preIndex);
-                envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = dataSize;
                 preFlag = flag;
             }
+            envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = dataSize;
         } else {
             if (flag == preFlag) {
                 envelopeList.demarcPos[envelopeList.demarcPos.size() - 1] = toIndex;
