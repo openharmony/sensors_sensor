@@ -17,9 +17,11 @@
 
 #include <string>
 #include <sys/socket.h>
+#include <tokenid_kit.h>
 #include <unistd.h>
 #include <vector>
 
+#include "accesstoken_kit.h"
 #include "hisysevent.h"
 #include "ipc_skeleton.h"
 #include "message_parcel.h"
@@ -93,11 +95,35 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
 }
 
+bool SensorServiceStub::IsSystemServiceCalling()
+{
+    const auto tokenId = IPCSkeleton::GetCallingTokenID();
+    const auto flag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (flag == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE ||
+        flag == Security::AccessToken::ATokenTypeEnum::TOKEN_SHELL) {
+        SEN_HILOGD("system service calling, tokenId: %{public}u, flag: %{public}u", tokenId, flag);
+        return true;
+    }
+    return false;
+}
+
+bool SensorServiceStub::IsSystemCalling()
+{
+    if (IsSystemServiceCalling()) {
+        return true;
+    }
+    return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID());
+}
+
 ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel &reply)
 {
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) && !IsSystemCalling()) {
+        SEN_HILOGE("Permission check failed. A non-system application uses the system API");
+        return NON_SYSTEM_API;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
@@ -118,6 +144,10 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) && !IsSystemCalling()) {
+        SEN_HILOGE("Permission check failed. A non-system application uses the system API");
+        return NON_SYSTEM_API;
+    }
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {

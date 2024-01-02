@@ -28,7 +28,8 @@ constexpr uint32_t MAX_SENSOR_COUNT = 200;
 enum ErrorCode : int32_t {
     PERMISSION_DENIED = 201, // Use this error code when permission is denied.
     PARAMETER_ERROR = 401, // Use this error code when the input parameter type or range does not match.
-    SERVICE_EXCEPTION = 14500101 // Use this error code when the service is exception.
+    SERVICE_EXCEPTION = 14500101, // Use this error code when the service is exception.
+    NON_SYSTEM_API = 202 // Permission check failed. A non-system application uses the system API.
 };
 
 enum {
