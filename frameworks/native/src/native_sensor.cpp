@@ -86,10 +86,15 @@ Sensor_Info **OH_Sensor_CreateInfos(uint32_t count)
 int32_t OH_Sensor_DestroyInfos(Sensor_Info **sensors, uint32_t count)
 {
     for (uint32_t i = 0; i < count; ++i) {
-        delete sensors[i];
+        if (sensors[i] != nullptr) {
+            delete sensors[i];
+            sensors[i] = nullptr;
+        }
     }
-    delete[] sensors;
-    sensors = nullptr;
+    if (sensors != nullptr) {
+        delete[] sensors;
+        sensors = nullptr;
+    }
     return SENSOR_SUCCESS;
 }
 
