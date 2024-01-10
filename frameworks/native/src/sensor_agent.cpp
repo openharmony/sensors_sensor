@@ -116,7 +116,7 @@ int32_t SuspendSensors(int32_t pid)
 {
     int32_t ret = SENSOR_AGENT_IMPL->SuspendSensors(pid);
     if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Suspend sensors failed, ret:%{public}d", ret);
+        SEN_HILOGD("Suspend sensors failed, ret:%{public}d", ret);
         return NormalizeErrCode(ret);
     }
     return ret;

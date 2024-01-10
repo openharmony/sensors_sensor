@@ -331,7 +331,7 @@ int32_t SensorAgentProxy::SuspendSensors(int32_t pid)
     }
     int32_t ret = SEN_CLIENT.SuspendSensors(pid);
     if (ret != ERR_OK) {
-        SEN_HILOGE("Suspend sensors failed, ret:%{public}d", ret);
+        SEN_HILOGD("Suspend sensors failed, ret:%{public}d", ret);
     }
     return ret;
 }

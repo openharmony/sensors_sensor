@@ -186,7 +186,7 @@ ErrCode SensorServiceProxy::SuspendSensors(int32_t pid)
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::SUSPEND_SENSORS),
         data, reply, option);
     if (ret != NO_ERROR) {
-        SEN_HILOGE("Failed, ret:%{public}d", ret);
+        SEN_HILOGD("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
@@ -206,7 +206,7 @@ ErrCode SensorServiceProxy::ResumeSensors(int32_t pid)
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::RESUME_SENSORS),
         data, reply, option);
     if (ret != NO_ERROR) {
-        SEN_HILOGE("Failed, ret:%{public}d", ret);
+        SEN_HILOGD("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
 }
