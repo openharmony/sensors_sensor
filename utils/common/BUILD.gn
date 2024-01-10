@@ -44,7 +44,7 @@ ohos_shared_library("libsensor_utils") {
     "c_utils:utils",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 
   innerapi_tags = [ "platformsdk_indirect" ]

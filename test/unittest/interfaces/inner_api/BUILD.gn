@@ -42,7 +42,7 @@ ohos_unittest("SensorAgentTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 
@@ -68,7 +68,7 @@ ohos_unittest("SensorAlgorithmTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 
@@ -104,7 +104,7 @@ ohos_unittest("SensorPowerTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 
@@ -130,7 +130,7 @@ ohos_unittest("PostureTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 
@@ -157,7 +157,7 @@ ohos_unittest("HeadPostureTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 ohos_unittest("DropDetectionTest") {
@@ -181,7 +181,7 @@ ohos_unittest("DropDetectionTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 group("unittest") {
