@@ -275,7 +275,7 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         SEN_HILOGE("The number of sensors exceeds the maximum value");
         return ERROR;
     }
-    sensorInfos_ = static_cast<SensorInfo *>(malloc(sizeof(SensorInfo) * count));
+    sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
     CHKPR(sensorInfos_, ERROR);
     for (size_t i = 0; i < count; ++i) {
         SensorInfo *sensorInfo = sensorInfos_ + i;
@@ -382,7 +382,7 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid,
         SEN_HILOGE("The number of active info exceeds the maximum value, count:%{public}zu", activeInfoCount);
         return ERROR;
     }
-    sensorActiveInfos_ = static_cast<SensorActiveInfo *>(malloc(sizeof(SensorActiveInfo) * activeInfoCount));
+    sensorActiveInfos_ = (SensorActiveInfo *)malloc(sizeof(SensorActiveInfo) * activeInfoCount);
     CHKPR(sensorActiveInfos_, ERROR);
     for (size_t i = 0; i < activeInfoCount; ++i) {
         SensorActiveInfo *curActiveInfo = sensorActiveInfos_ + i;
