@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <thread>
 
-void SensorDataCallbackImpl(const SensorEvent *event)
+void SensorDataCallbackImpl(SensorEvent *event)
 {
     if (event == nullptr) {
         return;
