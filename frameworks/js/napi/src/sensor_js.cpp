@@ -41,7 +41,7 @@ constexpr int32_t SENSOR_SUBSCRIBE_FAILURE = 1001;
 constexpr int32_t INPUT_ERROR = 202;
 constexpr float BODY_STATE_EXCEPT = 1.0f;
 constexpr float THRESHOLD = 0.000001f;
-}
+} // namespace
 static std::map<std::string, int64_t> g_samplingPeriod = {
     {"normal", 200000000},
     {"ui", 60000000},

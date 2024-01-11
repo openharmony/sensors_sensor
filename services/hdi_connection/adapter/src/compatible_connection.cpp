@@ -25,7 +25,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "CompatibleConnection" };
-}
+} // namespace
 
 ReportDataCb CompatibleConnection::reportDataCb_ = nullptr;
 sptr<ReportDataCallback> CompatibleConnection::reportDataCallback_ = nullptr;

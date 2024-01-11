@@ -25,7 +25,7 @@ namespace OHOS {
 namespace Sensors {
 namespace {
     constexpr int32_t STRING_LENGTH_MAX = 64;
-}
+} // namespace
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs)
 {
     CALL_LOG_ENTER;

@@ -78,8 +78,8 @@ void GetActiveSensorInfosFuzzTest(const uint8_t *data, size_t size)
     int32_t count { 0 };
     GetActiveSensorInfos(pid, &sensorActiveInfos, &count);
 }
-} // Sensors
-} // OHOS
+} // namespace Sensors
+} // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {

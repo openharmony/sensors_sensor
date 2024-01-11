@@ -42,7 +42,7 @@ std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_HEADPOSTURE
 };
 #endif // BUILD_VARIANT_ENG
-}
+} // namespace
 
 int32_t SensorHdiConnection::ConnectHdi()
 {
