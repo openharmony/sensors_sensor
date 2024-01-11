@@ -22,7 +22,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "Sensor" };
-}
+} // namespace
 
 Sensor::Sensor()
     : sensorId_(0),
