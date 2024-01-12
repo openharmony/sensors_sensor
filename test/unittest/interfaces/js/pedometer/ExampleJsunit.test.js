@@ -89,11 +89,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+     * @tc.number: PedometerJsTest_001
      * @tc.name: PedometerJsTest
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000HPEMQ
-     * @tc.number: PedometerJsTest_001
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("PedometerJsTest_001", 0, async function (done) {
         console.info('----------------------PedometerJsTest_001---------------------------');
@@ -134,11 +137,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_002
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_002
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_002", 0, async function (done) {
         console.info('----------------------PedometerJsTest_002---------------------------');
@@ -176,11 +182,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_003
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_003
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_003", 0, async function (done) {
         console.info('----------------------PedometerJsTest_003---------------------------');
@@ -221,11 +230,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_004
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_004
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_004", 0, async function (done) {
         console.info('----------------------PedometerJsTest_004---------------------------');
@@ -266,11 +278,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_005
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_005
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_005", 0, async function (done) {
         console.info('----------------------PedometerJsTest_005---------------------------');
@@ -308,11 +323,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_006
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_006
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_006", 0, async function (done) {
         console.info('----------------------PedometerJsTest_006---------------------------');
@@ -349,11 +367,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_007
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_007
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_007", 0, async function (done) {
         console.info('----------------------PedometerJsTest_007---------------------------');
@@ -395,11 +416,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_008
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_008
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_008", 0, async function (done) {
         console.info('----------------------PedometerJsTest_008---------------------------');
@@ -444,11 +468,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_009
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_009
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_009", 0, async function (done) {
         console.info('----------------------PedometerJsTest_009---------------------------');
@@ -490,11 +517,14 @@ describe("PedometerJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerJsTest_010
     * @tc.name: PedometerJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: AR000HPEMQ
-    * @tc.number: PedometerJsTest_010
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerJsTest_010", 0, async function (done) {
         console.info('----------------------PedometerJsTest_010---------------------------');

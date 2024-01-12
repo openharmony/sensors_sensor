@@ -61,11 +61,14 @@ describe("SarJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
+     * @tc.number: SarJsTest_001
      * @tc.name: SarJsTest
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
-     * @tc.number: SarJsTest_001
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("SarJsTest_001", 0, async function (done) {
         console.info('----------------------SarJsTest_001---------------------------');
@@ -97,11 +100,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_002
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_002
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_002", 0, async function (done) {
         console.info('----------------------SarJsTest_002---------------------------');
@@ -133,11 +139,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_003
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_003
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_003", 0, async function (done) {
         console.info('----------------------SarJsTest_003---------------------------');
@@ -174,11 +183,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_004
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_004
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_004", 0, async function (done) {
         console.info('----------------------SarJsTest_004---------------------------');
@@ -209,11 +221,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_005
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_005
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_005", 0, async function (done) {
         console.info('----------------------SarJsTest_005---------------------------');
@@ -241,11 +256,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_006
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_006
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_006", 0, async function (done) {
         console.info('----------------------SarJsTest_006---------------------------');
@@ -278,11 +296,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_007
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_007
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_007", 0, async function (done) {
         console.info('----------------------SarJsTest_007---------------------------');
@@ -318,11 +339,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_008
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_008
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_008", 0, async function (done) {
         console.info('----------------------SarJsTest_008---------------------------');
@@ -358,11 +382,14 @@ describe("SarJsTest", function () {
     })
 
     /*
+    * @tc.number: SarJsTest_009
     * @tc.name: SarJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: SarJsTest_009
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("SarJsTest_009", 0, async function (done) {
         console.info('----------------------SarJsTest_009---------------------------');

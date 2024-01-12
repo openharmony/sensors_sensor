@@ -89,11 +89,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+     * @tc.number: PedometerDetectionJsTest_001
      * @tc.name: PedometerDetectionJsTest
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
-     * @tc.number: PedometerDetectionJsTest_001
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("PedometerDetectionJsTest_001", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_001---------------------------');
@@ -134,11 +137,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_002
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_002
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_002", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_002---------------------------');
@@ -176,11 +182,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_003
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_003
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_003", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_003---------------------------');
@@ -221,11 +230,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_004
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_004
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_004", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_004---------------------------');
@@ -266,11 +278,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_005
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_005
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_005", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_005---------------------------');
@@ -308,11 +323,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_006
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_006
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_006", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_006---------------------------');
@@ -349,11 +367,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_007
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_007
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_007", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_007---------------------------');
@@ -395,11 +416,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_008
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_008
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_008", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_008---------------------------');
@@ -444,11 +468,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_009
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_009
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_009", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_009---------------------------');
@@ -490,11 +517,14 @@ describe("PedometerDetectionJsTest", function () {
     })
 
     /*
+    * @tc.number: PedometerDetectionJsTest_010
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
-    * @tc.number: PedometerDetectionJsTest_010
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("PedometerDetectionJsTest_010", 0, async function (done) {
         console.info('----------------------PedometerDetectionJsTest_010---------------------------');
