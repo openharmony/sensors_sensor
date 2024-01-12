@@ -61,10 +61,11 @@ describe("SarJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:SarJsTest_001
-     * @tc.desc:verify app info is not null
+     * @tc.name: SarJsTest
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.number: SarJsTest_001
      */
     it("SarJsTest_001", 0, async function (done) {
         console.info('----------------------SarJsTest_001---------------------------');
@@ -96,10 +97,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_002
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_002
     */
     it("SarJsTest_002", 0, async function (done) {
         console.info('----------------------SarJsTest_002---------------------------');
@@ -131,10 +133,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_003
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_003
     */
     it("SarJsTest_003", 0, async function (done) {
         console.info('----------------------SarJsTest_003---------------------------');
@@ -171,10 +174,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_004
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_004
     */
     it("SarJsTest_004", 0, async function (done) {
         console.info('----------------------SarJsTest_004---------------------------');
@@ -205,10 +209,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_005
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_005
     */
     it("SarJsTest_005", 0, async function (done) {
         console.info('----------------------SarJsTest_005---------------------------');
@@ -236,10 +241,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_006
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_006
     */
     it("SarJsTest_006", 0, async function (done) {
         console.info('----------------------SarJsTest_006---------------------------');
@@ -272,10 +278,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_007
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_007
     */
     it("SarJsTest_007", 0, async function (done) {
         console.info('----------------------SarJsTest_007---------------------------');
@@ -311,10 +318,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_008
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_008
     */
     it("SarJsTest_008", 0, async function (done) {
         console.info('----------------------SarJsTest_008---------------------------');
@@ -350,10 +358,11 @@ describe("SarJsTest", function () {
     })
 
     /*
-    * @tc.name:SarJsTest_009
-    * @tc.desc:verify app info is not null
+    * @tc.name: SarJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.number: SarJsTest_009
     */
     it("SarJsTest_009", 0, async function (done) {
         console.info('----------------------SarJsTest_009---------------------------');
