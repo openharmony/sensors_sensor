@@ -39,7 +39,7 @@ ohos_unittest("SensorNativeTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 group("unittest") {
