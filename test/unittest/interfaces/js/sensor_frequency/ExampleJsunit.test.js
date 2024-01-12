@@ -65,13 +65,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorFrequencyJsTest_001
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorFrequencyJsTest_001
+     * @tc.desc: verify app info is not null
      * @tc.size: MediumTest
      * @tc.type: Function
      * @tc.level: Level 1
      * @tc.require: Issue Number
-     * @tc.number:SensorFrequencyJsTest_001
+     * @tc.number: SensorFrequencyJsTest_001
      */
     it("SensorFrequencyJsTest_001", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_001---------------------------');
@@ -103,13 +103,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_002
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_002
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_002
+    * @tc.number: SensorFrequencyJsTest_002
     */
     it("SensorFrequencyJsTest_002", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_002---------------------------');
@@ -141,13 +141,13 @@ describe("SensorFrequencyJsTest", function () {
         })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_003
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_003
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_003
+    * @tc.number: SensorFrequencyJsTest_003
     */
     it("SensorFrequencyJsTest_003", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_003---------------------------');
@@ -179,13 +179,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_004
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_004
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_004
+    * @tc.number: SensorFrequencyJsTest_004
     */
     it("SensorFrequencyJsTest_004", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_004---------------------------');
@@ -217,13 +217,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_005
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_005
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_005
+    * @tc.number: SensorFrequencyJsTest_005
     */
     it("SensorFrequencyJsTest_005", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_005---------------------------');
@@ -255,13 +255,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_006
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_006
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_006
+    * @tc.number: SensorFrequencyJsTest_006
     */
     it("SensorFrequencyJsTest_006", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_006---------------------------');
@@ -293,13 +293,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_007
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_007
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_007
+    * @tc.number: SensorFrequencyJsTest_007
     */
     it("SensorFrequencyJsTest_007", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_007---------------------------');
@@ -331,13 +331,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_008
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_008
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_008
+    * @tc.number: SensorFrequencyJsTest_008
     */
     it("SensorFrequencyJsTest_008", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_008---------------------------');
@@ -369,13 +369,13 @@ describe("SensorFrequencyJsTest", function () {
     })
 
     /*
-    * @tc.name:SensorFrequencyJsTest_009
-    * @tc.desc:verify app info is not null
+    * @tc.name: SensorFrequencyJsTest_009
+    * @tc.desc: verify app info is not null
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     * @tc.require: Issue Number
-    * @tc.number:SensorFrequencyJsTest_009
+    * @tc.number: SensorFrequencyJsTest_009
     */
     it("SensorFrequencyJsTest_009", 0, async function (done) {
         console.info('----------------------SensorFrequencyJsTest_009---------------------------');

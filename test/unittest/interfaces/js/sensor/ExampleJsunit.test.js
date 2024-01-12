@@ -76,8 +76,9 @@ describe("SensorJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:SensorJsTest_001
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_001
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -91,8 +92,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_002
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_002
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -114,8 +116,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_003
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_003
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -131,8 +134,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_004
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_004
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -159,8 +163,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_005
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_005
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -173,8 +178,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_006
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_006
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -195,8 +201,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_007
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number:SensorJsTest_007
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -216,8 +223,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_008
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_008
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -233,8 +241,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_010
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_010
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -255,8 +264,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_011
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_011
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -278,8 +288,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_012
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_012
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -295,8 +306,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_013
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_013
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -319,8 +331,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_014
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_014
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -343,8 +356,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_015
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_015
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -374,8 +388,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_016
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_016
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -389,8 +404,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_017
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_017
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -404,8 +420,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_018
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_018
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -419,8 +436,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_019
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_019
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -434,8 +452,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_020
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_020
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -449,8 +468,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_021
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_021
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -464,8 +484,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_022
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_022
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -479,8 +500,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_023
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_023
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -494,8 +516,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:SensorJsTest_024
-     * @tc.desc:verify app info is not null
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_024
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -533,7 +556,8 @@ describe("SensorJsTest", function () {
      /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_001
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_001
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -574,7 +598,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_002
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_002
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -615,7 +640,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_003
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_003
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -648,7 +674,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_004
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_004
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -680,7 +707,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_005
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_005
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -712,7 +740,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_006
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_006
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -744,7 +773,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_007
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_007
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
@@ -769,7 +799,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_008
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_008
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A3
      * @tc.author:
@@ -794,7 +825,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_009
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_009
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A3
      * @tc.author:
@@ -819,7 +851,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_010
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_010
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A3
      * @tc.author:
@@ -844,7 +877,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_011
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_011
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A4
      * @tc.author:
@@ -876,7 +910,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_012
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_012
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A4
      * @tc.author:
@@ -901,7 +936,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_013
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_013
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A4
      * @tc.author:
@@ -926,7 +962,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_014
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_014
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -951,7 +988,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_015
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_015
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -976,7 +1014,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_016
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_016
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1001,7 +1040,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_017
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_017
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1026,7 +1066,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_018
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_018
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1051,7 +1092,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_019
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_019
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1076,7 +1118,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_020
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_020
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1101,7 +1144,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_021
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_021
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1126,7 +1170,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_022
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_022
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1151,7 +1196,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_023
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_023
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1176,7 +1222,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_024
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_024
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1201,7 +1248,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_025
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_025
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
@@ -1229,7 +1277,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_026
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_026
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UD
      * @tc.author:
@@ -1256,7 +1305,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_027
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_027
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UD
      * @tc.author:
@@ -1283,7 +1333,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetGeomagneticField_028
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_028
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UD
      * @tc.author:
@@ -1308,8 +1359,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_029
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_029
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1333,8 +1385,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_030
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_030
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1352,8 +1405,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_031
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_031
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1370,8 +1424,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_032
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_032
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1388,7 +1443,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_033
+     * @tc.name:Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_033
      * @tc.desc:verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
@@ -1406,8 +1462,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_034
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_034
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1431,8 +1488,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_035
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_035
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1449,8 +1507,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_036
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_036
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1467,8 +1526,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_037
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_037
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1493,8 +1553,9 @@ describe("SensorJsTest", function () {
    })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_038
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_038
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1511,8 +1572,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_039
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_039
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1529,8 +1591,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_040
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_040
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1547,8 +1610,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_041
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_041
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1565,8 +1629,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_042
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_042
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1583,8 +1648,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_043
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_043
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1609,8 +1675,9 @@ describe("SensorJsTest", function () {
    })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_044
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_044
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1627,8 +1694,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_045
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_045
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1645,8 +1713,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_046
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_046
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1663,8 +1732,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_047
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_047
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1681,8 +1751,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_048
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_048
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1699,8 +1770,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_049
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_049
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
      */
@@ -1717,8 +1789,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_050
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_050
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1739,8 +1812,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_051
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_051
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1761,8 +1835,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_052
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_052
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1783,8 +1858,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_053
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_053
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1805,8 +1881,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_054
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_054
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1827,8 +1904,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_055
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_055
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1849,8 +1927,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_056
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_056
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1871,8 +1950,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_057
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_057
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1893,8 +1973,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_058
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_058
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1919,8 +2000,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_059
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_059
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -1945,8 +2027,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetGeomagneticField_060
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetGeomagneticField
+     * @tc.number: Sensor_GetGeomagneticField_060
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -2037,7 +2120,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_001
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_001
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2058,7 +2142,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_002
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_002
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2080,7 +2165,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_003
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_003
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2099,7 +2185,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_004
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_004
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2125,7 +2212,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_005
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_005
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2144,7 +2232,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_006
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_006
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2162,7 +2251,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_007
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_007
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2180,7 +2270,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_008
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_008
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2201,7 +2292,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_009
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_009
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2225,7 +2317,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_010
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_010
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2249,7 +2342,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_CreateRotationMatrix_011
+     * @tc.name: Sensor_CreateRotationMatrix
+     * @tc.number: Sensor_CreateRotationMatrix_011
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2266,7 +2360,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateRotationMatrix_012
+    * @tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_012
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -2290,7 +2385,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix_013
+    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_013
     * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: SR000GH2A2
     * @tc.author:
@@ -2312,7 +2408,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix_014
+    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_014
     * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: I5SWJI
     * @tc.author:
@@ -2334,7 +2431,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix_015
+    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_015
     * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: I5SWJI
     * @tc.author:
@@ -2351,7 +2449,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix_016
+    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_016
     * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: I5SWJI
     * @tc.author:
@@ -2368,7 +2467,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix_017
+    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_017
     * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: I5SWJI
     * @tc.author:
@@ -2387,7 +2487,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix_018
+    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.number: Sensor_CreateRotationMatrix_018
     * tc.desc: Verification results of the incorrect parameters of test interface.
     * tc.require: I5SWJI
     * @tc.author:
@@ -2408,7 +2509,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_001
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_001
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2431,7 +2533,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_002
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_002
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2454,7 +2557,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_003
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_003
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2RN
      * @tc.author:
@@ -2475,7 +2579,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_004
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_004
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2RN
      * @tc.author:
@@ -2496,7 +2601,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_005
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_005
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2RN
      * @tc.author:
@@ -2524,7 +2630,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_006
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_006
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2542,7 +2649,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_007
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_007
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2560,7 +2668,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_008
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_008
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2581,7 +2690,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_009
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_009
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2605,7 +2715,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_010
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_010
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2629,7 +2740,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_011
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_011
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2650,7 +2762,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetDirection_012
+     * @tc.name: Sensor_GetDirection
+     * @tc.number: Sensor_GetDirection_012
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -2678,7 +2791,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_001
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_001
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2703,7 +2817,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_002
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_002
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2730,7 +2845,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_003
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_003
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2758,7 +2874,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_004
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_004
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2784,7 +2901,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_005
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_005
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2810,7 +2928,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_006
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_006
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2833,7 +2952,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_007
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_007
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2856,7 +2976,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_008
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_008
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2881,7 +3002,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_009
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_009
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2905,7 +3027,8 @@ describe("SensorJsTest", function () {
     /**
      * test
      *
-     * @tc.name: Sensor_GetAngleModify_010
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_010
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
@@ -2926,8 +3049,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_011
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_011
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -2948,8 +3072,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_012
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_012
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -2970,8 +3095,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_013
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_013
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -2992,8 +3118,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_014
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_014
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -3014,8 +3141,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_015
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_015
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -3036,8 +3164,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_016
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_016
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -3058,8 +3187,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_017
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_017
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -3079,8 +3209,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_018
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_018
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -3100,8 +3231,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_GetAngleModify_019
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_GetAngleModify
+     * @tc.number: Sensor_GetAngleModify_019
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
      */
@@ -3129,7 +3261,8 @@ describe("SensorJsTest", function () {
     ];
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_001
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3152,7 +3285,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_002
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_002
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3174,7 +3308,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_003
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_003
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3197,7 +3332,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_004
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_004
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3220,7 +3356,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_005
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_005
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3245,7 +3382,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_006
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_006
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3268,7 +3406,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_007
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_007
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3294,7 +3433,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_008
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_008
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3317,7 +3457,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_009
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_009
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3339,7 +3480,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_CreateQuaternion_010
+    * @tc.name: Sensor_CreateQuaternion
+    * @tc.number: Sensor_CreateQuaternion_010
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
@@ -3366,7 +3508,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_011
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_011
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3384,7 +3527,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_012
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_012
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3402,7 +3546,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_013
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_013
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3424,7 +3569,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_014
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_014
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3448,7 +3594,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_015
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_015
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3472,7 +3619,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_016
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_016
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3494,7 +3642,8 @@ describe("SensorJsTest", function () {
     /*
      * test
      *
-     * @tc.name: Sensor_CreateQuaternion_017
+     * @tc.name: Sensor_CreateQuaternion
+     * @tc.number: Sensor_CreateQuaternion_017
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
@@ -3516,7 +3665,8 @@ describe("SensorJsTest", function () {
     const getGeomagneticDipResult = [ 0.8760581016540527, 0.862170, -953042337792, 44330];
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_001
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
@@ -3538,7 +3688,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_002
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_002
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
@@ -3563,7 +3714,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_003
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_003
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3582,7 +3734,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_004
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_004
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3611,7 +3764,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_005
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_005
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3637,7 +3791,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_006
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_006
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3663,7 +3818,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_007
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_007
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3681,7 +3837,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_008
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_008
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3699,7 +3856,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_009
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_009
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3717,7 +3875,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetGeomagneticDip_010
+    * @tc.name: Sensor_GetGeomagneticDip
+    * @tc.number: Sensor_GetGeomagneticDip_010
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3735,7 +3894,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_001
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
@@ -3756,7 +3916,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_002
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_002
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
@@ -3777,7 +3938,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_003
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_003
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
@@ -3795,7 +3957,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_004
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_004
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
@@ -3813,7 +3976,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_005
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_005
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3832,7 +3996,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_006
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_006
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3861,7 +4026,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_007
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_007
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3887,7 +4053,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_008
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_008
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3913,7 +4080,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_009
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_009
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3931,7 +4099,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_010
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_010
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3949,7 +4118,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetAltitude_011
+    * @tc.name: Sensor_GetAltitude
+    * @tc.number: Sensor_GetAltitude_011
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -3974,7 +4144,8 @@ describe("SensorJsTest", function () {
      [Infinity, -Infinity, Infinity, Infinity, -Infinity, Infinity, Infinity, -Infinity, Infinity]]
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_001
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -3994,7 +4165,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_002
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_002
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4014,7 +4186,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_003
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_003
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4035,7 +4208,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_004
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_004
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4056,7 +4230,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_005
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_005
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4075,7 +4250,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_006
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_006
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4103,7 +4279,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_007
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_007
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4129,7 +4306,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_008
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_008
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4155,7 +4333,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_009
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_009
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4181,7 +4360,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_010
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_010
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4209,7 +4389,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_011
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_011
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4230,7 +4411,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_012
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_012
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4251,7 +4433,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_TransformCoordinateSystem_013
+    * @tc.name: Sensor_TransformCoordinateSystem
+    * @tc.number: Sensor_TransformCoordinateSystem_013
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
@@ -4272,7 +4455,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSensorList_001
+    * @tc.name: Sensor_GetSensorList
+    * @tc.number: Sensor_GetSensorList_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4294,7 +4478,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSensorList_002
+    * @tc.name: Sensor_GetSensorList
+    * @tc.number: Sensor_GetSensorList_002
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4317,7 +4502,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSensorList_003
+    * @tc.name: Sensor_GetSensorList
+    * @tc.number: Sensor_GetSensorList_003
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4339,7 +4525,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSensorList_004
+    * @tc.name: Sensor_GetSensorList
+    * @tc.number: Sensor_GetSensorList_004
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4361,7 +4548,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSensorList_005
+    * @tc.name: Sensor_GetSensorList
+    * @tc.number: Sensor_GetSensorList_005
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4383,7 +4571,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_001
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_001
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4404,7 +4593,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_002
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_002
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4432,7 +4622,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_003
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_003
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4451,7 +4642,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_004
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_004
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4477,7 +4669,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_005
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_005
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4496,7 +4689,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_006
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_006
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4515,7 +4709,8 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * @tc.name: Sensor_GetSingleSensor_007
+    * @tc.name: Sensor_GetSingleSensor
+    * @tc.number: Sensor_GetSingleSensor_007
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
@@ -4534,8 +4729,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_001
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_001
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4576,8 +4772,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_002
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_002
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4599,8 +4796,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_003
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_003
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4625,8 +4823,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_004
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_004
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4647,8 +4846,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_005
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_005
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4685,8 +4885,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_006
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_006
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4724,8 +4925,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_007
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_007
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4763,8 +4965,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_SubscribeAccelerometer_008
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_SubscribeAccelerometer
+     * @tc.number: Sensor_SubscribeAccelerometer_008
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4802,8 +5005,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_UnsubscribeAccelerometer_001
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_UnsubscribeAccelerometer
+     * @tc.number: Sensor_UnsubscribeAccelerometer_001
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
@@ -4822,8 +5026,9 @@ describe("SensorJsTest", function () {
     })
 
     /*
-     * @tc.name:Sensor_UnsubscribeAccelerometer_002
-     * @tc.desc:verify app info is not null
+     * @tc.name: Sensor_UnsubscribeAccelerometer
+     * @tc.number: Sensor_UnsubscribeAccelerometer_002
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
      */
