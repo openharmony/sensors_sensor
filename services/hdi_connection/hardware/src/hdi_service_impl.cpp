@@ -64,7 +64,7 @@ SensorEvent g_headPostureEvent = {
     .option = 3,
     .dataLen = 20
 };
-}
+} // namespace
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
 std::vector<RecordSensorCallback> HdiServiceImpl::callbacks_;
 int64_t HdiServiceImpl::samplingInterval_ = -1;

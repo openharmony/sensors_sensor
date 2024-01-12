@@ -76,8 +76,8 @@ void RegisterFuzzTest(const uint8_t *data, size_t size)
     GetObject<SensorActiveInfoCB>(data, size, callback);
     Register(callback);
 }
-} // Sensors
-} // OHOS
+} // namespace Sensors
+} // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {

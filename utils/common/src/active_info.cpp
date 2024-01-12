@@ -22,7 +22,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "ActiveInfo" };
-}
+} // namespace
 
 ActiveInfo::ActiveInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
     :pid_(pid), sensorId_(sensorId), samplingPeriodNs_(samplingPeriodNs), maxReportDelayNs_(maxReportDelayNs)

@@ -75,8 +75,8 @@ void ResumeSensorsFuzzTest(const uint8_t *data, size_t size)
     GetObject<int32_t>(data, size, pid);
     ResumeSensors(pid);
 }
-} // Sensors
-} // OHOS
+} // namespace Sensors
+} // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
