@@ -34,7 +34,7 @@
 #ifndef OH_SENSOR_TYPE_H
 #define OH_SENSOR_TYPE_H
 
-#include <stdint.h>
+#include <cstdint>
 
 #ifdef __cplusplus
 extern "C" {
@@ -493,4 +493,5 @@ int32_t OH_SensorSubscriber_GetCallback(Sensor_Subscriber* subscriber, Sensor_Ev
 #ifdef __cplusplus
 }
 #endif
+/** @} */
 #endif // OH_SENSOR_TYPE_H

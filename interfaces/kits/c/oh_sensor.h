@@ -96,4 +96,5 @@ Sensor_Result OH_Sensor_Unsubscribe(const Sensor_SubscriptionId *id, const Senso
 #ifdef __cplusplus
 }
 #endif
+/** @} */
 #endif // OH_SENSOR_H
