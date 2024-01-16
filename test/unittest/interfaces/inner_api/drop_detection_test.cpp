@@ -22,13 +22,15 @@
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "DropDetectionTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "DropDetectionTest" };
 std::atomic_bool g_existDropDetection = false;
 }  // namespace
 

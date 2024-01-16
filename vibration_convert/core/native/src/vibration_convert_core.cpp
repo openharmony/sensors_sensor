@@ -21,10 +21,12 @@
 #include "sensors_errors.h"
 #include "vibration_convert_core.h"
 
+#undef LOG_TAG
+#define LOG_TAG "VibrationConvertCore"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "VibrationConvertCore" };
 constexpr double AMP_INVALIDE_DELTA { 0.001 };
 constexpr int32_t FRAGMENT_MIN_LEN { 32 };
 constexpr double COEF { 0.01 };

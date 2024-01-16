@@ -26,11 +26,13 @@
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorDump"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDump" };
 constexpr int32_t MAX_DUMP_PARAMETERS = 32;
 #ifdef BUILD_VARIANT_ENG
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;

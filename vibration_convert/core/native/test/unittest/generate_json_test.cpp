@@ -26,14 +26,13 @@
 #include "vibration_convert_core.h"
 #include "vibration_convert_type.h"
 
+#undef LOG_TAG
+#define LOG_TAG "GenerateJsonFileTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
-
-namespace {
-    constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "GenerateJsonFileTest" };
-}  // namespace
 
 class GenerateJsonFileTest : public testing::Test {
 public:

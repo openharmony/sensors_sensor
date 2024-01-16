@@ -20,10 +20,12 @@
 #include "sensors_errors.h"
 #include "utils.h"
 
+#undef LOG_TAG
+#define LOG_TAG "ConversionMfcc"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "ConversionMfcc" };
 constexpr double BANDS_MIN_THRESHOLD { 0.000001 };
 constexpr uint32_t MEL_FILTERS_OR_COEFFS_MAX { 4096 * 4096 };
 }  // namespace

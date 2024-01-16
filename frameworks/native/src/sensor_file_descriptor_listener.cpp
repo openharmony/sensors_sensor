@@ -19,13 +19,15 @@
 #include "sensor_errors.h"
 #include "sys/socket.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorFileDescriptorListener"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorFileDescriptorListener" };
 constexpr int32_t RECEIVE_DATA_SIZE = 100;
 }  // namespace
 

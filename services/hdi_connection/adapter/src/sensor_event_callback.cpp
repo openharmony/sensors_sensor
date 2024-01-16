@@ -19,11 +19,13 @@
 #include "sensor_data_event.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "HdiConnection"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
 } // namespace

@@ -27,6 +27,9 @@
 #include "sensor_agent.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorPowerTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
@@ -35,7 +38,6 @@ using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorPowerTest" };
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
 }  // namespace

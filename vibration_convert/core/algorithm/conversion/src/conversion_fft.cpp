@@ -19,10 +19,12 @@
 #include "sensors_errors.h"
 #include "utils.h"
 
+#undef LOG_TAG
+#define LOG_TAG "ConversionFFT"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "ConversionFFT" };
 constexpr int32_t SPECTRUM_COUNT_MAX { 8192 };
 constexpr int32_t MAX_FFT_SIZE { 10240 };
 }  // namespace

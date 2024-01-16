@@ -26,12 +26,14 @@
 #include "securec.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SYSTEM_INFO"
+
 namespace OHOS {
 namespace Sensors {
 namespace SYSTEM_INFO {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SYSTEM_INFO" };
 constexpr int32_t LOCATION = 14;
 constexpr int32_t TIME_WAIT_FOR_OP = 1000;
 constexpr int32_t DEFAULT_PID = -1;

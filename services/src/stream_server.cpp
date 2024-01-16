@@ -21,10 +21,12 @@
 
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "StreamServer"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamServer" };
 constexpr int32_t INVALID_PID = -1;
 constexpr int32_t INVALID_FD = -1;
 } // namespace

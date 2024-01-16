@@ -30,10 +30,12 @@
 #include "vibration_convert_core.h"
 #include "vibration_convert_type.h"
 
+#undef LOG_TAG
+#define LOG_TAG "AudioParsing"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, Sensors::SENSOR_LOG_DOMAIN, "AudioParsing"};
 constexpr int32_t MIN_SAMPLE_COUNT = 4096;
 constexpr uint32_t AUDIO_DATA_CONVERSION_FACTOR = INT32_MAX;
 constexpr int32_t AUDIO_DATA_MAX_NUMBER = 100000;

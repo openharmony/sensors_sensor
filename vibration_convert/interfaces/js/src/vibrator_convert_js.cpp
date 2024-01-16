@@ -22,10 +22,12 @@
 #include "sensor_napi_error.h"
 #include "vibrator_convert_napi_utils.h"
 
+#undef LOG_TAG
+#define LOG_TAG "VibratorConvert"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "VibratorConvert" };
 const char* CONVERT = "convert";
 const char* CONVERT_CLASS = "convert_class";
 }  // namespace

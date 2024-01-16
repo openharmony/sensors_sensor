@@ -22,13 +22,15 @@
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "HeadPostureTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "HeadPostureTest" };
 std::atomic_bool g_existHeadPosture = false;
 }  // namespace
 

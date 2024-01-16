@@ -21,12 +21,13 @@
 #include "sensor_errors.h"
 #include "sensor_file_descriptor_listener.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorDataChannel"
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataChannel" };
 const std::string LISTENER_THREAD_NAME = "OS_SenConsumer";
 }  // namespace
 

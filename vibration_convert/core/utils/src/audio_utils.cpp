@@ -16,10 +16,12 @@
 #include "audio_utils.h"
 #include "sensors_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "AudioUtils"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, Sensors::SENSOR_LOG_DOMAIN, "AudioUtils"};
 constexpr int32_t MTOF_ARRAY_SIZE = 128;
 // This is a lookup table for converting midi to frequency
 constexpr double MTOF_ARRAY[MTOF_ARRAY_SIZE + 1] = {

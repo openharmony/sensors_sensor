@@ -24,10 +24,12 @@
 #include "sensor_log.h"
 #include "sensors_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "Fft"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "Fft" };
 constexpr uint32_t MAX_FAST_BITS { 16 };
 constexpr int32_t NUM_SAMPLES_MIN { 2 };
 constexpr double HAMMING_WND_UP { 0.54 };

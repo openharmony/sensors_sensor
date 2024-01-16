@@ -24,11 +24,11 @@
 #include "sensor_log.h"
 #include "sensors_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "GenerateVibrationJsonFile"
+
 namespace OHOS {
 namespace Sensors {
-namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, Sensors::SENSOR_LOG_DOMAIN, "GenerateVibrationJsonFile" };
-}
 
 int32_t GenerateVibrationJsonFile::GenerateJsonFile(std::vector<HapticEvent> &hapticEvents)
 {

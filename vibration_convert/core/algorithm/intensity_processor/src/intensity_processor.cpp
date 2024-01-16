@@ -19,10 +19,12 @@
 #include "sensor_log.h"
 #include "sensors_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "IntensityProcessor"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "IntensityProcessor" };
 constexpr double VOLUME_DB_COEF { 10.0 };
 }  // namespace
 
