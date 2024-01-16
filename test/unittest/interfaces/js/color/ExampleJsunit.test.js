@@ -63,10 +63,14 @@ describe("ColorJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:ColorJsTest_001
-     * @tc.desc:verify app info is not null
+     * @tc.number: ColorJsTest_001
+     * @tc.name: ColorJsTest
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("ColorJsTest_001", 0, async function (done) {
         console.info('----------------------ColorJsTest_001---------------------------');
@@ -98,10 +102,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_002
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_002
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_002", 0, async function (done) {
         console.info('----------------------ColorJsTest_002---------------------------');
@@ -133,10 +141,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_003
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_003
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_003", 0, async function (done) {
         console.info('----------------------ColorJsTest_003---------------------------');
@@ -173,10 +185,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_004
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_004
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_004", 0, async function (done) {
         console.info('----------------------ColorJsTest_004---------------------------');
@@ -207,10 +223,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_005
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_005
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_005", 0, async function (done) {
         console.info('----------------------ColorJsTest_005---------------------------');
@@ -238,10 +258,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_006
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_006
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_006", 0, async function (done) {
         console.info('----------------------ColorJsTest_006---------------------------');
@@ -274,10 +298,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_007
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_007
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_007", 0, async function (done) {
         console.info('----------------------ColorJsTest_007---------------------------');
@@ -313,10 +341,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_008
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_008
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_008", 0, async function (done) {
         console.info('----------------------ColorJsTest_008---------------------------');
@@ -352,10 +384,14 @@ describe("ColorJsTest", function () {
     })
 
     /*
-    * @tc.name:ColorJsTest_009
-    * @tc.desc:verify app info is not null
+    * @tc.number: ColorJsTest_009
+    * @tc.name: ColorJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("ColorJsTest_009", 0, async function (done) {
         console.info('----------------------ColorJsTest_009---------------------------');

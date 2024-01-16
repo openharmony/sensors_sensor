@@ -61,10 +61,14 @@ describe("BarometerJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:BarometerJsTest_001
-     * @tc.desc:verify app info is not null
+     * @tc.number: BarometerJsTest_001
+     * @tc.name: BarometerJsTest
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("BarometerJsTest_001", 0, async function (done) {
         console.info('----------------------BarometerJsTest_001---------------------------');
@@ -96,10 +100,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_002
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_002
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_002", 0, async function (done) {
         console.info('----------------------BarometerJsTest_002---------------------------');
@@ -131,10 +139,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_003
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_003
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_003", 0, async function (done) {
         console.info('----------------------BarometerJsTest_003---------------------------');
@@ -171,10 +183,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_004
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_004
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_004", 0, async function (done) {
         console.info('----------------------BarometerJsTest_004---------------------------');
@@ -205,10 +221,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_005
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_005
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_005", 0, async function (done) {
         console.info('----------------------BarometerJsTest_005---------------------------');
@@ -240,10 +260,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_006
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_006
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_006", 0, async function (done) {
         console.info('----------------------BarometerJsTest_006---------------------------');
@@ -275,10 +299,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_007
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_007
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_007", 0, async function (done) {
         console.info('----------------------BarometerJsTest_007---------------------------');
@@ -307,10 +335,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_008
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_008
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_008", 0, async function (done) {
         console.info('----------------------BarometerJsTest_008---------------------------');
@@ -338,10 +370,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_009
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_009
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_009", 0, async function (done) {
         console.info('----------------------BarometerJsTest_009---------------------------');
@@ -374,10 +410,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_010
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_010
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_010", 0, async function (done) {
         console.info('----------------------BarometerJsTest_010---------------------------');
@@ -413,10 +453,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_011
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_011
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_011", 0, async function (done) {
         console.info('----------------------BarometerJsTest_011---------------------------');
@@ -449,10 +493,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_012
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_012
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_012", 0, async function (done) {
         console.info('----------------------BarometerJsTest_012---------------------------');
@@ -488,10 +536,14 @@ describe("BarometerJsTest", function () {
     })
 
     /*
-    * @tc.name:BarometerJsTest_013
-    * @tc.desc:verify app info is not null
+    * @tc.number: BarometerJsTest_013
+    * @tc.name: BarometerJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("BarometerJsTest_013", 0, async function (done) {
         console.info('----------------------BarometerJsTest_013---------------------------');

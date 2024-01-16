@@ -65,10 +65,14 @@ describe("GyroscopeJsTest", function () {
     const SERVICE_EXCEPTION_MSG = 'Service exception.'
 
     /*
-     * @tc.name:GyroscopeJsTest_001
-     * @tc.desc:verify app info is not null
+     * @tc.number: GyroscopeJsTest_001
+     * @tc.name: GyroscopeJsTest
+     * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("GyroscopeJsTest_001", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_001---------------------------');
@@ -100,10 +104,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_002
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_002
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_002", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_002---------------------------');
@@ -135,10 +143,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_003
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_003
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_003", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_003---------------------------');
@@ -175,10 +187,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_004
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_004
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_004", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_004---------------------------');
@@ -209,10 +225,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_005
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_005
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_005", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_005---------------------------');
@@ -244,10 +264,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_006
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_006
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_006", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_006---------------------------');
@@ -279,10 +303,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_007
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_007
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_007", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_007---------------------------');
@@ -311,10 +339,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_008
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_008
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_008", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_008---------------------------');
@@ -342,10 +374,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_009
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_009
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_009", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_009---------------------------');
@@ -378,10 +414,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_010
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_010
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_010", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_010---------------------------');
@@ -417,10 +457,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_011
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_011
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_011", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_011---------------------------');
@@ -453,10 +497,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_012
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_012
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_012", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_012---------------------------');
@@ -492,10 +540,14 @@ describe("GyroscopeJsTest", function () {
     })
 
     /*
-    * @tc.name:GyroscopeJsTest_013
-    * @tc.desc:verify app info is not null
+    * @tc.number: GyroscopeJsTest_013
+    * @tc.name: GyroscopeJsTest
+    * @tc.desc: verify app info is not null
     * @tc.type: FUNC
     * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("GyroscopeJsTest_013", 0, async function (done) {
         console.info('----------------------GyroscopeJsTest_013---------------------------');
