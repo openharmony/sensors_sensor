@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import CommonConstants from './CommonConstants';
 import sensor from '@ohos.sensor'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
@@ -55,11 +56,6 @@ describe("BarometerJsTest", function () {
          console.info('afterEach called')
     })
 
-    const PARAMETER_ERROR_CODE = 401
-    const SERVICE_EXCEPTION_CODE = 14500101
-    const PARAMETER_ERROR_MSG = 'The parameter invalid.'
-    const SERVICE_EXCEPTION_MSG = 'Service exception.'
-
     /*
      * @tc.number: BarometerJsTest_001
      * @tc.name: BarometerJsTest
@@ -93,8 +89,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -132,8 +128,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -176,8 +172,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -207,15 +203,15 @@ describe("BarometerJsTest", function () {
                     done();
                 } catch (error) {
                     console.info('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(error.code).assertEqual(SERVICE_EXCEPTION_CODE);
-                    expect(error.message).assertEqual(SERVICE_EXCEPTION_MSG);
+                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                    expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                     done();
                 }
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -253,8 +249,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -292,8 +288,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -321,15 +317,15 @@ describe("BarometerJsTest", function () {
                     sensor.once(sensor.SensorId.BAROMETER, 5);
                 } catch (error) {
                     console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
-                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                    expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                     done();
                 }
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -356,15 +352,15 @@ describe("BarometerJsTest", function () {
                 try {
                     sensor.off(-1, callback);
                 } catch (error) {
-                    expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-                    expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
+                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+                    expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
                     done();
                 }
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -403,8 +399,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -446,8 +442,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -486,8 +482,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -529,8 +525,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -569,8 +565,8 @@ describe("BarometerJsTest", function () {
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })

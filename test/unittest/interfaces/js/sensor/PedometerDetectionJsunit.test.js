@@ -14,33 +14,21 @@
  */
 import abilityAccessCtrl from '@ohos.abilityAccessCtrl'
 import bundle from '@ohos.bundle'
+import CommonConstants from './CommonConstants';
 import osAccount from '@ohos.account.osAccount'
 import sensor from '@ohos.sensor'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
 
-let PermissionFlag = {
-    PERMISSION_USER_SET:1,
-    PERMISSION_USER_FIXED:2,
-    PERMISSION_SYSTEM_FIXED:4
-}
-
-const PERMISSION_DENIED_CODE = 201
-const PARAMETER_ERROR_CODE = 401
-const PARAMETER_ERROR_MSG = 'The parameter invalid.'
-const PERMISSION_DENIED_MSG = 'Permission denied.'
-let tokenID = undefined
-let permissionNameUser = 'ohos.permission.ACTIVITY_MOTION'
-
-describe("PedometerJsTest", function () {
+describe("PedometerDetectionJsTest", function () {
     function callback(data) {
         console.info('callback' + JSON.stringify(data));
-        expect(typeof(data.steps)).assertEqual('number');
+        expect(typeof(data.scalar)).assertEqual('number');
     }
 
     function callback2(data) {
         console.info('callback2' + JSON.stringify(data));
-        expect(typeof(data.steps)).assertEqual('number');
+        expect(typeof(data.scalar)).assertEqual('number');
     }
  
     beforeAll(async function() {
@@ -52,7 +40,7 @@ describe("PedometerJsTest", function () {
             let accountManager = osAccount.getAccountManager();
             let userId = await accountManager.getOsAccountLocalIdFromProcess();
             let appInfo = await bundle.getApplicationInfo('com.example.myapplication', 0, userId);
-            tokenID = appInfo.accessTokenId;
+            CommonConstants.tokenID = appInfo.accessTokenId;
             console.log('AccessTokenId accessTokenId:' + appInfo.accessTokenId + ', name:' + appInfo.name +
                 ' ,bundleName:' + appInfo.bundleName)
          } catch(err) {
@@ -80,8 +68,8 @@ describe("PedometerJsTest", function () {
          */
         console.info('afterEach called')
         let atManager = abilityAccessCtrl.createAtManager();
-        atManager.revokeUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        atManager.revokeUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .catch((err) => {
             console.info('err:' + JSON.stringify(err));
             expect(err.code).assertEqual(ERR_NOT_HAVE_PERMISSION);
@@ -89,32 +77,32 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-     * @tc.number: PedometerJsTest_001
-     * @tc.name: PedometerJsTest
+     * @tc.number: PedometerDetectionJsTest_001
+     * @tc.name: PedometerDetectionJsTest
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
-     * @tc.require: AR000HPEMQ
+     * @tc.require: Issue Number
      * @tc.size: MediumTest
      * @tc.type: Function
      * @tc.level: Level 1
      */
-    it("PedometerJsTest_001", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_001---------------------------');
+    it("PedometerDetectionJsTest_001", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_001---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.on(sensor.SensorId.PEDOMETER, callback);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback);
                         setTimeout(() => {
-                            sensor.off(sensor.SensorId.PEDOMETER);
+                            sensor.off(sensor.SensorId.PEDOMETER_DETECTION);
                             done();
                         }, 500);
                     } catch (err) {
@@ -125,8 +113,8 @@ describe("PedometerJsTest", function () {
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -137,41 +125,41 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_002
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_002
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_002", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_002---------------------------');
+    it("PedometerDetectionJsTest_002", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_002---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.on(sensor.SensorId.PEDOMETER, 5);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, 5);
                     } catch (err) {
                         console.error('On fail, errCode:' + err.code + ' ,msg:' + err.message);
-                        expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                        expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                        expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                        expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                         done();
                     }
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -182,78 +170,30 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_003
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_003
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_003", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_003---------------------------');
+    it("PedometerDetectionJsTest_003", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_003---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.once(sensor.SensorId.PEDOMETER, callback);
-                        setTimeout(() => {
-                            expect(true).assertTrue();
-                            done();
-                        }, 500);
-                    } catch (err) {
-                        console.error('Once fail, errCode:' + err.code + ' ,msg:' + err.message);
-                        expect(false).assertTrue();
-                        done();
-                    }
-                });
-            } catch (err) {
-                console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
-                done();
-            }
-        })
-        .catch ((err) => {
-            console.error('err:' + JSON.stringify(err));
-            done();
-        })
-    })
-
-    /*
-    * @tc.number: PedometerJsTest_004
-    * @tc.name: PedometerJsTest
-    * @tc.desc: verify app info is not null
-    * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
-    * @tc.size: MediumTest
-    * @tc.type: Function
-    * @tc.level: Level 1
-    */
-    it("PedometerJsTest_004", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_004---------------------------');
-        let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
-        .then(() => {
-            try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
-                    if (err) {
-                        console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
-                        expect(false).assertTrue();
-                        done();
-                    }
-                    try {
-                        sensor.once(sensor.SensorId.PEDOMETER, callback, 5);
+                        sensor.once(sensor.SensorId.PEDOMETER_DETECTION, callback);
                         setTimeout(() => {
                             expect(true).assertTrue();
                             done();
@@ -266,8 +206,8 @@ describe("PedometerJsTest", function () {
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -278,41 +218,44 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_005
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_004
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_005", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_005---------------------------');
+    it("PedometerDetectionJsTest_004", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_004---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.once(sensor.SensorId.PEDOMETER, 5);
+                        sensor.once(sensor.SensorId.PEDOMETER_DETECTION, callback, 5);
+                        setTimeout(() => {
+                            expect(true).assertTrue();
+                            done();
+                        }, 500);
                     } catch (err) {
-                        console.error('On fail, errCode:' + err.code + ' ,msg:' + err.message);
-                        expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                        expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                        console.error('Once fail, errCode:' + err.code + ' ,msg:' + err.message);
+                        expect(false).assertTrue();
                         done();
                     }
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -323,23 +266,68 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_006
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_005
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_006", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_006---------------------------');
+    it("PedometerDetectionJsTest_005", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_005---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
+                    if (err) {
+                        console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
+                        expect(false).assertTrue();
+                        done();
+                    }
+                    try {
+                        sensor.once(sensor.SensorId.PEDOMETER_DETECTION, 5);
+                    } catch (err) {
+                        console.error('On fail, errCode:' + err.code + ' ,msg:' + err.message);
+                        expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                        expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+                        done();
+                    }
+                });
+            } catch (err) {
+                console.error('Sensor is not support');
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+                done();
+            }
+        })
+        .catch ((err) => {
+            console.error('err:' + JSON.stringify(err));
+            done();
+        })
+    })
+
+    /*
+    * @tc.number: PedometerDetectionJsTest_006
+    * @tc.name: PedometerDetectionJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("PedometerDetectionJsTest_006", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_006---------------------------');
+        let atManager = abilityAccessCtrl.createAtManager();
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        .then(() => {
+            try {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
@@ -348,15 +336,15 @@ describe("PedometerJsTest", function () {
                     try {
                         sensor.off(-1, callback);
                     } catch (err) {
-                        expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-                        expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+                        expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+                        expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
                         done();
                     }
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -367,33 +355,33 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_007
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_007
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_007", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_007---------------------------');
+    it("PedometerDetectionJsTest_007", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_007---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.on(sensor.SensorId.PEDOMETER, callback);
-                        sensor.on(sensor.SensorId.PEDOMETER, callback2);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback2);
                         setTimeout(() => {
-                            sensor.off(sensor.SensorId.PEDOMETER);
+                            sensor.off(sensor.SensorId.PEDOMETER_DETECTION);
                             done();
                         }, 1000);
                     } catch (err) {
@@ -404,8 +392,8 @@ describe("PedometerJsTest", function () {
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -416,36 +404,36 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_008
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_008
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_008", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_008---------------------------');
+    it("PedometerDetectionJsTest_008", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_008---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.on(sensor.SensorId.PEDOMETER, callback);
-                        sensor.on(sensor.SensorId.PEDOMETER, callback2);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback2);
                         setTimeout(() => {
-                            sensor.off(sensor.SensorId.PEDOMETER, callback);
+                            sensor.off(sensor.SensorId.PEDOMETER_DETECTION, callback);
                         }, 500);
                         setTimeout(() => {
-                            sensor.off(sensor.SensorId.PEDOMETER, callback2);
+                            sensor.off(sensor.SensorId.PEDOMETER_DETECTION, callback2);
                             done();
                         }, 1000);
                     } catch (err) {
@@ -456,8 +444,8 @@ describe("PedometerJsTest", function () {
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -468,33 +456,33 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_009
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_009
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_009", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_009---------------------------');
+    it("PedometerDetectionJsTest_009", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_009---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
-        await atManager.grantUserGrantedPermission(tokenID, permissionNameUser,
-            PermissionFlag.PERMISSION_SYSTEM_FIXED)
+        await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
+            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
         .then(() => {
             try {
-                sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+                sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                     if (err) {
                         console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(false).assertTrue();
                         done();
                     }
                     try {
-                        sensor.on(sensor.SensorId.PEDOMETER, callback);
-                        sensor.once(sensor.SensorId.PEDOMETER, callback2);
+                        sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback);
+                        sensor.once(sensor.SensorId.PEDOMETER_DETECTION, callback2);
                         setTimeout(() => {
-                            sensor.off(sensor.SensorId.PEDOMETER);
+                            sensor.off(sensor.SensorId.PEDOMETER_DETECTION);
                             done();
                         }, 500);
                     } catch (err) {
@@ -505,8 +493,8 @@ describe("PedometerJsTest", function () {
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                 done();
             }
         })
@@ -517,37 +505,37 @@ describe("PedometerJsTest", function () {
     })
 
     /*
-    * @tc.number: PedometerJsTest_010
-    * @tc.name: PedometerJsTest
+    * @tc.number: PedometerDetectionJsTest_010
+    * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: AR000HPEMQ
+    * @tc.require: Issue Number
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
     */
-    it("PedometerJsTest_010", 0, async function (done) {
-        console.info('----------------------PedometerJsTest_010---------------------------');
+    it("PedometerDetectionJsTest_010", 0, async function (done) {
+        console.info('----------------------PedometerDetectionJsTest_010---------------------------');
         try {
-            sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
+            sensor.getSingleSensor(sensor.SensorId.PEDOMETER_DETECTION, (err, data) => {
                 if (err) {
                     console.error('getSingleSensor fail, errCode:' + err.code + ' ,msg:' + err.message);
                     expect(false).assertTrue();
                     done();
                 }
                 try {
-                    sensor.on(sensor.SensorId.PEDOMETER, callback);
+                    sensor.on(sensor.SensorId.PEDOMETER_DETECTION, callback);
                 } catch (err) {
                     console.error('On fail, errCode:' + err.code + ' ,msg:' + err.message);
-                    expect(err.code).assertEqual(PERMISSION_DENIED_CODE);
-                    expect(err.message).assertEqual(PERMISSION_DENIED_MSG);
+                    expect(err.code).assertEqual(CommonConstants.PERMISSION_DENIED_CODE);
+                    expect(err.message).assertEqual(CommonConstants.PERMISSION_DENIED_MSG);
                     done();
                 }
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
