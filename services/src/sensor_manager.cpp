@@ -23,11 +23,13 @@
 #include "sensor_data_event.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorManager"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorManager" };
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 constexpr int32_t INVALID_SENSOR_ID = -1;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR

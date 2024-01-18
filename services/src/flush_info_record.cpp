@@ -17,12 +17,14 @@
 
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "FlushInfoRecord"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FlushInfoRecord" };
 constexpr int32_t CHANNEL_NO_FLUSH = -1;
 } // namespace
 

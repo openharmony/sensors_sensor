@@ -25,10 +25,12 @@
 #include "sensor_napi_error.h"
 #include "vibration_convert_type.h"
 
+#undef LOG_TAG
+#define LOG_TAG "VibratorConvertNapiUtils"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "VibratorConvertNapiUtils"};
 constexpr int32_t RESULT_LENGTH = 2;
 constexpr int64_t INVALID_FILE_SIZE = -1;
 }  // namespace

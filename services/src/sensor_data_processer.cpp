@@ -26,12 +26,14 @@
 #include "sensor_errors.h"
 #include "system_ability_definition.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorDataProcesser"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorDataProcesser" };
 const std::string SENSOR_REPORT_THREAD_NAME = "OS_SenProducer";
 } // namespace
 

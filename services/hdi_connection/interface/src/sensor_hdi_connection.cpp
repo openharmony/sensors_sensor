@@ -21,6 +21,9 @@
 #include "hdi_connection.h"
 #include "hitrace_meter.h"
 #include "sensor_errors.h"
+
+#undef LOG_TAG
+#define LOG_TAG "SensorHdiConnection"
 std::mutex OHOS::Sensors::ISensorHdiConnection::dataMutex_;
 std::condition_variable OHOS::Sensors::ISensorHdiConnection::dataCondition_;
 
@@ -28,7 +31,6 @@ namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorHdiConnection" };
 #ifdef BUILD_VARIANT_ENG
 constexpr float MAX_RANGE = 9999.0;
 constexpr float POWER = 20.0;

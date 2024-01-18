@@ -19,9 +19,9 @@
 
 namespace OHOS {
 namespace Sensors {
-namespace {
-constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002700;
-} // namespace
+#undef LOG_DOMAIN
+#define LOG_DOMAIN 0xD002700
+
 #ifndef SENSOR_FUNC_FMT
 #define SENSOR_FUNC_FMT "in %{public}s, "
 #endif
@@ -31,19 +31,19 @@ constexpr uint32_t SENSOR_LOG_DOMAIN = 0xD002700;
 #endif
 
 #define SEN_HILOGD(fmt, ...) do { \
-    OHOS::HiviewDFX::HiLog::Debug(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
+    HILOG_DEBUG(LOG_CORE, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
 #define SEN_HILOGI(fmt, ...) do { \
-    OHOS::HiviewDFX::HiLog::Info(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
+    HILOG_INFO(LOG_CORE, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
 #define SEN_HILOGW(fmt, ...) do { \
-    OHOS::HiviewDFX::HiLog::Warn(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
+    HILOG_WARN(LOG_CORE, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
 #define SEN_HILOGE(fmt, ...) do { \
-    OHOS::HiviewDFX::HiLog::Error(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
+    HILOG_ERROR(LOG_CORE, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
 #define SENSOR_LOGF(fmt, ...) do { \
-    OHOS::HiviewDFX::HiLog::Fatal(LABEL, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
+    HILOG_FATAL(LOG_CORE, SENSOR_FUNC_FMT fmt, SENSOR_FUNC_INFO, ##__VA_ARGS__); \
 } while (0)
 } // namespace Sensors
 } // namespace OHOS

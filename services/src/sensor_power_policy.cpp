@@ -20,13 +20,14 @@
 #ifdef OHOS_BUILD_ENABLE_RUST
 #include "rust_binding.h"
 #endif // OHOS_BUILD_ENABLE_RUST
+#undef LOG_TAG
+#define LOG_TAG "SensorPowerPolicy"
 
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorPowerPolicy" };
 constexpr int32_t INVALID_SENSOR_ID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 ClientInfo &clientInfo_ = ClientInfo::GetInstance();

@@ -18,13 +18,11 @@
 #include "message_parcel.h"
 #include "sensor_log.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorClientStub"
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
-namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorClientStub" };
-}  // namespace
 
 int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                           MessageOption &option)

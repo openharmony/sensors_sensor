@@ -23,10 +23,12 @@
 #include "sensors_errors.h"
 #include "utils.h"
 
+#undef LOG_TAG
+#define LOG_TAG "PeakFinder"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "PeakFinder" };
 constexpr size_t MAX_N { 32 };
 constexpr int32_t PEAKS_MIN_SAMPLE_COUNT { 512 };
 constexpr double REMOVE_RATIO { 0.1 };

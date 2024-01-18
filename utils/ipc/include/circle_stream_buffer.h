@@ -18,10 +18,12 @@
 
 #include "stream_buffer.h"
 
+#undef LOG_TAG
+#define LOG_TAG "CircleStreamBuffer"
+
 namespace OHOS {
 namespace Sensors {
 class CircleStreamBuffer : public StreamBuffer {
-    static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "CircleStreamBuffer" };
 public:
     CircleStreamBuffer() = default;
     ~CircleStreamBuffer() = default;

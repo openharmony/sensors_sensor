@@ -20,12 +20,12 @@
 #include "securec.h"
 #include "sensor_errors.h"
 #include "sensor_service_client.h"
-
+#undef LOG_TAG
+#define LOG_TAG "SensorAgentProxy"
 using namespace OHOS::HiviewDFX;
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorAgentProxy" };
 constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 std::mutex sensorInfoMutex_;
 SensorInfo *sensorInfos_ = nullptr;

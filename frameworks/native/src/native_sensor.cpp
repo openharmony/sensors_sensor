@@ -21,10 +21,10 @@
 #include "sensor_agent.h"
 #include "sensor_errors.h"
 
-using OHOS::HiviewDFX::HiLog;
-using OHOS::HiviewDFX::HiLogLabel;
+#undef LOG_TAG
+#define LOG_TAG "SensorCapiAPI"
+
 namespace {
-const HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorCapiAPI"};
 const uint32_t FLOAT_SIZE = 4;
 }
 

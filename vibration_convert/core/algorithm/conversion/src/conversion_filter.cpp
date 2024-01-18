@@ -17,10 +17,12 @@
 
 #include "sensor_log.h"
 
+#undef LOG_TAG
+#define LOG_TAG "ConversionFilter"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "ConversionFilter" };
 constexpr double CUT_OFF_MIN { 10.0 };
 constexpr double VALIDE_RESONANCE_MAX { 0.999999 };
 constexpr double AMOUNT_RESONANCE_MIN { 1.0 };

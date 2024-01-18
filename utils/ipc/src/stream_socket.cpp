@@ -22,9 +22,8 @@
 namespace OHOS {
 namespace Sensors {
 #ifndef OHOS_BUILD_ENABLE_RUST
-namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamSocket" };
-} // namespace
+#undef LOG_TAG
+#define LOG_TAG "StreamSocket"
 #endif // OHOS_BUILD_ENABLE_RUST
 
 StreamSocket::StreamSocket() {}

@@ -16,13 +16,13 @@
 #include "report_data_callback.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "ReportDataCallback"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
-namespace {
-constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "ReportDataCallback"};
-}  // namespace
 ReportDataCallback::ReportDataCallback()
 {
     eventsBuf_.circularBuf = new (std::nothrow) SensorData[CIRCULAR_BUF_LEN];

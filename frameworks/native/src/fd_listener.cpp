@@ -20,11 +20,13 @@
 #include "sensor_errors.h"
 #include "stream_socket.h"
 
+#undef LOG_TAG
+#define LOG_TAG "FdListener"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::AppExecFwk;
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FdListener" };
 constexpr int32_t MAX_DATA_BUF_SIZE = 256;
 }  // namespace
 

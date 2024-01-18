@@ -22,10 +22,12 @@
 #include "sensor_log.h"
 #include "sensors_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "FrequencyEstimation"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "FrequencyEstimation" };
 constexpr double BASE_SEMITONE { 69.0 };
 constexpr double PITCH_INTERVAL_MIN { 12.0 };
 constexpr double LA_FREQUENCE { 440.0 };

@@ -28,10 +28,12 @@
 #include "sensor_log.h"
 #include "sensors_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "Utils"
+
 namespace OHOS {
 namespace Sensors {
 namespace{
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "Utils" };
 constexpr double PERCENTAGE_RANGE = 100.0;
 constexpr int32_t VOICE_MIN_INTENSITY_NORM = 25;
 constexpr size_t MAX_SIZE = 26460000;

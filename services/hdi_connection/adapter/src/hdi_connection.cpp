@@ -26,6 +26,9 @@
 #include "sensor_errors.h"
 #include "sensor_event_callback.h"
 
+#undef LOG_TAG
+#define LOG_TAG "HdiConnection"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
@@ -33,7 +36,6 @@ using OHOS::HDI::Sensor::V2_0::ISensorInterface;
 using OHOS::HDI::Sensor::V2_0::ISensorCallback;
 using OHOS::HDI::Sensor::V2_0::HdfSensorInformation;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "HdiConnection" };
 sptr<ISensorInterface> g_sensorInterface = nullptr;
 sptr<ISensorCallback> g_eventCallback = nullptr;
 std::map<int32_t, SensorBasicInfo> g_sensorBasicInfoMap;

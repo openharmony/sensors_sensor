@@ -22,11 +22,11 @@
 #include "sensor_errors.h"
 #include "stream_socket.h"
 
+#undef LOG_TAG
+#define LOG_TAG "StreamSession"
+
 namespace OHOS {
 namespace Sensors {
-namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamSession" };
-} // namespace
 
 StreamSession::StreamSession(const std::string &programName, const int32_t fd, const int32_t uid, const int32_t pid)
     : programName_(programName)

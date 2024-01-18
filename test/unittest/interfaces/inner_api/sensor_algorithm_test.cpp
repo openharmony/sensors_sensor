@@ -19,13 +19,15 @@
 #include "sensor_algorithm.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorAlgorithmTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorAlgorithmTest" };
 constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;

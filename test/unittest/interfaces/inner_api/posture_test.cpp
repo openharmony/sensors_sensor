@@ -22,13 +22,15 @@
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "PostureTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "PostureTest" };
 constexpr float ANGLE_MAX = 180.0F;
 constexpr float ANGLE_MIN = 0.0F;
 std::atomic_bool g_existPosture = false;

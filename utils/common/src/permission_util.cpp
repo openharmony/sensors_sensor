@@ -20,13 +20,12 @@
 #include "sensor_agent_type.h"
 #include "sensor_log.h"
 
+#undef LOG_TAG
+#define LOG_TAG "PermissionUtil"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
-namespace {
-constexpr HiLogLabel LABEL = {LOG_CORE, SENSOR_LOG_DOMAIN, "PermissionUtil"};
-}  // namespace
 
 std::unordered_map<int32_t, std::string> PermissionUtil::sensorPermissions_ = {
     { SENSOR_TYPE_ID_ACCELEROMETER, ACCELEROMETER_PERMISSION },

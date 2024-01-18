@@ -25,10 +25,12 @@
 #include "sensors_errors.h"
 #include "utils.h"
 
+#undef LOG_TAG
+#define LOG_TAG "Onset"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
-constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "Onset" };
 // Effective threshold of note envelope
 constexpr double C_ONSET_ENV_VALIDE_THRESHOLD = 0.0001;
 constexpr double POWER_DB_COEF = 10.0;

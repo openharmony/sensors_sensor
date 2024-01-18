@@ -23,13 +23,15 @@
 #include "sensor_agent.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SuspendSensorsFuzzTest"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SuspendSensorsFuzzTest" };
 constexpr size_t DATA_MIN_SIZE = 4;
 } // namespace
 

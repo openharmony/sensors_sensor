@@ -23,13 +23,12 @@
 #include "sensor_errors.h"
 #include "sensor_parcel.h"
 
+#undef LOG_TAG
+#define LOG_TAG "SensorServiceProxy"
+
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-
-namespace {
-constexpr HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "SensorServiceProxy" };
-}  // namespace
 
 SensorServiceProxy::SensorServiceProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorService>(impl)
 {}

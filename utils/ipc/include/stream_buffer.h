@@ -29,10 +29,12 @@
 #include "rust_binding.h"
 #endif // OHOS_BUILD_ENABLE_RUST
 
+#undef LOG_TAG
+#define LOG_TAG "StreamBuffer"
+
 namespace OHOS {
 namespace Sensors {
 class StreamBuffer {
-    static constexpr OHOS::HiviewDFX::HiLogLabel LABEL = { LOG_CORE, SENSOR_LOG_DOMAIN, "StreamBuffer" };
 public:
     StreamBuffer() = default;
     explicit StreamBuffer(const StreamBuffer &buf);

@@ -18,16 +18,13 @@
 #include "sensor_agent_proxy.h"
 #include "sensor_errors.h"
 
-using OHOS::HiviewDFX::HiLog;
-using OHOS::HiviewDFX::HiLogLabel;
+#undef LOG_TAG
+#define LOG_TAG "SensorNativeAPI"
 using OHOS::Sensors::SensorAgentProxy;
 using OHOS::Sensors::SERVICE_EXCEPTION;
 using OHOS::Sensors::PARAMETER_ERROR;
 using OHOS::Sensors::PERMISSION_DENIED;
 using OHOS::Sensors::NON_SYSTEM_API;
-namespace {
-constexpr HiLogLabel LABEL = {LOG_CORE, OHOS::Sensors::SENSOR_LOG_DOMAIN, "SensorNativeAPI"};
-}  // namespace
 
 static int32_t NormalizeErrCode(int32_t code)
 {
