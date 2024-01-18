@@ -179,7 +179,7 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
     }
     if (samplingInterval < 0 || reportInterval < 0) {
         SEN_HILOGE("samplingInterval or reportInterval is invalid");
-        return OHOS::Sensors::ERROR;
+        return PARAMETER_ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if ((subscribeMap_.find(sensorId) == subscribeMap_.end()) || (subscribeMap_.at(sensorId) != user)) {

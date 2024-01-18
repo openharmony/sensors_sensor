@@ -13,14 +13,5 @@
 
 group("unittest") {
   testonly = true
-  deps = [
-    "barometer:BarometerJsTest",
-    "color:ColorJsTest",
-    "gyroscope:GyroscopeJsTest",
-    "pedometer:PedometerJsTest",
-    "pedometer_detection:PedometerDetectionJsTest",
-    "sar:SarJsTest",
-    "sensor:SensorJsTest",
-    "sensor_frequency:SensorFrequencyJsTest",
-  ]
+  deps = [ "sensor:SensorJsTest" ]
 }

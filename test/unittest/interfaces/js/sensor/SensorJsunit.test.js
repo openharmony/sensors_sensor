@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import CommonConstants from './CommonConstants';
 import sensor from '@ohos.sensor'
 
 import {describe, beforeAll, beforeEach, afterEach, afterAll, it, expect} from 'deccjsunit/index'
@@ -69,12 +70,6 @@ describe("SensorJsTest", function () {
          console.info('afterEach called')
     })
 
-    const PARAMETER_ERROR_CODE = 401
-    const SERVICE_EXCEPTION_CODE = 14500101
-    const EPS = 0.01
-    const PARAMETER_ERROR_MSG = 'The parameter invalid.'
-    const SERVICE_EXCEPTION_MSG = 'Service exception.'
-
     /*
      * @tc.name: SensorJsTest
      * @tc.number: SensorJsTest_001
@@ -109,8 +104,8 @@ describe("SensorJsTest", function () {
             sensor.on(-1, onSensorCallback);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -194,8 +189,8 @@ describe("SensorJsTest", function () {
             sensor.once(-1, onceSensorCallback);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -234,8 +229,8 @@ describe("SensorJsTest", function () {
             sensor.off(-1, callback);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done();
         }
     })
@@ -257,8 +252,8 @@ describe("SensorJsTest", function () {
             sensor.off(1000000, onSensorCallback);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done();
         }
     })
@@ -299,8 +294,8 @@ describe("SensorJsTest", function () {
             sensor.off(sensor.SensorId.ACCELEROMETER, 5);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done();
         }
     })
@@ -367,22 +362,22 @@ describe("SensorJsTest", function () {
         try {
             sensor.on();
         } catch (error) {
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         try {
             sensor.once();
         } catch (error) {
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         try {
             sensor.off();
         } catch (error) {
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -578,13 +573,13 @@ describe("SensorJsTest", function () {
                     } else {
                         console.info('Sensor_GetGeomagneticField_001 success x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                         + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                        expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][0]) < EPS).assertTrue()
-                        expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][1]) < EPS).assertTrue()
-                        expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][2]) < EPS).assertTrue()
-                        expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][3]) < EPS).assertTrue()
-                        expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][4]) < EPS).assertTrue()
-                        expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][5]) < EPS).assertTrue()
-                        expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][6]) < EPS).assertTrue()
+                        expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][0]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][1]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][2]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][3]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][4]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][5]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[j][6]) < CommonConstants.EPS).assertTrue()
                         setTimeout(() => {
                             resolve()
                         }, 500)
@@ -620,13 +615,13 @@ describe("SensorJsTest", function () {
                     } else {
                         console.info('Sensor_GetGeomagneticField_002 success x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                         + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                        expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][0]) < EPS).assertTrue()
-                        expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][1]) < EPS).assertTrue()
-                        expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][2]) < EPS).assertTrue()
-                        expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][3]) < EPS).assertTrue()
-                        expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][4]) < EPS).assertTrue()
-                        expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][5]) < EPS).assertTrue()
-                        expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][6]) < EPS).assertTrue()
+                        expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][0]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][1]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][2]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][3]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][4]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][5]) < CommonConstants.EPS).assertTrue()
+                        expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[j][6]) < CommonConstants.EPS).assertTrue()
                         setTimeout(() => {
                             resolve()
                         }, 500)
@@ -657,13 +652,13 @@ describe("SensorJsTest", function () {
             } else {
                 console.info('Sensor_GetGeomagneticField_003 success x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+                expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < CommonConstants.EPS).assertTrue()
             }
             setTimeout(() => {
                 done()
@@ -690,12 +685,12 @@ describe("SensorJsTest", function () {
             } else {
                 console.info('Sensor_GetGeomagneticField_004 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
+                expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
                 expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
             }
             setTimeout(() => {
@@ -723,12 +718,12 @@ describe("SensorJsTest", function () {
             } else {
                 console.info('Sensor_GetGeomagneticField_005 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
+                expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
                 expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
             }
             setTimeout(() => {
@@ -756,12 +751,12 @@ describe("SensorJsTest", function () {
             } else {
                 console.info('Sensor_GetGeomagneticField_006 success x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
+                expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
                 expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
             }
             setTimeout(() => {
@@ -893,13 +888,13 @@ describe("SensorJsTest", function () {
             } else {
                 console.info('Sensor_GetGeomagneticField_011 success x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-                expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+                expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < CommonConstants.EPS).assertTrue()
             }
             setTimeout(() => {
                 done()
@@ -1260,13 +1255,13 @@ describe("SensorJsTest", function () {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i]).then((data) => {
                 console.info('Sensor_GetGeomagneticField_025 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
-                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < CommonConstants.EPS).assertTrue()
             }).catch((error) => {
                 console.info("promise::catch", error);
             })
@@ -1289,13 +1284,13 @@ describe("SensorJsTest", function () {
         await sensor.getGeomagneticInfo({'latitude':0, 'longitude':0, 'altitude':0}, Number.MIN_VALUE).then((data) => {
             console.info('Sensor_GetGeomagneticField_026 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-            expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-            expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-            expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+            expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < CommonConstants.EPS).assertTrue()
         }).catch((error) => {
             console.info("promise::catch", error);
         });
@@ -1317,12 +1312,12 @@ describe("SensorJsTest", function () {
         await sensor.getGeomagneticInfo({'latitude':Number.MAX_VALUE, 'longitude':0, 'altitude':0}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_027 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-            expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-            expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-            expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
+            expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
             expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
         }).catch((error) => {
             console.info("promise::catch", error)
@@ -1345,12 +1340,12 @@ describe("SensorJsTest", function () {
         await sensor.getGeomagneticInfo({'latitude':Number.NaN, 'longitude':0, 'altitude':0}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_028 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-            expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-            expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-            expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
+            expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
             expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
         }).catch((error) => {
             console.info("promise::catch", error)
@@ -1371,12 +1366,12 @@ describe("SensorJsTest", function () {
         await sensor.getGeomagneticInfo({'latitude':Number.NEGATIVE_INFINITY, 'longitude':0, 'altitude':0}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_029 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-            expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-            expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-            expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
+            expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
             expect(data.totalIntensity).assertEqual(geomagneticComponent[6])
         }).catch((error) => {
             console.info("promise::catch", error)
@@ -1474,13 +1469,13 @@ describe("SensorJsTest", function () {
         await sensor.getGeomagneticInfo({'latitude':0, 'longitude':0, 'altitude':Number.MIN_VALUE}, timeMillis[0]).then((data) => {
             console.info('Sensor_GetGeomagneticField_034 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
             + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-            expect(Math.abs(data.x - geomagneticComponent[0]) < EPS).assertTrue()
-            expect(Math.abs(data.y - geomagneticComponent[1]) < EPS).assertTrue()
-            expect(Math.abs(data.z - geomagneticComponent[2]) < EPS).assertTrue()
-            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < EPS).assertTrue()
-            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < EPS).assertTrue()
-            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < EPS).assertTrue()
-            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < EPS).assertTrue()
+            expect(Math.abs(data.x - geomagneticComponent[0]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.y - geomagneticComponent[1]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.z - geomagneticComponent[2]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.geomagneticDip - geomagneticComponent[3]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.deflectionAngle - geomagneticComponent[4]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.levelIntensity - geomagneticComponent[5]) < CommonConstants.EPS).assertTrue()
+            expect(Math.abs(data.totalIntensity - geomagneticComponent[6]) < CommonConstants.EPS).assertTrue()
         }).catch((error) => {
             console.info("promise::catch", error)
         });
@@ -1538,13 +1533,13 @@ describe("SensorJsTest", function () {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i]).then((data) => {
                console.info('Sensor_GetGeomagneticField_037 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
-               expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
-               expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
-               expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
-               expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
-               expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
-               expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
-               expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+               expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < CommonConstants.EPS).assertTrue()
             }).catch((error) => {
                console.info("promise::catch", error)
             });
@@ -1660,13 +1655,13 @@ describe("SensorJsTest", function () {
             await sensor.getGeomagneticInfo({'latitude':GEOMAGNETIC_COORDINATES[i][0], 'longitude':GEOMAGNETIC_COORDINATES[i][1], 'altitude':GEOMAGNETIC_COORDINATES[i][2]}, timeMillis[0]).then((data) => {
                console.info('Sensor_GetGeomagneticField_043 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity)
-               expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][0]) < EPS).assertTrue()
-               expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][1]) < EPS).assertTrue()
-               expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][2]) < EPS).assertTrue()
-               expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][3]) < EPS).assertTrue()
-               expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][4]) < EPS).assertTrue()
-               expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][5]) < EPS).assertTrue()
-               expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][6]) < EPS).assertTrue()
+               expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][0]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][1]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][2]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][3]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][4]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][5]) < CommonConstants.EPS).assertTrue()
+               expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_COORDINATES_RESULT[i][6]) < CommonConstants.EPS).assertTrue()
            }).catch((error) => {
                console.info("promise::catch", error);
            });
@@ -1805,8 +1800,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1828,8 +1823,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1851,8 +1846,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1874,8 +1869,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1897,8 +1892,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1920,8 +1915,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1943,8 +1938,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1966,8 +1961,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -1985,13 +1980,13 @@ describe("SensorJsTest", function () {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], undefined).then((data) => {
                 console.info('Sensor_GetGeomagneticField_058 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
-                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < CommonConstants.EPS).assertTrue()
             }).catch((error) => {
                 console.info("promise::catch", error);
             })
@@ -2012,13 +2007,13 @@ describe("SensorJsTest", function () {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], null).then((data) => {
                 console.info('Sensor_GetGeomagneticField_059 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
-                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < CommonConstants.EPS).assertTrue()
             }).catch((error) => {
                 console.info("promise::catch", error);
             })
@@ -2039,13 +2034,13 @@ describe("SensorJsTest", function () {
             await sensor.getGeomagneticInfo({'latitude':80, 'longitude':0, 'altitude':0}, timeMillis[i], "abc").then((data) => {
                 console.info('Sensor_GetGeomagneticField_060 x: ' + data.x + ',y: ' + data.y + ',z: ' + data.z + ',geomagneticDip: ' + data.geomagneticDip
                 + ',deflectionAngle: ' + data.deflectionAngle + ',levelIntensity: ' + data.levelIntensity + ',totalIntensity: ' + data.totalIntensity);
-                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < EPS).assertTrue()
-                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < EPS).assertTrue()
-                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < EPS).assertTrue()
-                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < EPS).assertTrue()
-                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < EPS).assertTrue()
-                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < EPS).assertTrue()
-                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < EPS).assertTrue()
+                expect(Math.abs(data.x - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][0]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.y - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][1]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.z - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][2]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.deflectionAngle - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][3]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.geomagneticDip - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][4]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.levelIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][5]) < CommonConstants.EPS).assertTrue()
+                expect(Math.abs(data.totalIntensity - GEOMAGNETIC_COMPONENT_YEAR_RESULT[i][6]) < CommonConstants.EPS).assertTrue()
             }).catch((error) => {
                 console.info("promise::catch", error);
             })
@@ -2196,11 +2191,11 @@ describe("SensorJsTest", function () {
             console.info("Sensor_CreateRotationMatrix_004" + JSON.stringify(data))
             expect(data.rotation.length).assertEqual(SENSOR_DATA_MATRIX[1].rotation.length)
             for (let i = 0; i < data.rotation.length; ++i) {
-                expect(Math.abs(data.rotation[i] - SENSOR_DATA_MATRIX[1].rotation[i]) < EPS).assertTrue()
+                expect(Math.abs(data.rotation[i] - SENSOR_DATA_MATRIX[1].rotation[i]) < CommonConstants.EPS).assertTrue()
             }
             expect(data.inclination.length).assertEqual(SENSOR_DATA_MATRIX[1].inclination.length)
             for (let i = 0; i < data.inclination.length; ++i) {
-                expect(Math.abs(data.inclination[i] - SENSOR_DATA_MATRIX[1].inclination[i]) < EPS).assertTrue()
+                expect(Math.abs(data.inclination[i] - SENSOR_DATA_MATRIX[1].inclination[i]) < CommonConstants.EPS).assertTrue()
             }
             done()
         }, (error) => {
@@ -2242,8 +2237,8 @@ describe("SensorJsTest", function () {
         try {
             sensor.getRotationMatrix()
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2261,8 +2256,8 @@ describe("SensorJsTest", function () {
         try {
             sensor.getRotationMatrix(-1)
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2308,8 +2303,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2333,8 +2328,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2621,8 +2616,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2640,8 +2635,8 @@ describe("SensorJsTest", function () {
         try {
             sensor.getOrientation()
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2659,8 +2654,8 @@ describe("SensorJsTest", function () {
         try {
             sensor.getOrientation(-1)
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2706,8 +2701,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -2731,8 +2726,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3065,8 +3060,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3088,8 +3083,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3111,8 +3106,8 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3134,8 +3129,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3157,8 +3152,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3180,8 +3175,8 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3374,8 +3369,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
         console.info("Sensor_CreateQuaternion_005 end")
@@ -3425,8 +3420,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
         console.info("Sensor_CreateQuaternion_007 end")
@@ -3499,8 +3494,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3518,8 +3513,8 @@ describe("SensorJsTest", function () {
         try {
             sensor.getQuaternion()
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3537,8 +3532,8 @@ describe("SensorJsTest", function () {
         try {
             sensor.getQuaternion(-1)
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3585,8 +3580,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3610,8 +3605,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
     })
@@ -3706,8 +3701,8 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
+            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
             done()
         }
         console.info("Sensor_GetGeomagneticDip_002 end")
@@ -3726,8 +3721,8 @@ describe("SensorJsTest", function () {
             sensor.getInclination()
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_003 end")
@@ -3756,8 +3751,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_004 end")
@@ -3783,8 +3778,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_005 end")
@@ -3810,8 +3805,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_006 end")
@@ -3988,8 +3983,8 @@ describe("SensorJsTest", function () {
             sensor.getDeviceAltitude()
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_005 end")
@@ -4018,8 +4013,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_006 end")
@@ -4045,8 +4040,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_007 end")
@@ -4072,8 +4067,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_008 end")
@@ -4242,8 +4237,8 @@ describe("SensorJsTest", function () {
             sensor.transformRotationMatrix()
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_005 end")
@@ -4271,8 +4266,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_006 end")
@@ -4298,8 +4293,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_007 end")
@@ -4325,8 +4320,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_008 end")
@@ -4352,8 +4347,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_009 end")
@@ -4381,8 +4376,8 @@ describe("SensorJsTest", function () {
             })
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_010 end")
@@ -4615,8 +4610,8 @@ describe("SensorJsTest", function () {
             });
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -4662,8 +4657,8 @@ describe("SensorJsTest", function () {
             });
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })

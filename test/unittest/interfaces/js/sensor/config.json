@@ -23,6 +23,34 @@
             ],
             "when": "inuse"
           }
+        },
+        {
+          "name": "ohos.permission.ACTIVITY_MOTION",
+          "reason": "need user ohos.permission.ACTIVITY_MOTION",
+          "usedScene": {
+            "ability": [
+              ".MainAbility"
+            ],
+            "when": "inuse"
+          }
+        },
+        {
+          "name": "ohos.permission.GYROSCOPE",
+          "reason": "",
+          "usedScene": {
+            "ability": [
+              ".MainAbility"
+            ],
+            "when": "inuse"
+          }
+        },
+        {
+            "name": "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
+            "reason": "user ohos.permission.GRANT_SENSITIVE_PERMISSIONS"
+        },
+        {
+            "name": "ohos.permission.REVOKE_SENSITIVE_PERMISSIONS",
+            "reason": "user ohos.permission.REVOKE_SENSITIVE_PERMISSIONS"
         }
       ],
       "package": "com.example.myapplication",
