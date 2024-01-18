@@ -20,8 +20,6 @@
 
 #undef LOG_TAG
 #define LOG_TAG "SensorNativeAPI"
-using OHOS::HiviewDFX::HiLog;
-using OHOS::HiviewDFX::HiLogLabel;
 using OHOS::Sensors::SensorAgentProxy;
 using OHOS::Sensors::SERVICE_EXCEPTION;
 using OHOS::Sensors::PARAMETER_ERROR;

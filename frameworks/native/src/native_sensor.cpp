@@ -24,8 +24,6 @@
 #undef LOG_TAG
 #define LOG_TAG "SensorCapiAPI"
 
-using OHOS::HiviewDFX::HiLog;
-using OHOS::HiviewDFX::HiLogLabel;
 namespace {
 const uint32_t FLOAT_SIZE = 4;
 }

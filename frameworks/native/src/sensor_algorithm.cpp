@@ -22,8 +22,6 @@
 
 #undef LOG_TAG
 #define LOG_TAG "SensorAlgorithmAPI"
-using OHOS::HiviewDFX::HiLog;
-using OHOS::HiviewDFX::HiLogLabel;
 using namespace OHOS::Sensors;
 
 int32_t SensorAlgorithm::CreateQuaternion(std::vector<float> rotationVector, std::vector<float> &quaternion)
