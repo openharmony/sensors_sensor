@@ -19,6 +19,8 @@
 #include "v2_0/isensor_callback.h"
 #include "v2_0/sensor_types.h"
 
+#include "sensor_data_event.h"
+
 using OHOS::HDI::Sensor::V2_0::HdfSensorEvents;
 using OHOS::HDI::Sensor::V2_0::ISensorCallback;
 
@@ -28,6 +30,11 @@ class SensorEventCallback : public ISensorCallback {
 public:
     virtual ~SensorEventCallback() {}
     int32_t OnDataEvent(const HdfSensorEvents &event) override;
+private:
+    void ControlSensorPrint(const SensorData &sensorData);
+    void PrintSensorData(const SensorData &sensorData);
+    int32_t GetDataDimension(int32_t sensorId);
+    int64_t postureLastTs_ = 0;
 };
 } // namespace Sensors
 } // namespace OHOS

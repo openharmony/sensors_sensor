@@ -16,7 +16,6 @@
 
 #include "hdi_connection.h"
 #include "sensor_agent_type.h"
-#include "sensor_data_event.h"
 #include "sensor_errors.h"
 
 #undef LOG_TAG
@@ -28,6 +27,12 @@ using namespace OHOS::HiviewDFX;
 namespace {
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
+constexpr int64_t LOG_INTERVAL = 60000000000;
+enum {
+    TWO_DIMENSION = 2,
+    SEVEN_DIMENSION = 7,
+    DEFAULT_DIMENSION = 16
+};
 } // namespace
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
@@ -71,10 +76,54 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
             sensorData.data[i] = event.data[i];
         }
     }
+    ControlSensorPrint(sensorData);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
+}
+
+void SensorEventCallback::ControlSensorPrint(const SensorData &sensorData)
+{
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData(sensorData);
+    }
+    if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_POSTURE)
+        && ((postureLastTs_ == 0) || (sensorData.timestamp - postureLastTs_ >= LOG_INTERVAL))) {
+        PrintSensorData(sensorData);
+        postureLastTs_ = sensorData.timestamp;
+    }
+}
+
+void SensorEventCallback::PrintSensorData(const SensorData &sensorData)
+{
+    std::string str;
+    str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + "\n";
+    str += "timestamp: " + std::to_string(sensorData.timestamp) + "\n";
+    int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
+    auto data = reinterpret_cast<const float *>(sensorData.data);
+    for (int32_t i = 0; i < dataDim; ++i) {
+        str.append(std::to_string(*data));
+        if (i != dataDim - 1) {
+            str.append(", ");
+        }
+        ++data;
+    }
+    str.append("\n");
+    SEN_HILOGI("SensorData: %{public}s", str.c_str());
+}
+
+int32_t SensorEventCallback::GetDataDimension(int32_t sensorId)
+{
+    switch (sensorId) {
+        case SENSOR_TYPE_ID_HALL_EXT:
+            return TWO_DIMENSION;
+        case SENSOR_TYPE_ID_POSTURE:
+            return SEVEN_DIMENSION;
+        default:
+            SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, DEFAULT_DIMENSION);
+            return DEFAULT_DIMENSION;
+    }
 }
 } // namespace Sensors
 } // namespace OHOS
