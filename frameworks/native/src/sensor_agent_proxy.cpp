@@ -58,15 +58,20 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *
     SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-        auto iter = subscribeMap_.find(eventStream.sensorTypeId);
-        if (iter == subscribeMap_.end()) {
-            SEN_HILOGE("Sensor is not subscribed");
-            return;
+        RecordSensorCallback fun;
+        {
+            std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
+            auto iter = subscribeMap_.find(eventStream.sensorTypeId);
+            if (iter == subscribeMap_.end()) {
+                SEN_HILOGE("Sensor is not subscribed");
+                return;
+            }
+            const SensorUser *user = iter->second;
+            CHKPV(user);
+            fun = user->callback;
         }
-        const SensorUser *user = iter->second;
-        CHKPV(user);
-        user->callback(&eventStream);
+        CHKPV(fun);
+        fun(&eventStream);
     }
 }
 
