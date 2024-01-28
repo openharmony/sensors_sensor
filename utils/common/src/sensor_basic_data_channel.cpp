@@ -151,7 +151,7 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
         length = send(sendFd_, vaddr, size, MSG_DONTWAIT | MSG_NOSIGNAL);
     } while (errno == EINTR);
     if (length < 0) {
-        SEN_HILOGE("Send fail:%{public}d, length:%{public}d", errno, (int32_t)length);
+        SEN_HILOGD("Send fail:%{public}d, length:%{public}d", errno, (int32_t)length);
         return SENSOR_CHANNEL_SEND_DATA_ERR;
     }
     return ERR_OK;
