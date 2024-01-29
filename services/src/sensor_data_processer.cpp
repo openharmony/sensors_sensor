@@ -15,6 +15,7 @@
 
 #include "sensor_data_processer.h"
 
+#include <cinttypes>
 #include <sys/prctl.h>
 #include <sys/socket.h>
 #include <thread>
@@ -208,7 +209,8 @@ void SensorDataProcesser::SendRawData(std::unordered_map<int32_t, SensorData> &c
     size_t eventSize = events.size();
     auto ret = channel->SendData(events.data(), eventSize * sizeof(SensorData));
     if (ret != ERR_OK) {
-        SEN_HILOGE("Send data failed, ret:%{public}d", ret);
+        SEN_HILOGE("Send data failed, ret:%{public}d, sensorId:%{public}d, timestamp:%{public}" PRId64,
+            ret, events[eventSize - 1].sensorTypeId, events[eventSize - 1].timestamp);
         int32_t sensorId = events[eventSize - 1].sensorTypeId;
         cacheBuf[sensorId] = events[eventSize - 1];
     }
@@ -223,13 +225,16 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     auto cacheEvent = cacheBuf.find(sensorId);
     if (cacheEvent != cacheBuf.end()) {
         // Try to send the last failed value, if it still fails, replace the previous cache directly
-        ret = channel->SendData(&cacheEvent->second, sizeof(SensorData));
+        const SensorData &cacheData = cacheEvent->second;
+        ret = channel->SendData(&cacheData, sizeof(SensorData));
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret:%{public}d", ret);
+            SEN_HILOGE("retry send cache data failed, ret:%{public}d, sensorId:%{public}d, timestamp:%{public}" PRId64,
+                ret, cacheData.sensorTypeId, cacheData.timestamp);
         }
         ret = channel->SendData(&data, sizeof(SensorData));
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret:%{public}d", ret);
+            SEN_HILOGE("retry send data failed, ret:%{public}d, sensorId:%{public}d, timestamp:%{public}" PRId64,
+                ret, data.sensorTypeId, data.timestamp);
             cacheBuf[sensorId] = data;
         } else {
             cacheBuf.erase(cacheEvent);
@@ -237,7 +242,8 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     } else {
         ret = channel->SendData(&data, sizeof(SensorData));
         if (ret != ERR_OK) {
-            SEN_HILOGE("ret:%{public}d", ret);
+            SEN_HILOGE("directly retry failed, ret:%{public}d, sensorId:%{public}d, timestamp:%{public}" PRId64,
+                ret, data.sensorTypeId, data.timestamp);
             cacheBuf[sensorId] = data;
         }
     }
