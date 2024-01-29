@@ -155,7 +155,7 @@ bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid
 {
     CALL_LOG_ENTER;
     if (clientInfo_.OnlyCurPidSensorEnabled(sensorId, clientPid)) {
-        SEN_HILOGW("Only current client using this sensor");
+        SEN_HILOGD("Only current client using this sensor");
         return false;
     }
     clientInfo_.ClearCurPidSensorInfo(sensorId, clientPid);
