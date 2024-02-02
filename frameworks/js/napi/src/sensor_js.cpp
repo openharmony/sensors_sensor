@@ -1061,13 +1061,11 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     CHKPP(asyncCallbackInfo);
     napi_value napiSuccess = GetNamedProperty(env, args[0], "success");
     CHKCP(IsMatchType(env, napiSuccess, napi_function), "get napiSuccess fail");
-    CHKCP(RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
-        "register success callback fail");
+    CHKCP(RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]), "register success callback fail");
     napi_value napiFail = GetNamedProperty(env, args[0], "fail");
     if (IsMatchType(env, napiFail, napi_function)) {
         SEN_HILOGD("Has fail callback");
-        CHKCP(RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]),
-            "register fail callback fail");
+        CHKCP(RegisterNapiCallback(env, napiFail, asyncCallbackInfo->callback[1]), "register fail callback fail");
     }
     if (auto iter = g_samplingPeriod.find(interval); iter == g_samplingPeriod.end()) {
         CHKCP(IsMatchType(env, napiFail, napi_function), "input error, interval is invalid");

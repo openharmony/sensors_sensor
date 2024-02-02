@@ -156,6 +156,7 @@ private:
     void OutputTransientEventsByInsertTime(const std::vector<double> &onsetTimes,
         const std::vector<IntensityData> &intensityDatas, const std::vector<int32_t> &freqNorms,
         std::vector<int32_t> &transientIndexs, std::vector<double> &transientEventTimes);
+    void GetIndex(const UnionTransientEvent &unionTransientEvent, const std::vector<IntensityData> &intensityDatas);
     void OutputTransientEventsAlign(const std::vector<UnionTransientEvent> &unionTransientEvents,
         const std::vector<IntensityData> &intensityDatas, const std::vector<int32_t> &freqNorms,
         std::vector<int32_t> &transientIndexs, std::vector<double> &transientEventTimes);
@@ -176,6 +177,7 @@ private:
         std::vector<double> &times, std::vector<double> &durations);
     void MergeContinuousEvents(const std::vector<ContinuousEvent> &interContinuousEvents);
     void AddContinuousEventData(const ContinuousEvent &continuousEvent);
+    int32_t GetAudioData();
     void StoreHapticEvent();
     void StoreEventSequence();
     void StoreEventBlock();
