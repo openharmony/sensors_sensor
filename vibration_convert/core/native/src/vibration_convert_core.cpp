@@ -66,20 +66,8 @@ constexpr int32_t ADSR_BOUNDARY_STATUS_ONE { 1 };
 constexpr int32_t ADSR_BOUNDARY_STATUS_BOTH { 2 };
 }  // namespace
 
-int32_t VibrationConvertCore::ConvertAudioToHaptic(const AudioSetting &audioSetting, const std::vector<double> &audioDatas,
-    std::vector<HapticEvent> &hapticEvents)
+int32_t VibrationConvertCore::GetAudioData()
 {
-    CALL_LOG_ENTER;
-    if (audioDatas.empty()) {
-        SEN_HILOGE("audioDatas is empty");
-        return Sensors::ERROR;
-    }
-    audioSetting_ = audioSetting;
-    int32_t ret = ResampleAudioData(audioDatas);
-    if (ret != Sensors::SUCCESS) {
-        SEN_HILOGE("ResampleAudioData failed");
-        return ret;
-    }
     std::vector<double> data = PreprocessAudioData();
     int32_t onsetHopLength = WINDOW_LENGTH;
     double rmsILowerDelta = 0.0;
@@ -119,6 +107,26 @@ int32_t VibrationConvertCore::ConvertAudioToHaptic(const AudioSetting &audioSett
             transientEventFlags.push_back(unionTransientEvents[i].transientEventFlag);
         }
         OutputAllContinuousEvent(intensityDatas, transientIndexes, freqNorms, transientEventFlags);
+    }
+    return Sensors::SUCCESS;
+}
+int32_t VibrationConvertCore::ConvertAudioToHaptic(const AudioSetting &audioSetting,
+    const std::vector<double> &audioDatas, std::vector<HapticEvent> &hapticEvents)
+{
+    CALL_LOG_ENTER;
+    if (audioDatas.empty()) {
+        SEN_HILOGE("audioDatas is empty");
+        return Sensors::ERROR;
+    }
+    audioSetting_ = audioSetting;
+    int32_t ret = ResampleAudioData(audioDatas);
+    if (ret != Sensors::SUCCESS) {
+        SEN_HILOGE("ResampleAudioData failed");
+        return ret;
+    }
+    if (GetAudioData() != Sensors::SUCCESS) {
+        SEN_HILOGE("GetAudioData failed");
+        return Sensors::ERROR;
     }
     StoreHapticEvent();
     hapticEvents = hapticEvents_;
@@ -915,6 +923,40 @@ void VibrationConvertCore::AddTransientEventData(TransientEvent transientEvent)
     transientEvents_.push_back(transientEvent);
 }
 
+void VibrationConvertCore::GetIdex(const UnionTransientEvent &unionTransientEvent,
+    const std::vector<IntensityData> &intensityDatas)
+{
+    // get max index.
+    size_t beginIndex = unionTransientEvent.onsetIdx;
+    size_t endIndex = beginIndex + onsetMinSkip_;
+    size_t maxIndex = beginIndex;
+    double maxRmseEnvelope = intensityDatas[beginIndex].rmseEnvelope;
+    for (size_t k = (beginIndex + 1); k < endIndex; k++) {
+        if (intensityDatas[k].rmseEnvelope > maxRmseEnvelope) {
+            maxRmseEnvelope = intensityDatas[k].rmseEnvelope;
+            maxIndex = k;
+        }
+    }
+    int32_t fromIndex = unionTransientEvent.onsetIdx - onsetMinSkip_;
+    if (fromIndex < 0) {
+        fromIndex = 0;
+    }
+    // get min index.
+    beginIndex = fromIndex;
+    endIndex = unionTransientEvent.onsetIdx + 1;
+    size_t minIndex = beginIndex;
+    double minRmseEnvelope = intensityDatas[beginIndex].rmseEnvelope;
+    for (size_t k = (beginIndex + 1); k < endIndex; k++) {
+        if (intensityDatas[k].rmseEnvelope < minRmseEnvelope) {
+            minRmseEnvelope = intensityDatas[k].rmseEnvelope;
+            minIndex = k;
+        }
+    }
+    if (minIndex == (unionTransientEvent.onsetIdx + 1)) {
+        minIndex = unionTransientEvent.onsetIdx;
+    }
+}
+
 void VibrationConvertCore::OutputTransientEventsAlign(const std::vector<UnionTransientEvent> &unionTransientEvents,
     const std::vector<IntensityData> &intensityDatas, const std::vector<int32_t> &freqNorms,
     std::vector<int32_t> &transientIndexs, std::vector<double> &transientEventTimes)
@@ -933,36 +975,7 @@ void VibrationConvertCore::OutputTransientEventsAlign(const std::vector<UnionTra
                 continue;
             }
         }
-        // get max index.
-        size_t beginIndex = unionTransientEvents[i].onsetIdx;
-        size_t endIndex = beginIndex + onsetMinSkip_;
-        size_t maxIndex = beginIndex;
-        double maxRmseEnvelope = intensityDatas[beginIndex].rmseEnvelope;
-        for (size_t k = (beginIndex + 1); k < endIndex; k++) {
-            if (intensityDatas[k].rmseEnvelope > maxRmseEnvelope) {
-                maxRmseEnvelope = intensityDatas[k].rmseEnvelope;
-                maxIndex = k;
-            }
-        }
-        int32_t fromIndex = unionTransientEvents[i].onsetIdx - onsetMinSkip_;
-        if (fromIndex < 0) {
-            fromIndex = 0;
-        }
-        // get min index.
-        beginIndex = fromIndex;
-        endIndex = unionTransientEvents[i].onsetIdx + 1;
-        size_t minIndex = beginIndex;
-        double minRmseEnvelope = intensityDatas[beginIndex].rmseEnvelope;
-        for (size_t k = (beginIndex + 1); k < endIndex; k++) {
-            if (intensityDatas[k].rmseEnvelope < minRmseEnvelope) {
-                minRmseEnvelope = intensityDatas[k].rmseEnvelope;
-                minIndex = k;
-            }
-        }
-        if (minIndex == (unionTransientEvents[i].onsetIdx + 1)) {
-            minIndex = unionTransientEvents[i].onsetIdx;
-        }
-
+        GetIdex(unionTransientEvents[i], intensityDatas);
         auto it = find(transientIndexs.begin(), transientIndexs.end(), minIndex);
         if (it == transientIndexs.end()) {
             transientEventTimes.push_back(intensityDatas[minIndex].rmseTimeNorm);
