@@ -480,5 +480,5 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_004, TestSize.Level1)
     int32_t ret = SetMode(SENSOR_ID, &user, SENSOR_DEFAULT_MODE);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

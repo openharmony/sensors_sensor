@@ -32,7 +32,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 std::atomic_bool g_existHeadPosture = false;
-}  // namespace
+} // namespace
 
 class HeadPostureTest : public testing::Test {
 public:
@@ -304,5 +304,5 @@ HWTEST_F(HeadPostureTest, HeadPostureTest_018, TestSize.Level1)
         ASSERT_EQ(UnsubscribeSensor(SENSOR_TYPE_ID_HEADPOSTURE, &user2), OHOS::Sensors::SUCCESS);
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

@@ -32,7 +32,7 @@ constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr float EPS = 0.01;
-}  // namespace
+} // namespace
 
 class SensorAlgorithmTest : public testing::Test {
 public:
@@ -341,5 +341,5 @@ HWTEST_F(SensorAlgorithmTest, SensorAlgorithmTest_028, TestSize.Level1)
     ASSERT_TRUE(fabs(geomagneticField.ObtainLevelIntensity() - 6572.02294921875) < EPS);
     ASSERT_TRUE(fabs(geomagneticField.ObtainTotalIntensity() - 55000.0703125) < EPS);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

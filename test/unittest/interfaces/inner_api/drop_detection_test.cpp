@@ -32,7 +32,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 std::atomic_bool g_existDropDetection = false;
-}  // namespace
+} // namespace
 
 class DropDetectionTest : public testing::Test {
 public:
@@ -302,5 +302,5 @@ HWTEST_F(DropDetectionTest, DropDetectionTest_018, TestSize.Level1)
         ASSERT_EQ(UnsubscribeSensor(SENSOR_TYPE_ID_DROP_DETECTION, &user2), OHOS::Sensors::SUCCESS);
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

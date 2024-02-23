@@ -40,7 +40,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
-}  // namespace
+} // namespace
 
 class SensorPowerTest : public testing::Test {
 public:
@@ -325,5 +325,5 @@ HWTEST_F(SensorPowerTest, SensorPowerTest_010, TestSize.Level1)
     ret = UnsubscribeSensor(SENSOR_ID, &user);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
