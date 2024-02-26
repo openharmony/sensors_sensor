@@ -62,6 +62,6 @@ private:
 private:
     bool freqReaderAbsFlag_ { true };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // FREQUENCY_ESTIMATION_H

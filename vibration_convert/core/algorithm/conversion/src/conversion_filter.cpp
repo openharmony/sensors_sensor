@@ -27,7 +27,7 @@ constexpr double CUT_OFF_MIN { 10.0 };
 constexpr double VALIDE_RESONANCE_MAX { 0.999999 };
 constexpr double AMOUNT_RESONANCE_MIN { 1.0 };
 constexpr double BAND_PASS_COEF { 4.0 };
-}  // namespace
+} // namespace
 
 // I particularly like these. cutoff between 0 and 1
 double ConversionFilter::FilterLowPass(double input, double cutoff)
@@ -160,5 +160,5 @@ double ConversionFilter::HandleHighPassOrLowPass(double input, double cutoff, bo
 {
     return isHighPass ? FilterHighPass(input, cutoff) : FilterLowPass(input, cutoff);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
