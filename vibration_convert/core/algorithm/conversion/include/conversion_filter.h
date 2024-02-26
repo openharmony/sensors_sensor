@@ -27,7 +27,7 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr size_t ARRAY_SIZE { 10 };
-}  // namespace
+} // namespace
 
 /**
  * @brief selection of filters
@@ -128,6 +128,6 @@ private:
     double filterCoefficient_ { 0.0 };
     int32_t sampleRate_ { 0 };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // CONVERSION_FILTER_H

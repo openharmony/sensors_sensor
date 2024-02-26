@@ -37,7 +37,7 @@ constexpr double HAMMING_WND_DOWN { 0.46 };
 constexpr float VOLUME_MIN { 0.000001 };
 constexpr double AMP_TO_DB_COEF { 20.0 };
 constexpr bool TRANSFORM_INVERSE_FLAG { true };
-}  // namespace
+} // namespace
 
 Fft::~Fft()
 {
@@ -446,5 +446,5 @@ void Fft::InversePowerSpectrum(const std::vector<float> &window, const std::vect
     ConvertCart(magnitude, phase);
     CalcIFFT(window, finalOut);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

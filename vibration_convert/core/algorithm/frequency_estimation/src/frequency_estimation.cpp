@@ -32,7 +32,7 @@ constexpr double BASE_SEMITONE { 69.0 };
 constexpr double PITCH_INTERVAL_MIN { 12.0 };
 constexpr double LA_FREQUENCE { 440.0 };
 constexpr double PITCH_INTERVAL_MAX { 108.0 };
-}  // namespace
+} // namespace
 
 double FrequencyEstimation::Mean(const std::vector<double> &data)
 {
@@ -103,5 +103,5 @@ std::vector<double> FrequencyEstimation::GetZeroCrossingRate(const std::vector<d
     }
     return zcr;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

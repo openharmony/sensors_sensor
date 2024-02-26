@@ -27,7 +27,7 @@ namespace Sensors {
 namespace {
 constexpr int32_t SPECTRUM_COUNT_MAX { 8192 };
 constexpr int32_t MAX_FFT_SIZE { 10240 };
-}  // namespace
+} // namespace
 
 int32_t ConversionFFT::Init(const FFTInputPara &fftPara)
 {
@@ -309,5 +309,5 @@ int32_t ConversionOctave::Calculate(const std::vector<float> &fftData)
     }
     return Sensors::SUCCESS;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

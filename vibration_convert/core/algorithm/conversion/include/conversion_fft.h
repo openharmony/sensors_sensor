@@ -314,6 +314,6 @@ private:
     // so.. note that clever use of it can also provide a "gain" control of sorts
     // (fe: set intercept to 2f and slope to 0f to double gain)
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // CONVERSION_FFT_H

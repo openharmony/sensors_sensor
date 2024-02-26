@@ -120,6 +120,6 @@ private:
     FftParaAndResult para_;
     uint32_t** fftBitTable_ { nullptr };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // FFT_H

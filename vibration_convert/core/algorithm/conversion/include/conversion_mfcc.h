@@ -106,6 +106,6 @@ private:
     std::vector<double> dctMatrix_;
     std::vector<double> coeffs_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // CONVERSION_MFCC_H

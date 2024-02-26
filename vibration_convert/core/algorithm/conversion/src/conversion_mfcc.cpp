@@ -28,7 +28,7 @@ namespace Sensors {
 namespace {
 constexpr double BANDS_MIN_THRESHOLD { 0.000001 };
 constexpr uint32_t MEL_FILTERS_OR_COEFFS_MAX { 4096 * 4096 };
-}  // namespace
+} // namespace
 
 int32_t ConversionMfcc::HandleMelFilterAndLogSquare(const std::vector<float> &powerSpectrum)
 {
@@ -267,5 +267,5 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
     }
     return Sensors::SUCCESS;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
