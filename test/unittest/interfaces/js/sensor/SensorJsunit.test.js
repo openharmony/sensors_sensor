@@ -76,6 +76,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_001", 0, async function (done) {
         console.info('----------------------SensorJsTest_001---------------------------');
@@ -92,6 +94,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_002", 0, async function (done) {
         console.info('----------------------SensorJsTest_002---------------------------');
@@ -116,6 +120,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_003", 0, async function (done) {
         console.info('----------------------SensorJsTest_003---------------------------');
@@ -134,6 +140,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_004", 0, function (done) {
         console.info('----------------------SensorJsTest_004---------------------------');
@@ -163,6 +171,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_005", 0, async function (done) {
         sensor.once(sensor.SensorId.ACCELEROMETER, callback);
@@ -178,6 +188,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_006", 0, async function (done) {
         function onceSensorCallback(data) {
@@ -201,6 +213,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_007", 0, function (done) {
         function onceSensorCallback(data) {
@@ -223,6 +237,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_008", 0, async function (done) {
         try {
@@ -241,6 +257,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_010", 0, async function (done) {
         function onSensorCallback(data) {
@@ -264,6 +282,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_011", 0, async function (done) {
         sensor.on(sensor.SensorId.ACCELEROMETER, (data) => {
@@ -288,6 +308,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_012", 0, function (done) {
         try {
@@ -306,6 +328,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_013", 0, async function (done) {
         console.info('----------------------SensorJsTest013---------------------------');
@@ -331,6 +355,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_014", 0, async function (done) {
         console.info('----------------------SensorJsTest_014---------------------------');
@@ -356,6 +382,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_015", 0, async function (done) {
         console.info('----------------------SensorJsTest_015---------------------------');
@@ -388,6 +416,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_016", 0, async function (done) {
         console.info('----------------------SensorJsTest_016---------------------------');
@@ -404,6 +434,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_017", 0, async function (done) {
         console.info('----------------------SensorJsTest_017---------------------------');
@@ -420,6 +452,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_018", 0, async function (done) {
         console.info('----------------------SensorJsTest_018---------------------------');
@@ -436,6 +470,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_019", 0, async function (done) {
         console.info('----------------------SensorJsTest_019---------------------------');
@@ -452,6 +488,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_020", 0, async function (done) {
         console.info('----------------------SensorJsTest_020---------------------------');
@@ -468,6 +506,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_021", 0, async function (done) {
         console.info('----------------------SensorJsTest_021---------------------------');
@@ -484,6 +524,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_022", 0, async function (done) {
         console.info('----------------------SensorJsTest_022---------------------------');
@@ -500,6 +542,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_023", 0, async function (done) {
         console.info('----------------------SensorJsTest_023---------------------------');
@@ -516,6 +560,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("SensorJsTest_024", 0, async function (done) {
         console.info('----------------------SensorJsTest_024---------------------------');
@@ -556,6 +602,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_001', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_001----------------------------------");
@@ -598,6 +647,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_002', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_002----------------------------------");
@@ -640,6 +692,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_003', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_003----------------------------------");
@@ -674,6 +729,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_004', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_004----------------------------------");
@@ -707,6 +765,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_005', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_005----------------------------------");
@@ -740,6 +801,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_006', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_006----------------------------------");
@@ -773,6 +837,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2U6
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_007', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_007----------------------------------");
@@ -799,6 +866,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A3
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_008', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_008----------------------------------");
@@ -825,6 +895,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A3
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_009', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_009----------------------------------");
@@ -851,6 +924,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A3
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_010', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_010----------------------------------");
@@ -877,6 +953,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A4
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_011', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_011----------------------------------");
@@ -910,6 +989,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A4
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_012', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_012----------------------------------");
@@ -936,6 +1018,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: SR000GH2A4
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_013', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_013----------------------------------");
@@ -962,6 +1047,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_014', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_014----------------------------------");
@@ -988,6 +1076,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_015', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_015----------------------------------");
@@ -1014,6 +1105,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_016', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_016----------------------------------");
@@ -1040,6 +1134,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_017', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_017----------------------------------");
@@ -1066,6 +1163,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_018', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_018----------------------------------");
@@ -1092,6 +1192,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_019', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_019----------------------------------");
@@ -1118,6 +1221,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_020', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_020----------------------------------");
@@ -1144,6 +1250,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_021', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_021----------------------------------");
@@ -1170,6 +1279,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_022', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_022----------------------------------");
@@ -1196,6 +1308,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_023', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_023----------------------------------");
@@ -1222,6 +1337,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_024', 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_024----------------------------------");
@@ -1248,6 +1366,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UB
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_025", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_025----------------------------------");
@@ -1277,6 +1398,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UD
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_026", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_026---------------------------');
@@ -1305,6 +1429,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UD
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_027", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_027---------------------------');
@@ -1333,6 +1460,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2UD
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_028", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_028---------------------------');
@@ -1359,6 +1489,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_029", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_029---------------------------');
@@ -1385,6 +1517,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_030", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_030---------------------------');
@@ -1405,6 +1539,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_031", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_031---------------------------');
@@ -1424,6 +1560,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_032", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_032---------------------------');
@@ -1443,6 +1581,8 @@ describe("SensorJsTest", function () {
      * @tc.desc:verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_033", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_033---------------------------');
@@ -1462,6 +1602,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_034", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_034---------------------------');
@@ -1488,6 +1630,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_035", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_035---------------------------');
@@ -1507,6 +1651,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_036", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_036---------------------------');
@@ -1526,6 +1672,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it('Sensor_GetGeomagneticField_037', 0, async function (done) {
         for (let i = 0; i < timeMillis.length; i++) {
@@ -1553,6 +1701,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_038", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_038---------------------------');
@@ -1572,6 +1722,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_039", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_039---------------------------');
@@ -1591,6 +1743,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_040", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_040 max ---------------------------');
@@ -1610,6 +1764,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_041", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_041---------------------------');
@@ -1629,6 +1785,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_042", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_042---------------------------');
@@ -1648,6 +1806,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
    it('Sensor_GetGeomagneticField_043', 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_043---------------------------');
@@ -1675,6 +1835,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_044", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_044---------------------------');
@@ -1694,6 +1856,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_045", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_045---------------------------');
@@ -1713,6 +1877,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_046", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_046---------------------------');
@@ -1732,6 +1898,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_047", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_047---------------------------');
@@ -1751,6 +1919,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_048", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_048---------------------------');
@@ -1770,6 +1940,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_049", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_049---------------------------');
@@ -1789,6 +1961,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_050", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_050---------------------------');
@@ -1812,6 +1986,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_051", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_051---------------------------');
@@ -1835,6 +2011,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_052", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_052---------------------------');
@@ -1858,6 +2036,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_053", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_053---------------------------');
@@ -1881,6 +2061,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_054", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_054---------------------------');
@@ -1904,6 +2086,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_055", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_055---------------------------');
@@ -1927,6 +2111,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_056", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_056---------------------------');
@@ -1950,6 +2136,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_057", 0, async function (done) {
         console.info('----------------------Sensor_GetGeomagneticField_057---------------------------');
@@ -1973,6 +2161,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_058", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_058----------------------------------");
@@ -2000,6 +2190,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_059", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_059----------------------------------");
@@ -2027,6 +2219,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetGeomagneticField_060", 0, async function (done) {
         console.info("---------------------------Sensor_GetGeomagneticField_060----------------------------------");
@@ -2120,6 +2314,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_001', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], (error, data) => {
@@ -2142,6 +2339,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
 
     it('Sensor_CreateRotationMatrix_002', 0, async function (done) {
@@ -2165,6 +2365,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_003', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0]).then((data) => {
@@ -2185,6 +2388,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_CreateRotationMatrix_004', 0, async function (done) {
         sensor.getRotationMatrix(gravity[1], geomagnetic[1]).then((data) => {
@@ -2212,6 +2418,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_CreateRotationMatrix_005', 0, async function (done) {
         sensor.getRotationMatrix(gravity[2], geomagnetic[2]).then((data) => {
@@ -2232,6 +2441,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_006', 0, async function (done) {
         try {
@@ -2251,6 +2463,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_007', 0, async function (done) {
         try {
@@ -2270,6 +2485,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_008', 0, async function (done) {
         sensor.getRotationMatrix([-0.0245, 0.402, 0.0465], -1).then((data) => {
@@ -2292,6 +2510,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_009', 0, async function (done) {
         try {
@@ -2317,6 +2538,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_CreateRotationMatrix_010', 0, async function (done) {
         try {
@@ -2342,6 +2566,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateRotationMatrix_011', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], -1).then((data) => {
@@ -2360,6 +2587,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_012', 0, async function (done) {
         console.info("Sensor_CreateRotationMatrix_012 start");
@@ -2380,11 +2610,14 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.name: Sensor_CreateRotationMatrix
     * @tc.number: Sensor_CreateRotationMatrix_013
-    * tc.desc: Verification results of the incorrect parameters of test interface.
-    * tc.require: SR000GH2A2
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: SR000GH2A2
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_013', 0, async function (done) {
         console.info('Sensor_CreateRotationMatrix_013 start')
@@ -2403,11 +2636,14 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.name: Sensor_CreateRotationMatrix
     * @tc.number: Sensor_CreateRotationMatrix_014
-    * tc.desc: Verification results of the incorrect parameters of test interface.
-    * tc.require: I5SWJI
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_014', 0, async function (done) {
         console.info('Sensor_CreateRotationMatrix_014 start')
@@ -2426,11 +2662,14 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.name: Sensor_CreateRotationMatrix
     * @tc.number: Sensor_CreateRotationMatrix_015
-    * tc.desc: Verification results of the incorrect parameters of test interface.
-    * tc.require: I5SWJI
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_015', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], undefined).then((data) => {
@@ -2444,11 +2683,14 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.name: Sensor_CreateRotationMatrix
     * @tc.number: Sensor_CreateRotationMatrix_016
-    * tc.desc: Verification results of the incorrect parameters of test interface.
-    * tc.require: I5SWJI
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_016', 0, async function (done) {
         sensor.getRotationMatrix(gravity[0], geomagnetic[0], null).then((data) => {
@@ -2462,11 +2704,14 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.name: Sensor_CreateRotationMatrix
     * @tc.number: Sensor_CreateRotationMatrix_017
-    * tc.desc: Verification results of the incorrect parameters of test interface.
-    * tc.require: I5SWJI
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_017', 0, async function (done) {
         sensor.getRotationMatrix([0, 0, 0], undefined).then((data) => {
@@ -2482,11 +2727,14 @@ describe("SensorJsTest", function () {
     })
 
     /*
-    * tc.name: Sensor_CreateRotationMatrix
+    * @tc.name: Sensor_CreateRotationMatrix
     * @tc.number: Sensor_CreateRotationMatrix_018
-    * tc.desc: Verification results of the incorrect parameters of test interface.
-    * tc.require: I5SWJI
+    * @tc.desc: Verification results of the incorrect parameters of test interface.
+    * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateRotationMatrix_018', 0, async function (done) {
         sensor.getRotationMatrix([0, 0, 0], null).then((data) => {
@@ -2509,6 +2757,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_001', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0], (error, data) => {
@@ -2533,6 +2784,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_002', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[1], (error, data) => {
@@ -2557,6 +2811,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2RN
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_003', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0]).then((data) => {
@@ -2579,6 +2836,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2RN
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_004', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[1]).then((data) => {
@@ -2601,6 +2861,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: AR000GH2RN
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_005', 0, async function (done) {
         try {
@@ -2630,6 +2893,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_GetDirection_006', 0, async function (done) {
         try {
@@ -2649,6 +2915,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_GetDirection_007', 0, async function (done) {
         try {
@@ -2668,6 +2937,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_GetDirection_008', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[1], -1).then((data) => {
@@ -2690,6 +2962,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_GetDirection_009', 0, async function (done) {
         try {
@@ -2715,6 +2990,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_010', 0, async function (done) {
         try {
@@ -2740,6 +3018,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_011', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0], undefined).then((data) => {
@@ -2762,6 +3043,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetDirection_012', 0, async function (done) {
         sensor.getOrientation(rotationMatrix[0], null).then((data) => {
@@ -2791,6 +3075,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_001', 0, async function (done) {
         console.info("SensorJsAPI--->Sensor_GetAngleModify_001");
@@ -2817,6 +3104,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_002', 0, async function (done) {
         console.info("Sensor_GetAngleModify_002");
@@ -2845,6 +3135,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_003', 0, async function (done) {
         console.info("Sensor_GetAngleModify_003 in");
@@ -2874,6 +3167,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_004', 0, async function (done) {
         console.info("Sensor_GetAngleModify_004");
@@ -2901,6 +3197,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_005', 0, async function (done) {
         console.info("Sensor_GetAngleModify_005 in");
@@ -2928,6 +3227,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_006', 0, async function (done) {
         console.info("Sensor_GetAngleModify_006 in");
@@ -2952,6 +3254,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_007', 0, async function (done) {
         console.info("Sensor_GetAngleModify_007 in");
@@ -2976,6 +3281,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_008', 0, async function (done) {
         console.info("Sensor_GetAngleModify_008 in");
@@ -3002,6 +3310,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_009', 0, async function (done) {
         console.info("Sensor_GetAngleModify_009 in");
@@ -3027,6 +3338,9 @@ describe("SensorJsTest", function () {
      * @tc.desc:
      * @tc.require: AR000GH2SL
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_010', 0, async function (done) {
         console.info("Sensor_GetAngleModify_010 in");
@@ -3049,6 +3363,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetAngleModify_011", 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_011---------------------------');
@@ -3072,6 +3388,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetAngleModify_012", 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_012---------------------------');
@@ -3095,6 +3413,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetAngleModify_013", 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_013---------------------------');
@@ -3118,6 +3438,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetAngleModify_014", 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_014---------------------------');
@@ -3141,6 +3463,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetAngleModify_015", 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_015---------------------------');
@@ -3164,6 +3488,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_GetAngleModify_016", 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_016---------------------------');
@@ -3187,6 +3513,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_017', 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_017---------------------------');
@@ -3209,6 +3537,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_018', 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_018---------------------------');
@@ -3231,6 +3561,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: I5SWJI
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it('Sensor_GetAngleModify_019', 0, async function (done) {
         console.info('----------------------Sensor_GetAngleModify_019---------------------------');
@@ -3261,6 +3593,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_001', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_001 start')
@@ -3285,6 +3620,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_002', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_002 start')
@@ -3308,6 +3646,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_003', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_003 start')
@@ -3332,6 +3673,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_004', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_004 start')
@@ -3356,6 +3700,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_005', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_005 start')
@@ -3382,6 +3729,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_006', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_006 start')
@@ -3406,6 +3756,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_007', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_007 start')
@@ -3433,6 +3786,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_008', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_008 start')
@@ -3457,6 +3813,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_009', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_009 start')
@@ -3480,6 +3839,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2RP
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_CreateQuaternion_010', 0, async function (done) {
         console.info('Sensor_CreateQuaternion_010 start')
@@ -3508,6 +3870,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateQuaternion_011', 0, async function (done) {
         try {
@@ -3527,6 +3892,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateQuaternion_012', 0, async function (done) {
         try {
@@ -3546,6 +3914,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateQuaternion_013', 0, async function (done) {
         sensor.getQuaternion([0.52, -0.336, -0.251], -1).then((data) => {
@@ -3569,6 +3940,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
      it('Sensor_CreateQuaternion_014', 0, async function (done) {
         try {
@@ -3594,6 +3968,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_CreateQuaternion_015', 0, async function (done) {
         try {
@@ -3619,6 +3996,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_CreateQuaternion_016', 0, async function (done) {
         sensor.getQuaternion([0.52, -0.336, -0.251], undefined).then((data) => {
@@ -3642,6 +4022,9 @@ describe("SensorJsTest", function () {
      * @tc.desc: Verification results of the incorrect parameters of the test interface.
      * @tc.require: I5SWJI
      * @tc.author:
+     * @tc.size: MediumTest
+     * @tc.type: Function
+     * @tc.level: Level 1
      */
     it('Sensor_CreateQuaternion_017', 0, async function (done) {
         sensor.getQuaternion([0.52, -0.336, -0.251], null).then((data) => {
@@ -3665,6 +4048,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_001', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_001 start')
@@ -3688,6 +4074,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_002', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_002 start')
@@ -3714,6 +4103,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_003', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_003 start')
@@ -3734,6 +4126,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_004', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_004 start')
@@ -3764,6 +4159,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_005', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_005 start')
@@ -3791,6 +4189,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_006', 0, async function (done) {
         console.info('Sensor_GetGeomagneticDip_006 start')
@@ -3818,6 +4219,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_007', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9]).then((data) => {
@@ -3837,6 +4241,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_008', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], undefined).then((data) => {
@@ -3856,6 +4263,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_009', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], null).then((data) => {
@@ -3875,6 +4285,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetGeomagneticDip_010', 0, async function (done) {
         sensor.getInclination([1, 2, 3, 4, 5, 6, 7, 8, 9], null).then((data) => {
@@ -3894,6 +4307,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_001', 0, async function (done) {
         console.info('Sensor_GetAltitude_001 start')
@@ -3916,6 +4332,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_002', 0, async function (done) {
         console.info('Sensor_GetAltitude_002 start')
@@ -3938,6 +4357,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_003', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100).then((data) => {
@@ -3957,6 +4379,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2OG
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_004', 0, async function (done) {
         sensor.getDeviceAltitude(5, 0).then((data) => {
@@ -3976,6 +4401,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_005', 0, async function (done) {
         console.info('Sensor_GetAltitude_005 start')
@@ -3996,6 +4424,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_006', 0, async function (done) {
         console.info('Sensor_GetAltitude_006 start')
@@ -4026,6 +4457,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_007', 0, async function (done) {
         console.info('Sensor_GetAltitude_007 start')
@@ -4053,6 +4487,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_008', 0, async function (done) {
         console.info('Sensor_GetAltitude_008 start')
@@ -4080,6 +4517,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_009', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100, undefined).then((data) => {
@@ -4099,6 +4539,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_010', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100, null).then((data) => {
@@ -4118,6 +4561,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_GetAltitude_011', 0, async function (done) {
         sensor.getDeviceAltitude(0, 100, "abc").then((data) => {
@@ -4144,6 +4590,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
      it('Sensor_TransformCoordinateSystem_001', 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_001----------------------------------");
@@ -4165,6 +4614,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_002', 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_002----------------------------------");
@@ -4186,6 +4638,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_TransformCoordinateSystem_003", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_003----------------------------------");
@@ -4208,6 +4663,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_TransformCoordinateSystem_004", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_004----------------------------------");
@@ -4230,6 +4688,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_005', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_005 start')
@@ -4250,6 +4711,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_006', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_006 start')
@@ -4279,6 +4743,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_007', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_007 start')
@@ -4306,6 +4773,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_008', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_008 start')
@@ -4333,6 +4803,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_009', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_008 start')
@@ -4360,6 +4833,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it('Sensor_TransformCoordinateSystem_010', 0, async function (done) {
         console.info('Sensor_TransformCoordinateSystem_010 start')
@@ -4389,6 +4865,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_TransformCoordinateSystem_011", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_011----------------------------------");
@@ -4411,6 +4890,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_TransformCoordinateSystem_012", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_012----------------------------------");
@@ -4433,6 +4915,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: I5SWJI
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_TransformCoordinateSystem_013", 0, async function (done) {
         console.info("---------------------------Sensor_TransformCoordinateSystem_013----------------------------------");
@@ -4455,6 +4940,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSensorList_001", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_001----------------------------------");
@@ -4478,6 +4966,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSensorList_002", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_002----------------------------------");
@@ -4502,6 +4993,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSensorList_003", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_003----------------------------------");
@@ -4525,6 +5019,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSensorList_004", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_004----------------------------------");
@@ -4548,6 +5045,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSensorList_005", 0, async function (done) {
         console.info("---------------------------Sensor_GetSensorList_005----------------------------------");
@@ -4571,6 +5071,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_001", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_001----------------------------------");
@@ -4593,6 +5096,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_002", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_002----------------------------------");
@@ -4622,6 +5128,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_003", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_003----------------------------------");
@@ -4642,6 +5151,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_004", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_004----------------------------------");
@@ -4669,6 +5181,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_005", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_005----------------------------------");
@@ -4689,6 +5204,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_006", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_006----------------------------------");
@@ -4709,6 +5227,9 @@ describe("SensorJsTest", function () {
     * @tc.desc: Verification results of the incorrect parameters of test interface.
     * @tc.require: AR000GH2TR
     * @tc.author:
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
     */
     it("Sensor_GetSingleSensor_007", 0, async function (done) {
         console.info("---------------------------Sensor_GetSingleSensor_007----------------------------------");
@@ -4729,6 +5250,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_001", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_001---------------------------');
@@ -4772,6 +5295,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_002", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_002---------------------------');
@@ -4796,6 +5321,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_003", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_003---------------------------');
@@ -4823,6 +5350,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_004", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_004---------------------------');
@@ -4846,6 +5375,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_005", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_005---------------------------');
@@ -4885,6 +5416,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_006", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_006---------------------------');
@@ -4925,6 +5458,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_007", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_007---------------------------');
@@ -4965,6 +5500,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_SubscribeAccelerometer_008", 0, async function (done) {
         console.info('----------------------Sensor_SubscribeAccelerometer_008---------------------------');
@@ -5005,6 +5542,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_UnsubscribeAccelerometer_001", 0, async function (done) {
         console.info('----------------------Sensor_UnsubscribeAccelerometer_001---------------------------');
@@ -5026,6 +5565,8 @@ describe("SensorJsTest", function () {
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
      * @tc.require: AR000GH2TR
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
      */
     it("Sensor_UnsubscribeAccelerometer_002", 0, async function (done) {
         console.info('----------------------Sensor_UnsubscribeAccelerometer_002---------------------------');
