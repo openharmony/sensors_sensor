@@ -1,4 +1,4 @@
-# Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -160,6 +160,32 @@ ohos_unittest("HeadPostureTest") {
     "ipc:ipc_single",
   ]
 }
+
+ohos_unittest("Ambientlight1Test") {
+  module_out_path = "sensor/interfaces/inner_api"
+
+  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//ambient_light1_test.cpp" ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+  ]
+}
+
 ohos_unittest("DropDetectionTest") {
   module_out_path = "sensor/interfaces/inner_api"
 
@@ -187,6 +213,7 @@ ohos_unittest("DropDetectionTest") {
 group("unittest") {
   testonly = true
   deps = [
+    ":Ambientlight1Test",
     ":DropDetectionTest",
     ":HeadPostureTest",
     ":PostureTest",

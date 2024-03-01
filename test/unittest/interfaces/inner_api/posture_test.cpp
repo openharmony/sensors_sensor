@@ -34,7 +34,7 @@ namespace {
 constexpr float ANGLE_MAX = 180.0F;
 constexpr float ANGLE_MIN = 0.0F;
 std::atomic_bool g_existPosture = false;
-}  // namespace
+} // namespace
 
 class PostureTest : public testing::Test {
 public:
@@ -346,5 +346,5 @@ HWTEST_F(PostureTest, PostureTest_018, TestSize.Level1)
         ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
