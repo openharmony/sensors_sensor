@@ -127,11 +127,11 @@ enum {
 class InnerFunctionTracer {
 public:
     InnerFunctionTracer(const char *func, const char *tag)
-        : func_  { func }, tag_ { tag }
+        : func_ { func }, tag_ { tag }
     {
         if (HiLogIsLoggable(LOG_DOMAIN, tag_, LOG_DEBUG)) {
             if (func_  != nullptr && tag_ != nullptr) {
-                HILOG_IMPL(LOG_CORE, LOG_DEBUG, LOG_DOMAIN, tag_, "in %{public}s, enter", func_ );
+                HILOG_IMPL(LOG_CORE, LOG_DEBUG, LOG_DOMAIN, tag_, "in %{public}s, enter", func_);
             }
         }
     }
@@ -139,7 +139,7 @@ public:
     {
         if (HiLogIsLoggable(LOG_DOMAIN, tag_, LOG_DEBUG)) {
             if (func_  != nullptr && tag_ != nullptr) {
-                HILOG_IMPL(LOG_CORE, LOG_DEBUG, LOG_DOMAIN, tag_, "in %{public}s, leave", func_ );
+                HILOG_IMPL(LOG_CORE, LOG_DEBUG, LOG_DOMAIN, tag_, "in %{public}s, leave", func_);
             }
         }
     }
