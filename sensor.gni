@@ -21,6 +21,8 @@ SUBSYSTEM_DIR = "//base/sensors/sensor"
 
 FUZZ_MODULE_OUT_PATH = "sensor/sensor"
 
+THERD_PARTY_NODE = "//third_party/node"
+
 sensor_default_defines = []
 
 if (rust_socket_ipc) {
