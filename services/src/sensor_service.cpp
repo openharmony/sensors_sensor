@@ -401,6 +401,7 @@ void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClien
 {
     CALL_LOG_ENTER;
     CHKPV(sensorClient);
+    std::lock_guard<std::mutex> clientDeathObserverLock(clientDeathObserverMutex_);
     if (clientDeathObserver_ == nullptr) {
         clientDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorService *>(this));
         CHKPV(clientDeathObserver_);
@@ -422,6 +423,7 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
         SEN_HILOGD("Can't unregister client death recipient");
         return;
     }
+    std::lock_guard<std::mutex> clientDeathObserverLock(clientDeathObserverMutex_);
     sensorClient->RemoveDeathRecipient(clientDeathObserver_);
     clientInfo_.DestroyClientPid(sensorClient);
 }

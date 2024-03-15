@@ -108,6 +108,7 @@ private:
     SensorManager &sensorManager_ = SensorManager::GetInstance();
     std::mutex uidLock_;
     // death recipient of sensor client
+    std::mutex clientDeathObserverMutex_;
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
