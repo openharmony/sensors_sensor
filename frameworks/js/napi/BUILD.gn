@@ -20,7 +20,6 @@ ohos_shared_library("libsensor") {
     "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/frameworks/js/napi/include",
     "$SUBSYSTEM_DIR/utils/common/include",
-    "THERD_PARTY_NODE/src",
   ]
   defines = [
     "APP_LOG_TAG = \"sensorJs\"",
@@ -42,7 +41,6 @@ ohos_shared_library("libsensor") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "libuv:uv",
     "napi:ace_napi",
   ]
   relative_install_dir = "module"

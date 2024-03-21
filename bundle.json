@@ -30,8 +30,7 @@
         "ipc",
         "safwk",
         "samgr",
-        "eventhandler",
-        "libuv"
+        "eventhandler"
       ],
       "third_party": []
     },
