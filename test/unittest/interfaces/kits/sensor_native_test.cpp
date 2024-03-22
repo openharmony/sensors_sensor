@@ -43,17 +43,6 @@ constexpr int32_t SLEEP_TIME_MS = 1000;
 constexpr int64_t INVALID_VALUE = -1;
 constexpr float INVALID_RESOLUTION = -1.0F;
 
-PermissionDef g_infoManagerTestPermDef = {
-    .permissionName = "ohos.permission.ACCELEROMETER",
-    .bundleName = "accesstoken_test",
-    .grantMode = 1,
-    .availableLevel = APL_NORMAL,
-    .label = "label",
-    .labelId = 1,
-    .description = "test sensor agent",
-    .descriptionId = 1
-};
-
 PermissionStateFull g_infoManagerTestState = {
     .permissionName = "ohos.permission.ACCELEROMETER",
     .isGeneral = true,
@@ -65,7 +54,7 @@ PermissionStateFull g_infoManagerTestState = {
 HapPolicyParams g_infoManagerTestPolicyPrams = {
     .apl = APL_NORMAL,
     .domain = "test.domain",
-    .permList = {g_infoManagerTestPermDef},
+    .permList = {},
     .permStateList = {g_infoManagerTestState}
 };
 
