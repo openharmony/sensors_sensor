@@ -107,5 +107,5 @@ std::unique_ptr<ActiveInfo> ActiveInfo::Unmarshalling(Parcel &parcel)
     activeInfo->SetMaxReportDelayNs(maxReportDelayNs);
     return activeInfo;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

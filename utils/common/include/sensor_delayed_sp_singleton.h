@@ -68,6 +68,6 @@ void SensorDelayedSpSingleton<T>::DestroyInstance()
         instance_ = nullptr;
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_DELAYED_SP_SINGLETON_H

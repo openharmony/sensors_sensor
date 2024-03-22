@@ -39,6 +39,6 @@ private:
     bool sensorState_ = false;
     bool permState_ = true;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_BASIC_INFO_H

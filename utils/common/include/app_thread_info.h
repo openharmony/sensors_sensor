@@ -29,6 +29,6 @@ struct AppThreadInfo {
     AppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
         : pid(pid), uid(uid), callerToken(callerToken) {};
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // APP_THREAD_INFO_H

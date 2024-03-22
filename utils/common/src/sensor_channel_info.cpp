@@ -79,5 +79,5 @@ void SensorChannelInfo::SetCmdType(const std::vector<int32_t> &cmdType)
 {
     cmdType_ = cmdType;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

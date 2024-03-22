@@ -50,6 +50,6 @@ private:
     std::mutex statusLock_;
     std::unordered_map<int32_t, SensorData> dataCacheBuf_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_H

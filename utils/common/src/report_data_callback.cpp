@@ -81,5 +81,5 @@ CircularEventBuf &ReportDataCallback::GetEventData()
 {
     return eventsBuf_;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

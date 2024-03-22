@@ -42,6 +42,6 @@ private:
     int64_t samplingPeriodNs_ { -1 };
     int64_t maxReportDelayNs_ { -1 };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // ACTIVE_INFO_H
