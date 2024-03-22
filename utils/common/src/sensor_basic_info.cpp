@@ -59,5 +59,5 @@ void SensorBasicInfo::SetPermState(bool permState)
 {
     permState_ = permState;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

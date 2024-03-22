@@ -47,6 +47,6 @@ private:
     uint32_t fifoCount_;
     std::vector<int32_t> cmdType_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_CHANNEL_INFO_H

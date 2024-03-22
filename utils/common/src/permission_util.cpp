@@ -81,5 +81,5 @@ int32_t PermissionUtil::CheckManageSensorPermission(AccessTokenID callerToken)
     }
     return ret;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

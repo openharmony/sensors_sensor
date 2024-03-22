@@ -212,5 +212,5 @@ void SensorBasicDataChannel::SetSensorStatus(bool isActive)
     isActive_ = isActive;
     return;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

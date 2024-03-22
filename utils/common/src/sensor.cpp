@@ -256,5 +256,5 @@ bool Sensor::ReadFromParcel(Parcel &parcel)
     }
     return true;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

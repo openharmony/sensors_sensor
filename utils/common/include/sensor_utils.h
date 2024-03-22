@@ -25,6 +25,6 @@ bool IsEqual(const T &left, const T &right)
     return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
 }
 
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_UTILS_H

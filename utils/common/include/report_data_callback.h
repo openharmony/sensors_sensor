@@ -41,6 +41,6 @@ public:
 };
 
 using ReportDataCb = int32_t (ReportDataCallback::*)(SensorData *sensorData, sptr<ReportDataCallback> cb);
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // REPORT_DATA_CALLBACK_H

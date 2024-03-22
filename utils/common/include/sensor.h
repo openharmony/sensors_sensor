@@ -72,6 +72,6 @@ private:
     int64_t minSamplePeriodNs_;
     int64_t maxSamplePeriodNs_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_H

@@ -43,6 +43,6 @@ private:
     void AddPermissionRecord(AccessTokenID tokenID, const std::string &permissionName, bool status);
     static std::unordered_map<int32_t, std::string> sensorPermissions_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // PERMISSION_UTIL_H

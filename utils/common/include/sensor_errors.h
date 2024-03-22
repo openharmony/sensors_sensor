@@ -317,6 +317,6 @@ private:
     } while (0)
 
 #endif
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSORS_ERRORS_H
