@@ -39,17 +39,6 @@ namespace {
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
 
-PermissionDef g_infoManagerTestPermDef = {
-    .permissionName = "ohos.permission.ACCELEROMETER",
-    .bundleName = "accesstoken_test",
-    .grantMode = 1,
-    .label = "label",
-    .labelId = 1,
-    .description = "test sensor agent",
-    .descriptionId = 1,
-    .availableLevel = APL_NORMAL
-};
-
 PermissionStateFull g_infoManagerTestState = {
     .grantFlags = {1},
     .grantStatus = {PermissionState::PERMISSION_GRANTED},
@@ -61,7 +50,7 @@ PermissionStateFull g_infoManagerTestState = {
 HapPolicyParams g_infoManagerTestPolicyPrams = {
     .apl = APL_NORMAL,
     .domain = "test.domain",
-    .permList = {g_infoManagerTestPermDef},
+    .permList = {},
     .permStateList = {g_infoManagerTestState}
 };
 
