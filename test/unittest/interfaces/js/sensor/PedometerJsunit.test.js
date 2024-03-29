@@ -69,7 +69,7 @@ describe("PedometerJsTest", function () {
         console.info('afterEach called')
         let atManager = abilityAccessCtrl.createAtManager();
         atManager.revokeUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .catch((err) => {
             console.info('err:' + JSON.stringify(err));
             expect(err.code).assertEqual(ERR_NOT_HAVE_PERMISSION);
@@ -90,7 +90,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_001---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -138,7 +138,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_002---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -183,7 +183,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_003---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -231,7 +231,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_004---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -279,7 +279,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_005---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -324,7 +324,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_006---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -368,7 +368,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_007---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -417,7 +417,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_008---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
@@ -469,7 +469,7 @@ describe("PedometerJsTest", function () {
         console.info('----------------------PedometerJsTest_009---------------------------');
         let atManager = abilityAccessCtrl.createAtManager();
         await atManager.grantUserGrantedPermission(CommonConstants.tokenID, CommonConstants.permissionNameUser,
-            CommonConstants.PermissionFlag.PERMISSION_SYSTEM_FIXED)
+            CommonConstants.PermissionFlag.PERMISSION_USER_SET)
         .then(() => {
             try {
                 sensor.getSingleSensor(sensor.SensorId.PEDOMETER, (err, data) => {
