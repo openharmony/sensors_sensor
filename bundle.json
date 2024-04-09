@@ -58,16 +58,6 @@
             ],
             "header_base": "//base/sensors/sensor/interfaces/inner_api"
           }
-        },
-        {
-          "name": "//base/sensors/sensor/interfaces/kits/c:libsensor_ndk",
-          "header": {
-            "header_files": [
-              "native_sensor_type.h",
-              "native_sensor.h"
-            ],
-            "header_base": "//base/sensors/sensor/interfaces/kits/c"
-          }
         }
       ],
       "test": [
