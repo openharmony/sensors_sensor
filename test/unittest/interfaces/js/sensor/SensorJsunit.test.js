@@ -5116,8 +5116,8 @@ describe("SensorJsTest", function () {
             });
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -5169,8 +5169,8 @@ describe("SensorJsTest", function () {
             });
         } catch(error) {
             console.info(error);
-            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })

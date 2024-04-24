@@ -92,8 +92,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -130,8 +130,8 @@ describe("SensorFrequencyJsTest", function () {
                 });
             } catch (err) {
                 console.error('Sensor is not support');
-                expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-                expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+                expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -168,8 +168,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -206,8 +206,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -244,8 +244,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -282,8 +282,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -320,8 +320,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -358,8 +358,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -396,8 +396,8 @@ describe("SensorFrequencyJsTest", function () {
             });
         } catch (err) {
             console.error('Sensor is not support');
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
+            expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
