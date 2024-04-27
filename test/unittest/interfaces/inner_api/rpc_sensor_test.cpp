@@ -87,8 +87,8 @@ void RPCDataCallbackImpl(SensorEvent *event)
         SEN_HILOGE("rpcData is nullptr");
         return;
     }
-    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u,
-        absorptionRatio:%{public}f, threshold:%{public}f, offset:%{public}f", event[0].sensorTypeId, event[0].version,
+    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u,"
+        "absorptionRatio:%{public}f, threshold:%{public}f, offset:%{public}f", event[0].sensorTypeId, event[0].version,
         event[0].dataLen, rpcData->absorptionRatio, rpcData->threshold, rpcData->offset);
 }
 
@@ -111,8 +111,8 @@ void RPCDataCallbackImpl2(SensorEvent *event)
         SEN_HILOGE("rpcData is nullptr");
         return;
     }
-    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u,
-        absorptionRatio:%{public}f, threshold:%{public}f, offset:%{public}f", event[0].sensorTypeId, event[0].version,
+    SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u,"
+        "absorptionRatio:%{public}f, threshold:%{public}f, offset:%{public}f", event[0].sensorTypeId, event[0].version,
         event[0].dataLen, rpcData->absorptionRatio, rpcData->threshold, rpcData->offset);
 }
 
