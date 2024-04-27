@@ -34,7 +34,7 @@ using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr Sensor_Type SENSOR_ID { SENSOR_TYPE_AMBIENT_LIGHT };  
+constexpr Sensor_Type SENSOR_ID { SENSOR_TYPE_AMBIENT_LIGHT };
 constexpr uint32_t SENSOR_NAME_LENGTH_MAX = 64;
 constexpr int64_t SENSOR_SAMPLE_PERIOD = 200000000;
 constexpr int32_t SLEEP_TIME_MS = 1000;
@@ -105,9 +105,10 @@ void SensorDataCallbackImpl(Sensor_Event *event)
     uint32_t length = 0;
     ret = OH_SensorEvent_GetData(event, &data, &length);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
-    SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d"
-        "intensity:%{public}f, colorTemperature:%{public}f, infraredLuminance:%{public}f",
-        sensorType, length, accuracy, data[0], data[1], data[2]);
+    SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d", sensorType, length, accuracy);
+    for (uint32_t i = 0; i < length; ++i) {
+        SEN_HILOGI("data[%{public}d]:%{public}f", i, data[i]);
+    }
 }
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_001, TestSize.Level1)

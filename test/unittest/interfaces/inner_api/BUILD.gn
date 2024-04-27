@@ -214,7 +214,9 @@ ohos_unittest("DropDetectionTest") {
 ohos_unittest("RPCSensorTest") {
   module_out_path = "sensor/interfaces/inner_api"
 
-  sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/rpc_sensor_test.cpp" ]
+  sources = [
+    "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/rpc_sensor_test.cpp",
+  ]
 
   include_dirs = [
     "$SUBSYSTEM_DIR/utils/common/include",
@@ -243,9 +245,9 @@ group("unittest") {
     ":DropDetectionTest",
     ":HeadPostureTest",
     ":PostureTest",
+    ":RPCSensorTest",
     ":SensorAgentTest",
     ":SensorAlgorithmTest",
     ":SensorPowerTest",
-    ":RPCSensorTest"
   ]
 }
