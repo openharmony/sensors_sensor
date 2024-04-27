@@ -100,6 +100,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_DEVICE_ORIENTATION = 279,    /**< Device orientation sensor */
     SENSOR_TYPE_ID_WEAR_DETECTION = 280,        /**< Wear detection sensor */
     SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED = 281,   /**< Uncalibrated acceleration sensor */
+    SENSOR_TYPE_ID_RPC = 282,     /**< Radio power control sensor */
     SENSOR_TYPE_ID_MAX = 30,      /**< Maximum number of sensor type IDs*/
 } SensorTypeId;
 
@@ -417,6 +418,8 @@ typedef struct ProximityData {
  */
 typedef struct AmbientLightData {
     float intensity = 0.0;
+    float colorTemperature = 0.0;
+    float infraredLuminance = 0.0;
 } AmbientLightData;
 
 /**
@@ -461,6 +464,16 @@ typedef struct ColorData {
 typedef struct SarData {
     float absorptionRatio = 0.0;
 } SarData;
+
+/**
+ * @brief Defines the struct of the data reported by the RPC sensor.
+ * This sensor measures the radio power control.
+ */
+typedef struct RPCData {
+    float absorptionRatio = 0.0;
+    float threshold = 0.0;
+    float offset = 0.0;
+} RPCData;
 
 /**
  * @brief Defines the struct of the data reported by the posture sensor.
