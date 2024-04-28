@@ -32,40 +32,16 @@ namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
-using namespace Security::AccessToken;
-using Security::AccessToken::AccessTokenID;
 
 namespace {
-constexpr Sensor_Type SENSOR_ID { SENSOR_TYPE_ACCELEROMETER };
+constexpr Sensor_Type SENSOR_ID { SENSOR_TYPE_AMBIENT_LIGHT };
 constexpr uint32_t SENSOR_NAME_LENGTH_MAX = 64;
 constexpr int64_t SENSOR_SAMPLE_PERIOD = 200000000;
 constexpr int32_t SLEEP_TIME_MS = 1000;
 constexpr int64_t INVALID_VALUE = -1;
 constexpr float INVALID_RESOLUTION = -1.0F;
-
-PermissionStateFull g_infoManagerTestState = {
-    .permissionName = "ohos.permission.ACCELEROMETER",
-    .isGeneral = true,
-    .resDeviceID = {"local"},
-    .grantStatus = {PermissionState::PERMISSION_GRANTED},
-    .grantFlags = {1}
-};
-
-HapPolicyParams g_infoManagerTestPolicyPrams = {
-    .apl = APL_NORMAL,
-    .domain = "test.domain",
-    .permList = {},
-    .permStateList = {g_infoManagerTestState}
-};
-
-HapInfoParams g_infoManagerTestInfoParms = {
-    .userID = 1,
-    .bundleName = "sensoragent_test",
-    .instIndex = 0,
-    .appIDDesc = "sensorAgentTest"
-};
-
 Sensor_Subscriber *g_user = nullptr;
+std::atomic_bool g_existAmbientLight = false;
 }  // namespace
 
 class SensorAgentTest : public testing::Test {
@@ -74,34 +50,41 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
-private:
-    static AccessTokenID tokenID_;
 };
-
-AccessTokenID SensorAgentTest::tokenID_ = 0;
 
 void SensorAgentTest::SetUpTestCase()
 {
-    AccessTokenIDEx tokenIdEx = {0};
-    tokenIdEx = AccessTokenKit::AllocHapToken(g_infoManagerTestInfoParms, g_infoManagerTestPolicyPrams);
-    tokenID_ = tokenIdEx.tokenIdExStruct.tokenID;
-    ASSERT_NE(0, tokenID_);
-    ASSERT_EQ(0, SetSelfTokenID(tokenID_));
-}
-
-void SensorAgentTest::TearDownTestCase()
-{
-    int32_t ret = AccessTokenKit::DeleteToken(tokenID_);
-    if (tokenID_ != 0) {
-        ASSERT_EQ(RET_SUCCESS, ret);
+    SEN_HILOGI("SensorAgentTest SetUpTestCase in");
+    uint32_t count = 0;
+    int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    Sensor_Info **sensors = OH_Sensor_CreateInfos(count);
+    ASSERT_NE(sensors, nullptr);
+    ret = OH_Sensor_GetInfos(sensors, &count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    for (uint32_t i = 0; i < count; ++i) {
+        Sensor_Type sensorType;
+        ret = OH_SensorInfo_GetType(sensors[i], &sensorType);
+        ASSERT_EQ(ret, SENSOR_SUCCESS);
+        if (sensorType == SENSOR_TYPE_AMBIENT_LIGHT) {
+            g_existAmbientLight = true;
+            SEN_HILOGI("Exist ambient light sensor");
+            break;
+        }
     }
+    if (!g_existAmbientLight) {
+        SEN_HILOGI("Not exist ambient light sensor");
+    }
+    ret = OH_Sensor_DestroyInfos(sensors, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    SEN_HILOGI("SensorAgentTest SetUpTestCase end");
 }
 
-void SensorAgentTest::SetUp()
-{}
+void SensorAgentTest::TearDownTestCase() {}
 
-void SensorAgentTest::TearDown()
-{}
+void SensorAgentTest::SetUp() {}
+
+void SensorAgentTest::TearDown() {}
 
 void SensorDataCallbackImpl(Sensor_Event *event)
 {
@@ -122,9 +105,10 @@ void SensorDataCallbackImpl(Sensor_Event *event)
     uint32_t length = 0;
     ret = OH_SensorEvent_GetData(event, &data, &length);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
-    SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d"
-        "x:%{public}f, y:%{public}f, z:%{public}f", sensorType, length, accuracy,
-        data[0], data[1], data[2]);
+    SEN_HILOGI("sensorType:%{public}d, dataLen:%{public}d, accuracy:%{public}d", sensorType, length, accuracy);
+    for (uint32_t i = 0; i < length; ++i) {
+        SEN_HILOGI("data[%{public}d]:%{public}f", i, data[i]);
+    }
 }
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_001, TestSize.Level1)
@@ -178,33 +162,35 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_002, TestSize.Level1)
 HWTEST_F(SensorAgentTest, OH_Sensor_Subscribe_001, TestSize.Level1)
 {
     SEN_HILOGI("OH_Sensor_Subscribe_001 in");
-    g_user = OH_Sensor_CreateSubscriber();
-    int32_t ret = OH_SensorSubscriber_SetCallback(g_user, SensorDataCallbackImpl);
-    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    if (g_existAmbientLight) {
+        g_user = OH_Sensor_CreateSubscriber();
+        int32_t ret = OH_SensorSubscriber_SetCallback(g_user, SensorDataCallbackImpl);
+        ASSERT_EQ(ret, SENSOR_SUCCESS);
 
-    Sensor_SubscriptionId *id = OH_Sensor_CreateSubscriptionId();
-    ret = OH_SensorSubscriptionId_SetType(id, SENSOR_ID);
-    ASSERT_EQ(ret, SENSOR_SUCCESS);
+        Sensor_SubscriptionId *id = OH_Sensor_CreateSubscriptionId();
+        ret = OH_SensorSubscriptionId_SetType(id, SENSOR_ID);
+        ASSERT_EQ(ret, SENSOR_SUCCESS);
 
-    Sensor_SubscriptionAttribute *attr = OH_Sensor_CreateSubscriptionAttribute();
-    ret = OH_SensorSubscriptionAttribute_SetSamplingInterval(attr, SENSOR_SAMPLE_PERIOD);
-    ASSERT_EQ(ret, SENSOR_SUCCESS);
+        Sensor_SubscriptionAttribute *attr = OH_Sensor_CreateSubscriptionAttribute();
+        ret = OH_SensorSubscriptionAttribute_SetSamplingInterval(attr, SENSOR_SAMPLE_PERIOD);
+        ASSERT_EQ(ret, SENSOR_SUCCESS);
 
-    ret = OH_Sensor_Subscribe(id, attr, g_user);
-    ASSERT_EQ(ret, SENSOR_SUCCESS);
+        ret = OH_Sensor_Subscribe(id, attr, g_user);
+        ASSERT_EQ(ret, SENSOR_SUCCESS);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
-    ret = OH_Sensor_Unsubscribe(id, g_user);
-    ASSERT_EQ(ret, SENSOR_SUCCESS);
-    if (id != nullptr) {
-        OH_Sensor_DestroySubscriptionId(id);
-    }
-    if (attr != nullptr) {
-        OH_Sensor_DestroySubscriptionAttribute(attr);
-    }
-    if (g_user != nullptr) {
-        OH_Sensor_DestroySubscriber(g_user);
-        g_user = nullptr;
+        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME_MS));
+        ret = OH_Sensor_Unsubscribe(id, g_user);
+        ASSERT_EQ(ret, SENSOR_SUCCESS);
+        if (id != nullptr) {
+            OH_Sensor_DestroySubscriptionId(id);
+        }
+        if (attr != nullptr) {
+            OH_Sensor_DestroySubscriptionAttribute(attr);
+        }
+        if (g_user != nullptr) {
+            OH_Sensor_DestroySubscriber(g_user);
+            g_user = nullptr;
+        }
     }
 }
 

@@ -210,6 +210,34 @@ ohos_unittest("DropDetectionTest") {
     "ipc:ipc_single",
   ]
 }
+
+ohos_unittest("RPCSensorTest") {
+  module_out_path = "sensor/interfaces/inner_api"
+
+  sources = [
+    "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/rpc_sensor_test.cpp",
+  ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [
@@ -217,6 +245,7 @@ group("unittest") {
     ":DropDetectionTest",
     ":HeadPostureTest",
     ":PostureTest",
+    ":RPCSensorTest",
     ":SensorAgentTest",
     ":SensorAlgorithmTest",
     ":SensorPowerTest",
