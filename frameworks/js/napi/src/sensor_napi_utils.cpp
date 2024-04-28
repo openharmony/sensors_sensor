@@ -160,7 +160,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { 0, { "x" } },
     { SENSOR_TYPE_ID_ACCELEROMETER, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_GYROSCOPE, { "x", "y", "z" } },
-    { SENSOR_TYPE_ID_AMBIENT_LIGHT, { "intensity" } },
+    { SENSOR_TYPE_ID_AMBIENT_LIGHT, { "intensity", "colorTemperature", "infraredLuminance" } },
     { SENSOR_TYPE_ID_MAGNETIC_FIELD, { "x", "y", "z" } },
     { SENSOR_TYPE_ID_BAROMETER, { "pressure" } },
     { SENSOR_TYPE_ID_HALL, { "status" } },

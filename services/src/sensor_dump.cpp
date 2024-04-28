@@ -86,6 +86,7 @@ std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_POSTURE, "POSTURE" },
     { SENSOR_TYPE_ID_HEADPOSTURE, "HEAD POSTURE" },
     { SENSOR_TYPE_ID_DROP_DETECTION, "DROP DETECTION" },
+    { SENSOR_TYPE_ID_RPC, "RPC" },
 };
 
 void SensorDump::RunSensorDump(int32_t fd, int32_t optionIndex, const std::vector<std::string> &args, char **argv)
@@ -292,8 +293,6 @@ void SensorDump::DumpCurrentTime(int32_t fd)
 int32_t SensorDump::GetDataDimension(int32_t sensorId)
 {
     switch (sensorId) {
-        case SENSOR_TYPE_ID_AMBIENT_LIGHT:
-        case SENSOR_TYPE_ID_AMBIENT_LIGHT1:
         case SENSOR_TYPE_ID_BAROMETER:
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_HALL_EXT:

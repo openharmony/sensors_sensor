@@ -22,7 +22,10 @@
 
 #include "hisysevent.h"
 #include "iservice_registry.h"
+#include "mem_mgr_client.h"
+#include "mem_mgr_proxy.h"
 #include "permission_util.h"
+
 #include "securec.h"
 #include "sensor.h"
 #include "sensor_dump.h"
@@ -40,6 +43,10 @@ auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_sensorService.GetRefPtr());
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
+constexpr int32_t SA_ID = 3601;
+constexpr int32_t SYSTEM_STATUS_START = 1;
+constexpr int32_t SYSTEM_STATUS_STOP = 0;
+constexpr int32_t SYSTEM_PROCESS_TYPE = 1;
 std::atomic_bool g_isRegister = false;
 } // namespace
 
@@ -54,6 +61,15 @@ SensorService::~SensorService() {}
 void SensorService::OnDump()
 {
     SEN_HILOGI("OnDump");
+}
+
+void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
+{
+    SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
+    if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
+        Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
+            SYSTEM_PROCESS_TYPE, SYSTEM_STATUS_START, SA_ID);
+    }
 }
 
 void SensorService::OnStart()
@@ -89,6 +105,7 @@ void SensorService::OnStart()
     sensorManager_.InitSensorMap(sensorMap_);
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     state_ = SensorServiceState::STATE_RUNNING;
+    AddSystemAbilityListener(MEMORY_MANAGER_SA_ID);
 }
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
@@ -155,6 +172,8 @@ void SensorService::OnStop()
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     UnregisterPermCallback();
+    Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
+        SYSTEM_PROCESS_TYPE, SYSTEM_STATUS_STOP, SA_ID);
 }
 
 void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid)

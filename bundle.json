@@ -28,6 +28,7 @@
         "access_token",
         "hitrace",
         "ipc",
+        "memmgr",
         "safwk",
         "samgr",
         "eventhandler"

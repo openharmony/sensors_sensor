@@ -35,7 +35,12 @@ export default class CommonConstants {
   /**
    * Exception code of service
    */
-  static SERVICE_EXCEPTION_CODE = 14500101
+  static SERVICE_EXCEPTION_CODE = 14500101;
+
+  /**
+   * Exception code of sensor not supported
+   */
+  static SENSOR_NO_SUPPORT = 14500102;
 
   /**
    * eps
