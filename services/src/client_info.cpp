@@ -730,6 +730,7 @@ int32_t ClientInfo::DelActiveInfoCBPid(int32_t pid)
 std::vector<int32_t> ClientInfo::GetActiveInfoCBPid()
 {
     std::vector<int32_t> activeInfoCBPids;
+    std::lock_guard<std::mutex> activeInfoCBPidLock(activeInfoCBPidMutex_);
     for (auto it = activeInfoCBPidSet_.begin(); it != activeInfoCBPidSet_.end(); ++it) {
         activeInfoCBPids.push_back(*it);
     }
