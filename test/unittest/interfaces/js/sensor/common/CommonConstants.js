@@ -28,6 +28,11 @@ export default class CommonConstants {
   static SERVICE_EXCEPTION_MSG = 'Service exception.';
 
   /**
+   * Excption message of sensorId no support
+   */
+    static SENSOR_NO_SUPPOR_MSG = 'The sensor is not supported by the device.';
+
+  /**
    * Error code of parameter
    */
   static PARAMETER_ERROR_CODE = 401;
@@ -41,6 +46,11 @@ export default class CommonConstants {
    * Exception code of sensor not supported
    */
   static SENSOR_NO_SUPPORT = 14500102;
+
+  /**
+   * Exception code of sensorId no support
+   */
+  static SENSOR_NO_SUPPORT_CODE = 14500102
 
   /**
    * eps

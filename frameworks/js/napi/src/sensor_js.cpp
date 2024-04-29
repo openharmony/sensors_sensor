@@ -1069,7 +1069,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
             }
         }
         if (asyncCallbackInfo->sensorInfos.empty()) {
-            ThrowErr(env, PARAMETER_ERROR, "Can't find the sensorId");
+            ThrowErr(env, SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
             return nullptr;
         }
     }
@@ -1116,7 +1116,7 @@ static napi_value GetSingleSensorSync(napi_env env, napi_callback_info info)
         }
     }
     if (sensorInfoVec.empty()) {
-        ThrowErr(env, SENSOR_NO_SUPPORT, "Can't find the sensorId");
+        ThrowErr(env, SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
         return result;
     }
     if (!ConvertToSensorInfo(env, sensorInfoVec[0], result)) {
