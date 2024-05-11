@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,11 +41,6 @@ export default class CommonConstants {
    * Exception code of service
    */
   static SERVICE_EXCEPTION_CODE = 14500101;
-
-  /**
-   * Exception code of sensor not supported
-   */
-  static SENSOR_NO_SUPPORT = 14500102;
 
   /**
    * Exception code of sensorId no support
