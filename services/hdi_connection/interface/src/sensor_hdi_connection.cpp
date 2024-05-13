@@ -41,7 +41,8 @@ const std::string VERSION_NAME = "1.0.1";
 std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_COLOR,
     SENSOR_TYPE_ID_SAR,
-    SENSOR_TYPE_ID_HEADPOSTURE
+    SENSOR_TYPE_ID_HEADPOSTURE,
+    SENSOR_TYPE_ID_PROXIMITY1
 };
 #endif // BUILD_VARIANT_ENG
 } // namespace
@@ -177,6 +178,23 @@ Sensor SensorHdiConnection::GenerateHeadPostureSensor()
     sensorHeadPosture.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
     return sensorHeadPosture;
 }
+
+Sensor SensorHdiConnection::GenerateProximitySensor()
+{
+    Sensor sensorProximity;
+    sensorProximity.SetSensorId(SENSOR_TYPE_ID_PROXIMITY1);
+    sensorProximity.SetSensorTypeId(SENSOR_TYPE_ID_PROXIMITY1);
+    sensorProximity.SetFirmwareVersion(VERSION_NAME);
+    sensorProximity.SetHardwareVersion(VERSION_NAME);
+    sensorProximity.SetMaxRange(MAX_RANGE);
+    sensorProximity.SetSensorName("sensor_proximity1");
+    sensorProximity.SetVendorName("default_proximity1");
+    sensorProximity.SetResolution(RESOLITION);
+    sensorProximity.SetPower(POWER);
+    sensorProximity.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
+    sensorProximity.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
+    return sensorProximity;
+}
 #endif // BUILD_VARIANT_ENG
 
 int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
@@ -198,6 +216,9 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
                 break;
             case SENSOR_TYPE_ID_HEADPOSTURE:
                 sensorList.push_back(GenerateHeadPostureSensor());
+                break;
+            case SENSOR_TYPE_ID_PROXIMITY1:
+                sensorList.push_back(GenerateProximitySensor());
                 break;
             default:
                 break;

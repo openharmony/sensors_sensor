@@ -44,6 +44,7 @@ private:
     static void GenerateColorEvent();
     static void GenerateSarEvent();
     static void GenerateHeadPostureEvent();
+    static void GenerateProximityEvent();
     static std::vector<int32_t> enableSensors_;
     std::thread dataReportThread_;
     static std::vector<RecordSensorCallback> callbacks_;

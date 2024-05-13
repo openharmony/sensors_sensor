@@ -52,6 +52,7 @@ private:
     Sensor GenerateColorSensor();
     Sensor GenerateSarSensor();
     Sensor GenerateHeadPostureSensor();
+    Sensor GenerateProximitySensor();
     std::atomic_bool hdiConnectionStatus_ = false;
 };
 } // namespace Sensors
