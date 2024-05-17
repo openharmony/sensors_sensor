@@ -41,12 +41,14 @@ std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_ACCELEROMETER,
     SENSOR_TYPE_ID_COLOR,
     SENSOR_TYPE_ID_SAR,
-    SENSOR_TYPE_ID_HEADPOSTURE
+    SENSOR_TYPE_ID_HEADPOSTURE,
+    SENSOR_TYPE_ID_PROXIMITY1
 };
 float g_accData[3];
 float g_colorData[2];
 float g_sarData[1];
 float g_headPostureData[5];
+float g_proximityData[1];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
     .option = 3,
@@ -66,6 +68,11 @@ SensorEvent g_headPostureEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_HEADPOSTURE,
     .option = 3,
     .dataLen = 20
+};
+SensorEvent g_proximityEvent = {
+    .sensorTypeId = SENSOR_TYPE_ID_PROXIMITY1,
+    .option = 3,
+    .dataLen = 4
 };
 } // namespace
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -89,6 +96,9 @@ void HdiServiceImpl::GenerateEvent()
                 break;
             case SENSOR_TYPE_ID_HEADPOSTURE:
                 GenerateHeadPostureEvent();
+                break;
+            case SENSOR_TYPE_ID_PROXIMITY1:
+                GenerateProximityEvent();
                 break;
             default:
                 SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
@@ -165,6 +175,15 @@ void HdiServiceImpl::GenerateHeadPostureEvent()
     g_headPostureEvent.data = reinterpret_cast<uint8_t *>(g_headPostureData);
 }
 
+void HdiServiceImpl::GenerateProximityEvent()
+{
+    std::random_device rd;
+    std::default_random_engine eng(rd());
+    std::uniform_real_distribution<float> distr(0.0, MAX_RANGE);
+    g_proximityData[0] = distr(eng);
+    g_proximityEvent.data = reinterpret_cast<uint8_t *>(g_proximityData);
+}
+
 int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
 {
     CALL_LOG_ENTER;
@@ -197,6 +216,9 @@ void HdiServiceImpl::DataReportThread()
                         break;
                     case SENSOR_TYPE_ID_HEADPOSTURE:
                         it(&g_headPostureEvent);
+                        break;
+                    case SENSOR_TYPE_ID_PROXIMITY1:
+                        it(&g_proximityEvent);
                         break;
                     default:
                         SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);

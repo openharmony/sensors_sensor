@@ -80,6 +80,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_SAR = 15,                   /**< Sar sensor */
     SENSOR_TYPE_ID_AMBIENT_LIGHT1 = 16,        /**< Secondary ambient light sensor */
     SENSOR_TYPE_ID_HALL_EXT = 17,              /**< Extended hall effect sensor */
+    SENSOR_TYPE_ID_PROXIMITY1 = 18,            /**< Secondary proximity sensor */
     SENSOR_TYPE_ID_PHYSICAL_MAX = 0xFF,        /**< Maximum type ID of a physical sensor */
     SENSOR_TYPE_ID_ORIENTATION = 256,          /**< Orientation sensor */
     SENSOR_TYPE_ID_GRAVITY = 257,              /**< Gravity sensor */
