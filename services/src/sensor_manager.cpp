@@ -134,10 +134,6 @@ SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingP
     }
     int64_t curSamplingPeriodNs =
         (samplingPeriodNs < it->second.GetMinSamplePeriodNs()) ? it->second.GetMinSamplePeriodNs() : samplingPeriodNs;
-    if (it->second.GetMaxSamplePeriodNs() != 0) {
-        curSamplingPeriodNs = (samplingPeriodNs > it->second.GetMaxSamplePeriodNs()) ? it->second.GetMaxSamplePeriodNs()
-                                                                                     : curSamplingPeriodNs;
-    }
     int32_t maxEventCount = it->second.GetFifoMaxEventCount();
     if ((samplingPeriodNs == 0) || (maxEventCount > (INT64_MAX / samplingPeriodNs))) {
         SEN_HILOGE("Failed, samplingPeriodNs overflow");
