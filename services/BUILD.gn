@@ -63,6 +63,7 @@ ohos_shared_library("libsensor_service") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 
   if (hdf_drivers_interface_sensor) {
@@ -146,6 +147,7 @@ ohos_static_library("libsensor_service_static") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 
   if (hdf_drivers_interface_sensor) {
