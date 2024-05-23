@@ -69,6 +69,7 @@ public:
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
+    void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
 
     class PermStateChangeCb : public Security::AccessToken::PermStateChangeCallbackCustomize {
     public:

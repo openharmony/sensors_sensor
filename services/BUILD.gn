@@ -62,6 +62,7 @@ ohos_shared_library("libsensor_service") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
+    "memmgr:memmgrclient",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
@@ -146,6 +147,7 @@ ohos_static_library("libsensor_service_static") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
+    "memmgr:memmgrclient",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
   ]
