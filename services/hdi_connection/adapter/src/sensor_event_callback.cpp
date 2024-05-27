@@ -54,7 +54,8 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         .mode = event.mode,
         .dataLen = event.dataLen
     };
-    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY) {
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY ||
+        sensorData.sensorTypeId == SENSOR_TYPE_ID_DROP_DETECTION) {
         sensorData.mode = SENSOR_ON_CHANGE;
     }
     CHKPR(sensorData.data, ERR_NO_INIT);
