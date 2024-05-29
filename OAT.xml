@@ -67,7 +67,8 @@
                 <filteritem type="filepath" name="interfaces/plugin/test/sensor_js_test_hap/entry/src/ohosTest/resources/base/media/icon.png" desc="js文件，不参与打包不影响兼容性"/>
                 <filteritem type="filepath" name="interfaces/plugin/test/sensor_js_test_hap/entry/src/main/resources/base/media/icon.png" desc="js文件，不参与打包不影响兼容性"/>
                 <filteritem type="filepath" name="interfaces/plugin/test/sensor_js_test_hap/gradle/wrapper/gradle-wrapper.jar" desc="js文件，不参与打包不影响兼容性"/>
-
+                <filteritem type="filepath" name="figures/en-us_image_0000001199027515.png" desc="png文件，不参与打包不影响兼容性"/>
+                <filteritem type="filepath" name="figures/zh-cn_image_0000001199027515.png" desc="png文件，不参与打包不影响兼容性"/>
             </filefilter>
 
         </filefilterlist>
