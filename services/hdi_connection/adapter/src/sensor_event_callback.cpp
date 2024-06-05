@@ -29,7 +29,9 @@ std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>(
 constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
 constexpr int64_t LOG_INTERVAL = 60000000000;
 enum {
+    ONE_DIMENSION = 1,
     TWO_DIMENSION = 2,
+    THREE_DIMENSION = 3,
     SEVEN_DIMENSION = 7,
     DEFAULT_DIMENSION = 16
 };
@@ -86,7 +88,8 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 
 void SensorEventCallback::ControlSensorPrint(const SensorData &sensorData)
 {
-    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT || sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY
+        || sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL) {
         PrintSensorData(sensorData);
     }
     if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_POSTURE)
@@ -94,13 +97,18 @@ void SensorEventCallback::ControlSensorPrint(const SensorData &sensorData)
         PrintSensorData(sensorData);
         postureLastTs_ = sensorData.timestamp;
     }
+    if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT)
+        && ((ambientLightLastTs_ == 0) || (sensorData.timestamp - ambientLightLastTs_ >= LOG_INTERVAL))) {
+        PrintSensorData(sensorData);
+        ambientLightLastTs_ = sensorData.timestamp;
+    }
 }
 
 void SensorEventCallback::PrintSensorData(const SensorData &sensorData)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + "\n";
-    str += "timestamp: " + std::to_string(sensorData.timestamp) + "\n";
+    str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + ", ";
+    str += "timestamp: " + std::to_string(sensorData.timestamp) + ", ";
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
     auto data = reinterpret_cast<const float *>(sensorData.data);
     for (int32_t i = 0; i < dataDim; ++i) {
@@ -117,10 +125,15 @@ void SensorEventCallback::PrintSensorData(const SensorData &sensorData)
 int32_t SensorEventCallback::GetDataDimension(int32_t sensorId)
 {
     switch (sensorId) {
+        case SENSOR_TYPE_ID_HALL:
+        case SENSOR_TYPE_ID_PROXIMITY:
+            return ONE_DIMENSION;
         case SENSOR_TYPE_ID_HALL_EXT:
             return TWO_DIMENSION;
         case SENSOR_TYPE_ID_POSTURE:
             return SEVEN_DIMENSION;
+        case SENSOR_TYPE_ID_AMBIENT_LIGHT:
+            return THREE_DIMENSION;
         default:
             SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, DEFAULT_DIMENSION);
             return DEFAULT_DIMENSION;
