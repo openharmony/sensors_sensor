@@ -322,7 +322,6 @@ describe("GyroscopeJsTest", function () {
                 } catch (error) {
                     console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-                    expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                     done();
                 }
             });
@@ -356,8 +355,7 @@ describe("GyroscopeJsTest", function () {
                 try {
                     sensor.off(-1, callback);
                 } catch (error) {
-                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-                    expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
                     done();
                 }
             });

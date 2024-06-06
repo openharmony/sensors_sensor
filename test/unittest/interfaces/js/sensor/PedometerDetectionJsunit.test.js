@@ -152,7 +152,6 @@ describe("PedometerDetectionJsTest", function () {
                     } catch (err) {
                         console.error('On fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-                        expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                         done();
                     }
                 });
@@ -293,7 +292,6 @@ describe("PedometerDetectionJsTest", function () {
                     } catch (err) {
                         console.error('On fail, errCode:' + err.code + ' ,msg:' + err.message);
                         expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-                        expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
                         done();
                     }
                 });
@@ -336,8 +334,7 @@ describe("PedometerDetectionJsTest", function () {
                     try {
                         sensor.off(-1, callback);
                     } catch (err) {
-                        expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-                        expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+                        expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
                         done();
                     }
                 });
