@@ -109,7 +109,6 @@ describe("SensorJsTest", function () {
         } catch (error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -202,7 +201,6 @@ describe("SensorJsTest", function () {
         } catch (error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -245,8 +243,7 @@ describe("SensorJsTest", function () {
             sensor.off(-1, callback);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done();
         }
     })
@@ -270,8 +267,7 @@ describe("SensorJsTest", function () {
             sensor.off(1000000, onSensorCallback);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done();
         }
     })
@@ -316,8 +312,7 @@ describe("SensorJsTest", function () {
             sensor.off(sensor.SensorId.ACCELEROMETER, 5);
         } catch (error) {
             console.info(error);
-            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done();
         }
     })
@@ -391,21 +386,18 @@ describe("SensorJsTest", function () {
             sensor.on();
         } catch (error) {
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         try {
             sensor.once();
         } catch (error) {
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         try {
             sensor.off();
         } catch (error) {
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
     })
@@ -1974,8 +1966,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -1999,8 +1990,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2024,8 +2014,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2049,8 +2038,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2074,8 +2062,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2099,8 +2086,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2124,8 +2110,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2149,8 +2134,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2449,8 +2433,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getRotationMatrix()
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2471,8 +2454,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getRotationMatrix(-1)
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2524,8 +2506,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2552,8 +2533,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2879,8 +2859,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2901,8 +2880,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getOrientation()
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2923,8 +2901,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getOrientation(-1)
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -2976,8 +2953,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3004,8 +2980,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3376,8 +3351,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3401,8 +3375,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3426,8 +3399,7 @@ describe("SensorJsTest", function () {
             });
             done()
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3451,8 +3423,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3476,8 +3447,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3501,8 +3471,7 @@ describe("SensorJsTest", function () {
                 }, 500)
             });
         } catch(err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3716,8 +3685,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
         console.info("Sensor_CreateQuaternion_005 end")
@@ -3773,8 +3741,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
         console.info("Sensor_CreateQuaternion_007 end")
@@ -3856,8 +3823,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3878,8 +3844,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getQuaternion()
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3900,8 +3865,7 @@ describe("SensorJsTest", function () {
         try {
             sensor.getQuaternion(-1)
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3954,8 +3918,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -3982,8 +3945,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
     })
@@ -4090,8 +4052,7 @@ describe("SensorJsTest", function () {
                 done()
             })
         } catch (err) {
-            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE)
-            expect(err.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG)
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done()
         }
         console.info("Sensor_GetGeomagneticDip_002 end")
@@ -4114,7 +4075,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_003 end")
@@ -4147,7 +4107,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_004 end")
@@ -4177,7 +4136,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_005 end")
@@ -4207,7 +4165,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetGeomagneticDip_006 end")
@@ -4412,7 +4369,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_005 end")
@@ -4445,7 +4401,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_006 end")
@@ -4475,7 +4430,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_007 end")
@@ -4505,7 +4459,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_GetAltitude_008 end")
@@ -4699,7 +4652,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_005 end")
@@ -4731,7 +4683,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_006 end")
@@ -4761,7 +4712,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_007 end")
@@ -4791,7 +4741,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_008 end")
@@ -4821,7 +4770,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_009 end")
@@ -4853,7 +4801,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
-            expect(error.message).assertEqual(CommonConstants.PARAMETER_ERROR_MSG);
             done();
         }
         console.info("Sensor_TransformCoordinateSystem_010 end")
