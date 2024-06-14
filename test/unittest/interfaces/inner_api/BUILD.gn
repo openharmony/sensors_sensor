@@ -32,8 +32,6 @@ ohos_unittest("SensorAgentTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
@@ -41,6 +39,8 @@ ohos_unittest("SensorAgentTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -61,12 +61,12 @@ ohos_unittest("SensorAlgorithmTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -94,8 +94,6 @@ ohos_unittest("SensorPowerTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
@@ -103,6 +101,8 @@ ohos_unittest("SensorPowerTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -123,12 +123,12 @@ ohos_unittest("PostureTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -150,12 +150,12 @@ ohos_unittest("HeadPostureTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -175,12 +175,12 @@ ohos_unittest("Ambientlight1Test") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -200,12 +200,12 @@ ohos_unittest("DropDetectionTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -227,12 +227,12 @@ ohos_unittest("RPCSensorTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
@@ -254,12 +254,12 @@ ohos_unittest("Proximity1Test") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
