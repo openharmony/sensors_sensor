@@ -40,7 +40,7 @@ sptr<ISensorInterface> g_sensorInterface = nullptr;
 sptr<ISensorCallback> g_eventCallback = nullptr;
 std::map<int32_t, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
-constexpr int32_t GET_HDI_SERVICE_COUNT = 5;
+constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
 constexpr uint32_t WAIT_MS = 200;
 constexpr int32_t HEADPOSTURE_FIFO_COUNT = 5;
 }  // namespace
