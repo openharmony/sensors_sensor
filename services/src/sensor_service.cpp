@@ -95,15 +95,15 @@ void SensorService::OnStart()
     if (!InitSensorPolicy()) {
         SEN_HILOGE("Init sensor policy error");
     }
-    if (!SystemAbility::Publish(SensorDelayedSpSingleton<SensorService>::GetInstance())) {
-        SEN_HILOGE("Publish SensorService error");
-        return;
-    }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     sensorManager_.InitSensorMap(sensorMap_, sensorDataProcesser_, reportDataCallback_);
 #else
     sensorManager_.InitSensorMap(sensorMap_);
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
+    if (!SystemAbility::Publish(SensorDelayedSpSingleton<SensorService>::GetInstance())) {
+        SEN_HILOGE("Publish SensorService error");
+        return;
+    }
     state_ = SensorServiceState::STATE_RUNNING;
     AddSystemAbilityListener(MEMORY_MANAGER_SA_ID);
 }
