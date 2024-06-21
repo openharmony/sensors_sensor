@@ -29,8 +29,6 @@ ohos_unittest("SensorNativeTest") {
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:ohsensor",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
@@ -38,6 +36,8 @@ ohos_unittest("SensorNativeTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
