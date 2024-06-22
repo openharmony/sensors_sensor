@@ -84,15 +84,35 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
         SEN_HILOGE("Client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
-    auto itFunc = baseFuncs_.find(code);
-    if (itFunc != baseFuncs_.end()) {
-        auto memberFunc = itFunc->second;
-        if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
-        }
+    switch (code) {
+        case 1:{
+            return this->_VirtualFuncA(data, reply, option);
+        }break;
+        case 2:{
+            return this->_VirtualFuncB(data, reply, option);
+        }break;
     }
     SEN_HILOGD("No member func supporting, applying default process");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+}
+
+
+int32_t SensorServiceStub::_VirtualFuncA(MessageParcel &data, MessageParcel &reply, MessageOption &option) {
+    this->VirtualFuncA();
+	return 0;
+}
+
+int32_t SensorServiceStub::_VirtualFuncB(MessageParcel &data, MessageParcel &reply, MessageOption &option) {
+    this->VirtualFuncB(1,false);
+	return 0;
+}
+int32_t SensorServiceStub::VirtualFuncA() {
+    SEN_HILOGE("SensorServiceStub::VirtualFuncA");
+    return 0;
+}
+int32_t SensorServiceStub::VirtualFuncB(int32_t slotId, bool voicMailMsgResult) {
+    SEN_HILOGE("SensorServiceStub::VirtualFuncB");
+    return 0;
 }
 
 bool SensorServiceStub::IsSystemServiceCalling()
