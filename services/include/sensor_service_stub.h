@@ -30,10 +30,6 @@ public:
     virtual ~SensorServiceStub();
     virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                     MessageOption &option) override;
-    int32_t _VirtualFuncA(MessageParcel &data, MessageParcel &reply, MessageOption &option);
-    int32_t _VirtualFuncB(MessageParcel &data, MessageParcel &reply, MessageOption &option);
-    virtual int32_t VirtualFuncA();
-    virtual int32_t VirtualFuncB(int32_t slotId, bool voicMailMsgResult);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorServiceStub);

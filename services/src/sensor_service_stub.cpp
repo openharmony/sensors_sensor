@@ -85,34 +85,51 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
         return OBJECT_NULL;
     }
     switch (code) {
-        case 1:{
-            return this->_VirtualFuncA(data, reply, option);
-        }break;
-        case 2:{
-            return this->_VirtualFuncB(data, reply, option);
-        }break;
+        case static_cast<int32_t>(SensorInterfaceCode::ENABLE_SENSOR): {
+            return SensorEnableInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DISABLE_SENSOR): {
+            return SensorDisableInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::GET_SENSOR_LIST): {
+            return GetAllSensorsInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL): {
+            return CreateDataChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL): {
+            return DestroyDataChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::SUSPEND_SENSORS): {
+            return SuspendSensorsInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::RESUME_SENSORS): {
+            return ResumeSensorsInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST): {
+            return GetActiveInfoListInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL): {
+            return CreateSocketChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL): {
+            return DestroySocketChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB): {
+            return EnableActiveInfoCBInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB): {
+            return DisableActiveInfoCBInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::RESET_SENSORS): {
+            return ResetSensorsInner(data, reply);
+        }
+        default: {
+            return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+        }
     }
     SEN_HILOGD("No member func supporting, applying default process");
-    return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
-}
-
-
-int32_t SensorServiceStub::_VirtualFuncA(MessageParcel &data, MessageParcel &reply, MessageOption &option) {
-    this->VirtualFuncA();
-	return 0;
-}
-
-int32_t SensorServiceStub::_VirtualFuncB(MessageParcel &data, MessageParcel &reply, MessageOption &option) {
-    this->VirtualFuncB(1,false);
-	return 0;
-}
-int32_t SensorServiceStub::VirtualFuncA() {
-    SEN_HILOGE("SensorServiceStub::VirtualFuncA");
-    return 0;
-}
-int32_t SensorServiceStub::VirtualFuncB(int32_t slotId, bool voicMailMsgResult) {
-    SEN_HILOGE("SensorServiceStub::VirtualFuncB");
-    return 0;
+    return ERR_OK;
 }
 
 bool SensorServiceStub::IsSystemServiceCalling()
