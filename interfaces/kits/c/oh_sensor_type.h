@@ -24,7 +24,7 @@
 
 /**
  * @file oh_sensor_type.h
- *
+ * @kit SensorServiceKit
  * @brief Declares the common sensor attributes.
  * @library libohsensor.so
  * @syscap SystemCapability.Sensors.Sensor

@@ -23,7 +23,7 @@
  */
 /**
  * @file oh_sensor.h
- *
+ * @kit SensorServiceKit
  * @brief Declares the APIs for operating sensors, including obtaining sensor information and subscribing to or
  * unsubscribing from sensor data.
  * @library libohsensor.so
