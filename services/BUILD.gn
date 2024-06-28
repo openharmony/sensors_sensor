@@ -62,10 +62,13 @@ ohos_shared_library("libsensor_service") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
-    "memmgr:memmgrclient",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
+
+  if (sensor_memmgr_enable) {
+    defines += [ "MEMMGR_ENABLE" ]
+    external_deps += [ "memmgr:memmgrclient" ]
+  }
 
   if (hdf_drivers_interface_sensor) {
     sources += [
@@ -147,10 +150,13 @@ ohos_static_library("libsensor_service_static") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
-    "memmgr:memmgrclient",
     "safwk:system_ability_fwk",
-    "samgr:samgr_proxy",
   ]
+
+  if (sensor_memmgr_enable) {
+    defines += [ "MEMMGR_ENABLE" ]
+    external_deps += [ "memmgr:memmgrclient" ]
+  }
 
   if (hdf_drivers_interface_sensor) {
     sources += [

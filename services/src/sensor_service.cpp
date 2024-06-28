@@ -22,8 +22,9 @@
 
 #include "hisysevent.h"
 #include "iservice_registry.h"
+#ifdef MEMMGR_ENABLE
 #include "mem_mgr_client.h"
-#include "mem_mgr_proxy.h"
+#endif // MEMMGR_ENABLE
 #include "permission_util.h"
 
 #include "securec.h"
@@ -43,10 +44,6 @@ auto g_sensorService = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_sensorService.GetRefPtr());
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
-constexpr int32_t SA_ID = 3601;
-constexpr int32_t SYSTEM_STATUS_START = 1;
-constexpr int32_t SYSTEM_STATUS_STOP = 0;
-constexpr int32_t SYSTEM_PROCESS_TYPE = 1;
 std::atomic_bool g_isRegister = false;
 } // namespace
 
@@ -66,10 +63,12 @@ void SensorService::OnDump()
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
+#ifdef MEMMGR_ENABLE
     if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
         Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
-            SYSTEM_PROCESS_TYPE, SYSTEM_STATUS_START, SA_ID);
+            PROCESS_TYPE_SA, PROCESS_STATUS_STARTED, SENSOR_SERVICE_ABILITY_ID);
     }
+#endif // MEMMGR_ENABLE
 }
 
 void SensorService::OnStart()
@@ -105,7 +104,9 @@ void SensorService::OnStart()
         return;
     }
     state_ = SensorServiceState::STATE_RUNNING;
+#ifdef MEMMGR_ENABLE
     AddSystemAbilityListener(MEMORY_MANAGER_SA_ID);
+#endif // MEMMGR_ENABLE
 }
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
@@ -172,8 +173,10 @@ void SensorService::OnStop()
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     UnregisterPermCallback();
-    Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
-        SYSTEM_PROCESS_TYPE, SYSTEM_STATUS_STOP, SA_ID);
+#ifdef MEMMGR_ENABLE
+    Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(), PROCESS_TYPE_SA, PROCESS_STATUS_DIED,
+        SENSOR_SERVICE_ABILITY_ID);
+#endif // MEMMGR_ENABLE
 }
 
 void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid)

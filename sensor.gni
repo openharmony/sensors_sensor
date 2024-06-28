@@ -35,6 +35,13 @@ if (!defined(global_parts_info) ||
   hdf_drivers_interface_sensor = false
 }
 
+if (!defined(global_parts_info) ||
+    defined(global_parts_info.resourceschedule_memmgr_override)) {
+  sensor_memmgr_enable = true
+} else {
+  sensor_memmgr_enable = false
+}
+
 if (build_variant == "root") {
   sensor_default_defines += [ "BUILD_VARIANT_ENG" ]
   sensor_build_eng = true
