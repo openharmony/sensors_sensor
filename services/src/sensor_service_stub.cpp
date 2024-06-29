@@ -41,7 +41,7 @@ SensorServiceStub::SensorServiceStub() {}
 
 SensorServiceStub::~SensorServiceStub() {}
 
-int32_t SensorServiceStub::BypassOnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
+int32_t SensorServiceStub::ProcessRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
     switch (code) {
@@ -88,6 +88,7 @@ int32_t SensorServiceStub::BypassOnRemoteRequest(uint32_t code, MessageParcel &d
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
         }
     }
+    SEN_HILOGD("No member func supporting, applying default process");
 }
 
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
@@ -100,8 +101,7 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
         SEN_HILOGE("Client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
-    SEN_HILOGD("No member func supporting, applying default process");
-    return BypassOnRemoteRequest(code, data, reply, option);
+    return ProcessRemoteRequest(code, data, reply, option);
 }
 
 bool SensorServiceStub::IsSystemServiceCalling()
