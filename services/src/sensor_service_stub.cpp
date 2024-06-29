@@ -37,44 +37,11 @@ namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
-SensorServiceStub::SensorServiceStub()
-{
-    CALL_LOG_ENTER;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR)] =
-        &SensorServiceStub::SensorEnableInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_SENSOR)] =
-        &SensorServiceStub::SensorDisableInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST)] =
-        &SensorServiceStub::GetAllSensorsInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL)] =
-        &SensorServiceStub::CreateDataChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL)] =
-        &SensorServiceStub::DestroyDataChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::SUSPEND_SENSORS)] =
-        &SensorServiceStub::SuspendSensorsInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::RESUME_SENSORS)] =
-        &SensorServiceStub::ResumeSensorsInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST)] =
-        &SensorServiceStub::GetActiveInfoListInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL)] =
-        &SensorServiceStub::CreateSocketChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL)] =
-        &SensorServiceStub::DestroySocketChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB)] =
-        &SensorServiceStub::EnableActiveInfoCBInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB)] =
-        &SensorServiceStub::DisableActiveInfoCBInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::RESET_SENSORS)] =
-        &SensorServiceStub::ResetSensorsInner;
-}
+SensorServiceStub::SensorServiceStub() {}
 
-SensorServiceStub::~SensorServiceStub()
-{
-    CALL_LOG_ENTER;
-    baseFuncs_.clear();
-}
+SensorServiceStub::~SensorServiceStub() {}
 
-int32_t SensorServiceStub::BypassCfiProtection(uint32_t code, MessageParcel &data, MessageParcel &reply,
+int32_t SensorServiceStub::BypassOnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
     MessageOption &option)
 {
     switch (code) {
@@ -121,8 +88,8 @@ int32_t SensorServiceStub::BypassCfiProtection(uint32_t code, MessageParcel &dat
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
         }
     }
-    return ERR_OK;
 }
+
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                            MessageOption &option)
 {
@@ -133,9 +100,8 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
         SEN_HILOGE("Client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
-    Cfi(code, data, reply, option);
     SEN_HILOGD("No member func supporting, applying default process");
-    return ERR_OK;
+    return BypassOnRemoteRequest(code, data, reply, option);
 }
 
 bool SensorServiceStub::IsSystemServiceCalling()
