@@ -85,10 +85,10 @@ int32_t SensorServiceStub::ProcessRemoteRequest(uint32_t code, MessageParcel &da
             return ResetSensorsInner(data, reply);
         }
         default: {
+            SEN_HILOGD("No member func supporting, applying default process");
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
         }
     }
-    SEN_HILOGD("No member func supporting, applying default process");
 }
 
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
