@@ -48,6 +48,7 @@ private:
     ErrCode DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
     ErrCode ResetSensorsInner(MessageParcel &data, MessageParcel &reply);
     bool IsSystemServiceCalling();
+    int32_t BypassCfiProtection(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
     bool IsSystemCalling();
     std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };

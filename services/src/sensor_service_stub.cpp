@@ -74,16 +74,9 @@ SensorServiceStub::~SensorServiceStub()
     baseFuncs_.clear();
 }
 
-int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
-                                           MessageOption &option)
+int32_t SensorServiceStub::BypassCfiProtection(uint32_t code, MessageParcel &data, MessageParcel &reply,
+    MessageOption &option)
 {
-    SEN_HILOGD("Begin, cmd:%{public}u", code);
-    std::u16string descriptor = SensorServiceStub::GetDescriptor();
-    std::u16string remoteDescriptor = data.ReadInterfaceToken();
-    if (descriptor != remoteDescriptor) {
-        SEN_HILOGE("Client and service descriptors are inconsistent");
-        return OBJECT_NULL;
-    }
     switch (code) {
         case static_cast<int32_t>(SensorInterfaceCode::ENABLE_SENSOR): {
             return SensorEnableInner(data, reply);
@@ -128,6 +121,19 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
         }
     }
+    return ERR_OK;
+}
+int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
+                                           MessageOption &option)
+{
+    SEN_HILOGD("Begin, cmd:%{public}u", code);
+    std::u16string descriptor = SensorServiceStub::GetDescriptor();
+    std::u16string remoteDescriptor = data.ReadInterfaceToken();
+    if (descriptor != remoteDescriptor) {
+        SEN_HILOGE("Client and service descriptors are inconsistent");
+        return OBJECT_NULL;
+    }
+    Cfi(code, data, reply, option);
     SEN_HILOGD("No member func supporting, applying default process");
     return ERR_OK;
 }
