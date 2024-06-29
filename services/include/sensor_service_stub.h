@@ -50,7 +50,6 @@ private:
     bool IsSystemServiceCalling();
     int32_t BypassCfiProtection(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
     bool IsSystemCalling();
-    std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };
 } // namespace Sensors
 } // namespace OHOS
