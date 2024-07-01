@@ -33,7 +33,6 @@ public:
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorServiceStub);
-    using SensorBaseFunc = ErrCode (SensorServiceStub::*)(MessageParcel &data, MessageParcel &reply);
     ErrCode SensorEnableInner(MessageParcel &data, MessageParcel &reply);
     ErrCode SensorDisableInner(MessageParcel &data, MessageParcel &reply);
     ErrCode GetAllSensorsInner(MessageParcel &data, MessageParcel &reply);
@@ -48,8 +47,8 @@ private:
     ErrCode DisableActiveInfoCBInner(MessageParcel &data, MessageParcel &reply);
     ErrCode ResetSensorsInner(MessageParcel &data, MessageParcel &reply);
     bool IsSystemServiceCalling();
+    int32_t ProcessRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply, MessageOption &option);
     bool IsSystemCalling();
-    std::unordered_map<uint32_t, SensorBaseFunc> baseFuncs_;
 };
 } // namespace Sensors
 } // namespace OHOS

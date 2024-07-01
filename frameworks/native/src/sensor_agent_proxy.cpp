@@ -84,8 +84,9 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
-    auto ret = dataChannel_->CreateSensorDataChannel(std::bind(&SensorAgentProxy::HandleSensorData,
-        this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3), nullptr);
+    auto ret = dataChannel_->CreateSensorDataChannel([this] (SensorEvent *events, int32_t num, void *data) {
+        this->HandleSensorData(events, num, data);
+    }, nullptr);
     if (ret != ERR_OK) {
         SEN_HILOGE("Create data channel failed, ret:%{public}d", ret);
         return ret;

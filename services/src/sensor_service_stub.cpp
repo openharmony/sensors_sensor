@@ -37,41 +37,58 @@ namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
-SensorServiceStub::SensorServiceStub()
-{
-    CALL_LOG_ENTER;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR)] =
-        &SensorServiceStub::SensorEnableInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_SENSOR)] =
-        &SensorServiceStub::SensorDisableInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST)] =
-        &SensorServiceStub::GetAllSensorsInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL)] =
-        &SensorServiceStub::CreateDataChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL)] =
-        &SensorServiceStub::DestroyDataChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::SUSPEND_SENSORS)] =
-        &SensorServiceStub::SuspendSensorsInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::RESUME_SENSORS)] =
-        &SensorServiceStub::ResumeSensorsInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST)] =
-        &SensorServiceStub::GetActiveInfoListInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL)] =
-        &SensorServiceStub::CreateSocketChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL)] =
-        &SensorServiceStub::DestroySocketChannelInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB)] =
-        &SensorServiceStub::EnableActiveInfoCBInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB)] =
-        &SensorServiceStub::DisableActiveInfoCBInner;
-    baseFuncs_[static_cast<uint32_t>(SensorInterfaceCode::RESET_SENSORS)] =
-        &SensorServiceStub::ResetSensorsInner;
-}
+SensorServiceStub::SensorServiceStub() {}
 
-SensorServiceStub::~SensorServiceStub()
+SensorServiceStub::~SensorServiceStub() {}
+
+int32_t SensorServiceStub::ProcessRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
+    MessageOption &option)
 {
-    CALL_LOG_ENTER;
-    baseFuncs_.clear();
+    switch (code) {
+        case static_cast<int32_t>(SensorInterfaceCode::ENABLE_SENSOR): {
+            return SensorEnableInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DISABLE_SENSOR): {
+            return SensorDisableInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::GET_SENSOR_LIST): {
+            return GetAllSensorsInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL): {
+            return CreateDataChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL): {
+            return DestroyDataChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::SUSPEND_SENSORS): {
+            return SuspendSensorsInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::RESUME_SENSORS): {
+            return ResumeSensorsInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::GET_ACTIVE_INFO_LIST): {
+            return GetActiveInfoListInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL): {
+            return CreateSocketChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL): {
+            return DestroySocketChannelInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB): {
+            return EnableActiveInfoCBInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB): {
+            return DisableActiveInfoCBInner(data, reply);
+        }
+        case static_cast<int32_t>(SensorInterfaceCode::RESET_SENSORS): {
+            return ResetSensorsInner(data, reply);
+        }
+        default: {
+            SEN_HILOGD("No member func supporting, applying default process");
+            return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+        }
+    }
 }
 
 int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
@@ -84,15 +101,7 @@ int32_t SensorServiceStub::OnRemoteRequest(uint32_t code, MessageParcel &data, M
         SEN_HILOGE("Client and service descriptors are inconsistent");
         return OBJECT_NULL;
     }
-    auto itFunc = baseFuncs_.find(code);
-    if (itFunc != baseFuncs_.end()) {
-        auto memberFunc = itFunc->second;
-        if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
-        }
-    }
-    SEN_HILOGD("No member func supporting, applying default process");
-    return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
+    return ProcessRemoteRequest(code, data, reply, option);
 }
 
 bool SensorServiceStub::IsSystemServiceCalling()

@@ -429,7 +429,7 @@ void SensorServiceClient::ReceiveMessage(const char *buf, size_t size)
 #ifdef OHOS_BUILD_ENABLE_RUST
     ReadClientPackets(circBuf_.streamBufferPtr_.get(), this, OnPacket);
 #else
-    OnReadPackets(circBuf_, std::bind(&SensorServiceClient::HandleNetPacke, this, std::placeholders::_1));
+    OnReadPackets(circBuf_, [this] (NetPacket &pkt) { this->HandleNetPacke(pkt); });
 #endif // OHOS_BUILD_ENABLE_RUST
 }
 
@@ -508,8 +508,8 @@ int32_t SensorServiceClient::CreateSocketChannel()
     {
         std::lock_guard<std::mutex> channelLock(channelMutex_);
         if (dataChannel_->AddFdListener(GetFd(),
-            std::bind(&SensorServiceClient::ReceiveMessage, this, std::placeholders::_1, std::placeholders::_2),
-            std::bind(&SensorServiceClient::Disconnect, this)) != ERR_OK) {
+            [this] (const char *buf, size_t size) { this->ReceiveMessage(buf, size); },
+            [this] { this->Disconnect(); })!= ERR_OK) {
             Close();
             SEN_HILOGE("Add fd listener failed, fd:%{public}d", GetFd());
             return ERROR;
