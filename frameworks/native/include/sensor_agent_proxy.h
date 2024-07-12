@@ -18,6 +18,7 @@
 
 #include <atomic>
 #include <map>
+#include <set>
 #include <thread>
 #include "refbase.h"
 #include "singleton.h"
@@ -55,14 +56,15 @@ private:
     int32_t DestroySensorDataChannel();
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
+    std::set<const SensorUser *> GetSubscribeUser(int32_t sensorId);
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_ = nullptr;
     std::atomic_bool isChannelCreated_ = false;
     int64_t samplingInterval_ = -1;
     int64_t reportInterval_ = -1;
-    std::map<int32_t, const SensorUser *> subscribeMap_;
-    std::map<int32_t, const SensorUser *> unsubscribeMap_;
+    std::map<int32_t, std::set<const SensorUser *>> subscribeMap_;
+    std::map<int32_t, std::set<const SensorUser *>> unsubscribeMap_;
 };
 
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
