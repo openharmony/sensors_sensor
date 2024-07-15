@@ -182,15 +182,13 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
         SEN_HILOGE("Subscribe user first");
         return OHOS::Sensors::ERROR;
     }
-    subscribeSet.erase(user);
-    if (subscribeSet.empty()) {
-        subscribeMap_.erase(sensorId);
-    }
     auto status = unsubscribeMap_[sensorId].insert(user);
     if (!status.second) {
         SEN_HILOGD("User has been unsubscribed");
     }
+    subscribeSet.erase(user);
     if (subscribeSet.empty()) {
+        subscribeMap_.erase(sensorId);
         int32_t ret = SEN_CLIENT.DisableSensor(sensorId);
         if (ret != 0) {
             SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
