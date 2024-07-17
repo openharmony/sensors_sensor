@@ -27,9 +27,6 @@ namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace OHOS::AppExecFwk;
-namespace {
-const std::string LISTENER_THREAD_NAME = "OS_SenConsumer";
-}  // namespace
 
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
 {
@@ -61,7 +58,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
     auto listener = std::make_shared<SensorFileDescriptorListener>();
     listener->SetChannel(this);
     if (eventHandler_ == nullptr) {
-        auto myRunner = AppExecFwk::EventRunner::Create(LISTENER_THREAD_NAME);
+        auto myRunner = AppExecFwk::EventRunner::Create(true, AppExecFwk::ThreadMode::FFRT);
         CHKPR(myRunner, ERROR);
         eventHandler_ = std::make_shared<SensorEventHandler>(myRunner);
     }
@@ -97,7 +94,7 @@ int32_t SensorDataChannel::AddFdListener(int32_t fd, ReceiveMessageFun receiveMe
     disconnect_ = disconnect;
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     if (eventHandler_ == nullptr) {
-        auto myRunner = AppExecFwk::EventRunner::Create(LISTENER_THREAD_NAME);
+        auto myRunner = AppExecFwk::EventRunner::Create(true, AppExecFwk::ThreadMode::FFRT);
         CHKPR(myRunner, ERROR);
         eventHandler_ = std::make_shared<SensorEventHandler>(myRunner);
     }
