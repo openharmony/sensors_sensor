@@ -189,9 +189,11 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
     if (enable) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+        SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d", packageName.c_str(), sensorId);
     } else {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+        SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d", packageName.c_str(), sensorId);
     }
 }
 
