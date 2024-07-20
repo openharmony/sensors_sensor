@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "destroysocketchannelstub_fuzzer.h"
+#include "transferdatachannel_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -34,8 +34,8 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
+static sptr<SensorBasicDataChannel> g_dataChannel = new (std::nothrow) SensorBasicDataChannel();
 } // namespace
 
 void SetUpTestCase()
@@ -53,7 +53,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "DestroySocketChannelStubFuzzTest",
+        .processName = "CreateDataChannelStubFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -62,20 +62,13 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
+bool TransferDataChannelFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    MessageParcel datas;
-    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    if (g_remote == nullptr) {
+    if (g_remote == nullptr || g_dataChannel == nullptr) {
         return false;
     }
-    datas.WriteRemoteObject(g_remote);
-    datas.RewindRead(0);
-    MessageParcel reply;
-    MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL),
-        datas, reply, option);
+    g_service->TransferDataChannel(g_dataChannel, g_remote);
     return true;
 }
 }  // namespace Sensors
@@ -93,6 +86,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    OHOS::Sensors::OnRemoteRequestFuzzTest(data, size);
+    OHOS::Sensors::TransferDataChannelFuzzTest(data, size);
     return 0;
 }

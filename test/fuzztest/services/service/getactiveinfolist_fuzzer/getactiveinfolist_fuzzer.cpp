@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "destroysocketchannelstub_fuzzer.h"
+#include "getactiveinfolist_fuzzer.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -34,9 +34,21 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
-static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
 } // namespace
+
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
 
 void SetUpTestCase()
 {
@@ -53,7 +65,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "DestroySocketChannelStubFuzzTest",
+        .processName = "CreateDataChannelStubFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -62,20 +74,15 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
+bool GetActiveInfoListFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    MessageParcel datas;
-    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    if (g_remote == nullptr) {
-        return false;
-    }
-    datas.WriteRemoteObject(g_remote);
-    datas.RewindRead(0);
-    MessageParcel reply;
-    MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL),
-        datas, reply, option);
+    std::vector<ActiveInfo> activeInfoList;
+    int32_t pid = 0;
+    GetObject<int32_t>(pid, data, size);
+    g_service->GetActiveInfoList(pid, activeInfoList);
+    g_service->SuspendSensors(pid);
+    g_service->ResumeSensors(pid);
     return true;
 }
 }  // namespace Sensors
@@ -93,6 +100,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    OHOS::Sensors::OnRemoteRequestFuzzTest(data, size);
+    OHOS::Sensors::GetActiveInfoListFuzzTest(data, size);
     return 0;
 }

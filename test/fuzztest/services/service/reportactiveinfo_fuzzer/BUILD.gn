@@ -1,4 +1,4 @@
-# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -14,19 +14,24 @@
 import("//build/config/features.gni")
 import("//build/ohos.gni")
 import("//build/test.gni")
-import("./../../../../sensor.gni")
+import("./../../../../../sensor.gni")
 
-ohos_fuzztest("SensorAgentFuzzTest") {
+ohos_fuzztest("ReportActiveInfoFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH
 
   fuzz_config_file =
-      "$SUBSYSTEM_DIR/test/fuzztest/interfaces/sensoragent_fuzzer"
+      "$SUBSYSTEM_DIR/test/fuzztest/services/service/reportactiveinfo_fuzzer"
 
   include_dirs = [
-    "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/frameworks/native/include",
-    "$SUBSYSTEM_DIR/test/fuzztest/interfaces/sensoragent_fuzzer",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/services/hdi_connection/interface/include",
+    "$SUBSYSTEM_DIR/services/hdi_connection/adapter/include",
+    "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include",
+    "$SUBSYSTEM_DIR/services/include",
+    "$SUBSYSTEM_DIR/test/fuzztest/services/service/reportactiveinfo_fuzzer",
     "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
   cflags = [
@@ -34,11 +39,20 @@ ohos_fuzztest("SensorAgentFuzzTest") {
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
+    "-Dprivate=public",
+    "-Dprotected=public",
   ]
 
-  sources = [ "sensoragent_fuzzer.cpp" ]
+  sources = [ "reportactiveinfo_fuzzer.cpp" ]
 
-  deps = [ "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native" ]
+  defines = sensor_default_defines
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
+    "$SUBSYSTEM_DIR/services:libsensor_service_static",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
+  ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
@@ -46,14 +60,15 @@ ohos_fuzztest("SensorAgentFuzzTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
   ]
 }
 
 group("fuzztest") {
   testonly = true
-  deps = []
-  deps += [
+  deps = [
     # deps file
-    ":SensorAgentFuzzTest",
+    ":ReportActiveInfoFuzzTest",
   ]
 }

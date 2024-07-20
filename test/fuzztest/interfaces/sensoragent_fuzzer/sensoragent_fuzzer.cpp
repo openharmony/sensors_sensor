@@ -14,10 +14,62 @@
  */
 
 #include "sensoragent_fuzzer.h"
-#include "sensor_agent.h"
-#include "sensor_agent_type.h"
+
 #include <unistd.h>
 #include <thread>
+
+#include "accesstoken_kit.h"
+#include "token_setproc.h"
+#include "nativetoken_kit.h"
+#include "securec.h"
+
+#include "sensor_agent.h"
+#include "sensor_agent_type.h"
+#include "sensor_errors.h"
+
+using namespace OHOS::HiviewDFX;
+using namespace OHOS::Security::AccessToken;
+using OHOS::Security::AccessToken::AccessTokenID;
+namespace {
+constexpr int64_t g_samplingInterval = 200000000;
+constexpr int64_t g_reportInterval = 200000000;
+} // namespace
+
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
+
+void SetUpTestCase()
+{
+    const char **perms = new (std::nothrow) const char *[2];
+    CHKPV(perms);
+    perms[0] = "ohos.permission.ACCELEROMETER";
+    perms[1] = "ohos.permission.MANAGE_SENSOR";
+    TokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 2,
+        .aclsNum = 0,
+        .dcaps = nullptr,
+        .perms = perms,
+        .acls = nullptr,
+        .processName = "SensorAgentFuzzTest",
+        .aplStr = "system_core",
+    };
+    uint64_t tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+    AccessTokenKit::ReloadNativeTokenInfo();
+    delete[] perms;
+}
 
 void SensorDataCallbackImpl(SensorEvent *event)
 {
@@ -42,34 +94,24 @@ bool CheckSensorTypeId(int32_t sensorTypeId)
     return false;
 }
 
-bool SensorAgentFuzzTest(const uint8_t *data, size_t size)
+void SensorAgentFuzzTest(const uint8_t *data, size_t size)
 {
-    intptr_t sensorTypeId = reinterpret_cast<intptr_t>(data);
+    SetUpTestCase();
+    size_t startPos = 0;
+    int32_t sensorTypeId = 0;
+    GetObject<int32_t>(sensorTypeId, data + startPos, size - startPos);
     bool validSensorId = CheckSensorTypeId(sensorTypeId);
+    if (!validSensorId) {
+        sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER;
+    }
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
-    int32_t ret = SubscribeSensor(sensorTypeId, &user);
-    if (ret != 0) {
-        return validSensorId ? false : true;
-    }
-    ret = SetBatch(sensorTypeId, &user, 200000000, 0);
-    if (ret != 0) {
-        return validSensorId ? false : true;
-    }
-    ret = ActivateSensor(sensorTypeId, &user);
-    if (ret != 0) {
-        return validSensorId ? false : true;
-    }
+    SubscribeSensor(sensorTypeId, &user);
+    SetBatch(sensorTypeId, &user, g_samplingInterval, g_reportInterval);
+    ActivateSensor(sensorTypeId, &user);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    ret = DeactivateSensor(sensorTypeId, &user);
-    if (ret != 0) {
-        return validSensorId ? false : true;
-    }
-    ret = UnsubscribeSensor(sensorTypeId, &user);
-    if (ret != 0) {
-        return validSensorId ? false : true;
-    }
-    return true;
+    DeactivateSensor(sensorTypeId, &user);
+    UnsubscribeSensor(sensorTypeId, &user);
 }
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
