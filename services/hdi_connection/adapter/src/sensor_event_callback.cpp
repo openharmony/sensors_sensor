@@ -102,6 +102,11 @@ void SensorEventCallback::ControlSensorPrint(const SensorData &sensorData)
         PrintSensorData(sensorData);
         ambientLightLastTs_ = sensorData.timestamp;
     }
+    if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_MAGNETIC_FIELD)
+        && ((magneticFieldLastTs_ == 0) || (sensorData.timestamp - magneticFieldLastTs_ >= LOG_INTERVAL))) {
+        PrintSensorData(sensorData);
+        magneticFieldLastTs_ = sensorData.timestamp;
+    }
 }
 
 void SensorEventCallback::PrintSensorData(const SensorData &sensorData)
@@ -133,6 +138,7 @@ int32_t SensorEventCallback::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_POSTURE:
             return SEVEN_DIMENSION;
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
+        case SENSOR_TYPE_ID_MAGNETIC_FIELD:
             return THREE_DIMENSION;
         default:
             SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, DEFAULT_DIMENSION);
