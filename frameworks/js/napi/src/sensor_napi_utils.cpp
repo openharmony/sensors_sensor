@@ -19,12 +19,17 @@
 #include <string>
 #include <vector>
 
+#include "app_mgr_client.h"
+#include "bundle_mgr_client.h"
+#include "os_account_manager.h"
+
 #include "sensor_napi_error.h"
 
 namespace OHOS {
 namespace Sensors {
 namespace {
-    constexpr int32_t STRING_LENGTH_MAX = 64;
+constexpr int32_t STRING_LENGTH_MAX = 64;
+constexpr int32_t INVALID_TARGET_VERSION = -1;
 } // namespace
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs)
 {
@@ -606,6 +611,44 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         SEN_HILOGE("Create async work fail");
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
+}
+
+int32_t GetTargetSDKVersion(int32_t pid)
+{
+    AppExecFwk::RunningProcessInfo processinfo;
+    appMgrClientPtr_ = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
+    if (appMgrClientPtr_ == nullptr) {
+        MISC_HILOGE("appMgrClientPtr is nullptr");
+        return INVALID_TARGET_VERSION;
+    }
+    int32_t ret = appMgrClientPtr_->AppExecFwk::AppMgrClient::GetRunningProcessInfoByPid(pid, processinfo);
+    if (ret != ERR_OK) {
+        MISC_HILOGE("Getrunningprocessinfobypid failed");
+        return INVALID_TARGET_VERSION;
+    }
+    std::vector<int32_t> activeUserIds;
+    int32_t retId = AccountSA::OsAccountManager::QueryActiveOsAccountIds(activeUserIds);
+    if (retId != 0) {
+        MISC_HILOGE("QueryActiveOsAccountIds failed %{public}d", retId);
+        return INVALID_TARGET_VERSION;
+    }
+    if (activeUserIds.empty()) {
+        MISC_HILOGE("activeUserId empty");
+        return INVALID_TARGET_VERSION;
+    }
+    for (const auto &bundleName : processinfo.bundleNames) {
+        MISC_HILOGD("bundleName = %{public}s", bundleName.c_str());
+        AppExecFwk::BundleMgrClient bundleMgrClient;
+        AppExecFwk::BundleInfo bundleInfo;
+        auto res = bundleMgrClient.AppExecFwk::BundleMgrClient::GetBundleInfo(bundleName,
+            AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, activeUserIds[0]);
+        if (!res) {
+            MISC_HILOGE("Getbundleinfo fail");
+            return INVALID_TARGET_VERSION;
+        }
+        return bundleInfo.targetVersion;
+    }
+    return INVALID_TARGET_VERSION;
 }
 }  // namespace Sensors
 }  // namespace OHOS

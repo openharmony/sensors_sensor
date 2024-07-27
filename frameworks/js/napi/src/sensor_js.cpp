@@ -1036,6 +1036,8 @@ static napi_value GetSensorListSync(napi_env env, napi_callback_info info)
 static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
+    int32_t targetSdkVersion = GetTargetSDKVersion(getpid());
+    SEN_HILOGE("targetSdkVersion = %{public}d", targetSdkVersion);
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
