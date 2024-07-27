@@ -616,34 +616,30 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
 int32_t GetTargetSDKVersion(int32_t pid)
 {
     AppExecFwk::RunningProcessInfo processinfo;
-    appMgrClientPtr_ = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
-    if (appMgrClientPtr_ == nullptr) {
-        MISC_HILOGE("appMgrClientPtr is nullptr");
-        return INVALID_TARGET_VERSION;
-    }
-    int32_t ret = appMgrClientPtr_->AppExecFwk::AppMgrClient::GetRunningProcessInfoByPid(pid, processinfo);
+    AppExecFwk::AppMgrClient appMgrClient;
+    int32_t ret = appMgrClient.AppExecFwk::AppMgrClient::GetRunningProcessInfoByPid(pid, processinfo);
     if (ret != ERR_OK) {
-        MISC_HILOGE("Getrunningprocessinfobypid failed");
+        SEN_HILOGE("Getrunningprocessinfobypid failed");
         return INVALID_TARGET_VERSION;
     }
     std::vector<int32_t> activeUserIds;
     int32_t retId = AccountSA::OsAccountManager::QueryActiveOsAccountIds(activeUserIds);
     if (retId != 0) {
-        MISC_HILOGE("QueryActiveOsAccountIds failed %{public}d", retId);
+        SEN_HILOGE("QueryActiveOsAccountIds failed %{public}d", retId);
         return INVALID_TARGET_VERSION;
     }
     if (activeUserIds.empty()) {
-        MISC_HILOGE("activeUserId empty");
+        SEN_HILOGE("activeUserId empty");
         return INVALID_TARGET_VERSION;
     }
     for (const auto &bundleName : processinfo.bundleNames) {
-        MISC_HILOGD("bundleName = %{public}s", bundleName.c_str());
+        SEN_HILOGD("bundleName = %{public}s", bundleName.c_str());
         AppExecFwk::BundleMgrClient bundleMgrClient;
         AppExecFwk::BundleInfo bundleInfo;
         auto res = bundleMgrClient.AppExecFwk::BundleMgrClient::GetBundleInfo(bundleName,
             AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, activeUserIds[0]);
         if (!res) {
-            MISC_HILOGE("Getbundleinfo fail");
+            SEN_HILOGE("Getbundleinfo fail");
             return INVALID_TARGET_VERSION;
         }
         return bundleInfo.targetVersion;

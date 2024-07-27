@@ -19,6 +19,8 @@
     ],
     "deps": {
       "components": [
+        "ability_runtime",
+        "bundle_framework",
         "c_utils",
         "hilog",
         "build_framework",
@@ -31,7 +33,8 @@
         "memmgr",
         "safwk",
         "samgr",
-        "eventhandler"
+        "eventhandler",
+        "os_account"
       ],
       "third_party": []
     },
