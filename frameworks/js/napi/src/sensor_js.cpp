@@ -41,6 +41,7 @@ constexpr int32_t SENSOR_SUBSCRIBE_FAILURE = 1001;
 constexpr int32_t INPUT_ERROR = 202;
 constexpr float BODY_STATE_EXCEPT = 1.0f;
 constexpr float THRESHOLD = 0.000001f;
+constexpr uint32_t COMPATIBILITY_CHANGE_VERSION_API12 = 12;
 } // namespace
 static std::map<std::string, int64_t> g_samplingPeriod = {
     {"normal", 200000000},
@@ -1036,8 +1037,12 @@ static napi_value GetSensorListSync(napi_env env, napi_callback_info info)
 static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
-    int32_t targetSdkVersion = GetTargetSDKVersion(getpid());
-    SEN_HILOGE("targetSdkVersion = %{public}d", targetSdkVersion);
+    uint32_t targetVersion = 0;
+    if (GetSelfTargetVersion(targetVersion)) {
+        SEN_HILOGI("targetVersion: %{public}d", targetVersion);
+    } else {
+        SEN_HILOGE("Get self target version fail");
+    }
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
@@ -1074,6 +1079,10 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
             }
         }
         if (asyncCallbackInfo->sensorInfos.empty()) {
+            if (GetSelfTargetVersion(targetVersion) && (targetVersion < COMPATIBILITY_CHANGE_VERSION_API12)) {
+                ThrowErr(env, PARAMETER_ERROR, "The sensor is not supported by the device");
+                return nullptr;
+            }
             ThrowErr(env, SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
             return nullptr;
         }

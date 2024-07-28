@@ -59,7 +59,7 @@ bool CreateFailMessage(CallbackDataType type, int32_t code, string message,
 bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 void ReleaseCallback(sptr<AsyncCallbackInfo> asyncCallbackInfo);
-int32_t GetTargetSDKVersion(int32_t pid);
+bool GetSelfTargetVersion(uint32_t &targetVersion);
 
 
 #define CHKNCF(env, cond, message) \

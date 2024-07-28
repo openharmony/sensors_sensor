@@ -19,9 +19,10 @@
 #include <string>
 #include <vector>
 
-#include "app_mgr_client.h"
-#include "bundle_mgr_client.h"
-#include "os_account_manager.h"
+#include "bundle_mgr_proxy.h"
+#include "ipc_skeleton.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
 
 #include "sensor_napi_error.h"
 
@@ -29,7 +30,6 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr int32_t STRING_LENGTH_MAX = 64;
-constexpr int32_t INVALID_TARGET_VERSION = -1;
 } // namespace
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs)
 {
@@ -613,38 +613,32 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     }
 }
 
-int32_t GetTargetSDKVersion(int32_t pid)
+bool GetSelfTargetVersion(uint32_t &targetVersion)
 {
-    AppExecFwk::RunningProcessInfo processinfo;
-    AppExecFwk::AppMgrClient appMgrClient;
-    int32_t ret = appMgrClient.AppExecFwk::AppMgrClient::GetRunningProcessInfoByPid(pid, processinfo);
+    sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        SEN_HILOGE("Samgr error");
+        return false;
+    }
+    auto bundleObj = samgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (bundleObj == nullptr) {
+        SEN_HILOGE("BundleObj error");
+        return false;
+    }
+    auto bundleMgrProxy = iface_cast<AppExecFwk::IBundleMgr>(bundleObj);
+    if (bundleMgrProxy == nullptr) {
+        SEN_HILOGE("BundleMgrProxy error");
+        return false;
+    }
+    AppExecFwk::BundleInfo bundleInfo;
+    ErrCode ret = bundleMgrProxy->GetBundleInfoForSelf(OHOS::AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
     if (ret != ERR_OK) {
-        SEN_HILOGE("Getrunningprocessinfobypid failed");
-        return INVALID_TARGET_VERSION;
+        SEN_HILOGE("GetBundleInfoForSelf error");
+        return false;
     }
-    std::vector<int32_t> activeUserIds;
-    int32_t retId = AccountSA::OsAccountManager::QueryActiveOsAccountIds(activeUserIds);
-    if (retId != 0) {
-        SEN_HILOGE("QueryActiveOsAccountIds failed %{public}d", retId);
-        return INVALID_TARGET_VERSION;
-    }
-    if (activeUserIds.empty()) {
-        SEN_HILOGE("activeUserId empty");
-        return INVALID_TARGET_VERSION;
-    }
-    for (const auto &bundleName : processinfo.bundleNames) {
-        SEN_HILOGD("bundleName = %{public}s", bundleName.c_str());
-        AppExecFwk::BundleMgrClient bundleMgrClient;
-        AppExecFwk::BundleInfo bundleInfo;
-        auto res = bundleMgrClient.AppExecFwk::BundleMgrClient::GetBundleInfo(bundleName,
-            AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo, activeUserIds[0]);
-        if (!res) {
-            SEN_HILOGE("Getbundleinfo fail");
-            return INVALID_TARGET_VERSION;
-        }
-        return bundleInfo.targetVersion;
-    }
-    return INVALID_TARGET_VERSION;
+    SEN_HILOGI("Bundle targetVersion is %{public}d", bundleInfo.targetVersion);
+    targetVersion = bundleInfo.targetVersion;
+    return true;
 }
 }  // namespace Sensors
 }  // namespace OHOS
