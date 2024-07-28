@@ -636,7 +636,6 @@ bool GetSelfTargetVersion(uint32_t &targetVersion)
         SEN_HILOGE("GetBundleInfoForSelf error");
         return false;
     }
-    SEN_HILOGI("Bundle targetVersion is %{public}d", bundleInfo.targetVersion);
     targetVersion = bundleInfo.targetVersion;
     return true;
 }

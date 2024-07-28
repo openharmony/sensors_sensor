@@ -1037,12 +1037,6 @@ static napi_value GetSensorListSync(napi_env env, napi_callback_info info)
 static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
-    uint32_t targetVersion = 0;
-    if (GetSelfTargetVersion(targetVersion)) {
-        SEN_HILOGI("targetVersion: %{public}d", targetVersion);
-    } else {
-        SEN_HILOGE("Get self target version fail");
-    }
     size_t argc = 2;
     napi_value args[2] = { 0 };
     napi_value thisVar = nullptr;
@@ -1056,8 +1050,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
         return nullptr;
     }
-    sptr<AsyncCallbackInfo> asyncCallbackInfo =
-        new (std::nothrow) AsyncCallbackInfo(env, GET_SINGLE_SENSOR);
+    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, GET_SINGLE_SENSOR);
     CHKPP(asyncCallbackInfo);
     SensorInfo *sensorInfos = nullptr;
     int32_t count = 0;
@@ -1079,6 +1072,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
             }
         }
         if (asyncCallbackInfo->sensorInfos.empty()) {
+            uint32_t targetVersion = 0;
             if (GetSelfTargetVersion(targetVersion) && (targetVersion < COMPATIBILITY_CHANGE_VERSION_API12)) {
                 ThrowErr(env, PARAMETER_ERROR, "The sensor is not supported by the device");
                 return nullptr;
