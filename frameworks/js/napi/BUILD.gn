@@ -39,9 +39,14 @@ ohos_shared_library("libsensor") {
   }
   deps = [ "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native" ]
   external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "hilog:libhilog",
+    "ipc:ipc_single",
     "napi:ace_napi",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
   relative_install_dir = "module"
   part_name = "sensor"

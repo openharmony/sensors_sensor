@@ -19,6 +19,7 @@
     ],
     "deps": {
       "components": [
+        "bundle_framework",
         "c_utils",
         "hilog",
         "build_framework",

@@ -19,12 +19,17 @@
 #include <string>
 #include <vector>
 
+#include "bundle_mgr_proxy.h"
+#include "ipc_skeleton.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+
 #include "sensor_napi_error.h"
 
 namespace OHOS {
 namespace Sensors {
 namespace {
-    constexpr int32_t STRING_LENGTH_MAX = 64;
+constexpr int32_t STRING_LENGTH_MAX = 64;
 } // namespace
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs)
 {
@@ -606,6 +611,33 @@ void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         SEN_HILOGE("Create async work fail");
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
+}
+
+bool GetSelfTargetVersion(uint32_t &targetVersion)
+{
+    sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        SEN_HILOGE("Samgr error");
+        return false;
+    }
+    auto bundleObj = samgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (bundleObj == nullptr) {
+        SEN_HILOGE("BundleObj error");
+        return false;
+    }
+    auto bundleMgrProxy = iface_cast<AppExecFwk::IBundleMgr>(bundleObj);
+    if (bundleMgrProxy == nullptr) {
+        SEN_HILOGE("BundleMgrProxy error");
+        return false;
+    }
+    AppExecFwk::BundleInfo bundleInfo;
+    ErrCode ret = bundleMgrProxy->GetBundleInfoForSelf(OHOS::AppExecFwk::BundleFlag::GET_BUNDLE_DEFAULT, bundleInfo);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("GetBundleInfoForSelf error");
+        return false;
+    }
+    targetVersion = bundleInfo.targetVersion;
+    return true;
 }
 }  // namespace Sensors
 }  // namespace OHOS
