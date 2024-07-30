@@ -99,7 +99,8 @@ double ConversionFilter::FilterHighResonant(double input, double cutoff, double 
         SEN_HILOGE("pole_ should not be 1.0");
         return 0.0;
     }
-    double r = (sqrt(2.0) * sqrt(-pow((pole_ - 1.0), F_THREE)) + resonance * (pole_ - 1.0)) / (resonance * (pole_ - 1.0));
+    double r = (sqrt(2.0) * sqrt(-pow((pole_ - 1.0), F_THREE)) +
+        resonance * (pole_ - 1.0)) / (resonance * (pole_ - 1.0));
     speed_ = speed_ + (input - pos_) * filterCoefficient_;
     pos_ = pos_ + speed_;
     speed_ = speed_ * r;

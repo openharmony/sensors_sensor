@@ -37,7 +37,8 @@ struct FftParaAndResult {
     std::vector<float> imagOut;
 
     FftParaAndResult() = default;
-    explicit FftParaAndResult(int32_t size) {
+    explicit FftParaAndResult(int32_t size)
+    {
         numSamples = size;
         realIn.resize(size, 0.0F);
         imagIn.resize(size, 0.0F);

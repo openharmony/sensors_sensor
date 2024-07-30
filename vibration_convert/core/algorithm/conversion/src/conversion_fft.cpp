@@ -34,7 +34,7 @@ int32_t ConversionFFT::Init(const FFTInputPara &fftPara)
     if ((fftPara.sampleRate <= 0) ||
         (fftPara.fftSize <= 0 || !(IsPowerOfTwo(static_cast<uint32_t>(fftPara.fftSize)))) ||
         (fftPara.hopSize <= 0 || !(IsPowerOfTwo(static_cast<uint32_t>(fftPara.hopSize))))) {
-        SEN_HILOGE("sampleRate:%{public}d,fftSize:%{public}d,hopSize:%{public}d",fftPara.sampleRate,
+        SEN_HILOGE("sampleRate:%{public}d, fftSize:%{public}d, hopSize:%{public}d", fftPara.sampleRate,
             fftPara.fftSize, fftPara.hopSize);
         return Sensors::PARAMETER_ERROR;
     }
@@ -88,7 +88,8 @@ bool ConversionFFT::ProcessSingle(float value, FFTModes mode)
     return isFrameFull_;
 }
 
-int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frameCount, std::vector<float> &frameMagsArr)
+int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frameCount,
+    std::vector<float> &frameMagsArr)
 {
     FFTModes mode = ConversionFFT::WITH_POLAR_CONVERSION;
     pos_ = para_.windowSize - para_.hopSize;
@@ -106,7 +107,8 @@ int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frame
             continue;
         }
         if (mode == ConversionFFT::WITH_POLAR_CONVERSION) {
-            fft_.CalculatePowerSpectrum(fftResult_.buffer, fftResult_.window, fftResult_.magnitudes, fftResult_.phases);
+            fft_.CalculatePowerSpectrum(fftResult_.buffer, fftResult_.window,
+                fftResult_.magnitudes, fftResult_.phases);
         } else {
             fft_.CalcFFT(fftResult_.buffer, fftResult_.window);
         }

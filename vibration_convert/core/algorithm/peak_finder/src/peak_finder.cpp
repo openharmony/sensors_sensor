@@ -79,7 +79,7 @@ std::vector<bool> PeakFinder::GetVoiceFlag(const std::vector<double> &data, cons
     }
     lowerAmp = *max_element(peakAmp.begin(), peakAmp.end()) * INTERSITY_BOUNDARY_POINT;
     if (peakAmp.size() > 2) {
-        lowerAmp = peakAmp[static_cast<int32_t>(peakAmp.size() * INTERSITY_NUMBER_BOUNDARY_POINT )];
+        lowerAmp = peakAmp[static_cast<int32_t>(peakAmp.size() * INTERSITY_NUMBER_BOUNDARY_POINT)];
     }
     std::vector<double> triangularEnvelope(data.size(), 0.0);
     for (size_t i = 0; i < data.size(); i++) {
@@ -129,7 +129,7 @@ std::vector<bool> PeakFinder::SplitVoiceSlienceRange(int32_t dataSize, const std
             vioceFlag[boundary] = true;
         }
     }
-    for (int32_t i = 0; i < dataSize; ) {
+    for (int32_t i = 0; i < dataSize;) {
         if (vioceFlag[i]) {
             int32_t j = i / hopLength_;
             segmentFlag[j] = true;
@@ -315,7 +315,7 @@ std::vector<int32_t> PeakFinder::FilterSecondaryPeak(const std::vector<double> &
     return wholeEnvelop.peakPos;
 }
 
-// The peak points are enveloped together, and the drop of the secondary peak is less than 30 %. Delete this peak point.
+// The peak points are enveloped together, and the drop of the secondary peak is less than 30 %. Delete this peak point
 int32_t PeakFinder::DeletePeaks(const std::vector<double> &envelope, int32_t startPos, int32_t endPos,
     MountainPosition &mountainPosition, int32_t &endIndex)
 {
@@ -656,8 +656,8 @@ void PeakFinder::SplitLongShortEnvelope(int32_t dataSize, const std::vector<int3
 // Calculate the starting and ending envelopes of isolated pure short events, searching from peak to both sides
 // Do not merge common envelope peaks
 // Missing trackback function similar to note when co enveloping
-int32_t PeakFinder::GetIsolatedEnvelope(const std::vector<double> &data, const std::vector<int32_t> &peaks, double lowerAmp,
-    IsolatedEnvelopeInfo &isolatedEnvelopeInfo)
+int32_t PeakFinder::GetIsolatedEnvelope(const std::vector<double> &data, const std::vector<int32_t> &peaks,
+    double lowerAmp, IsolatedEnvelopeInfo &isolatedEnvelopeInfo)
 {
     std::vector<double> triangularEnvelope(data.size(), 0.0);
     for (size_t i = 0; i < data.size(); i++) {
@@ -727,7 +727,8 @@ int32_t PeakFinder::ObtainTransientByAmplitude(const std::vector<double> &data,
     double ampLowerDalta = GetLowestPeakValue(peakDetection.ampPeakEnvelope, peakDetection.ampPeakAllIdx);
 
     // Calculate the starting and ending envelopes of isolated pure short events, searching from peak to both sides
-    if (GetIsolatedEnvelope(data, peakDetection.ampPeakIdxs, ampLowerDalta, isolatedEnvelopeInfo) != Sensors::SUCCESS) {
+    if (GetIsolatedEnvelope(data, peakDetection.ampPeakIdxs,
+        ampLowerDalta, isolatedEnvelopeInfo) != Sensors::SUCCESS) {
         SEN_HILOGE("GetIsolatedEnvelope failed");
         return Sensors::ERROR;
     }
