@@ -93,7 +93,8 @@ struct DownwardTrendInfo {
     double ducyCycle { 0.0 };
 
     DownwardTrendInfo() = default;
-    DownwardTrendInfo(bool isDecay, double drop, double cycle) {
+    DownwardTrendInfo(bool isDecay, double drop, double cycle)
+    {
         isRapidlyDecay = isDecay;
         dropHeight = drop;
         ducyCycle = cycle;
@@ -108,7 +109,8 @@ public:
      * 2. Like heartbeat. wav, the secondary peak point is not from the lowest point and must be removed
      *
      * @param envelope Envelope curve of the peak point to be searched.
-     * @param peakThreshold If the peak drop is less than 'peakThreshold', it is considered not the peak. Value range 0~1.0.
+     * @param peakThreshold If the peak drop is less than 'peakThreshold',
+     * it is considered not the peak. Value range 0~1.0.
      * @return Return the index of peaks.
      */
     std::vector<int32_t> DetectPeak(const std::vector<double> &envelope, double peakThreshold);
@@ -135,16 +137,20 @@ private:
     bool GetDeleteFlagOfPeak(const std::vector<double> &envelope, int32_t peakIndex, int32_t valleyIndex,
         const std::vector<double> &valleysValue, const MountainPosition &mountainPosition);
     std::vector<double> ExtractValues(const std::vector<double> &envelope, const std::vector<int32_t> &idxs);
-    std::vector<bool> GetVoiceFlag(const std::vector<double> &data, const std::vector<int32_t> &peaks, double lowerAmp);
+    std::vector<bool> GetVoiceFlag(const std::vector<double> &data,
+        const std::vector<int32_t> &peaks, double lowerAmp);
     void GetEachIndependentEnvelope(const std::vector<double> &data, const std::vector<int32_t> &peaks,
         double lowerAmp, MountainPosition &mountainPosition);
     bool FindPeakBoundary(const std::vector<double> &data, int32_t peakPlace, double threshold,
         BothSidesOfPeak &bothSides);
-    std::vector<int32_t> PeakFilterMinRange(const std::vector<double> &data, std::vector<int32_t> &peaks, int32_t minSampleCount);
-    std::vector<int32_t> FilterLowPeak(const std::vector<double> &envelope, const std::vector<int32_t> &peaks, double removeRatio);
-    std::vector<bool> SplitVoiceSlienceRange(int32_t dataSize,const std::vector<int32_t> &envelopeStart,
+    std::vector<int32_t> PeakFilterMinRange(const std::vector<double> &data,
+        std::vector<int32_t> &peaks, int32_t minSampleCount);
+    std::vector<int32_t> FilterLowPeak(const std::vector<double> &envelope,
+        const std::vector<int32_t> &peaks, double removeRatio);
+    std::vector<bool> SplitVoiceSlienceRange(int32_t dataSize, const std::vector<int32_t> &envelopeStart,
         const std::vector<int32_t> &envelopeLast);
-    std::vector<int32_t> FilterSecondaryPeak(const std::vector<double> &envelope, const std::vector<int32_t> &peaks, double lowerAmp);
+    std::vector<int32_t> FilterSecondaryPeak(const std::vector<double> &envelope,
+        const std::vector<int32_t> &peaks, double lowerAmp);
     int32_t DeletePeaks(const std::vector<double> &envelope, int32_t startPos, int32_t endPos,
         MountainPosition &mountainPosition, int32_t &index);
     int32_t DetectValley(const std::vector<double> &envelope, int32_t startPos, int32_t endPos,
@@ -170,10 +176,10 @@ private:
      * @param lastPos Last positions.
      * @param envelopeList Output continuous Long or Short Envelope Results.
      */
-    void SplitLongShortEnvelope(int32_t dataSize, const std::vector<int32_t> &firstPos, const std::vector<int32_t> &lastPos,
-        EnvelopeSegmentInfo &envelopeList);
-    int32_t GetIsolatedEnvelope(const std::vector<double> &data, const std::vector<int32_t> &peaks, double lowerAmp,
-        IsolatedEnvelopeInfo &isolatedEnvelopeInfo);
+    void SplitLongShortEnvelope(int32_t dataSize, const std::vector<int32_t> &firstPos,
+        const std::vector<int32_t> &lastPos, EnvelopeSegmentInfo &envelopeList);
+    int32_t GetIsolatedEnvelope(const std::vector<double> &data, const std::vector<int32_t> &peaks,
+        double lowerAmp, IsolatedEnvelopeInfo &isolatedEnvelopeInfo);
     // Descending energy
     // 1.Energy occupation ratio(area occupation ratio)
     // 2.Lowering energy difference

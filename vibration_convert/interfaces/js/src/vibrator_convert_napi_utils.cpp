@@ -325,7 +325,8 @@ void EmitHapticAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             napi_value result[RESULT_LENGTH] = { 0 };
             CHKCV((g_convertFuncList.find(asyncCallbackInfo->callbackType) != g_convertFuncList.end()),
                 "Callback type invalid in async work");
-            bool state = g_convertFuncList[asyncCallbackInfo->callbackType](env, asyncCallbackInfo, result, RESULT_LENGTH);
+            bool state = g_convertFuncList[asyncCallbackInfo->callbackType](env, asyncCallbackInfo,
+                result, RESULT_LENGTH);
             CHKCV(state, "Create napi data failed in async work");
             napi_value callResult = nullptr;
             CHKCV((napi_call_function(env, nullptr, callback, 2, result, &callResult) == napi_ok),
@@ -367,7 +368,8 @@ void EmitHapticPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
             napi_value result[RESULT_LENGTH] = { 0 };
             CHKCV((g_convertFuncList.find(asyncCallbackInfo->callbackType) != g_convertFuncList.end()),
                 "Callback type invalid in promise");
-            bool ret = g_convertFuncList[asyncCallbackInfo->callbackType](env, asyncCallbackInfo, result, RESULT_LENGTH);
+            bool ret = g_convertFuncList[asyncCallbackInfo->callbackType](env, asyncCallbackInfo,
+                result, RESULT_LENGTH);
             CHKCV(ret, "Callback type invalid in promise");
             if (asyncCallbackInfo->error.code != SUCCESS) {
                 CHKCV((napi_reject_deferred(env, asyncCallbackInfo->deferred, result[0]) == napi_ok),

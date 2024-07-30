@@ -140,7 +140,7 @@ std::vector<int32_t> NormalizePercentage(const std::vector<double> &values)
     }
     std::vector<int32_t> norm;
     for (size_t i = 0; i < values.size(); i++) {
-        norm.push_back(static_cast<int32_t>(round((values[i] - minValue) / range * PERCENTAGE_RANGE )));
+        norm.push_back(static_cast<int32_t>(round((values[i] - minValue) / range * PERCENTAGE_RANGE)));
     }
     return norm;
 }
