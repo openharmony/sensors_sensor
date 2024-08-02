@@ -37,6 +37,20 @@ auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 } // namespace
 
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
+
 void SetUpTestCase()
 {
     const char **perms = new (std::nothrow) const char *[2];
@@ -66,7 +80,9 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     SetUpTestCase();
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    datas.WriteBuffer(data, size);
+    int32_t sensorId = 0;
+    GetObject<int32_t>(sensorId, data, size);
+    datas.WriteInt32(sensorId);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
