@@ -14,6 +14,8 @@
  */
 #include "sensor_event_callback.h"
 
+#include <set>
+
 #include "hdi_connection.h"
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
@@ -34,6 +36,13 @@ enum {
     THREE_DIMENSION = 3,
     SEVEN_DIMENSION = 7,
     DEFAULT_DIMENSION = 16
+};
+const std::set<int32_t> g_sensorTypeTrigger = {
+    SENSOR_TYPE_ID_PROXIMITY,
+    SENSOR_TYPE_ID_DROP_DETECTION,
+    SENSOR_TYPE_ID_HALL,
+    SENSOR_TYPE_ID_HALL_EXT,
+    SENSOR_TYPE_ID_PROXIMITY1
 };
 } // namespace
 
@@ -58,6 +67,9 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
     };
     if (sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY ||
         sensorData.sensorTypeId == SENSOR_TYPE_ID_DROP_DETECTION) {
+        sensorData.mode = SENSOR_ON_CHANGE;
+    }
+    if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
         sensorData.mode = SENSOR_ON_CHANGE;
     }
     CHKPR(sensorData.data, ERR_NO_INIT);
