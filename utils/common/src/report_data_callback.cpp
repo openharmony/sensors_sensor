@@ -64,15 +64,15 @@ int32_t ReportDataCallback::ReportEventCallback(SensorData *sensorData, sptr<Rep
             cb->eventsBuf_.circularBuf[cb->eventsBuf_.writePosition] = *sensorData;
             cb->eventsBuf_.writePosition += 1;
     }
-    if (leftSize < 1) {
-        cb->eventsBuf_.readPos = cb->eventsBuf_.writePosition;
-    }
     cb->eventsBuf_.eventNum += 1;
     if (cb->eventsBuf_.eventNum >= CIRCULAR_BUF_LEN) {
         cb->eventsBuf_.eventNum = CIRCULAR_BUF_LEN;
     }
-    if (cb->eventsBuf_.writePosition == CIRCULAR_BUF_LEN) {
+    if (cb->eventsBuf_.writePosition >= CIRCULAR_BUF_LEN) {
         cb->eventsBuf_.writePosition = 0;
+    }
+    if (leftSize < 1) {
+        cb->eventsBuf_.readPos = cb->eventsBuf_.writePosition;
     }
     return ERR_OK;
 }
