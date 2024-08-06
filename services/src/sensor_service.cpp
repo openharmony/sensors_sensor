@@ -27,6 +27,7 @@
 #endif // MEMMGR_ENABLE
 #include "permission_util.h"
 
+#include "print_sensor_data.h"
 #include "securec.h"
 #include "sensor.h"
 #include "sensor_dump.h"
@@ -279,6 +280,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         if (isReportActiveInfo_) {
             ReportActiveInfo(sensorId, pid);
         }
+        PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
         return ERR_OK;
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
@@ -302,6 +304,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
     if (isReportActiveInfo_) {
         ReportActiveInfo(sensorId, pid);
     }
+    PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
     return ret;
 }
 
@@ -331,6 +334,7 @@ ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
     int32_t uid = clientInfo_.GetUidByPid(pid);
     clientInfo_.DestroyCmd(uid);
     clientInfo_.ClearDataQueue(sensorId);
+    PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
     return sensorManager_.AfterDisableSensor(sensorId);
 }
 

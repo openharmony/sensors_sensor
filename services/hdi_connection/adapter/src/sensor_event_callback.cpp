@@ -17,6 +17,7 @@
 #include <set>
 
 #include "hdi_connection.h"
+#include "print_sensor_data.h"
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
@@ -29,14 +30,6 @@ using namespace OHOS::HiviewDFX;
 namespace {
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
 constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
-constexpr int64_t LOG_INTERVAL = 60000000000;
-enum {
-    ONE_DIMENSION = 1,
-    TWO_DIMENSION = 2,
-    THREE_DIMENSION = 3,
-    SEVEN_DIMENSION = 7,
-    DEFAULT_DIMENSION = 16
-};
 const std::set<int32_t> g_sensorTypeTrigger = {
     SENSOR_TYPE_ID_PROXIMITY,
     SENSOR_TYPE_ID_DROP_DETECTION,
@@ -68,9 +61,6 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
     if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
         sensorData.mode = SENSOR_ON_CHANGE;
     }
-    if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
-        sensorData.mode = SENSOR_ON_CHANGE;
-    }
     CHKPR(sensorData.data, ERR_NO_INIT);
     if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
         sensorData.dataLen = HEADPOSTURE_DATA_SIZE;
@@ -90,71 +80,11 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
             sensorData.data[i] = event.data[i];
         }
     }
-    ControlSensorPrint(sensorData);
+    PrintSensorData::GetInstance().ControlSensorHdiPrint(sensorData);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
-}
-
-void SensorEventCallback::ControlSensorPrint(const SensorData &sensorData)
-{
-    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT || sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY
-        || sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL) {
-        PrintSensorData(sensorData);
-    }
-    if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_POSTURE)
-        && ((postureLastTs_ == 0) || (sensorData.timestamp - postureLastTs_ >= LOG_INTERVAL))) {
-        PrintSensorData(sensorData);
-        postureLastTs_ = sensorData.timestamp;
-    }
-    if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT)
-        && ((ambientLightLastTs_ == 0) || (sensorData.timestamp - ambientLightLastTs_ >= LOG_INTERVAL))) {
-        PrintSensorData(sensorData);
-        ambientLightLastTs_ = sensorData.timestamp;
-    }
-    if ((sensorData.sensorTypeId == SENSOR_TYPE_ID_MAGNETIC_FIELD)
-        && ((magneticFieldLastTs_ == 0) || (sensorData.timestamp - magneticFieldLastTs_ >= LOG_INTERVAL))) {
-        PrintSensorData(sensorData);
-        magneticFieldLastTs_ = sensorData.timestamp;
-    }
-}
-
-void SensorEventCallback::PrintSensorData(const SensorData &sensorData)
-{
-    std::string str;
-    str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + ", ";
-    str += "timestamp: " + std::to_string(sensorData.timestamp) + ", ";
-    int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
-    auto data = reinterpret_cast<const float *>(sensorData.data);
-    for (int32_t i = 0; i < dataDim; ++i) {
-        str.append(std::to_string(*data));
-        if (i != dataDim - 1) {
-            str.append(", ");
-        }
-        ++data;
-    }
-    str.append("\n");
-    SEN_HILOGI("SensorData: %{public}s", str.c_str());
-}
-
-int32_t SensorEventCallback::GetDataDimension(int32_t sensorId)
-{
-    switch (sensorId) {
-        case SENSOR_TYPE_ID_HALL:
-        case SENSOR_TYPE_ID_PROXIMITY:
-            return ONE_DIMENSION;
-        case SENSOR_TYPE_ID_HALL_EXT:
-            return TWO_DIMENSION;
-        case SENSOR_TYPE_ID_POSTURE:
-            return SEVEN_DIMENSION;
-        case SENSOR_TYPE_ID_AMBIENT_LIGHT:
-        case SENSOR_TYPE_ID_MAGNETIC_FIELD:
-            return THREE_DIMENSION;
-        default:
-            SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, DEFAULT_DIMENSION);
-            return DEFAULT_DIMENSION;
-    }
 }
 } // namespace Sensors
 } // namespace OHOS

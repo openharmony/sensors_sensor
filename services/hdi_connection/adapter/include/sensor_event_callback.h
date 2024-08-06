@@ -30,13 +30,6 @@ class SensorEventCallback : public ISensorCallback {
 public:
     virtual ~SensorEventCallback() {}
     int32_t OnDataEvent(const HdfSensorEvents &event) override;
-private:
-    void ControlSensorPrint(const SensorData &sensorData);
-    void PrintSensorData(const SensorData &sensorData);
-    int32_t GetDataDimension(int32_t sensorId);
-    int64_t postureLastTs_ = 0;
-    int64_t ambientLightLastTs_ = 0;
-    int64_t magneticFieldLastTs_ = 0;
 };
 } // namespace Sensors
 } // namespace OHOS
