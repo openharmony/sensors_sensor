@@ -59,7 +59,8 @@ std::set<const SensorUser *> SensorAgentProxy::GetSubscribeUser(int32_t sensorId
     return {iter->second};
 }
 
-void SensorAgentProxy::HandleSensorData(SensorEvent *events, int32_t num, void *data)
+void SensorAgentProxy::HandleSensorData(SensorEvent *events,
+    int32_t num, void *data) __attribute__((no_sanitize("cfi")))
 {
     CHKPV(events);
     if (num <= 0) {
