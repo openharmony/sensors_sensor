@@ -67,7 +67,8 @@
           "//base/sensors/sensor/test/unittest/interfaces/kits:unittest",
           "//base/sensors/sensor/test/fuzztest/interfaces:fuzztest",
           "//base/sensors/sensor/test/unittest/interfaces/inner_api:unittest",
-          "//base/sensors/sensor/test/fuzztest/services:fuzztest"
+          "//base/sensors/sensor/test/fuzztest/services:fuzztest",
+          "//base/sensors/sensor/test/unittest/coverage:unittest"
       ]
     }
   }
