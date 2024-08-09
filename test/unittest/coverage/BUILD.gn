@@ -42,7 +42,38 @@ ohos_unittest("SensorBasicDataChannelTest") {
     "ipc:ipc_single",
   ]
 }
+
+ohos_unittest("ReportDataCallbackTest") {
+  module_out_path = "sensor/coverage"
+
+  sources =
+      [ "$SUBSYSTEM_DIR/test/unittest/coverage/report_data_callback_test.cpp" ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/interfaces/kits/c",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
+    "$SUBSYSTEM_DIR/frameworks/native:ohsensor",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+  ]
+}
+
 group("unittest") {
   testonly = true
-  deps = [ ":SensorBasicDataChannelTest" ]
+  deps = [
+    ":ReportDataCallbackTest",
+    ":SensorBasicDataChannelTest",
+  ]
 }
