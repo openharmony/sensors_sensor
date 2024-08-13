@@ -174,7 +174,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_001, TestSize.Level1)
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_002, TestSize.Level1)
 {
-    SEN_HILOGI("OH_Sensor_GetInfos_003 in");
+    SEN_HILOGI("OH_Sensor_GetInfos_002 in");
     Sensor_Info *sensors { nullptr };
     int32_t ret = OH_Sensor_GetInfos(&sensors, nullptr);
     ASSERT_NE(ret, SENSOR_SUCCESS);
@@ -182,25 +182,11 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_002, TestSize.Level1)
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_003, TestSize.Level1)
 {
-    SEN_HILOGE("OH_Sensor_GetInfos_004 in");
+    SEN_HILOGE("OH_Sensor_GetInfos_003 in");
     uint32_t count = 0;
     int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
     ASSERT_EQ(ret, SENSOR_SUCCESS);
-
-    Sensor_Info **sensors = OH_Sensor_CreateInfos(count);
-    ASSERT_NE(sensors, nullptr);
-
-    count = 1;
-    ret = OH_Sensor_GetInfos(sensors, &count);
-    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
-}
-
-HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_004, TestSize.Level1)
-{
-    SEN_HILOGE("OH_Sensor_GetInfos_005 in");
-    uint32_t count = 0;
-    int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
-    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    ASSERT_NE(0, count);
 
     auto sensors = new Sensor_Info *[count];
     for (uint32_t i = 0; i < count; ++i) {
@@ -210,47 +196,132 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_004, TestSize.Level1)
     }
     ret = OH_Sensor_GetInfos(sensors, &count);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    ret = OH_Sensor_DestroyInfos(sensors, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_004, TestSize.Level1)
+{
+    SEN_HILOGE("OH_Sensor_GetInfos_004 in");
+    uint32_t count = 0;
+    int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    ASSERT_NE(0, count);
+    Sensor_Info **sensors = OH_Sensor_CreateInfos(count);
+    ASSERT_NE(sensors, nullptr);
+    char sensorName[SENSOR_NAME_LENGTH_MAX] = {};
+    uint32_t length = SENSOR_NAME_LENGTH_MAX;
+
+    auto sensors1 = new Sensor_Info *[count];
+    for (uint32_t i = 0; i < count; ++i) {
+        if (sensors1[i] != nullptr) {
+            sensors1[i] = nullptr;
+        }
+    }
+    ret = OH_SensorInfo_GetName(sensors1[0], sensorName, &length);
+    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+    ret = OH_Sensor_DestroyInfos(sensors1, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+
+    char *sensorName1 = nullptr;
+    ret = OH_SensorInfo_GetName(sensors[0], sensorName1, &length);
+    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    uint32_t *length1 = nullptr;
+    ret = OH_SensorInfo_GetName(sensors[0], sensorName, length1);
+    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    ret = OH_Sensor_DestroyInfos(sensors, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_005, TestSize.Level1)
 {
     SEN_HILOGE("OH_Sensor_GetInfos_005 in");
     uint32_t count = 0;
-    OH_Sensor_GetInfos(nullptr, &count);
-    auto sensors = new Sensor_Info *[count];
-
-    char * sensorName = nullptr;
+    int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    ASSERT_NE(0, count);
+    Sensor_Info **sensors = OH_Sensor_CreateInfos(count);
+    ASSERT_NE(sensors, nullptr);
+    char sensorName[SENSOR_NAME_LENGTH_MAX] = {};
     uint32_t length = SENSOR_NAME_LENGTH_MAX;
-    int32_t ret = OH_SensorInfo_GetName(sensors[0], sensorName, &length);
+
+    ret = OH_SensorInfo_GetName(sensors[0], sensorName, &length);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
 
-    char sensorName1[SENSOR_NAME_LENGTH_MAX] = {};
+    ret = OH_Sensor_GetInfos(sensors, &count);
     length = 0;
-    ret = OH_SensorInfo_GetName(sensors[0], sensorName1, &length);
+    ret = OH_SensorInfo_GetName(sensors[0], sensorName, &length);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    ret = OH_Sensor_DestroyInfos(sensors, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_006, TestSize.Level1)
 {
     SEN_HILOGE("OH_Sensor_GetInfos_006 in");
     uint32_t count = 0;
-    OH_Sensor_GetInfos(nullptr, &count);
-    auto sensors = new Sensor_Info *[count];
+    int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    ASSERT_NE(0, count);
+    Sensor_Info **sensors = OH_Sensor_CreateInfos(count);
+    ASSERT_NE(sensors, nullptr);
+    char vendorName[SENSOR_NAME_LENGTH_MAX] = {};
+    uint32_t length = SENSOR_NAME_LENGTH_MAX;
 
-    char *vendorName = nullptr;
-    uint32_t  length = SENSOR_NAME_LENGTH_MAX;
-    int32_t ret = OH_SensorInfo_GetVendorName(sensors[0], vendorName, &length);
+    auto sensors1 = new Sensor_Info *[count];
+    for (uint32_t i = 0; i < count; ++i) {
+        if (sensors1[i] != nullptr) {
+            sensors1[i] = nullptr;
+        }
+    }
+    ret = OH_SensorInfo_GetVendorName(sensors1[0], vendorName, &length);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+    ret = OH_Sensor_DestroyInfos(sensors1, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
 
-    char vendorName1[SENSOR_NAME_LENGTH_MAX] = {};
-    length = 0;
+    char *vendorName1 = nullptr;
     ret = OH_SensorInfo_GetVendorName(sensors[0], vendorName1, &length);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    uint32_t *length1 = nullptr;
+    ret = OH_SensorInfo_GetVendorName(sensors[0], vendorName, length1);
+    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    ret = OH_Sensor_DestroyInfos(sensors, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_007, TestSize.Level1)
 {
     SEN_HILOGE("OH_Sensor_GetInfos_007 in");
+    uint32_t count = 0;
+    int32_t ret = OH_Sensor_GetInfos(nullptr, &count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+    ASSERT_NE(0, count);
+    Sensor_Info **sensors = OH_Sensor_CreateInfos(count);
+    ASSERT_NE(sensors, nullptr);
+    char sensorName[SENSOR_NAME_LENGTH_MAX] = {};
+    uint32_t length = SENSOR_NAME_LENGTH_MAX;
+
+    ret = OH_SensorInfo_GetVendorName(sensors[0], sensorName, &length);
+    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    ret = OH_Sensor_GetInfos(sensors, &count);
+    length = 0;
+    ret = OH_SensorInfo_GetVendorName(sensors[0], sensorName, &length);
+    ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
+
+    ret = OH_Sensor_DestroyInfos(sensors, count);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_008, TestSize.Level1)
+{
+    SEN_HILOGE("OH_Sensor_GetInfos_008 in");
     uint32_t count = 0;
     OH_Sensor_GetInfos(nullptr, &count);
     auto sensors = new Sensor_Info *[count];
@@ -271,7 +342,6 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_007, TestSize.Level1)
     ret = OH_SensorInfo_GetMaxSamplingInterval(sensors[0], maxSamplePeriod);
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
 }
-
 
 HWTEST_F(SensorAgentTest, OH_Sensor_Subscribe_001, TestSize.Level1)
 {
