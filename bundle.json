@@ -10,7 +10,7 @@
     "name": "sensor",
     "subsystem": "sensors",
     "syscap": ["SystemCapability.Sensors.Sensor", "SystemCapability.Sensors.Sensor.Lite"],
-    "features": [],
+    "features": ["sensor_rust_socket_ipc"],
     "adapted_system_type": [ "standard" ],
     "rom": "2048KB",
     "ram": "~4096KB",
