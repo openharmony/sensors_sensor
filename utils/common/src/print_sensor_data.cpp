@@ -15,8 +15,8 @@
 
 #include "print_sensor_data.h"
 
-#include <set>
 #include <string>
+#include <vector>
 
 #include "sensor_errors.h"
 
@@ -33,15 +33,16 @@ enum {
     SEVEN_DIMENSION = 7,
     DEFAULT_DIMENSION = 16
 };
-constexpr int64_t LOG_INTERVAL = 60000000000;
-constexpr int32_t PRINT_TIMES = 20;
+constexpr int64_t LOG_INTERVAL = 60000000000L;
+constexpr int32_t FIRST_PRINT_TIMES = 20;
+constexpr float LOG_FORMAT_DIVIDER = 1e9f;
 
-const std::set<int32_t> g_triggerSensorType = {
+const std::vector<int32_t> g_triggerSensorType = {
     SENSOR_TYPE_ID_HALL_EXT,
     SENSOR_TYPE_ID_PROXIMITY,
     SENSOR_TYPE_ID_HALL,
 };
-const std::set<int32_t> g_continuousSensorType = {
+const std::vector<int32_t> g_continuousSensorType = {
     SENSOR_TYPE_ID_POSTURE,
     SENSOR_TYPE_ID_AMBIENT_LIGHT,
     SENSOR_TYPE_ID_MAGNETIC_FIELD,
@@ -50,22 +51,25 @@ const std::set<int32_t> g_continuousSensorType = {
 
 void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
 {
-    if (g_triggerSensorType.find(sensorData.sensorTypeId) != g_triggerSensorType.end()) {
+    auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), sensorData.sensorTypeId);
+    if (triggerIt != g_triggerSensorType.end()) {
         PrintHdiData(sensorData);
     }
-    auto it = hdiLoginfos_.find(sensorData.sensorTypeId);
-    if (it != hdiLoginfos_.end()) {
-        if (it->second.count < PRINT_TIMES) {
+    std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
+    auto it = hdiLoginfo_.find(sensorData.sensorTypeId);
+    if (it == hdiLoginfo_.end()) {
+        return;
+    }
+    if (it->second.count < FIRST_PRINT_TIMES) {
+        PrintHdiData(sensorData);
+        if (it->second.count == FIRST_PRINT_TIMES - 1) {
+            it->second.lastTime = sensorData.timestamp;
+        }
+        it->second.count++;
+    } else {
+        if (sensorData.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintHdiData(sensorData);
-            if (it->second.count == PRINT_TIMES - 1) {
-                it->second.lastTime = sensorData.timestamp;
-            }
-            it->second.count++;
-        } else {
-            if (sensorData.timestamp - it->second.lastTime >= LOG_INTERVAL) {
-                PrintHdiData(sensorData);
-                it->second.lastTime = sensorData.timestamp;
-            }
+            it->second.lastTime = sensorData.timestamp;
         }
     }
 }
@@ -74,9 +78,10 @@ void PrintSensorData::PrintHdiData(const SensorData &sensorData)
 {
     std::string str;
     str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + ", ";
-    str += "timestamp: " + std::to_string(sensorData.timestamp / 1e9) + ", ";
+    str += "timestamp: " + std::to_string(sensorData.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
     auto data = reinterpret_cast<const float *>(sensorData.data);
+    CHKPV(data);
     for (int32_t i = 0; i < dataDim; ++i) {
         str.append(std::to_string(*data));
         if (i != dataDim - 1) {
@@ -109,24 +114,30 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
 
 void PrintSensorData::ControlSensorClientPrint(const SensorUser *user, const SensorEvent &event)
 {
-    if (g_triggerSensorType.find(event.sensorTypeId) != g_triggerSensorType.end()) {
+    auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), event.sensorTypeId);
+    if (triggerIt != g_triggerSensorType.end()) {
         PrintClientData(event);
     }
-    if (g_continuousSensorType.find(event.sensorTypeId) != g_continuousSensorType.end()) {
-        auto it = clientLoginfos_.find(user);
-        if (it != clientLoginfos_.end()) {
-            if (it->second.count < PRINT_TIMES) {
-                PrintClientData(event);
-                if (it->second.count == PRINT_TIMES - 1) {
-                    it->second.lastTime = event.timestamp;
-                }
-                it->second.count++;
-            } else {
-                if (event.timestamp - it->second.lastTime >= LOG_INTERVAL) {
-                    PrintClientData(event);
-                    it->second.lastTime = event.timestamp;
-                }
-            }
+
+    auto continuosIt = std::find(g_continuousSensorType.begin(), g_continuousSensorType.end(), event.sensorTypeId);
+    if (continuosIt == g_continuousSensorType.end()) {
+        return;
+    }
+    std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
+    auto it = clientLoginfo_.find(user);
+    if (it == clientLoginfo_.end()) {
+        return;
+    }
+    if (it->second.count < FIRST_PRINT_TIMES) {
+        PrintClientData(event);
+        if (it->second.count == FIRST_PRINT_TIMES - 1) {
+            it->second.lastTime = event.timestamp;
+        }
+        it->second.count++;
+    } else {
+        if (event.timestamp - it->second.lastTime >= LOG_INTERVAL) {
+            PrintClientData(event);
+            it->second.lastTime = event.timestamp;
         }
     }
 }
@@ -135,9 +146,10 @@ void PrintSensorData::PrintClientData(const SensorEvent &event)
 {
     std::string str;
     str += "sensorId: " + std::to_string(event.sensorTypeId) + ", ";
-    str += "timestamp: " + std::to_string(event.timestamp / 1e9) + ", ";
+    str += "timestamp: " + std::to_string(event.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(event.sensorTypeId);
     auto data = reinterpret_cast<const float *>(event.data);
+    CHKPV(data);
     for (int32_t i = 0; i < dataDim; ++i) {
         str.append(std::to_string(*data));
         if (i != dataDim - 1) {
@@ -151,35 +163,43 @@ void PrintSensorData::PrintClientData(const SensorEvent &event)
 
 bool PrintSensorData::IsContinuousType(int32_t sensorId)
 {
-    return g_continuousSensorType.find(sensorId) != g_continuousSensorType.end();
+    return std::find(g_continuousSensorType.begin(), g_continuousSensorType.end(),
+        sensorId) != g_continuousSensorType.end();
 }
 
 void PrintSensorData::SavePrintUserInfo(const SensorUser *user)
 {
-    if (clientLoginfos_.find(user) == clientLoginfos_.end()) {
-        LogPrintInfo info;
-        auto status = clientLoginfos_.insert(std::make_pair(user, info));
-        if (!status.second) {
-            SEN_HILOGD("User has been subscribed");
-        }
+    CHKPV(user);
+    std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
+    if (clientLoginfo_.find(user) != clientLoginfo_.end()) {
+        return;
+    }
+    LogPrintInfo info;
+    auto status = clientLoginfo_.insert(std::make_pair(user, info));
+    if (!status.second) {
+        SEN_HILOGD("User has been subscribed");
     }
 }
 
 void PrintSensorData::RemovePrintUserInfo(const SensorUser *user)
 {
-    if (clientLoginfos_.find(user) != clientLoginfos_.end()) {
-        clientLoginfos_.erase(user);
+    CHKPV(user);
+    std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
+    if (clientLoginfo_.find(user) == clientLoginfo_.end()) {
+        return;
     }
+    clientLoginfo_.erase(user);
 }
 
 void PrintSensorData::ResetHdiCounter(int32_t sensorId)
 {
-    auto hdiIt = hdiLoginfos_.find(sensorId);
-    if (hdiIt != hdiLoginfos_.end()) {
-        SEN_HILOGE("tmac ResetCounter in 111, id:%{public}d", sensorId);
-        hdiIt->second.count = 0;
-        hdiIt->second.lastTime = 0;
+    std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
+    auto it = hdiLoginfo_.find(sensorId);
+    if (it == hdiLoginfo_.end()) {
+        return;
     }
+    it->second.count = 0;
+    it->second.lastTime = 0;
 }
 } // namespace Sensors
 } // namespace OHOS

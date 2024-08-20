@@ -255,12 +255,21 @@ bool SensorService::CheckSensorId(int32_t sensorId)
     return true;
 }
 
-ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+bool SensorService::CheckParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    CALL_LOG_ENTER;
     if ((!CheckSensorId(sensorId)) ||
         ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
         SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceeded the maximum value");
+        return false;
+    }
+    return true;
+}
+
+ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+{
+    CALL_LOG_ENTER;
+    if (!CheckParameter(sensorId, samplingPeriodNs, maxReportDelayNs)) {
+        SEN_HILOGE("sensorId, samplingPeriodNs or maxReportDelayNs is invalid");
         return ERR_NO_INIT;
     }
     int32_t pid = GetCallingPid();
@@ -334,7 +343,6 @@ ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
     int32_t uid = clientInfo_.GetUidByPid(pid);
     clientInfo_.DestroyCmd(uid);
     clientInfo_.ClearDataQueue(sensorId);
-    PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
     return sensorManager_.AfterDisableSensor(sensorId);
 }
 

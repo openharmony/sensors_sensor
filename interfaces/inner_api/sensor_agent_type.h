@@ -184,10 +184,6 @@ typedef struct SensorUser {
     char name[NAME_MAX_LEN];  /**< Name of the sensor data subscriber */
     RecordSensorCallback callback;   /**< Callback for reporting sensor data */
     UserData *userData = nullptr;              /**< Reserved field for the sensor data subscriber */
-    bool operator==( const SensorUser& user) const
-    {
-        return callback == user.callback;
-    }
 } SensorUser;
 
 /**

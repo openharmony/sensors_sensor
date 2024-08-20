@@ -27,6 +27,8 @@
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
+namespace OHOS {
+namespace Sensors {
 using namespace OHOS::HiviewDFX;
 using namespace OHOS::Security::AccessToken;
 using OHOS::Security::AccessToken::AccessTokenID;
@@ -113,10 +115,12 @@ void SensorAgentFuzzTest(const uint8_t *data, size_t size)
     DeactivateSensor(sensorTypeId, &user);
     UnsubscribeSensor(sensorTypeId, &user);
 }
+} // namespace Sensors
+} // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-    SensorAgentFuzzTest(data, size);
+    OHOS::Sensors::SensorAgentFuzzTest(data, size);
     return 0;
 }
 

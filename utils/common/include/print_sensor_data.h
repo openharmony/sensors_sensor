@@ -46,13 +46,15 @@ private:
         int32_t count { 0 };
         int64_t lastTime { 0 };
     };
+    std::mutex hdiLoginfoMutex_;
+    std::mutex clientLoginfoMutex_;
     LogPrintInfo info_;
-    std::map<int32_t, LogPrintInfo> hdiLoginfos_ = {
+    std::map<int32_t, LogPrintInfo> hdiLoginfo_ = {
         {SENSOR_TYPE_ID_POSTURE, info_},
         {SENSOR_TYPE_ID_AMBIENT_LIGHT, info_},
         {SENSOR_TYPE_ID_MAGNETIC_FIELD, info_},
     };
-    std::map<const SensorUser *, LogPrintInfo> clientLoginfos_;
+    std::map<const SensorUser *, LogPrintInfo> clientLoginfo_;
 };
 } // namespace Sensors
 } // namespace OHOS

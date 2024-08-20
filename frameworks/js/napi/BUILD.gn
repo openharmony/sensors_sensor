@@ -39,7 +39,7 @@ ohos_shared_library("libsensor") {
   }
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
-    "$SUBSYSTEM_DIR/utils/common:libsensor_utils"
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
   ]
   external_deps = [
     "bundle_framework:appexecfwk_base",
