@@ -40,7 +40,7 @@ constexpr uint32_t SEMITONE_NUM_COEFFS = 13;
 constexpr double ONSET_PEAK_THRESHOLD_RATIO = 0.4;
 constexpr double MIN_FREQ = 0.0;
 constexpr double MAX_FREQ = SAMPLE_RATE / 2.0;
-}  // namespace
+} // namespace
 
 std::vector<double> Onset::MatrixDot(size_t matrixAcols, const std::vector<double> &matrixA,
     size_t matrixBcols, const std::vector<double> &matrixB)
@@ -261,5 +261,5 @@ int32_t Onset::CheckOnset(const std::vector<double> &data, int32_t nFft, int32_t
     onsetInfo = onsetInfo_;
     return Sensors::SUCCESS;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

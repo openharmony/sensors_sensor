@@ -46,6 +46,6 @@ private:
     AudioData audioData_;
     AttributeChunk attributeChunk_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // AUDIO_PARSING_H

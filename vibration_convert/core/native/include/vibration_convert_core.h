@@ -205,6 +205,6 @@ private:
     Onset onset_;
     int32_t onsetMinSkip_ { 0 };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // VIBRATION_CONVERT_CORE_H

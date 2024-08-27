@@ -31,6 +31,6 @@ public:
      */
     void ProcessEvent(const AppExecFwk::InnerEvent::Pointer &event) override;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_EVENT_HANDLER_H

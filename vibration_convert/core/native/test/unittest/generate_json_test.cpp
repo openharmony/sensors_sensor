@@ -103,5 +103,5 @@ HWTEST_F(GenerateJsonFileTest, GenerateJsonFileTest_002, TestSize.Level1)
     int32_t ret = vibrationConvertCore.ConvertAudioToHaptic(audioSetting, data, vtEvents);
     EXPECT_EQ(ret, 0);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

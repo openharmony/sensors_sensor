@@ -38,6 +38,6 @@ std::vector<double> AudioSrcDatas = {
     0.00393714383244514,
     0.0
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // UT_TEST_DATA_H

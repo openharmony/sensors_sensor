@@ -37,7 +37,7 @@ namespace{
 constexpr double PERCENTAGE_RANGE = 100.0;
 constexpr int32_t VOICE_MIN_INTENSITY_NORM = 25;
 constexpr size_t MAX_SIZE = 26460000;
-}  // namespace
+} // namespace
 
 bool IsPowerOfTwo(uint32_t x)
 {
@@ -259,5 +259,5 @@ std::vector<double> ObtainAmplitudeEnvelop(const std::vector<double> &data, size
     }
     return enery;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

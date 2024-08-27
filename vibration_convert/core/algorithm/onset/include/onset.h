@@ -76,6 +76,6 @@ private:
     bool htkFlag_ { false };
     OnsetInfo onsetInfo_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // ONSET_H

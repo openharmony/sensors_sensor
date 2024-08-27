@@ -33,7 +33,7 @@ namespace Sensors {
 namespace {
 constexpr int32_t RESULT_LENGTH = 2;
 constexpr int64_t INVALID_FILE_SIZE = -1;
-}  // namespace
+} // namespace
 
 AsyncCallbackInfo::~AsyncCallbackInfo()
 {
@@ -385,5 +385,5 @@ void EmitHapticPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         asyncCallbackInfo->DecStrongRef(nullptr);
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

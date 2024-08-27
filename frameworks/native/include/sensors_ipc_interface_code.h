@@ -34,6 +34,6 @@ enum class SensorInterfaceCode {
     DISABLE_ACTIVE_INFO_CB,
     RESET_SENSORS,
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSORS_IPC_INTERFACE_CODE_H

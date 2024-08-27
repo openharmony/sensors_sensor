@@ -46,7 +46,7 @@ constexpr int32_t HUNDRED_POINT_DESCENT_HEIGHT { 100 };
 constexpr double DROP_HIGHT { 1.0 };
 constexpr int32_t AMPLITUDE_ENVELOPE_HOP_LENGTH { 256 };
 constexpr double DROP_HIGHT_THRESHOLD { 0.3 }; // 30%
-}  // namespace
+} // namespace
 
 std::vector<double> PeakFinder::ExtractValues(const std::vector<double> &envelope, const std::vector<int32_t> &idxs)
 {
@@ -790,5 +790,5 @@ int32_t PeakFinder::EstimateDesentEnergy(const std::vector<double> &data, double
     dutyCycle = totalEnergy / virtualWholeEnergy;
     return Sensors::SUCCESS;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
