@@ -50,6 +50,6 @@ public:
     virtual ErrCode DisableActiveInfoCB() = 0;
     virtual ErrCode ResetSensors() = 0;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // I_SENSOR_SERVICE_H

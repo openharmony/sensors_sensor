@@ -68,6 +68,6 @@ private:
 };
 
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // endif SENSOR_PROXY_H

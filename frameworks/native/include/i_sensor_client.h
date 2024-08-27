@@ -26,6 +26,6 @@ public:
     virtual ~ISensorClient() = default;
     DECLARE_INTERFACE_DESCRIPTOR(u"ISensorClient");
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // I_SENSOR_CLIENT_H

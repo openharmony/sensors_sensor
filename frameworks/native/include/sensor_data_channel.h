@@ -52,6 +52,6 @@ private:
     ReceiveMessageFun receiveMessage_;
     DisconnectFun disconnect_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_DATA_CHANNEL_H

@@ -35,6 +35,6 @@ public:
 private:
     SensorDataChannel *channel_ = { nullptr };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // FD_LISTENER_H
