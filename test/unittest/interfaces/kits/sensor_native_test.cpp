@@ -42,7 +42,7 @@ constexpr int64_t INVALID_VALUE = -1;
 constexpr float INVALID_RESOLUTION = -1.0F;
 Sensor_Subscriber *g_user = nullptr;
 std::atomic_bool g_existAmbientLight = false;
-}  // namespace
+} // namespace
 
 class SensorAgentTest : public testing::Test {
 public:
@@ -712,5 +712,5 @@ HWTEST_F(SensorAgentTest, OH_SensorSubscriber_GetCallback_003, TestSize.Level1)
         OH_Sensor_DestroySubscriber(g_user);
     }
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

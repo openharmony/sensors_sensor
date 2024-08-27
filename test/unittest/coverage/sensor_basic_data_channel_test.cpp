@@ -33,7 +33,7 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 constexpr int32_t INVALID_FD = 2;
-}  // namespace
+} // namespace
 
 class SensorBasicDataChannelTest : public testing::Test {
 public:
@@ -145,5 +145,5 @@ HWTEST_F(SensorBasicDataChannelTest, ReceiveData_001, TestSize.Level1)
     sensorChannel.DestroySensorBasicChannel();
 }
 
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

@@ -26,7 +26,7 @@ using namespace testing::ext;
 
 namespace {
     SensorData* g_sensorData = new (std::nothrow) SensorData[CIRCULAR_BUF_LEN];
-}  // namespace
+} // namespace
 
 class SensorBasicDataChannelTest : public testing::Test {
 public:
