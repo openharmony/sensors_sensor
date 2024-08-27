@@ -45,7 +45,7 @@ ohos_shared_library("libsensor_utils") {
     "hilog:libhilog",
     "ipc:ipc_single",
   ]
-  
+
   defines = sensor_default_defines
   if (hiviewdfx_hisysevent_enable) {
     external_deps += [ "hisysevent:libhisysevent" ]
