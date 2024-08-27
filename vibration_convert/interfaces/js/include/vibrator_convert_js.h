@@ -45,6 +45,6 @@ private:
     std::mutex mutex_;
     napi_ref contextRef_ { nullptr };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // VIBRATOR_CONVERT_JS_H

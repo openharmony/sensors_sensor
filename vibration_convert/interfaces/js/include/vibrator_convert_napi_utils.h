@@ -82,6 +82,6 @@ napi_value GetAudioToHapticInfo(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 void EmitHapticAsyncCallbackWork(sptr<AsyncCallbackInfo> async_callback_info);
 void EmitHapticPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 int64_t GetFileSize(int32_t fd);
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // VIBRATOR_CONVERT_NAPI_UTILS_H
