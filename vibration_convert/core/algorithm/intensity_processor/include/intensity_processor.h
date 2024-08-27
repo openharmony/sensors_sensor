@@ -86,6 +86,6 @@ public:
      */
     std::vector<double> VolumeInDB(const std::vector<double> &data, int32_t hopLength);
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // INTENSITY_PROCESSOR_H

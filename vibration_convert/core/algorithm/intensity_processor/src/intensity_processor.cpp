@@ -26,7 +26,7 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr double VOLUME_DB_COEF { 10.0 };
-}  // namespace
+} // namespace
 
 std::vector<double> IntensityProcessor::GetRMS(const std::vector<double> &data, int32_t hopLength, bool centerFlag)
 {
@@ -131,5 +131,5 @@ std::vector<double> IntensityProcessor::VolumeInDB(const std::vector<double> &da
     }
     return db;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
