@@ -15,6 +15,7 @@ import("//build/ohos.gni")
 
 declare_args() {
   rust_socket_ipc = false
+  hiviewdfx_hisysevent_enable = true
 }
 
 SUBSYSTEM_DIR = "//base/sensors/sensor"
@@ -47,4 +48,12 @@ if (build_variant == "root") {
   sensor_build_eng = true
 } else {
   sensor_build_eng = false
+}
+
+if (!defined(global_parts_info) ||
+    defined(global_parts_info.hiviewdfx_hisysevent)) {
+  hiviewdfx_hisysevent_enable = true
+  sensor_default_defines += [ "HIVIEWDFX_HISYSEVENT_ENABLE" ]
+} else {
+  hiviewdfx_hisysevent_enable = false
 }

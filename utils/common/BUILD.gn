@@ -43,9 +43,13 @@ ohos_shared_library("libsensor_utils") {
     "access_token:libprivacy_sdk",
     "c_utils:utils",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "ipc:ipc_single",
   ]
+  
+  defines = sensor_default_defines
+  if (hiviewdfx_hisysevent_enable) {
+    external_deps += [ "hisysevent:libhisysevent" ]
+  }
 
   innerapi_tags = [ "platformsdk_indirect" ]
   part_name = "sensor"
