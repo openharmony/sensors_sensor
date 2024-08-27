@@ -74,6 +74,6 @@ private:
     std::mutex activeInfoCBMutex_;
     std::set<SensorActiveInfoCB> activeInfoCBSet_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_SERVICE_CLIENT_H

@@ -48,6 +48,6 @@ private:
     DISALLOW_COPY_AND_MOVE(SensorServiceProxy);
     static inline BrokerDelegator<SensorServiceProxy> delegator_;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_SERVICE_PROXY_H
