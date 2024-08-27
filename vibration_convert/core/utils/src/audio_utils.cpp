@@ -39,7 +39,7 @@ constexpr double MTOF_ARRAY[MTOF_ARRAY_SIZE + 1] = {
     3729.31, 3951.066406, 4186.009277, 4434.921875, 4698.63623, 4978.031738, 5274.041016, 5587.651855,
     5919.910645, 6271.926758, 6644.875, 7040., 7458.620117, 7902.132812, 8372.018555, 8869.84375, 9397.272461,
     9956.063477, 10548.082031, 11175.303711, 11839.821289, 12543.853516, 13289.75 };
-}  // namespace
+} // namespace
 
 double AudioUtils::ConvertMtof(int32_t midinote)
 {
@@ -61,5 +61,5 @@ std::vector<double> AudioUtils::PadData(const std::vector<double> &data, int32_t
     paddingData.insert(paddingData.end(), hopLength / 2, 0);
     return paddingData;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

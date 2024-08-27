@@ -30,7 +30,7 @@ namespace Sensors {
 namespace {
 const char* CONVERT = "convert";
 const char* CONVERT_CLASS = "convert_class";
-}  // namespace
+} // namespace
 
 std::shared_ptr<AudioParsing> VibratorConvert::GetInterfaces()
 {
@@ -295,5 +295,5 @@ napi_value VibratorConvert::ConvertAudioToHaptic(napi_env env, napi_callback_inf
     EmitHapticPromiseWork(asyncCallbackInfo);
     return promise;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
