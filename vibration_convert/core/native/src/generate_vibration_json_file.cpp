@@ -93,5 +93,5 @@ int32_t GenerateVibrationJsonFile::DebugJsonFile(const std::string &pathName, co
     ofs.close();
     return Sensors::SUCCESS;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

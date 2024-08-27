@@ -64,7 +64,7 @@ constexpr double AMPLITUDE_DB_MAX { 1.0 };
 constexpr int32_t ADSR_BOUNDARY_STATUS_NONE { 0 };
 constexpr int32_t ADSR_BOUNDARY_STATUS_ONE { 1 };
 constexpr int32_t ADSR_BOUNDARY_STATUS_BOTH { 2 };
-}  // namespace
+} // namespace
 
 int32_t VibrationConvertCore::GetAudioData()
 {
@@ -1196,5 +1196,5 @@ void VibrationConvertCore::AddContinuousEventData(const ContinuousEvent &continu
 {
     continuousEvents_.push_back(continuousEvent);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

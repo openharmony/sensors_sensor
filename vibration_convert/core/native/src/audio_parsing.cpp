@@ -42,7 +42,7 @@ constexpr int32_t AUDIO_DATA_MAX_NUMBER = 100000;
 constexpr int64_t LSEEK_FAIL = -1;
 constexpr int32_t TIME_MS = 1000;
 constexpr int32_t BITS_PER_BYTE = 8;
-}  // namespace
+} // namespace
 
 AudioParsing::AudioParsing(const RawFileDescriptor &rawFd)
 {
@@ -210,5 +210,5 @@ void AudioParsing::PrintAttributeChunk()
     SEN_HILOGD("dataID:%{public}.4s", attributeChunk_.dataID);
     SEN_HILOGD("dataSize:%{public}u", attributeChunk_.dataSize);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

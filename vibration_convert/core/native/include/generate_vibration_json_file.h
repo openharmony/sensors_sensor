@@ -33,6 +33,6 @@ public:
     template<typename T>
     int32_t DebugJsonFile(const std::string &pathName, const std::vector<T> &srcDatas);
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // GENERATE_VIBRATION_JSON_FILE_H

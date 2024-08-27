@@ -190,6 +190,6 @@ private:
     std::vector<bool> voiceSegmentFlag_;
     int32_t hopLength_ { 1024 };
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // PEAK_FINDER_H
