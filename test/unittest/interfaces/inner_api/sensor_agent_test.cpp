@@ -60,7 +60,7 @@ HapInfoParams g_infoManagerTestInfoParms = {
     .instIndex = 0,
     .appIDDesc = "sensorAgentTest"
 };
-}  // namespace
+} // namespace
 
 class SensorAgentTest : public testing::Test {
 public:
