@@ -545,7 +545,7 @@ int32_t VibrationConvertCore::ConvertTransientEvent(const std::vector<double> &d
     IsolatedEnvelopeInfo isolatedEnvelopeInfo;
     int32_t ret = peakFinder_.ObtainTransientByAmplitude(datas, isolatedEnvelopeInfo);
     if (ret != Sensors::SUCCESS) {
-        SEN_HILOGE("ObtainTransientByAmplitude failed.");
+        SEN_HILOGE("ObtainTransientByAmplitude failed");
         return ret;
     }
     if (!isolatedEnvelopeInfo.isHaveContinuousEvent) {

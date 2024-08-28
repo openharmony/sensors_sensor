@@ -332,7 +332,7 @@ std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorDa
     std::string str;
     int32_t dataLen = GetDataDimension(sensorId);
     if (sensorData.dataLen < sizeof(float)) {
-        SEN_HILOGE("SensorData dataLen less than float size.");
+        SEN_HILOGE("SensorData dataLen less than float size");
         return str;
     }
     auto data = reinterpret_cast<float *>(sensorData.data);
