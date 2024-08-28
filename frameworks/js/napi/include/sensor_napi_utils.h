@@ -93,6 +93,6 @@ bool GetSelfTargetVersion(uint32_t &targetVersion);
             return false; \
         } \
     } while (0)
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_NAPI_UTILS_H
