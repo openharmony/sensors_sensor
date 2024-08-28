@@ -55,4 +55,3 @@ if (defined(global_parts_info) &&
   hiviewdfx_hisysevent_enable = true
   sensor_default_defines += [ "HIVIEWDFX_HISYSEVENT_ENABLE" ]
 }
-
