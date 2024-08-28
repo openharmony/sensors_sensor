@@ -21,7 +21,9 @@
 #include <vector>
 
 #include "death_recipient_template.h"
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "sensor_errors.h"
@@ -96,8 +98,10 @@ int32_t SensorServiceClient::InitServiceClient()
         std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
         retry++;
     }
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
     SEN_HILOGE("Get service failed");
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }

@@ -17,7 +17,9 @@
 
 #include <vector>
 
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "message_parcel.h"
 #include "sensor_client_proxy.h"
 #include "sensor_errors.h"
@@ -50,8 +52,10 @@ ErrCode SensorServiceProxy::EnableSensor(int32_t sensorId, int64_t samplingPerio
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -72,8 +76,10 @@ ErrCode SensorServiceProxy::DisableSensor(int32_t sensorId)
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DISABLE_SENSOR),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableSensor", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -97,8 +103,10 @@ std::vector<Sensor> SensorServiceProxy::GetSensorList()
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
         return sensors;
     }
@@ -139,8 +147,10 @@ ErrCode SensorServiceProxy::TransferDataChannel(const sptr<SensorBasicDataChanne
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "TransferDataChannel", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     sensorBasicDataChannel->CloseSendFd();
@@ -163,8 +173,10 @@ ErrCode SensorServiceProxy::DestroySensorChannel(sptr<IRemoteObject> sensorClien
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySensorChannel", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -259,8 +271,10 @@ ErrCode SensorServiceProxy::CreateSocketChannel(sptr<IRemoteObject> sensorClient
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateSocketChannel", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
         return ERROR;
     }
@@ -288,8 +302,10 @@ ErrCode SensorServiceProxy::DestroySocketChannel(sptr<IRemoteObject> sensorClien
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroySocketChannel", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -309,8 +325,10 @@ ErrCode SensorServiceProxy::EnableActiveInfoCB()
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_ACTIVE_INFO_CB),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableActiveInfoCB", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -330,8 +348,10 @@ ErrCode SensorServiceProxy::DisableActiveInfoCB()
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::DISABLE_ACTIVE_INFO_CB),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DisableActiveInfoCB", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);
@@ -351,8 +371,10 @@ ErrCode SensorServiceProxy::ResetSensors()
     int32_t ret = remote->SendRequest(static_cast<uint32_t>(SensorInterfaceCode::RESET_SENSORS),
         data, reply, option);
     if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "ResetSensors", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Failed, ret:%{public}d", ret);
     }
     return static_cast<ErrCode>(ret);

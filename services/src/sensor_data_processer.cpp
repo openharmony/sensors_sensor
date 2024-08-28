@@ -20,7 +20,9 @@
 #include <sys/socket.h>
 #include <thread>
 
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_basic_data_channel.h"

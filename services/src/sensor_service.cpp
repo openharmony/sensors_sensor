@@ -20,7 +20,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "iservice_registry.h"
 #ifdef MEMMGR_ENABLE
 #include "mem_mgr_client.h"
@@ -184,15 +186,21 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
     std::string packageName("");
     AccessTokenID tokenId = clientInfo_.GetTokenIdByPid(pid);
     sensorManager_.GetPackageName(tokenId, packageName);
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
     const int logLevel = 4;
     int32_t uid = clientInfo_.GetUidByPid(pid);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
     if (enable) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d", packageName.c_str(), sensorId);
     } else {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d", packageName.c_str(), sensorId);
     }
 }

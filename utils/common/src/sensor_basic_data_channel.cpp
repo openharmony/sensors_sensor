@@ -19,7 +19,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "sensor_errors.h"
 
 #undef LOG_TAG
@@ -49,8 +51,10 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 
     int32_t socketPair[SOCKET_PAIR_SIZE] = { 0 };
     if (socketpair(AF_UNIX, SOCK_SEQPACKET, 0, socketPair) != 0) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "DATA_CHANNEL_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateSensorBasicChannel", "ERROR_CODE", errno);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("Create socketpair failed");
         sendFd_ = -1;
         receiveFd_ = -1;

@@ -22,7 +22,9 @@
 #include <vector>
 
 #include "accesstoken_kit.h"
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "ipc_skeleton.h"
 #include "message_parcel.h"
 #include "permission_util.h"
@@ -136,8 +138,10 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("sensorId:%{public}d grant failed, result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }
@@ -160,8 +164,10 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
     if (ret != PERMISSION_GRANTED) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL",
             HiSysEvent::EventType::SECURITY, "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("sensorId:%{public}d grant failed, result:%{public}d", sensorId, ret);
         return PERMISSION_DENIED;
     }

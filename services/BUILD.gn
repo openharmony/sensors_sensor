@@ -59,7 +59,6 @@ ohos_shared_library("libsensor_service") {
     "access_token:libtokenid_sdk",
     "c_utils:utils",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
@@ -69,6 +68,10 @@ ohos_shared_library("libsensor_service") {
   if (sensor_memmgr_enable) {
     defines += [ "MEMMGR_ENABLE" ]
     external_deps += [ "memmgr:memmgrclient" ]
+  }
+
+  if (hiviewdfx_hisysevent_enable) {
+    external_deps += [ "hisysevent:libhisysevent" ]
   }
 
   if (hdf_drivers_interface_sensor) {
@@ -148,7 +151,6 @@ ohos_static_library("libsensor_service_static") {
     "access_token:libtokenid_sdk",
     "c_utils:utils",
     "hilog:libhilog",
-    "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
@@ -158,6 +160,10 @@ ohos_static_library("libsensor_service_static") {
   if (sensor_memmgr_enable) {
     defines += [ "MEMMGR_ENABLE" ]
     external_deps += [ "memmgr:memmgrclient" ]
+  }
+
+  if (hiviewdfx_hisysevent_enable) {
+    external_deps += [ "hisysevent:libhisysevent" ]
   }
 
   if (hdf_drivers_interface_sensor) {
