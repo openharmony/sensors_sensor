@@ -75,7 +75,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
     callbackInfo->data.sensorData.sensorAccuracy = event->option;
     CHKPF(event->data);
     if (event->dataLen < sizeof(float)) {
-        SEN_HILOGE("Event dataLen less than float size.");
+        SEN_HILOGE("Event dataLen less than float size");
         return false;
     }
     auto data = reinterpret_cast<float *>(event->data);
