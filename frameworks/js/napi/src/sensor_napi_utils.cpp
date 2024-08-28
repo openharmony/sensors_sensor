@@ -639,5 +639,5 @@ bool GetSelfTargetVersion(uint32_t &targetVersion)
     targetVersion = bundleInfo.targetVersion;
     return true;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

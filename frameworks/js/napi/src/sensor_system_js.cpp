@@ -180,5 +180,5 @@ napi_value UnsubscribeHall(napi_env env, napi_callback_info info)
     CALL_LOG_ENTER;
     return Unsubscribe(env, info, SENSOR_TYPE_ID_HALL);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

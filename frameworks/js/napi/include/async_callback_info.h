@@ -130,6 +130,6 @@ public:
 
 private:
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // ASYNC_CALLBACK_INFO_H

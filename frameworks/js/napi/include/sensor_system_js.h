@@ -45,6 +45,6 @@ napi_value SubscribeMagnetic(napi_env env, napi_callback_info info);
 napi_value UnsubscribeMagnetic(napi_env env, napi_callback_info info);
 napi_value SubscribeHall(napi_env env, napi_callback_info info);
 napi_value UnsubscribeHall(napi_env env, napi_callback_info info);
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_SYSTEM_JS_H

@@ -29,6 +29,6 @@ int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCall
 napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
 napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
 napi_value GetBodyState(napi_env env, napi_callback_info info);
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_JS_H
