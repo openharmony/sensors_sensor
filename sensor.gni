@@ -16,6 +16,7 @@ import("//build/ohos.gni")
 declare_args() {
   hiviewdfx_hisysevent_enable = false
   sensor_rust_socket_ipc = false
+  hiviewdfx_hitrace_enable = false
 }
 
 SUBSYSTEM_DIR = "//base/sensors/sensor"
@@ -54,4 +55,10 @@ if (defined(global_parts_info) &&
     defined(global_parts_info.hiviewdfx_hisysevent)) {
   hiviewdfx_hisysevent_enable = true
   sensor_default_defines += [ "HIVIEWDFX_HISYSEVENT_ENABLE" ]
+}
+
+if (defined(global_parts_info) &&
+    defined(global_parts_info.hiviewdfx_hitrace)) {
+  hiviewdfx_hitrace_enable = true
+  sensor_default_defines += [ "HIVIEWDFX_HITRACE_ENABLE" ]
 }

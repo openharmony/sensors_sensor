@@ -24,7 +24,9 @@
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
+#ifdef HIVIEWDFX_HITRACE_ENABLE
 #include "hitrace_meter.h"
+#endif // HIVIEWDFX_HITRACE_ENABLE
 #include "ipc_skeleton.h"
 #include "sensor_errors.h"
 #include "sensor_service_proxy.h"
@@ -136,9 +138,13 @@ int32_t SensorServiceClient::EnableSensor(int32_t sensorId, int64_t samplingPeri
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret == ERR_OK) {
         UpdateSensorInfoMap(sensorId, samplingPeriod, maxReportDelay);
     }
@@ -155,9 +161,13 @@ int32_t SensorServiceClient::DisableSensor(int32_t sensorId)
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->DisableSensor(sensorId);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret == ERR_OK) {
         DeleteSensorInfoItem(sensorId);
     }
@@ -194,12 +204,16 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "TransferDataChannel");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->TransferDataChannel(sensorDataChannel, remoteObject);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
@@ -213,12 +227,16 @@ int32_t SensorServiceClient::DestroyDataChannel()
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DestroyDataChannel");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->DestroySensorChannel(remoteObject);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
@@ -307,9 +325,13 @@ int32_t SensorServiceClient::SuspendSensors(int32_t pid)
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SuspendSensors");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->SuspendSensors(pid);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
@@ -323,9 +345,13 @@ int32_t SensorServiceClient::ResumeSensors(int32_t pid)
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "ResumeSensors");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->ResumeSensors(pid);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
@@ -339,9 +365,13 @@ int32_t SensorServiceClient::GetActiveInfoList(int32_t pid, std::vector<ActiveIn
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "GetActiveInfoList");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->GetActiveInfoList(pid, activeInfoList);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
@@ -382,20 +412,28 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DisableActiveInfoCB");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->DisableActiveInfoCB();
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGE("Disable active info callback failed, ret:%{public}d", ret);
         return ret;
     }
     Disconnect();
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DestroySocketChannel");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->DestroySocketChannel(remoteObject);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGE("Destroy socket channel failed, ret:%{public}d", ret);
         return ret;
@@ -414,9 +452,13 @@ int32_t SensorServiceClient::ResetSensors()
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "ResetSensors");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->ResetSensors();
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
@@ -493,12 +535,16 @@ int32_t SensorServiceClient::CreateSocketChannel()
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     int32_t clientFd = -1;
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->CreateSocketChannel(remoteObject, clientFd);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK || clientFd < 0) {
         Close();
         SEN_HILOGE("Create socket channel failed, ret:%{public}d", ret);
@@ -519,9 +565,13 @@ int32_t SensorServiceClient::CreateSocketChannel()
             return ERROR;
         }
     }
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "EnableActiveInfoCB");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->EnableActiveInfoCB();
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGE("Enable active info callback failed, ret:%{public}d", ret);
         Disconnect();

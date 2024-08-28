@@ -19,7 +19,9 @@
 #endif // BUILD_VARIANT_ENG
 
 #include "hdi_connection.h"
+#ifdef HIVIEWDFX_HITRACE_ENABLE
 #include "hitrace_meter.h"
+#endif // HIVIEWDFX_HITRACE_ENABLE
 #include "sensor_errors.h"
 
 #undef LOG_TAG
@@ -230,13 +232,17 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 
 int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 {
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = ENABLE_SENSOR_ERR;
 #ifdef BUILD_VARIANT_ENG
     if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGE("Enable sensor failed in compatible, sensorId:%{public}d", sensorId);
             return ENABLE_SENSOR_ERR;
@@ -246,7 +252,9 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, ENABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->EnableSensor(sensorId);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGI("Enable sensor failed, sensorId:%{public}d", sensorId);
         return ENABLE_SENSOR_ERR;
@@ -256,13 +264,17 @@ int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
 
 int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 {
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = DISABLE_SENSOR_ERR;
 #ifdef BUILD_VARIANT_ENG
     if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
         ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGE("Disable sensor failed in compatible, sensorId:%{public}d", sensorId);
             return DISABLE_SENSOR_ERR;
@@ -272,7 +284,9 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, DISABLE_SENSOR_ERR);
     ret = iSensorHdiConnection_->DisableSensor(sensorId);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGI("Disable sensor failed, sensorId:%{public}d", sensorId);
         return DISABLE_SENSOR_ERR;
@@ -282,13 +296,17 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 
 int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = SET_SENSOR_CONFIG_ERR;
 #ifdef BUILD_VARIANT_ENG
     if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
         ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGI("Set batch failed in compatible, sensorId:%{public}d", sensorId);
             return SET_SENSOR_CONFIG_ERR;
@@ -298,7 +316,9 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, SET_SENSOR_CONFIG_ERR);
     ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGI("Set batch failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_CONFIG_ERR;
@@ -308,13 +328,17 @@ int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval
 
 int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SetMode");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = SET_SENSOR_MODE_ERR;
 #ifdef BUILD_VARIANT_ENG
     if (FindOneInMockSet(sensorId)) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_MODE_ERR);
         ret = iSensorCompatibleHdiConnection_->SetMode(sensorId, mode);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
             return SET_SENSOR_MODE_ERR;
@@ -324,7 +348,9 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, SET_SENSOR_MODE_ERR);
     ret = iSensorHdiConnection_->SetMode(sensorId, mode);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
         SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
         return SET_SENSOR_MODE_ERR;
@@ -334,7 +360,9 @@ int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
 
 int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback)
 {
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "RegisterDataReport");
+#endif // HIVIEWDFX_HITRACE_ENABLE
     CHKPR(iSensorHdiConnection_, REGIST_CALLBACK_ERR);
     int32_t ret = iSensorHdiConnection_->RegisterDataReport(cb, reportDataCallback);
     if (ret != ERR_OK) {
@@ -350,7 +378,9 @@ int32_t SensorHdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportData
         }
     }
 #endif // BUILD_VARIANT_ENG
+#ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
     return ret;
 }
 
