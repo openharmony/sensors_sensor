@@ -72,7 +72,7 @@ struct RationMatrixData {
     float inclinationMatrix[THREE_DIMENSIONAL_MATRIX_LENGTH];
 };
 
-struct SensorData {
+struct CallbackSensorData {
     int32_t sensorTypeId;
     uint32_t dataLength;
     float data[DATA_LENGTH];
@@ -86,7 +86,7 @@ struct ReserveData {
 };
 
 union CallbackData {
-    SensorData sensorData;
+    CallbackSensorData sensorData;
     GeomagneticData geomagneticData;
     RationMatrixData rationMatrixData;
     ReserveData reserveData;

@@ -17,6 +17,7 @@
 
 #include <cstring>
 
+#include "print_sensor_data.h"
 #include "securec.h"
 #include "sensor_errors.h"
 #include "sensor_service_client.h"
@@ -76,6 +77,7 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
             RecordSensorCallback fun = user->callback;
             CHKPV(fun);
             fun(&eventStream);
+            PrintSensorData::GetInstance().ControlSensorClientPrint(user, eventStream);
         }
     }
 }
@@ -245,6 +247,9 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     if (!status.second) {
         SEN_HILOGD("User has been subscribed");
     }
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+        PrintSensorData::GetInstance().SavePrintUserInfo(user);
+    }
     return OHOS::Sensors::SUCCESS;
 }
 
@@ -277,6 +282,9 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     unsubscribeSet.erase(user);
     if (unsubscribeSet.empty()) {
         unsubscribeMap_.erase(sensorId);
+    }
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+        PrintSensorData::GetInstance().RemovePrintUserInfo(user);
     }
     return OHOS::Sensors::SUCCESS;
 }
