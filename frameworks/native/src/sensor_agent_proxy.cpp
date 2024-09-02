@@ -82,6 +82,13 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
     }
 }
 
+void SensorAgentProxy::SetIsChannelCreated(bool isChannelCreated)
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> chanelLock(chanelMutex_);
+    isChannelCreated_ = isChannelCreated;
+}
+
 int32_t SensorAgentProxy::CreateSensorDataChannel()
 {
     CALL_LOG_ENTER;
