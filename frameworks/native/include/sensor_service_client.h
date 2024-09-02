@@ -59,6 +59,7 @@ private:
     int32_t InitServiceClient();
     void UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
     void DeleteSensorInfoItem(int32_t sensorId);
+    int32_t CreateSocketClientFd(int32_t &clientFd);
     int32_t CreateSocketChannel();
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
