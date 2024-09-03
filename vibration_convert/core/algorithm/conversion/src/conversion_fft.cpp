@@ -115,7 +115,7 @@ int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frame
         // reset pos to start of hop
         pos_ = para_.windowSize - para_.hopSize;
         /** shift buffer back by one hop size. */
-        for (int32_t i = 0; i < pos_; ++i) {
+        for (int32_t i = 0; i < pos_; i++) {
             fftResult_.buffer[i] = fftResult_.buffer[i + para_.hopSize];
         }
         isFftCalcFinish_ = true;
@@ -142,7 +142,7 @@ float ConversionFFT::GetSpectralFlatness() const
     }
     float geometricMean = 0.0F;
     float arithmaticMean = 0.0F;
-    for (int32_t i = 0; i < bins_; ++i) {
+    for (int32_t i = 0; i < bins_; i++) {
         if (fftResult_.magnitudes[i] != 0) {
             geometricMean += logf(fftResult_.magnitudes[i]);
         }
@@ -158,7 +158,7 @@ float ConversionFFT::GetSpectralCentroid() const
 {
     float x = 0.0F;
     float y = 0.0F;
-    for (int32_t i = 0; i < bins_; ++i) {
+    for (int32_t i = 0; i < bins_; i++) {
         x += fabs(fftResult_.magnitudes[i]) * i;
         y += fabs(fftResult_.magnitudes[i]);
     }
@@ -199,15 +199,15 @@ float ConversionIFFT::Process(const std::vector<float> &mags, const std::vector<
         }
         // add to output
         // shift back by one hop
-        for (int32_t i = 0; i < (para_.fftSize - para_.hopSize); ++i) {
+        for (int32_t i = 0; i < (para_.fftSize - para_.hopSize); i++) {
             fftResult_.buffer[i] = fftResult_.buffer[i + para_.hopSize];
         }
         // clear the end chunk
-        for (int32_t i = 0; i < para_.hopSize; ++i) {
+        for (int32_t i = 0; i < para_.hopSize; i++) {
             fftResult_.buffer[i + para_.fftSize - para_.hopSize] = 0.0F;
         }
         // merge new output
-        for (int32_t i = 0; i < para_.fftSize; ++i) {
+        for (int32_t i = 0; i < para_.fftSize; i++) {
             fftResult_.buffer[i] += ifftOut_[i];
         }
     }
@@ -295,7 +295,7 @@ int32_t ConversionOctave::Calculate(const std::vector<float> &fftData)
         *(averages_.get() + lastAvgIdx) = sum / count;
     }
     // update the peaks separately
-    for (int32_t i = 0; i < nAverages_; ++i) {
+    for (int32_t i = 0; i < nAverages_; i++) {
         if (IsGreatOrEqual(*(averages_.get() + i), *(peaks_.get() + i))) {
             // save new peak level, also reset the hold timer
             *(peaks_.get() + i) = *(averages_.get() + i);

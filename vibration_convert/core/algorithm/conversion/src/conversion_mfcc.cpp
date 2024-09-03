@@ -37,14 +37,14 @@ int32_t ConversionMfcc::HandleMelFilterAndLogSquare(const std::vector<float> &po
         SEN_HILOGE("Invalid parameter");
         return Sensors::PARAMETER_ERROR;
     }
-    for (uint32_t i = 0; i < numFilters_; ++i) {
+    for (uint32_t i = 0; i < numFilters_; i++) {
         melBands_[i] = 0;
         for (uint32_t bin = 0; bin < numBins_; ++bin) {
             uint32_t idx = i + (bin * numFilters_);
             melBands_[i] += (melFilters_[idx] * powerSpectrum[bin]);
         }
     }
-    for (uint32_t i = 0; i < numFilters_; ++i) {
+    for (uint32_t i = 0; i < numFilters_; i++) {
         // log the square
         melBands_[i] = (melBands_[i] > BANDS_MIN_THRESHOLD) ? log(melBands_[i] * melBands_[i]) : 0;
     }
@@ -155,7 +155,7 @@ int32_t ConversionMfcc::CalcMelFilterBank(double sampleRate)
     double stepMel = (maxMel - minMel) / (numFilters_ + 1);
     std::vector<double> filterHzPos(numFilters_ + 2);
     double nextMel = minMel;
-    for (uint32_t i = 0; i < (numFilters_ + 2); ++i) {
+    for (uint32_t i = 0; i < (numFilters_ + 2); i++) {
         filterHzPos[i] = OHOS::Sensors::ConvertSlaneyHz(nextMel);
         nextMel += stepMel;
     }
@@ -164,7 +164,7 @@ int32_t ConversionMfcc::CalcMelFilterBank(double sampleRate)
     for (uint32_t bin = 0; bin < numBins_; ++bin) {
         binFs[bin] = stepHz * bin;
     }
-    for (uint32_t i = 0; i < numFilters_; ++i) {
+    for (uint32_t i = 0; i < numFilters_; i++) {
         for (uint32_t j = 0; j < numBins_; ++j) {
             uint32_t idx = i + (j * numFilters_);
             if (SetMelFilters(idx, binFs[j], filterHzPos[i], filterHzPos[i + 1],

@@ -429,7 +429,7 @@ typedef struct AmbientLightData {
  * The value <b>1</b> means that there is magnet attraction, and <b>0</b> means the opposite.
  */
 typedef struct HallData {
-    float status = 0.0;
+    float status = 0.0F;
 } HallData;
 
 /**
