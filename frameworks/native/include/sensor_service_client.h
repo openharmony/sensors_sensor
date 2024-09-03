@@ -61,6 +61,7 @@ private:
     void DeleteSensorInfoItem(int32_t sensorId);
     int32_t CreateSocketClientFd(int32_t &clientFd);
     int32_t CreateSocketChannel();
+    void ReenableSensor();
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
     sptr<ISensorService> sensorServer_ = nullptr;

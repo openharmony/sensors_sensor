@@ -42,6 +42,7 @@ public:
     int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user);
     int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode);
     int32_t SetOption(int32_t sensorId, const SensorUser *user, int32_t option);
+    void SetIsChannelCreated(bool isChannelCreated);
     int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const;
     int32_t SuspendSensors(int32_t pid);
     int32_t ResumeSensors(int32_t pid);
