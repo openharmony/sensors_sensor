@@ -41,10 +41,14 @@ const std::vector<int32_t> g_triggerSensorType = {
     SENSOR_TYPE_ID_HALL_EXT,
     SENSOR_TYPE_ID_PROXIMITY,
     SENSOR_TYPE_ID_HALL,
+    SENSOR_TYPE_ID_WEAR_DETECTION,
 };
 const std::vector<int32_t> g_continuousSensorType = {
+    SENSOR_TYPE_ID_ACCELEROMETER,
     SENSOR_TYPE_ID_POSTURE,
     SENSOR_TYPE_ID_AMBIENT_LIGHT,
+    SENSOR_TYPE_ID_AMBIENT_LIGHT1,
+    SENSOR_TYPE_ID_GYROSCOPE,
     SENSOR_TYPE_ID_MAGNETIC_FIELD,
 };
 }
@@ -98,12 +102,16 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
     switch (sensorId) {
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_PROXIMITY:
+        case SENSOR_TYPE_ID_WEAR_DETECTION:
             return ONE_DIMENSION;
         case SENSOR_TYPE_ID_HALL_EXT:
             return TWO_DIMENSION;
         case SENSOR_TYPE_ID_POSTURE:
             return SEVEN_DIMENSION;
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
+        case SENSOR_TYPE_ID_AMBIENT_LIGHT1:
+        case SENSOR_TYPE_ID_ACCELEROMETER:
+        case SENSOR_TYPE_ID_GYROSCOPE:
         case SENSOR_TYPE_ID_MAGNETIC_FIELD:
             return THREE_DIMENSION;
         default:
