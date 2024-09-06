@@ -71,7 +71,7 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     MessageParcel reply;
     MessageOption option;
     g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::ENABLE_SENSOR),
-    datas, reply, option);
+        datas, reply, option);
     return true;
 }
 } // namespace Sensors
