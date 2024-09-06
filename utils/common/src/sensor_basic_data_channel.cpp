@@ -44,11 +44,11 @@ SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), 
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 {
+    std::unique_lock<std::mutex> lock(fdLock_);
     if ((sendFd_ != -1) || (receiveFd_ != -1)) {
         SEN_HILOGD("Already create socketpair");
         return ERR_OK;
     }
-
     int32_t socketPair[SOCKET_PAIR_SIZE] = { 0 };
     if (socketpair(AF_UNIX, SOCK_SEQPACKET, 0, socketPair) != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -60,7 +60,6 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
         receiveFd_ = -1;
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
     }
-    // set socket attr
     if (setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE)) != 0) {
         SEN_HILOGE("setsockopt socketpair 0, SNDBUF failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
@@ -100,6 +99,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
 {
     CALL_LOG_ENTER;
+    std::unique_lock<std::mutex> lock(fdLock_);
     if (sendFd_ != -1) {
         SEN_HILOGD("Already create socketpair");
         return ERR_OK;
@@ -120,12 +120,16 @@ SensorBasicDataChannel::~SensorBasicDataChannel()
 
 int32_t SensorBasicDataChannel::SendToBinder(MessageParcel &data)
 {
-    SEN_HILOGD("sendFd:%{public}d", sendFd_);
-    if (sendFd_ < 0) {
-        SEN_HILOGE("sendFd FileDescriptor error");
-        return SENSOR_CHANNEL_SENDFD_ERR;
+    bool result = false;
+    {
+        std::unique_lock<std::mutex> lock(fdLock_);
+        SEN_HILOGD("sendFd:%{public}d", sendFd_);
+        if (sendFd_ < 0) {
+            SEN_HILOGE("sendFd FileDescriptor error");
+            return SENSOR_CHANNEL_SENDFD_ERR;
+        }
+        result = data.WriteFileDescriptor(sendFd_);
     }
-    bool result = data.WriteFileDescriptor(sendFd_);
     if (!result) {
         SEN_HILOGE("Send sendFd_ failed");
         CloseSendFd();
@@ -136,6 +140,7 @@ int32_t SensorBasicDataChannel::SendToBinder(MessageParcel &data)
 
 void SensorBasicDataChannel::CloseSendFd()
 {
+    std::unique_lock<std::mutex> lock(fdLock_);
     if (sendFd_ != -1) {
         close(sendFd_);
         sendFd_ = -1;
@@ -146,6 +151,7 @@ void SensorBasicDataChannel::CloseSendFd()
 int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 {
     CHKPR(vaddr, SENSOR_CHANNEL_SEND_ADDR_ERR);
+    std::unique_lock<std::mutex> lock(fdLock_);
     if (sendFd_ < 0) {
         SEN_HILOGE("Failed, param is invalid");
         return SENSOR_CHANNEL_SEND_ADDR_ERR;
@@ -163,6 +169,7 @@ int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 
 int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
 {
+    std::unique_lock<std::mutex> lock(fdLock_);
     if ((vaddr == nullptr) || (receiveFd_ < 0)) {
         SEN_HILOGE("Failed, vaddr is null or receiveFd_ invalid");
         return SENSOR_CHANNEL_RECEIVE_ADDR_ERR;
@@ -174,18 +181,21 @@ int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
     return length;
 }
 
-int32_t SensorBasicDataChannel::GetSendDataFd() const
+int32_t SensorBasicDataChannel::GetSendDataFd()
 {
+    std::unique_lock<std::mutex> lock(fdLock_);
     return sendFd_;
 }
 
-int32_t SensorBasicDataChannel::GetReceiveDataFd() const
+int32_t SensorBasicDataChannel::GetReceiveDataFd()
 {
+    std::unique_lock<std::mutex> lock(fdLock_);
     return receiveFd_;
 }
 
 int32_t SensorBasicDataChannel::DestroySensorBasicChannel()
 {
+    std::unique_lock<std::mutex> lock(fdLock_);
     if (sendFd_ >= 0) {
         close(sendFd_);
         sendFd_ = -1;

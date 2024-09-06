@@ -33,8 +33,8 @@ public:
     int32_t CreateSensorBasicChannel();
     int32_t CreateSensorBasicChannel(MessageParcel &data);
     int32_t DestroySensorBasicChannel();
-    int32_t GetSendDataFd() const;
-    int32_t GetReceiveDataFd() const;
+    int32_t GetSendDataFd();
+    int32_t GetReceiveDataFd();
     int32_t SendToBinder(MessageParcel &data);
     void CloseSendFd();
     int32_t SendData(const void *vaddr, size_t size);
@@ -44,6 +44,7 @@ public:
     const std::unordered_map<int32_t, SensorData> &GetDataCacheBuf() const;
 
 private:
+    std::mutex fdLock_;
     int32_t sendFd_;
     int32_t receiveFd_;
     bool isActive_;
