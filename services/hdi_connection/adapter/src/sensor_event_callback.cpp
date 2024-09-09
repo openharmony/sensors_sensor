@@ -37,6 +37,13 @@ enum {
     SEVEN_DIMENSION = 7,
     DEFAULT_DIMENSION = 16
 };
+const std::set<int32_t> g_sensorTypeTrigger = {
+    SENSOR_TYPE_ID_PROXIMITY,
+    SENSOR_TYPE_ID_DROP_DETECTION,
+    SENSOR_TYPE_ID_HALL,
+    SENSOR_TYPE_ID_HALL_EXT,
+    SENSOR_TYPE_ID_PROXIMITY1
+};
 } // namespace
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
@@ -58,8 +65,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
         .mode = event.mode,
         .dataLen = event.dataLen
     };
-    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY ||
-        sensorData.sensorTypeId == SENSOR_TYPE_ID_DROP_DETECTION) {
+    if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
         sensorData.mode = SENSOR_ON_CHANGE;
     }
     CHKPR(sensorData.data, ERR_NO_INIT);

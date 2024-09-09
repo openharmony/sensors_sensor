@@ -35,7 +35,6 @@ namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
-static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
 } // namespace
 
 void SetUpTestCase()
@@ -67,10 +66,7 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     SetUpTestCase();
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    if (g_remote == nullptr) {
-        return false;
-    }
-    datas.WriteRemoteObject(g_remote);
+    datas.WriteBuffer(data, size);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
