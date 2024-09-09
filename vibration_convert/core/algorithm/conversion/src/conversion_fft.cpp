@@ -238,7 +238,10 @@ int32_t ConversionOctave::Init(float samplingRate, int32_t nBandsInTheFFT, int32
     // this isn't currently configurable (used once here then no effect), but here's some reasoning
     firstOctaveFrequency_ = 55.0F;
     // for each spectrum[] bin, calculate the mapping into the appropriate average[] bin.
-    spe2avg_ = MakeSharedArray<int32_t>(static_cast<size_t>(nSpectrum_));
+    auto spe2avg = new (std::nothrow) int32_t[nSpectrum_];
+    CHKPR(spe2avg, Sensors::ERROR);
+    std::shared_ptr<int32_t> spe2avgShared(spe2avg, std::default_delete<int32_t[]>());
+    spe2avg_ = std::move(spe2avgShared);
     int32_t avgIdx = 0;
     float averageFreq = firstOctaveFrequency_; // the "top" of the first averaging bin
     // we're looking for the "top" of the first spectrum bin, and i'm just sort of
@@ -254,9 +257,17 @@ int32_t ConversionOctave::Init(float samplingRate, int32_t nBandsInTheFFT, int32
         spectrumFreq += spectrumFrequencySpan_;
     }
     nAverages_ = avgIdx;
-    averages_ = MakeSharedArray<float>(static_cast<size_t>(nAverages_));
-    peaks_ = MakeSharedArray<float>(static_cast<size_t>(nAverages_));
-    peakHoldTimes_ = MakeSharedArray<int32_t>(static_cast<size_t>(nAverages_));
+    auto averages = new (std::nothrow) float[nAverages_];
+    CHKPR(averages, Sensors::ERROR);
+    std::shared_ptr<float> averagesShared(averages, std::default_delete<float[]>());
+    averages_ = std::move(averagesShared);
+    auto peaks = new (std::nothrow) float[nAverages_];
+    CHKPR(peaks, Sensors::ERROR);
+    std::shared_ptr<float> peaksShared(peaks, std::default_delete<float[]>());
+    peaks_ = std::move(peaksShared);
+    auto peakHoldTimes = new (std::nothrow) int32_t[nAverages_];
+    CHKPR(peakHoldTimes, Sensors::ERROR);
+    std::shared_ptr<int32_t> peakHoldTimesShared(peakHoldTimes, std::default_delete<int32_t[]>());
     peakHoldTime_ = 0;
     peakDecayRate_ = 0.9F;
     linearEQIntercept_ = 1.0F;
