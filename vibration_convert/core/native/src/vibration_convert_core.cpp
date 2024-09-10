@@ -68,19 +68,19 @@ constexpr int32_t ADSR_BOUNDARY_STATUS_BOTH { 2 };
 
 int32_t VibrationConvertCore::GetAudioData()
 {
-    std::vector data = PreprocessAudioData();
+    std::vector<double> data = PreprocessAudioData();
     int32_t onsetHopLength = WINDOW_LENGTH;
     double rmsILowerDelta = 0.0;
     if (PreprocessParameter(data, onsetHopLength, rmsILowerDelta) != Sensors::SUCCESS) {
         SEN_HILOGE("PreprocessParameter failed");
         return Sensors::ERROR;
     }
-    std::vector unionTransientEvents;
+    std::vector<UnionTransientEvent> unionTransientEvents;
     if (ConvertTransientEvent(data, onsetHopLength, unionTransientEvents) != Sensors::SUCCESS) {
         SEN_HILOGE("ConvertTransientEvent failed");
         return Sensors::ERROR;
     }
-    std::vector intensityData;
+    std::vector<IntensityData> intensityData;
     // Processing intensity data, output parameters:intensityData
     if (DetectRmsIntensity(data, rmsILowerDelta, intensityData) != Sensors::SUCCESS) {
         SEN_HILOGE("DetectRmsIntensity failed");
@@ -97,11 +97,11 @@ int32_t VibrationConvertCore::GetAudioData()
         return Sensors::ERROR;
     }
     std::vector<int32_t> transientIndexes;
-    std::vector transientEventTime;
+    std::vector<double> transientEventTime;
     // Output all Transient events, output parameters: transientIndex transientEventTime
     OutputTransientEvents(unionTransientEvents, intensityData, freqNorm, transientIndexes, transientEventTime);
     if (continuousEventExistFlag_) {
-        std::vector transientEventFlags;
+        std::vector<bool> transientEventFlags;
         for (size_t i = 0; i < unionTransientEvents.size(); i++) {
             transientEventFlags.push_back(unionTransientEvents[i].transientEventFlag);
         }
@@ -110,7 +110,7 @@ int32_t VibrationConvertCore::GetAudioData()
     return Sensors::SUCCESS;
 }
 int32_t VibrationConvertCore::ConvertAudioToHaptic(const AudioSetting &audioSetting,
-    const std::vector &audioData, std::vector &hapticEvents)
+    const std::vector<double> &audioData, std::vector<HapticEvent> &hapticEvents)
 {
     if (audioData.empty()) {
         SEN_HILOGE("audioData is empty");
@@ -132,7 +132,7 @@ int32_t VibrationConvertCore::ConvertAudioToHaptic(const AudioSetting &audioSett
     return Sensors::SUCCESS;
 }
 
-int32_t VibrationConvertCore::ResampleAudioData(const std::vector &srcData)
+int32_t VibrationConvertCore::ResampleAudioData(const std::vector<double> &srcData)
 {
     if (srcData.empty()) {
         SEN_HILOGE("srcData is empty");
@@ -147,15 +147,15 @@ int32_t VibrationConvertCore::ResampleAudioData(const std::vector &srcData)
     return Sensors::SUCCESS;
 }
 
-std::vector VibrationConvertCore::PreprocessAudioData()
+std::vector<double> VibrationConvertCore::PreprocessAudioData()
 {
     CALL_LOG_ENTER;
     if (srcAudioData_.empty()) {
         SEN_HILOGE("invalid parameter");
         return {};
     }
-    std::vector absData = srcAudioData_;
-    std::vector dstData = srcAudioData_;
+    std::vector<double> absData = srcAudioData_;
+    std::vector<double> dstData = srcAudioData_;
     int32_t silence = 0;
     int32_t preClearEnd = 0;
     int32_t absDataSize = static_cast<int32_t>(absData.size());
@@ -195,7 +195,7 @@ std::vector VibrationConvertCore::PreprocessAudioData()
     return dstData;
 }
 
-int32_t VibrationConvertCore::PreprocessParameter(const std::vector &data, int32_t &onsetHopLength,
+int32_t VibrationConvertCore::PreprocessParameter(const std::vector<double> &data, int32_t &onsetHopLength,
     double &lowerDelta)
 {
     CALL_LOG_ENTER;
@@ -203,7 +203,7 @@ int32_t VibrationConvertCore::PreprocessParameter(const std::vector &data, int32
         SEN_HILOGE("data is empty");
         return Sensors::ERROR;
     }
-    std::vector rmse = intensityProcessor_.GetRMS(data, ENERGY_HOP_LEN, systemPara_.centerPaddingFlag);
+    std::vector<double> rmse = intensityProcessor_.GetRMS(data, ENERGY_HOP_LEN, systemPara_.centerPaddingFlag);
     OnsetInfo onsetInfo;
     if (onset_.CheckOnset(data, NFFT, onsetHopLength, onsetInfo) != Sensors::SUCCESS) {
         SEN_HILOGE("CheckOnset Failed");
@@ -233,18 +233,18 @@ std::vector<int32_t> VibrationConvertCore::MapOnsetHop(const std::vector<int32_t
         return {};
     }
     std::vector<int32_t> newIdx;
-    int32_t coef = static_cast<int32_t>(round(static_cast(ENERGY_HOP_LEN) / onsetHopLength));
+    int32_t coef = static_cast<int32_t>(round(static_cast<double>(ENERGY_HOP_LEN) / onsetHopLength));
     if (coef == 0) {
         SEN_HILOGE("coef is equal to 0");
         return {};
     }
     for (auto idx : drwIdx) {
-        newIdx.push_back(static_cast<int32_t>(round(static_cast(idx) / coef)));
+        newIdx.push_back(static_cast<int32_t>(round(static_cast<double>(idx) / coef)));
     }
     return newIdx;
 }
 
-bool VibrationConvertCore::GetRmseLowerDelta(double lowerDelta, const std::vector &rmse, double &deltaByTime)
+bool VibrationConvertCore::GetRmseLowerDelta(double lowerDelta, const std::vector<double> &rmse, double &deltaByTime)
 {
     int32_t rmseSize = static_cast<int32_t>(rmse.size());
     double rmseMax = *std::max_element(rmse.begin(), rmse.end());
@@ -257,7 +257,7 @@ bool VibrationConvertCore::GetRmseLowerDelta(double lowerDelta, const std::vecto
             break;
         }
     }
-    double rmsTimePerFrame = static_cast(ENERGY_HOP_LEN) / SAMPLE_RATE;
+    double rmsTimePerFrame = static_cast<double>(ENERGY_HOP_LEN) / SAMPLE_RATE;
     int32_t j = rmseSize - 1;
     for (; j >= 0 ; j = (j - 1)) {
         if (rmse[j] > lowerDelta) {
@@ -275,7 +275,7 @@ bool VibrationConvertCore::GetRmseLowerDelta(double lowerDelta, const std::vecto
     return false;
 }
 
-double VibrationConvertCore::CalcRmsLowerData(size_t dataSize, const std::vector &rmse,
+double VibrationConvertCore::CalcRmsLowerData(size_t dataSize, const std::vector<double> &rmse,
     const std::vector<int32_t> &newDrwIdx)
 {
     double soundSizeDelta = 0.0;
@@ -300,7 +300,7 @@ double VibrationConvertCore::CalcRmsLowerData(size_t dataSize, const std::vector
         }
     }
     double audioDurationDelta = soundSizeDelta;
-    double audioDuration = static_cast(dataSize) / SAMPLE_RATE;
+    double audioDuration = static_cast<double>(dataSize) / SAMPLE_RATE;
     if (IsLessOrEqual(audioDuration, 1.0)) {
         audioDurationDelta = rmseRange * RMSE_LOWDELTA_RATIO_LOW + rmseMin;
         return audioDurationDelta;
@@ -316,7 +316,7 @@ double VibrationConvertCore::CalcRmsLowerData(size_t dataSize, const std::vector
     return lowerDelta;
 }
 
-int32_t VibrationConvertCore::CalcOnsetHopLength(const std::vector &data, double rmseMax,
+int32_t VibrationConvertCore::CalcOnsetHopLength(const std::vector<double> &data, double rmseMax,
     size_t newDrwIdxLen, bool &continuousEventFlag, int32_t &newOnsetHopLen)
 {
     if (data.empty()) {
@@ -343,13 +343,13 @@ int32_t VibrationConvertCore::CalcOnsetHopLength(const std::vector &data, double
     return Sensors::SUCCESS;
 }
 
-std::vector VibrationConvertCore::GetLocalEnvelope(const std::vector &data)
+std::vector<double> VibrationConvertCore::GetLocalEnvelope(const std::vector<double> &data)
 {
     if (data.empty()) {
         SEN_HILOGE("invalid parameter");
         return {};
     }
-    std::vector envelope = data;
+    std::vector<double> envelope = data;
     for (auto &elem : envelope) {
         elem = std::fabs(elem);
     }
@@ -364,7 +364,7 @@ std::vector VibrationConvertCore::GetLocalEnvelope(const std::vector &data)
         if ((i + LOCAL_ENVELOPE_MAX_LEN) > dataSize) {
             break;
         }
-    std::vector segmentEnvelope;
+        std::vector<double> segmentEnvelope;
         for (size_t j = i; j < (i + LOCAL_ENVELOPE_MAX_LEN); ++j) {
             segmentEnvelope.push_back(envelope[j]);
         }
@@ -373,11 +373,11 @@ std::vector VibrationConvertCore::GetLocalEnvelope(const std::vector &data)
     return envelope;
 }
 
-int32_t VibrationConvertCore::IsIncludeContinuoustEvent(const std::vector &data,
+int32_t VibrationConvertCore::IsIncludeContinuoustEvent(const std::vector<double> &data,
     int32_t &longestCount, double &unzeroDensity, bool &isIncludeContinuoustEvent)
 {
     // envelope must be a non-negative number.
-    std::vector envelope = GetLocalEnvelope(data);
+    std::vector<double> envelope = GetLocalEnvelope(data);
     if (envelope.empty()) {
         SEN_HILOGE("GetLocalEnvelope failed");
         return Sensors::ERROR;
@@ -413,7 +413,7 @@ int32_t VibrationConvertCore::IsIncludeContinuoustEvent(const std::vector &data,
         return Sensors::SUCCESS;
     }
     longestCount = *std::max_element(countList.begin(), countList.end());
-    unzeroDensity = static_cast(accumulate(countList.begin(), countList.end(), 0)) / envelopeSize;
+    unzeroDensity = static_cast<double>(accumulate(countList.begin(), countList.end(), 0)) / envelopeSize;
     return Sensors::SUCCESS;
 }
 
@@ -496,7 +496,7 @@ void VibrationConvertCore::StoreEventBlock()
 }
 
 void VibrationConvertCore::EmplaceOnsetTime(bool flag, int32_t idx, double time,
-    std::vector &unionTransientEvents)
+    std::vector<UnionTransientEvent> &unionTransientEvents)
 {
     if (unionTransientEvents.empty()) {
         SEN_HILOGE("unionTransientEvents is empty");
@@ -520,8 +520,8 @@ void VibrationConvertCore::EmplaceOnsetTime(bool flag, int32_t idx, double time,
     }
 }
 
-int32_t VibrationConvertCore::ConvertTransientEvent(const std::vector &data, int32_t onsetHopLength,
-    std::vector &unionTransientEvents)
+int32_t VibrationConvertCore::ConvertTransientEvent(const std::vector<double> &data, int32_t onsetHopLength,
+    std::vector<UnionTransientEvent> &unionTransientEvents)
 {
     CALL_LOG_ENTER;
     if (data.empty()) {
@@ -529,13 +529,13 @@ int32_t VibrationConvertCore::ConvertTransientEvent(const std::vector &data, int
         return Sensors::ERROR;
     }
     // Using System Methods to Detect Onset
-    std::vector unionTransientValues = DetectOnset(data, onsetHopLength);
+    std::vector<UnionTransientEvent> unionTransientValues = DetectOnset(data, onsetHopLength);
     // Is the onset just a transient event
     std::vector<int32_t> onsetIdxs;
     for (size_t i = 0; i < unionTransientValues.size(); i++) {
         onsetIdxs.push_back(unionTransientValues[i].onsetIdx);
     }
-    std::vector transientEventFlags = IsTransientEvent(data, onsetIdxs);
+    std::vector<bool> transientEventFlags = IsTransientEvent(data, onsetIdxs);
     for (size_t i = 0; i < unionTransientValues.size(); i++) {
         unionTransientValues[i].transientEventFlag = transientEventFlags[i];
     }
@@ -580,7 +580,7 @@ int32_t VibrationConvertCore::ConvertTransientEvent(const std::vector &data, int
     return Sensors::SUCCESS;
 }
 
-std::vector VibrationConvertCore::DetectOnset(const std::vector &data,
+std::vector<UnionTransientEvent> VibrationConvertCore::DetectOnset(const std::vector<double> &data,
     int32_t onsetHopLength)
 {
     OnsetInfo onsetInfo;
@@ -590,7 +590,7 @@ std::vector VibrationConvertCore::DetectOnset(const std::vector &data,
     }
     onsetInfo.idx = MapOnsetHop(onsetInfo.idx, onsetHopLength);
     std::vector<int32_t> newIdx;
-    std::vector newTime;
+    std::vector<double> newTime;
     UniqueIdx(onsetInfo.idx, onsetInfo.time, newIdx, newTime);
     int32_t minSkip = ONSET_MINSKIP_MAX;
     if (newIdx.size() > 1) {
@@ -612,7 +612,7 @@ std::vector VibrationConvertCore::DetectOnset(const std::vector &data,
             minSkip = ONSET_MINSKIP_MAX;
         }
     }
-    std::vector unionTransientEvents;
+    std::vector<UnionTransientEvent> unionTransientEvents;
     for (size_t i = 0; i < newIdx.size(); ++i) {
         unionTransientEvents.push_back(UnionTransientEvent(newIdx[i], newTime[i]));
     }
@@ -620,7 +620,7 @@ std::vector VibrationConvertCore::DetectOnset(const std::vector &data,
     return unionTransientEvents;
 }
 
-bool VibrationConvertCore::GetTransientEventFlag(const std::vector &data, int32_t onsetIdx)
+bool VibrationConvertCore::GetTransientEventFlag(const std::vector<double> &data, int32_t onsetIdx)
 {
     if (data.empty()) {
         SEN_HILOGE("data is empty");
@@ -638,7 +638,7 @@ bool VibrationConvertCore::GetTransientEventFlag(const std::vector &data, int32_
     if (endIdx >= dataSize) {
         endIdx = dataSize - 1;
     }
-    std::vector localData;
+    std::vector<double> localData;
     for (int32_t i = beginIdx; i <= endIdx; ++i) {
         localData.push_back(data[i]);
     }
@@ -649,7 +649,7 @@ bool VibrationConvertCore::GetTransientEventFlag(const std::vector &data, int32_
     return IsTransientEventFlag(unzeroCount, unzeroDensity);
 }
 
-std::vector VibrationConvertCore::GetTransientEventFlags(const std::vector &data,
+std::vector<bool> VibrationConvertCore::GetTransientEventFlags(const std::vector<double> &data,
     const std::vector<int32_t> &onsetIdxs)
 {
     if (data.empty() || (onsetIdxs.size() <= 1)) {
@@ -657,7 +657,7 @@ std::vector VibrationConvertCore::GetTransientEventFlags(const std::vector &data
         return {};
     }
     int32_t partLen = 0;
-    std::vector transientEventFlags;
+    std::vector<bool> transientEventFlags;
     size_t onsetIdxsSize = onsetIdxs.size();
     for (size_t i = 0; i < onsetIdxsSize; ++i) {
         if (i == (onsetIdxsSize - 1)) {
@@ -683,7 +683,7 @@ std::vector VibrationConvertCore::GetTransientEventFlags(const std::vector &data
         if (endIdx >= dataSize) {
             endIdx = dataSize - 1;
         }
-    std::vector localData;
+        std::vector<double> localData;
         for (int32_t j = beginIdx; j <= endIdx; ++j) {
         localData.push_back(data[i]);
         }
@@ -695,14 +695,14 @@ std::vector VibrationConvertCore::GetTransientEventFlags(const std::vector &data
     return transientEventFlags;
 }
 
-std::vector VibrationConvertCore::IsTransientEvent(const std::vector &data,
+std::vector<bool> VibrationConvertCore::IsTransientEvent(const std::vector<double> &data,
     const std::vector<int32_t> &onsetIdxs)
 {
     if (data.empty() || onsetIdxs.empty()) {
         SEN_HILOGE("data or onsetIdxs is empty");
         return {};
     }
-    std::vector transientEventFlags;
+    std::vector<bool> transientEventFlags;
     if (onsetIdxs.size() == 1) {
         bool transientEventFlag = GetTransientEventFlag(data, onsetIdxs[0]);
         transientEventFlags.push_back(transientEventFlag);
@@ -712,7 +712,7 @@ std::vector VibrationConvertCore::IsTransientEvent(const std::vector &data,
     return transientEventFlags;
 }
 
-void VibrationConvertCore::GetUnzeroCount(const std::vector &localData,
+void VibrationConvertCore::GetUnzeroCount(const std::vector<double> &localData,
     int32_t &unzeroCount, double &unzeroDensity)
 {
     if (localData.empty()) {
@@ -721,7 +721,7 @@ void VibrationConvertCore::GetUnzeroCount(const std::vector &localData,
         SEN_HILOGE("localData is empty");
         return;
     }
-    std::vector envelope = localData;
+    std::vector<double> envelope = localData;
     for (auto &elem : envelope) {
         elem = std::fabs(elem);
         if (elem < LOWER_AMP) {
@@ -733,7 +733,7 @@ void VibrationConvertCore::GetUnzeroCount(const std::vector &localData,
         if ((i + LOCAL_ENVELOPE_MAX_LEN) >= envelopeSize) {
             break;
         }
-    std::vector segmentEnvelope;
+        std::vector<double> segmentEnvelope;
         for (size_t j = i; j < (i + LOCAL_ENVELOPE_MAX_LEN); ++j) {
             segmentEnvelope.push_back(envelope[j]);
         }
@@ -744,12 +744,12 @@ void VibrationConvertCore::GetUnzeroCount(const std::vector &localData,
             ++unzeroCount;
         }
     }
-    unzeroDensity = static_cast(unzeroCount) / envelopeSize;
+    unzeroDensity = static_cast<double>(unzeroCount) / envelopeSize;
 }
 
 bool VibrationConvertCore::IsTransientEventFlag(int32_t unzeroCount, double unzeroDensity)
 {
-    double duration = static_cast(unzeroCount) / SAMPLE_RATE;
+    double duration = static_cast<double>(unzeroCount) / SAMPLE_RATE;
     if (IsLessNotEqual(duration, FRAME_DURATION) || IsLessNotEqual(unzeroDensity, TRANSIENT_UNZERO_DENSITY_MIN)) {
         return true;
     }
@@ -757,7 +757,7 @@ bool VibrationConvertCore::IsTransientEventFlag(int32_t unzeroCount, double unze
 }
 
 void VibrationConvertCore::TranslateAnchorPoint(const std::vector<int32_t> &amplitudePeakPos,
-    std::vector &unionTransientEvents)
+    std::vector<UnionTransientEvent> &unionTransientEvents)
 {
     bool useAbsTimeFlag = systemPara_.useAbsTimeFlag;
     if (useAbsTimeFlag) {
@@ -766,7 +766,7 @@ void VibrationConvertCore::TranslateAnchorPoint(const std::vector<int32_t> &ampl
                 UnionTransientEvent(static_cast<int32_t>(round(1.0 * pos / ENERGY_HOP_LEN)), 1.0 * pos / SAMPLE_RATE));
         }
     } else {
-    double rmsTimePerFrame = static_cast(ENERGY_HOP_LEN) / SAMPLE_RATE;
+        double rmsTimePerFrame = static_cast<double>(ENERGY_HOP_LEN) / SAMPLE_RATE;
         for (auto pos : amplitudePeakPos) {
             int32_t idx = static_cast<int32_t>(round(1.0 * pos / ENERGY_HOP_LEN));
             unionTransientEvents.emplace_back(UnionTransientEvent(idx, idx * rmsTimePerFrame));
@@ -775,55 +775,55 @@ void VibrationConvertCore::TranslateAnchorPoint(const std::vector<int32_t> &ampl
 }
 
 void VibrationConvertCore::TranslateAnchorPoint(int32_t amplitudePeakPos, int32_t &amplitudePeakIdx,
-    double &amplitudePeakTime)
+    ouble &amplitudePeakTime)
 {
     bool useAbsTimeFlag = systemPara_.useAbsTimeFlag;
     amplitudePeakIdx = static_cast<int32_t>(round(1.0 * amplitudePeakPos / ENERGY_HOP_LEN));
     if (useAbsTimeFlag) {
-        amplitudePeakTime = static_cast(amplitudePeakPos) / SAMPLE_RATE;
+        amplitudePeakTime = static_cast<double>(amplitudePeakPos) / SAMPLE_RATE;
     } else {
-        double rmsTimePerFrame = static_cast(ENERGY_HOP_LEN) / SAMPLE_RATE;
+        double rmsTimePerFrame = static_cast<double>(ENERGY_HOP_LEN) / SAMPLE_RATE;
         amplitudePeakTime = amplitudePeakIdx * rmsTimePerFrame;
     }
 }
 
-std::vector<int32_t> VibrationConvertCore::DetectFrequency(const std::vector &data,
+std::vector<int32_t> VibrationConvertCore::DetectFrequency(const std::vector<double> &data,
     const std::vector<int32_t> &rmseIntensityNorm)
 {
     CALL_LOG_ENTER;
-    std::vector zcr = frequencyEstimation_.GetZeroCrossingRate(data, FRAME_LEN, ENERGY_HOP_LEN);
+    std::vector<double> zcr = frequencyEstimation_.GetZeroCrossingRate(data, FRAME_LEN, ENERGY_HOP_LEN);
     for (auto &elem : zcr) {
         elem = elem * SAMPLE_RATE * F_HALF;
     }
-    std::vector voiceSegmentFlag = peakFinder_.GetVoiceSegmentFlag();
+    std::vector<bool> voiceSegmentFlag = peakFinder_.GetVoiceSegmentFlag();
     std::vector<int32_t> freqNorm;
     frequencyEstimation_.FreqPostProcess(zcr, voiceSegmentFlag, rmseIntensityNorm, freqNorm);
     return freqNorm;
 }
 
-int32_t VibrationConvertCore::DetectRmsIntensity(const std::vector &data, double rmsILowerDelta,
-    std::vector &intensityData)
+int32_t VibrationConvertCore::DetectRmsIntensity(const std::vector<double> &data, double rmsILowerDelta,
+    std::vector<IntensityData> &intensityData)
 {
     CALL_LOG_ENTER;
-    std::vector rmse = intensityProcessor_.GetRMS(data, ENERGY_HOP_LEN, systemPara_.centerPaddingFlag);
+    std::vector<double> rmse = intensityProcessor_.GetRMS(data, ENERGY_HOP_LEN, systemPara_.centerPaddingFlag);
     if (rmse.empty()) {
         SEN_HILOGE("rmse is empty");
         return Sensors::ERROR;
     }
-    std::vector rmseTime;
-    double rmsTimePerFrame = static_cast(ENERGY_HOP_LEN) / SAMPLE_RATE;
+    std::vector<double> rmseTime;
+    double rmsTimePerFrame = static_cast<double>(ENERGY_HOP_LEN) / SAMPLE_RATE;
     for (auto elem : rmse) {
         rmseTime.push_back(elem * rmsTimePerFrame);
     }
-    std::vector rmseBand;
+    std::vector<double> rmseBand;
     std::vector<int32_t> rmseNorm;
     if (intensityProcessor_.RmseNormalize(rmse, rmsILowerDelta, rmseBand, rmseNorm) != Sensors::SUCCESS) {
         SEN_HILOGE("RmseNormalize failed");
         return Sensors::ERROR;
     }
-    std::vector rmseTimeNorm = StartTimeNormalize(rmse.size());
-    std::vector ampLin = intensityProcessor_.VolumeInLinary(data, ENERGY_HOP_LEN);
-    std::vector ampDb = intensityProcessor_.VolumeInDB(data, ENERGY_HOP_LEN);
+    std::vector<double> rmseTimeNorm = StartTimeNormalize(rmse.size());
+    std::vector<double> ampLin = intensityProcessor_.VolumeInLinary(data, ENERGY_HOP_LEN);
+    std::vector<double> ampDb = intensityProcessor_.VolumeInDB(data, ENERGY_HOP_LEN);
     double ampDbMax = *std::max_element(ampDb.begin(), ampDb.end());
     bool intensityUseLinearFlag = systemPara_.intensityUseLinearFlag;
     if (!intensityUseLinearFlag && (ampDbMax > AMPLITUDE_DB_MAX)) {
@@ -837,10 +837,10 @@ int32_t VibrationConvertCore::DetectRmsIntensity(const std::vector &data, double
     return Sensors::SUCCESS;
 }
 
-std::vector VibrationConvertCore::StartTimeNormalize(int32_t rmseLen)
+std::vector<double> VibrationConvertCore::StartTimeNormalize(int32_t rmseLen)
 {
     CALL_LOG_ENTER;
-    std::vector rmseTimeNorm;
+    std::vector<double> rmseTimeNorm;
     double startTime = 0.0;
     for (int32_t i = 0; i < rmseLen; ++i) {
         rmseTimeNorm.push_back(startTime);
@@ -849,14 +849,14 @@ std::vector VibrationConvertCore::StartTimeNormalize(int32_t rmseLen)
     return rmseTimeNorm;
 }
 
-void VibrationConvertCore::OutputTransientEvents(const std::vector &unionTransientEvents,
-    const std::vector &intensityData, const std::vector<int32_t> &freqNorm,
-    std::vector<int32_t> &transientIndex, std::vector &transientEventTime)
+void VibrationConvertCore::OutputTransientEvents(const std::vector<UnionTransientEvent> &unionTransientEvents,
+    const std::vector<IntensityData> &intensityData, const std::vector<int32_t> &freqNorm,
+    std::vector<int32_t> &transientIndex, std::vector<double> &transientEventTime)
 {
     CALL_LOG_ENTER;
     bool onsetBacktrackFlag = systemPara_.onsetBacktrackFlag;
     if (!continuousEventExistFlag_) {
-        std::vector onsetTimes;
+        std::vector<double> onsetTimes;
         for (size_t i = 0; i < unionTransientEvents.size(); i++) {
             onsetTimes.push_back(unionTransientEvents[i].onsetTime);
         }
@@ -870,11 +870,11 @@ void VibrationConvertCore::OutputTransientEvents(const std::vector &unionTransie
     }
 }
 
-void VibrationConvertCore::OutputTransientEventsByInsertTime(const std::vector &onsetTimes,
-    const std::vector &intensityData, const std::vector<int32_t> &freqNorm,
-    std::vector<int32_t> &transientIndex, std::vector &transientEventTime)
+void VibrationConvertCore::OutputTransientEventsByInsertTime(const std::vector<double> &onsetTimes,
+    const std::vector<IntensityData> &intensityData, const std::vector<int32_t> &freqNorm,
+    std::vector<int32_t> &transientIndex, std::vector<double> &transientEventTime)
 {
-    double rmsTimePerFrame = static_cast(ENERGY_HOP_LEN) / SAMPLE_RATE;
+    double rmsTimePerFrame = static_cast<double>(ENERGY_HOP_LEN) / SAMPLE_RATE;
     for (size_t i = 0; i < onsetTimes.size(); ++i) {
         bool flag = false;
         size_t j = 0;
@@ -899,7 +899,7 @@ void VibrationConvertCore::OutputTransientEventsByInsertTime(const std::vector &
                         maxIndex = k;
                     }
                 }
-                double onsetTimeNorm = static_cast(round(SAMPLE_IN_MS * onsetTimes[i]) / SAMPLE_IN_MS);
+                double onsetTimeNorm = static_cast<double>(round(SAMPLE_IN_MS * onsetTimes[i]) / SAMPLE_IN_MS);
                 transientEventTime.push_back(onsetTimeNorm);
                 transientIndex.push_back(j);
                 AddTransientEventData(TransientEvent(onsetTimeNorm, intensityData[maxIndex].rmseIntensityNorm,
@@ -921,7 +921,7 @@ void VibrationConvertCore::AddTransientEventData(TransientEvent transientEvent)
 }
 
 void VibrationConvertCore::GetIdex(const UnionTransientEvent &unionTransientEvent,
-    const std::vector &intensityData)
+    const std::vector<IntensityData> &intensityData)
 {
     // get max index.
     size_t beginIndex = unionTransientEvent.onsetIdx;
@@ -954,9 +954,9 @@ void VibrationConvertCore::GetIdex(const UnionTransientEvent &unionTransientEven
     }
 }
 
-void VibrationConvertCore::OutputTransientEventsAlign(const std::vector &unionTransientEvents,
-    const std::vector &intensityData, const std::vector<int32_t> &freqNorm,
-    std::vector<int32_t> &transientIndex, std::vector &transientEventTime)
+void VibrationConvertCore::OutputTransientEventsAlign(const std::vector<UnionTransientEvent> &unionTransientEvents,
+    const std::vector<IntensityData> &intensityData, const std::vector<int32_t> &freqNorm,
+    std::vector<int32_t> &transientIndex, std::vector<double> &transientEventTime)
 {
     size_t size = unionTransientEvents.size();
     for (size_t i = 1; i < size; ++i) {
@@ -983,9 +983,9 @@ void VibrationConvertCore::OutputTransientEventsAlign(const std::vector &unionTr
     }
 }
 
-void VibrationConvertCore::OutputTransientEventsDirect(const std::vector &unionTransientEvents,
-    const std::vector &intensityData, const std::vector<int32_t> &freqNorm,
-    std::vector<int32_t> &transientIndex, std::vector &transientEventTime)
+void VibrationConvertCore::OutputTransientEventsDirect(const std::vector<UnionTransientEvent> &unionTransientEvents,
+    const std::vector<IntensityData> &intensityData, const std::vector<int32_t> &freqNorm,
+    std::vector<int32_t> &transientIndex, std::vector<double> &transientEventTime)
 {
     size_t size = unionTransientEvents.size();
     for (size_t i = 0; i < size; ++i) {
@@ -1000,9 +1000,9 @@ void VibrationConvertCore::OutputTransientEventsDirect(const std::vector &unionT
     }
 }
 
-void VibrationConvertCore::OutputAllContinuousEvent(const std::vector &intensityData,
+void VibrationConvertCore::OutputAllContinuousEvent(const std::vector<IntensityData> &intensityData,
     const std::vector<int32_t> transientIndex, const std::vector<int32_t> &freqNorm,
-    const std::vector &transientEventFlags)
+    const std::vector<bool> &transientEventFlags)
 {
     CALL_LOG_ENTER;
     if (!systemPara_.splitSegmentFlag) {
@@ -1010,16 +1010,16 @@ void VibrationConvertCore::OutputAllContinuousEvent(const std::vector &intensity
     }
 }
 
-void VibrationConvertCore::OutputAllContinuousEventByUnseg(const std::vector &intensityData,
+void VibrationConvertCore::OutputAllContinuousEventByUnseg(const std::vector<IntensityData> &intensityData,
     const std::vector<int32_t> transientIndex, const std::vector<int32_t> &freqNorm,
-    const std::vector &transientEventFlags)
+    const std::vector<bool> &transientEventFlags)
 {
-    std::vector rmseTimeNorm;
+    std::vector<double> rmseTimeNorm;
     for (size_t i = 0; i < intensityData.size(); i++) {
         rmseTimeNorm.push_back(intensityData[i].rmseTimeNorm);
     }
-    std::vector times;
-    std::vector durations;
+    std::vector<double> times;
+    std::vector<double> durations;
     FillDefaultContinuousEvents(rmseTimeNorm, times, durations);
     int32_t ret = InsertTransientEvent(rmseTimeNorm, transientIndex, transientEventFlags,
     times, durations);
@@ -1027,7 +1027,7 @@ void VibrationConvertCore::OutputAllContinuousEventByUnseg(const std::vector &in
         SEN_HILOGE("InsertTransientEvent failed");
         return;
     }
-    std::vector continuousEvents;
+    std::vector<ContinuousEvent> continuousEvents;
     for (size_t i = 0; i < times.size(); i++) {
         continuousEvents.push_back(ContinuousEvent(times[i], durations[i],
         intensityData[i].rmseIntensityNorm, freqNorm[i]));
@@ -1035,8 +1035,8 @@ void VibrationConvertCore::OutputAllContinuousEventByUnseg(const std::vector &in
     MergeContinuousEvents(continuousEvents);
 }
 
-void VibrationConvertCore::FillDefaultContinuousEvents(const std::vector &rmseTimeNorm,
-    std::vector &times, std::vector &durations)
+void VibrationConvertCore::FillDefaultContinuousEvents(const std::vector<double> &rmseTimeNorm,
+    std::vector<double> &times, std::vector<double> &durations)
 {
     double value = 0.0;
     for (size_t i = 0; i < rmseTimeNorm.size(); ++i) {
@@ -1046,9 +1046,9 @@ void VibrationConvertCore::FillDefaultContinuousEvents(const std::vector &rmseTi
     }
 }
 
-int32_t VibrationConvertCore::InsertTransientEvent(const std::vector &rmseTimeNorm,
-    const std::vector<int32_t> &transientIndex, const std::vector &transientEventFlags,
-    std::vector &times, std::vector &durations)
+int32_t VibrationConvertCore::InsertTransientEvent(const std::vector<double> &rmseTimeNorm,
+    const std::vector<int32_t> &transientIndex, const std::vector<bool> &transientEventFlags,
+    std::vector<double> &times, std::vector<double> &durations)
 {
     if ((times.empty()) || (transientIndex.size() != transientEventFlags.size())) {
         SEN_HILOGE("times is empty");
@@ -1096,7 +1096,7 @@ int32_t VibrationConvertCore::InsertTransientEvent(const std::vector &rmseTimeNo
     return Sensors::SUCCESS;
 }
 
-void VibrationConvertCore::CombinateContinuousEvents(const std::vector &continuousEvents,
+void VibrationConvertCore::CombinateContinuousEvents(const std::vector<ContinuousEvent> &continuousEvents,
     int32_t startIdx, int32_t endIdx)
 {
     int32_t begIdx = startIdx;
@@ -1159,7 +1159,7 @@ void VibrationConvertCore::CombinateContinuousEvents(const std::vector &continuo
     }
 }
 
-void VibrationConvertCore::MergeContinuousEvents(const std::vector &interContinuousEvents)
+void VibrationConvertCore::MergeContinuousEvents(const std::vector<ContinuousEvent> &interContinuousEvents)
 {
     if (interContinuousEvents.empty()) {
         SEN_HILOGE("interContinuousEvents is empty");
