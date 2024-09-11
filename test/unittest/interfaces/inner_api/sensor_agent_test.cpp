@@ -450,6 +450,12 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_002, TestSize.Level1)
 
     ret = UnsubscribeSensor(SENSOR_ID, &user2);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+
+    ret = UnsubscribeSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SensorNativeApiTest_003, TestSize.Level1)
