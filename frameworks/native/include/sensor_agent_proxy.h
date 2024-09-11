@@ -57,7 +57,7 @@ private:
     int32_t DestroySensorDataChannel();
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
-    std::set<const SensorUser *> GetSubscribeUser(int32_t sensorId);
+    std::set<RecordSensorCallback> GetSubscribeUserCallback(int32_t sensorId);
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_ = nullptr;
