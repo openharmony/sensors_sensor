@@ -22,7 +22,6 @@
         "bundle_framework",
         "c_utils",
         "hilog",
-        "build_framework",
         "hisysevent",
         "napi",
         "drivers_interface_sensor",

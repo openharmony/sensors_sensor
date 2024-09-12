@@ -103,8 +103,6 @@ private:
      */
     int32_t AlgRealFFT(FftParaAndResult &paraRes);
     int32_t AlgFFT(bool inverseTransform, FftParaAndResult &paraRes);
-    void Normalize(FftParaAndResult &paraRes);
-    int32_t PreprocessData(uint32_t numSamples, FftParaAndResult &paraRes);
     int32_t AlgInitFFT();
 
 private:
