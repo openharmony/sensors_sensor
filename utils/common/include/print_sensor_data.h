@@ -31,12 +31,12 @@ class PrintSensorData : public Singleton<PrintSensorData> {
 public:
     PrintSensorData() = default;
     virtual ~PrintSensorData() {};
-    void ControlSensorClientPrint(const SensorUser *user, const SensorEvent &event);
+    void ControlSensorClientPrint(const RecordSensorCallback callback, const SensorEvent &event);
     void ControlSensorHdiPrint(const SensorData &sensorData);
     void ResetHdiCounter(int32_t sensorId);
     bool IsContinuousType(int32_t sensorId);
-    void SavePrintUserInfo(const SensorUser *user);
-    void RemovePrintUserInfo(const SensorUser *user);
+    void SavePrintUserInfo(const RecordSensorCallback callback);
+    void RemovePrintUserInfo(const RecordSensorCallback callback);
 
 private:
     void PrintClientData(const SensorEvent &event);
@@ -57,7 +57,7 @@ private:
         {SENSOR_TYPE_ID_AMBIENT_LIGHT1, info_},
         {SENSOR_TYPE_ID_MAGNETIC_FIELD, info_},
     };
-    std::map<const SensorUser *, LogPrintInfo> clientLoginfo_;
+    std::map<RecordSensorCallback, LogPrintInfo> clientLoginfo_;
 };
 } // namespace Sensors
 } // namespace OHOS

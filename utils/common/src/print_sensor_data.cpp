@@ -120,7 +120,7 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
     }
 }
 
-void PrintSensorData::ControlSensorClientPrint(const SensorUser *user, const SensorEvent &event)
+void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callback, const SensorEvent &event)
 {
     auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), event.sensorTypeId);
     if (triggerIt != g_triggerSensorType.end()) {
@@ -132,7 +132,7 @@ void PrintSensorData::ControlSensorClientPrint(const SensorUser *user, const Sen
         return;
     }
     std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
-    auto it = clientLoginfo_.find(user);
+    auto it = clientLoginfo_.find(callback);
     if (it == clientLoginfo_.end()) {
         return;
     }
@@ -175,28 +175,28 @@ bool PrintSensorData::IsContinuousType(int32_t sensorId)
         sensorId) != g_continuousSensorType.end();
 }
 
-void PrintSensorData::SavePrintUserInfo(const SensorUser *user)
+void PrintSensorData::SavePrintUserInfo(const RecordSensorCallback callback)
 {
-    CHKPV(user);
+    CHKPV(callback);
     std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
-    if (clientLoginfo_.find(user) != clientLoginfo_.end()) {
+    if (clientLoginfo_.find(callback) != clientLoginfo_.end()) {
         return;
     }
     LogPrintInfo info;
-    auto status = clientLoginfo_.insert(std::make_pair(user, info));
+    auto status = clientLoginfo_.insert(std::make_pair(callback, info));
     if (!status.second) {
-        SEN_HILOGD("User has been subscribed");
+        SEN_HILOGD("callback has been saved");
     }
 }
 
-void PrintSensorData::RemovePrintUserInfo(const SensorUser *user)
+void PrintSensorData::RemovePrintUserInfo(const RecordSensorCallback callback)
 {
-    CHKPV(user);
+    CHKPV(callback);
     std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
-    if (clientLoginfo_.find(user) == clientLoginfo_.end()) {
+    if (clientLoginfo_.find(callback) == clientLoginfo_.end()) {
         return;
     }
-    clientLoginfo_.erase(user);
+    clientLoginfo_.erase(callback);
 }
 
 void PrintSensorData::ResetHdiCounter(int32_t sensorId)
