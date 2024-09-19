@@ -349,7 +349,7 @@ int32_t OH_SensorEvent_GetAccuracy(Sensor_Event* sensorEvent, Sensor_Accuracy *a
  * SENSOR_TYPE_GAME_ROTATION_VECTOR: Supported from api version 13. data[0], data[1], and data[2], indicating the
  * rotation angles of a device around the x, y, and z axes, respectively, in degree. data[3] indicates the rotation
  * vector.
- * 
+ *
  * @param sensorEvent - Pointer to the sensor data information.
  * @param data - Double pointer to the sensor data.
  * @param length - Pointer to the array length.
