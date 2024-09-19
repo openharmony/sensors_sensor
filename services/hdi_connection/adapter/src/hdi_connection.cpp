@@ -220,6 +220,12 @@ void HdiConnection::UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
     SensorBasicInfo sensorBasicInfo;
     sensorBasicInfo.SetSamplingPeriodNs(samplingPeriodNs);
     sensorBasicInfo.SetMaxReportDelayNs(maxReportDelayNs);
+    auto it = g_sensorBasicInfoMap.find(sensorId);
+    if (it != g_sensorBasicInfoMap.end()) {
+        if (g_sensorBasicInfoMap[sensorId].GetSensorState()) {
+            sensorBasicInfo.SetSensorState(true);
+        }
+    }
     g_sensorBasicInfoMap[sensorId] = sensorBasicInfo;
 }
 

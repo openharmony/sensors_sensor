@@ -27,6 +27,7 @@
 #endif // MEMMGR_ENABLE
 #include "permission_util.h"
 
+#include "print_sensor_data.h"
 #include "securec.h"
 #include "sensor.h"
 #include "sensor_dump.h"

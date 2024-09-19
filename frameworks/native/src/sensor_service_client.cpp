@@ -225,7 +225,7 @@ void SensorServiceClient::ReenableSensor()
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {
         if (sensorServer_ != nullptr) {
-            sensorService_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+            sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
         }
     }
     if (!isConnected_) {
@@ -264,7 +264,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             if (InitServiceClient() != ERR_OK) {
                 SEN_HILOGE("InitServiceClient failed");
                 dataChannel_->DestroySensorDataChannel();
-                SENSOR_AGENT_TMPL->SetIsChannelCreated(false);
+                SENSOR_AGENT_IMPL->SetIsChannelCreated(false);
                 return;
             }
             if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
@@ -275,7 +275,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             }
         }
     }
-    RennableSensor();
+    ReenableSensor();
 }
 
 void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
