@@ -81,7 +81,7 @@ describe("PedometerDetectionJsTest", function () {
      * @tc.name: PedometerDetectionJsTest
      * @tc.desc: verify app info is not null
      * @tc.type: FUNC
-     * @tc.require: Issue Number
+     * @tc.require: AR000HPEMR
      * @tc.size: MediumTest
      * @tc.type: Function
      * @tc.level: Level 1
@@ -129,7 +129,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -173,7 +173,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -221,7 +221,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -269,7 +269,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -313,7 +313,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -356,7 +356,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -405,7 +405,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -457,7 +457,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1
@@ -506,7 +506,7 @@ describe("PedometerDetectionJsTest", function () {
     * @tc.name: PedometerDetectionJsTest
     * @tc.desc: verify app info is not null
     * @tc.type: FUNC
-    * @tc.require: Issue Number
+    * @tc.require: AR000HPEMR
     * @tc.size: MediumTest
     * @tc.type: Function
     * @tc.level: Level 1

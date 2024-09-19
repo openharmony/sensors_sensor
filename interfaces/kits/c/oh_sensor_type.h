@@ -92,10 +92,20 @@ typedef enum Sensor_Type {
      */
     SENSOR_TYPE_GRAVITY = 257,
     /**
+     * Linear acceleration sensor.
+     * @since 13
+     */
+    SENSOR_TYPE_LINEAR_ACCELERATION = 258,
+    /**
      * Rotation vector sensor.
      * @since 11
      */
     SENSOR_TYPE_ROTATION_VECTOR = 259,
+    /**
+     * Game rotation vector sensor.
+     * @since 13
+     */
+    SENSOR_TYPE_GAME_ROTATION_VECTOR = 262,
     /**
      * Pedometer detection sensor.
      * @since 11
@@ -120,23 +130,23 @@ typedef enum Sensor_Type {
  */
 typedef enum Sensor_Result {
     /**
-     * The operation is successful.
+     * @error The operation is successful.
      * @since 11
      */
     SENSOR_SUCCESS = 0,
     /**
-     * Permission verification failed.
+     * @error Permission verification failed.
      * @since 11
      */
     SENSOR_PERMISSION_DENIED = 201,
     /**
-     * Parameter check failed. For example, a mandatory parameter is not passed in,
+     * @error Parameter check failed. For example, a mandatory parameter is not passed in,
      * or the parameter type passed in is incorrect.
      * @since 11
      */
     SENSOR_PARAMETER_ERROR = 401,
     /**
-     * The sensor service is abnormal.
+     * @error The sensor service is abnormal.
      * @since 11
      */
     SENSOR_SERVICE_EXCEPTION = 14500101,
@@ -277,35 +287,35 @@ typedef struct Sensor_Event Sensor_Event;
 /**
  * @brief Obtains the sensor type.
  *
- * @param Sensor_Event - Pointer to the sensor data information.
+ * @param sensorEvent - Pointer to the sensor data information.
  * @param sensorType - Pointer to the sensor type.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_SensorEvent_GetType(Sensor_Event* Sensor_Event, Sensor_Type *sensorType);
+int32_t OH_SensorEvent_GetType(Sensor_Event* sensorEvent, Sensor_Type *sensorType);
 
 /**
  * @brief Obtains the timestamp of sensor data.
  *
- * @param Sensor_Event - Pointer to the sensor data information.
+ * @param sensorEvent - Pointer to the sensor data information.
  * @param timestamp - Pointer to the timestamp.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_SensorEvent_GetTimestamp(Sensor_Event* Sensor_Event, int64_t *timestamp);
+int32_t OH_SensorEvent_GetTimestamp(Sensor_Event* sensorEvent, int64_t *timestamp);
 
 /**
  * @brief Obtains the accuracy of sensor data.
  *
- * @param Sensor_Event - Pointer to the sensor data information.
+ * @param sensorEvent - Pointer to the sensor data information.
  * @param accuracy - Pointer to the accuracy.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_SensorEvent_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy *accuracy);
+int32_t OH_SensorEvent_GetAccuracy(Sensor_Event* sensorEvent, Sensor_Accuracy *accuracy);
 
 /**
  * @brief Obtains sensor data. The data length and content depend on the sensor type.
@@ -314,7 +324,9 @@ int32_t OH_SensorEvent_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy *
  * the x, y, and z axes of the device, respectively, in m/s2.
  * SENSOR_TYPE_GYROSCOPE: data[0], data[1], and data[2], indicating the angular velocity of rotation around
  *  the x, y, and z axes of the device, respectively, in rad/s.
- * SENSOR_TYPE_AMBIENT_LIGHT: data[0], indicating the ambient light intensity, in lux.
+ * SENSOR_TYPE_AMBIENT_LIGHT: data[0], indicating the ambient light intensity, in lux. Since api version 12,
+ * two additional data will be returned, where data[1] indicating the color temperature, in kelvin; data[2]
+ * indicating the infrared luminance, in cd/m2.
  * SENSOR_TYPE_MAGNETIC_FIELD: data[0], data[1], and data[2], indicating the magnetic field strength around
  * the x, y, and z axes of the device, respectively, in μT.
  * SENSOR_TYPE_BAROMETER: data[0], indicating the atmospheric pressure, in hPa.
@@ -332,15 +344,20 @@ int32_t OH_SensorEvent_GetAccuracy(Sensor_Event* Sensor_Event, Sensor_Accuracy *
  * The value <b>1</b> means that the number of detected steps changes.
  * SENSOR_TYPE_PEDOMETER: data[0], indicating the number of steps a user has walked.
  * SENSOR_TYPE_HEART_RATE: data[0], indicating the heart rate value.
- *
- * @param Sensor_Event - Pointer to the sensor data information.
+ * SENSOR_TYPE_LINEAR_ACCELERATION: Supported from api version 13. data[0], data[1], and data[2], indicating the
+ * linear acceleration around the x, y, and z axes of the device, respectively, in m/s2.
+ * SENSOR_TYPE_GAME_ROTATION_VECTOR: Supported from api version 13. data[0], data[1], and data[2], indicating the
+ * rotation angles of a device around the x, y, and z axes, respectively, in degree. data[3] indicates the rotation
+ * vector.
+ * 
+ * @param sensorEvent - Pointer to the sensor data information.
  * @param data - Double pointer to the sensor data.
  * @param length - Pointer to the array length.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11
  */
-int32_t OH_SensorEvent_GetData(Sensor_Event* Sensor_Event, float **data, uint32_t *length);
+int32_t OH_SensorEvent_GetData(Sensor_Event* sensorEvent, float **data, uint32_t *length);
 
 /**
  * @brief Defines the sensor subscription ID, which uniquely identifies a sensor.
@@ -371,7 +388,7 @@ int32_t OH_Sensor_DestroySubscriptionId(Sensor_SubscriptionId *id);
  * @brief Obtains the sensor type.
  *
  * @param id - Pointer to the sensor subscription ID.
- * @param id - Pointer to the sensor type.
+ * @param sensorType - Pointer to the sensor type.
  * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
  * returns an error code defined in {@link Sensor_Result} otherwise.
  * @since 11

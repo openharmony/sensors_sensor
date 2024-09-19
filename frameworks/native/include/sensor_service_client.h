@@ -60,6 +60,7 @@ private:
     void UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
     void DeleteSensorInfoItem(int32_t sensorId);
     int32_t CreateSocketChannel();
+    void ReenableSensor();
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
     sptr<ISensorService> sensorServer_ = nullptr;
@@ -76,4 +77,4 @@ private:
 };
 }  // namespace Sensors
 }  // namespace OHOS
-#endif // SENSOR_SERVICE_CLIENT_H
+#endif  // SENSOR_SERVICE_CLIENT_H

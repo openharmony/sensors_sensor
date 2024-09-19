@@ -28,7 +28,7 @@ namespace Sensors {
 namespace {
 constexpr double BANDS_MIN_THRESHOLD { 0.000001 };
 constexpr uint32_t MEL_FILTERS_OR_COEFFS_MAX { 4096 * 4096 };
-} // namespace
+}  // namespace
 
 int32_t ConversionMfcc::HandleMelFilterAndLogSquare(const std::vector<float> &powerSpectrum)
 {
@@ -223,16 +223,15 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
         fMax = sr / 2.0;
     }
     size_t nMels = static_cast<size_t>(para.nMels);
-    double fMin = para.minFreq;
     frmCount = nFft / 2;
     std::vector<double> basis(nMels * frmCount, 0.0);
     // generate mel frequencies.
+    double fMin = para.minFreq;
     double minMel = OHOS::Sensors::ConvertHtkMel(fMin);
     double maxMel = OHOS::Sensors::ConvertHtkMel(fMax);
     std::vector<double> filterHzPos(nMels + 2);
     double stepMel = (maxMel - minMel) / (nMels + 1);
     double stepHz = static_cast<double>(sr) / nFft;
-
     double nextMel = minMel;
     for (size_t i = 0; i < (nMels + 2); ++i) {
         filterHzPos[i] = OHOS::Sensors::ConvertHtkHz(nextMel);
@@ -261,7 +260,7 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
         }
     }
     melBasis = OHOS::Sensors::TransposeMatrix(nMels, basis);
-    return melBasis.empty() ? Sensor::ERROR : Sensors::SUCCESS;
+    return melBasis.empty() ? Sensors::ERROR : Sensors::SUCCESS;
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS
