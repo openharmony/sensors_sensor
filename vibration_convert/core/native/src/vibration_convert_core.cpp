@@ -109,6 +109,7 @@ int32_t VibrationConvertCore::GetAudioData()
     }
     return Sensors::SUCCESS;
 }
+
 int32_t VibrationConvertCore::ConvertAudioToHaptic(const AudioSetting &audioSetting,
     const std::vector<double> &audioData, std::vector<HapticEvent> &hapticEvents)
 {
@@ -293,7 +294,7 @@ double VibrationConvertCore::CalcRmsLowerData(size_t dataSize, const std::vector
     if (newDrwIdx.size() > 0) {
         for (int32_t i = 0; i < RMSE_LOWDELTA_ITERATION_TIMES; i++) {
             int32_t j = newDrwIdx[0];
-            lowerDelta = rmseRange * (RMSE_LOWDELTA_RATIO_HIGH - i * RMSE_LOWDELTA_RATIO_STEP ) + rmseMin;
+            lowerDelta = rmseRange * (RMSE_LOWDELTA_RATIO_HIGH - i * RMSE_LOWDELTA_RATIO_STEP) + rmseMin;
             if ((rmse[j] > lowerDelta) || (rmse[j + 1] > lowerDelta)) {
                 break;
             }
@@ -679,13 +680,13 @@ std::vector<bool> VibrationConvertCore::GetTransientEventFlags(const std::vector
         if ((i != 0) && (beginIdx < onsetIdxs[i - 1] * ENERGY_HOP_LEN)) {
             beginIdx = onsetIdxs[i - 1] * ENERGY_HOP_LEN;
         }
-    int32_t dataSize = static_cast<int32_t>(data.size());
+        int32_t dataSize = static_cast<int32_t>(data.size());
         if (endIdx >= dataSize) {
             endIdx = dataSize - 1;
         }
         std::vector<double> localData;
         for (int32_t j = beginIdx; j <= endIdx; ++j) {
-        localData.push_back(data[i]);
+            localData.push_back(data[i]);
         }
         double unzeroDensity = 0.0;
         int32_t unzeroCount = 0;
@@ -775,7 +776,7 @@ void VibrationConvertCore::TranslateAnchorPoint(const std::vector<int32_t> &ampl
 }
 
 void VibrationConvertCore::TranslateAnchorPoint(int32_t amplitudePeakPos, int32_t &amplitudePeakIdx,
-    ouble &amplitudePeakTime)
+    double &amplitudePeakTime)
 {
     bool useAbsTimeFlag = systemPara_.useAbsTimeFlag;
     amplitudePeakIdx = static_cast<int32_t>(round(1.0 * amplitudePeakPos / ENERGY_HOP_LEN));
@@ -791,7 +792,7 @@ std::vector<int32_t> VibrationConvertCore::DetectFrequency(const std::vector<dou
     const std::vector<int32_t> &rmseIntensityNorm)
 {
     CALL_LOG_ENTER;
-    std::vector<double> zcr = frequencyEstimation_.GetZeroCrossingRate(data, FRAME_LEN, ENERGY_HOP_LEN);
+    std::vector<double> zcr =  frequencyEstimation_.GetZeroCrossingRate(data, FRAME_LEN, ENERGY_HOP_LEN);
     for (auto &elem : zcr) {
         elem = elem * SAMPLE_RATE * F_HALF;
     }
@@ -1022,7 +1023,7 @@ void VibrationConvertCore::OutputAllContinuousEventByUnseg(const std::vector<Int
     std::vector<double> durations;
     FillDefaultContinuousEvents(rmseTimeNorm, times, durations);
     int32_t ret = InsertTransientEvent(rmseTimeNorm, transientIndex, transientEventFlags,
-    times, durations);
+        times, durations);
     if (ret != Sensors::SUCCESS) {
         SEN_HILOGE("InsertTransientEvent failed");
         return;
@@ -1030,7 +1031,7 @@ void VibrationConvertCore::OutputAllContinuousEventByUnseg(const std::vector<Int
     std::vector<ContinuousEvent> continuousEvents;
     for (size_t i = 0; i < times.size(); i++) {
         continuousEvents.push_back(ContinuousEvent(times[i], durations[i],
-        intensityData[i].rmseIntensityNorm, freqNorm[i]));
+            intensityData[i].rmseIntensityNorm, freqNorm[i]));
     }
     MergeContinuousEvents(continuousEvents);
 }

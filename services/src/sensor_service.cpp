@@ -27,6 +27,7 @@
 #endif // MEMMGR_ENABLE
 #include "permission_util.h"
 
+#include "print_sensor_data.h"
 #include "securec.h"
 #include "sensor.h"
 #include "sensor_dump.h"
@@ -45,7 +46,7 @@ const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_sensorSer
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
-} // namespace
+}  // namespace
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -254,12 +255,21 @@ bool SensorService::CheckSensorId(int32_t sensorId)
     return true;
 }
 
-ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+bool SensorService::CheckParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
-    CALL_LOG_ENTER;
     if ((!CheckSensorId(sensorId)) ||
         ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
         SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceeded the maximum value");
+        return false;
+    }
+    return true;
+}
+
+ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+{
+    CALL_LOG_ENTER;
+    if (!CheckParameter(sensorId, samplingPeriodNs, maxReportDelayNs)) {
+        SEN_HILOGE("sensorId, maxReportDelayNs or maxReportDelayNs is invalid");
         return ERR_NO_INIT;
     }
     int32_t pid = GetCallingPid();
@@ -279,6 +289,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         if (isReportActiveInfo_) {
             ReportActiveInfo(sensorId, pid);
         }
+        PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
         return ERR_OK;
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
@@ -302,6 +313,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
     if (isReportActiveInfo_) {
         ReportActiveInfo(sensorId, pid);
     }
+    PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
     return ret;
 }
 
@@ -607,5 +619,5 @@ void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessT
     server_->clientInfo_.ChangeSensorPerm(result.tokenID, result.permissionName,
         (result.permStateChangeType != 0));
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS

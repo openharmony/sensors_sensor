@@ -42,6 +42,7 @@ public:
     int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user);
     int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode);
     int32_t SetOption(int32_t sensorId, const SensorUser *user, int32_t option);
+    void SetIsChannelCreated(bool isChannelCreated);
     int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const;
     int32_t SuspendSensors(int32_t pid);
     int32_t ResumeSensors(int32_t pid);
@@ -56,7 +57,7 @@ private:
     int32_t DestroySensorDataChannel();
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
-    std::set<const SensorUser *> GetSubscribeUser(int32_t sensorId);
+    std::set<RecordSensorCallback> GetSubscribeUserCallback(int32_t sensorId);
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_ = nullptr;
@@ -70,4 +71,4 @@ private:
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
-#endif // endif SENSOR_PROXY_H
+#endif  // endif SENSOR_PROXY_H

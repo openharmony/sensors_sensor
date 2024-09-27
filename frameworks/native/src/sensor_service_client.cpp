@@ -24,6 +24,7 @@
 #include "hisysevent.h"
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
+#include "sensor_agent_proxy.h"
 #include "sensor_errors.h"
 #include "sensor_service_proxy.h"
 #include "system_ability_definition.h"
@@ -218,6 +219,23 @@ int32_t SensorServiceClient::DestroyDataChannel()
     return ret;
 }
 
+void SensorServiceClient::ReenableSensor()
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> mapLock(mapMutex_);
+    for (const auto &it : sensorInfoMap_) {
+        if (sensorServer_ != nullptr) {
+            sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+        }
+    }
+    if (!isConnected_) {
+        SEN_HILOGD("Previous socket channel status is false, not need retry creat socket channel");
+        return;
+    }
+    Disconnect();
+    CreateSocketChannel();
+}
+
 void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 {
     CALL_LOG_ENTER;
@@ -246,6 +264,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             if (InitServiceClient() != ERR_OK) {
                 SEN_HILOGE("InitServiceClient failed");
                 dataChannel_->DestroySensorDataChannel();
+                SENSOR_AGENT_IMPL->SetIsChannelCreated(false);
                 return;
             }
             if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
@@ -256,18 +275,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             }
         }
     }
-    std::lock_guard<std::mutex> mapLock(mapMutex_);
-    for (const auto &it : sensorInfoMap_) {
-        if (sensorServer_ != nullptr) {
-            sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
-        }
-    }
-    if (!isConnected_) {
-        SEN_HILOGD("Previous socket channel status is false, not need retry creat socket channel");
-        return;
-    }
-    Disconnect();
-    CreateSocketChannel();
+    ReenableSensor();
 }
 
 void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
