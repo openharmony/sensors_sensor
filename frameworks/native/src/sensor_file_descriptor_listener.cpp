@@ -53,11 +53,6 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         return;
     }
     CHKPV(channel_);
-    int32_t receiveFd = channel_->GetReceiveDataFd();
-    if (receiveFd < 0) {
-        SEN_HILOGE("receiveFd:%{public}d", receiveFd);
-        return;
-    }
     if (receiveDataBuff_ == nullptr) {
         SEN_HILOGE("Receive data buff_ is null");
         return;
