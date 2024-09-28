@@ -57,8 +57,7 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         SEN_HILOGE("Receive data buff_ is null");
         return;
     }
-    int32_t len =
-        recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
+    int32_t len = channel_->ReceiveData(receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE);
     int32_t eventSize = static_cast<int32_t>(sizeof(SensorData));
     while (len > 0) {
         int32_t num = len / eventSize;
@@ -74,7 +73,7 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
             };
             channel_->dataCB_(&event, 1, channel_->privateData_);
         }
-        len = recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
+        len = channel_->ReceiveData(receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE);
     }
 }
 

@@ -172,13 +172,10 @@ int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
     std::unique_lock<std::mutex> lock(fdLock_);
     if ((vaddr == nullptr) || (receiveFd_ < 0)) {
         SEN_HILOGE("Failed, vaddr is null or receiveFd_ invalid");
-        return SENSOR_CHANNEL_RECEIVE_ADDR_ERR;
+        return ERROR;
     }
-    ssize_t length;
-    do {
-        length = recv(receiveFd_, vaddr, size, MSG_DONTWAIT);
-    } while (errno == EINTR);
-    return length;
+    ssize_t length = recv(receiveFd_, vaddr, size, 0);
+    return static_cast<int32_t>(length);
 }
 
 int32_t SensorBasicDataChannel::GetSendDataFd()
