@@ -114,7 +114,6 @@ bool SensorServiceClient::IsValid(int32_t sensorId)
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
-        return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorList_.empty()) {
@@ -267,7 +266,6 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             SEN_HILOGI("dataChannel_ is nullptr");
             {
                 std::lock_guard<std::mutex> clientLock(clientMutex_);
-                sensorList_.clear();
                 sensorServer_ = nullptr;
             }
             if (InitServiceClient() != ERR_OK) {
@@ -280,7 +278,6 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             dataChannel_->RestoreSensorDataChannel();
             {
                 std::lock_guard<std::mutex> clientLock(clientMutex_);
-                sensorList_.clear();
                 sensorServer_ = nullptr;
             }
             if (InitServiceClient() != ERR_OK) {
