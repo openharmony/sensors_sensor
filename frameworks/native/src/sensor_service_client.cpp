@@ -245,6 +245,7 @@ void SensorServiceClient::ReenableSensor()
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {
+        std::lock_guard<std::mutex> clientLock(clientMutex_);
         if (sensorServer_ != nullptr) {
             sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
         }
@@ -286,6 +287,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
                 SENSOR_AGENT_IMPL->SetIsChannelCreated(false);
                 return;
             }
+            std::lock_guard<std::mutex> clientLock(clientMutex_);
             if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
                 auto remoteObject = sensorClientStub_->AsObject();
                 if (remoteObject != nullptr) {
