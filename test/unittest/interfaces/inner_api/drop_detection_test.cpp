@@ -83,10 +83,6 @@ void DropDetectionDataCallbackImpl(SensorEvent *event)
         return;
     }
     DropDetectionData *dropDetectionData = reinterpret_cast<DropDetectionData *>(event[0].data);
-    if (dropDetectionData == nullptr) {
-        SEN_HILOGE("dropDetectionData is nullptr");
-        return;
-    }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, status:%{public}f", event[0].sensorTypeId,
         event[0].version, event[0].dataLen, dropDetectionData->status);
 }
@@ -106,10 +102,6 @@ void DropDetectionDataCallbackImpl2(SensorEvent *event)
         return;
     }
     DropDetectionData *dropDetectionData = reinterpret_cast<DropDetectionData *>(event[0].data);
-    if (dropDetectionData == nullptr) {
-        SEN_HILOGE("dropDetectionData is nullptr");
-        return;
-    }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, status:%{public}f", event[0].sensorTypeId,
         event[0].version, event[0].dataLen, dropDetectionData->status);
 }

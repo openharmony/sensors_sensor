@@ -24,6 +24,7 @@
 #include "hisysevent.h"
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
+#include "sensor_service_proxy.h"
 #include "sensor_errors.h"
 #include "sensor_service_proxy.h"
 #include "system_ability_definition.h"
@@ -107,7 +108,6 @@ bool SensorServiceClient::IsValid(int32_t sensorId)
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
         SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
-        return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorList_.empty()) {
@@ -218,44 +218,9 @@ int32_t SensorServiceClient::DestroyDataChannel()
     return ret;
 }
 
-void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
+void SensorServiceClient::ReenableSensor()
 {
     CALL_LOG_ENTER;
-    {
-        std::lock_guard<std::mutex> channelLock(channelMutex_);
-        if (dataChannel_ == nullptr) {
-            SEN_HILOGI("dataChannel_ is nullptr");
-            {
-                std::lock_guard<std::mutex> clientLock(clientMutex_);
-                sensorList_.clear();
-                sensorServer_ = nullptr;
-            }
-            if (InitServiceClient() != ERR_OK) {
-                SEN_HILOGE("InitServiceClient failed");
-                return;
-            }
-        } else {
-            SEN_HILOGI("dataChannel_ is not nullptr");
-            dataChannel_->DestroySensorDataChannel();
-            dataChannel_->RestoreSensorDataChannel();
-            {
-                std::lock_guard<std::mutex> clientLock(clientMutex_);
-                sensorList_.clear();
-                sensorServer_ = nullptr;
-            }
-            if (InitServiceClient() != ERR_OK) {
-                SEN_HILOGE("InitServiceClient failed");
-                dataChannel_->DestroySensorDataChannel();
-                return;
-            }
-            if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
-                auto remoteObject = sensorClientStub_->AsObject();
-                if (remoteObject != nullptr) {
-                    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
-                }
-            }
-        }
-    }
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     for (const auto &it : sensorInfoMap_) {
         if (sensorServer_ != nullptr) {
@@ -268,6 +233,46 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     }
     Disconnect();
     CreateSocketChannel();
+}
+
+void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
+{
+    CALL_LOG_ENTER;
+    {
+        std::lock_guard<std::mutex> channelLock(channelMutex_);
+        if (dataChannel_ == nullptr) {
+            SEN_HILOGI("dataChannel_ is nullptr");
+            {
+                std::lock_guard<std::mutex> clientLock(clientMutex_);
+                sensorServer_ = nullptr;
+            }
+            if (InitServiceClient() != ERR_OK) {
+                SEN_HILOGE("InitServiceClient failed");
+                return;
+            }
+        } else {
+            SEN_HILOGI("dataChannel_ is not nullptr");
+            dataChannel_->DestroySensorDataChannel();
+            dataChannel_->RestoreSensorDataChannel();
+            {
+                std::lock_guard<std::mutex> clientLock(clientMutex_);
+                sensorServer_ = nullptr;
+            }
+            if (InitServiceClient() != ERR_OK) {
+                SEN_HILOGE("InitServiceClient failed");
+                dataChannel_->DestroySensorDataChannel();
+                SENSOR_AGENT_IMPL->SetIsChannelCreated(false);
+                return;
+            }
+            if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
+                auto remoteObject = sensorClientStub_->AsObject();
+                if (remoteObject != nullptr) {
+                    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
+                }
+            }
+        }
+    }
+    ReenableSensor();
 }
 
 void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)

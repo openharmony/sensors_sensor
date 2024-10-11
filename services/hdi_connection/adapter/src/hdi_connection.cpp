@@ -37,7 +37,7 @@ using OHOS::HDI::Sensor::V2_0::ISensorCallback;
 using OHOS::HDI::Sensor::V2_0::HdfSensorInformation;
 namespace {
 sptr<ISensorInterface> g_sensorInterface = nullptr;
-sptr<ISensorCallback> g_eventCallback = nullptr;
+sptr<ISensorCallback> g_eventCallback  = nullptr;
 std::map<int32_t, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
@@ -55,8 +55,8 @@ int32_t HdiConnection::ConnectHdi()
     while (retry < GET_HDI_SERVICE_COUNT) {
         g_sensorInterface = ISensorInterface::Get();
         if (g_sensorInterface != nullptr) {
-            SEN_HILOGI("Connect V2_0 hdi success");
-            g_eventCallback = new (std::nothrow) SensorEventCallback();
+            SEN_HILOGI("Connect v2_0 hdi success");
+            g_eventCallback  = new (std::nothrow) SensorEventCallback();
             CHKPR(g_eventCallback, ERR_NO_INIT);
             RegisterHdiDeathRecipient();
             return ERR_OK;
@@ -193,7 +193,7 @@ int32_t HdiConnection::DestroyHdiConnection()
         SEN_HILOGE("Unregister is failed");
         return ret;
     }
-    g_eventCallback = nullptr;
+    g_eventCallback  = nullptr;
     UnregisterHdiDeathRecipient();
     return ERR_OK;
 }
@@ -220,6 +220,12 @@ void HdiConnection::UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
     SensorBasicInfo sensorBasicInfo;
     sensorBasicInfo.SetSamplingPeriodNs(samplingPeriodNs);
     sensorBasicInfo.SetMaxReportDelayNs(maxReportDelayNs);
+    auto it = g_sensorBasicInfoMap.find(sensorId);
+    if (it != g_sensorBasicInfoMap.end()) {
+        if (g_sensorBasicInfoMap[sensorId].GetSensorState()) {
+            sensorBasicInfo.SetSensorState(true);
+        }
+    }
     g_sensorBasicInfoMap[sensorId] = sensorBasicInfo;
 }
 
@@ -269,7 +275,7 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     CHKPV(hdiService);
     CHKPV(hdiDeathObserver_);
     hdiService->RemoveDeathRecipient(hdiDeathObserver_);
-    g_eventCallback = nullptr;
+    g_eventCallback  = nullptr;
     Reconnect();
 }
 
@@ -311,5 +317,5 @@ void HdiConnection::Reconnect()
         }
     }
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS

@@ -49,7 +49,7 @@ ohos_shared_library("libsensor_service") {
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
 
-  if (rust_socket_ipc) {
+  if (sensor_rust_socket_ipc) {
     deps +=
         [ "$SUBSYSTEM_DIR/rust/utils/socket_ipc_rust_ffi:sensor_rust_util_ffi" ]
   }
@@ -63,6 +63,7 @@ ohos_shared_library("libsensor_service") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 
   if (sensor_memmgr_enable) {
@@ -137,7 +138,7 @@ ohos_static_library("libsensor_service_static") {
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
 
-  if (rust_socket_ipc) {
+  if (sensor_rust_socket_ipc) {
     deps +=
         [ "$SUBSYSTEM_DIR/rust/utils/socket_ipc_rust_ffi:sensor_rust_util_ffi" ]
   }
@@ -151,6 +152,7 @@ ohos_static_library("libsensor_service_static") {
     "hitrace:hitrace_meter",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 
   if (sensor_memmgr_enable) {

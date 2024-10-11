@@ -37,7 +37,10 @@ ohos_shared_library("libsensor") {
     "src/sensor_napi_utils.cpp",
     "src/sensor_system_js.cpp",
   ]
-  deps = [ "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native" ]
+  deps = [
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+    "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
+  ]
   external_deps = [
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",

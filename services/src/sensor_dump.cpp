@@ -49,7 +49,7 @@ enum {
     POSE_6DOF_DIMENSION = 15,
     DEFAULT_DIMENSION = 16,
 };
-} // namespace
+}  // namespace
 
 std::unordered_map<int32_t, std::string> SensorDump::sensorMap_ = {
     { SENSOR_TYPE_ID_ACCELEROMETER, "ACCELEROMETER" },
@@ -192,7 +192,7 @@ void SensorDump::DumpHelp(int32_t fd)
     dprintf(fd, "      -l, --list: dump the sensor list\n");
     dprintf(fd, "      -c, --channel: dump the sensor data channel info\n");
     dprintf(fd, "      -o, --open: dump the opening sensors\n");
-#ifdef BUILD_VARIANT_ENG 
+#ifdef BUILD_VARIANT_ENG
     dprintf(fd, "      -d, --data: dump the last 10 packages sensor data\n");
 #endif // BUILD_VARIANT_ENG
 }
@@ -253,7 +253,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     return true;
 }
 
-#ifdef BUILD_VARIANT_ENG 
+#ifdef BUILD_VARIANT_ENG
 bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
 {
     dprintf(fd, "Last 10 packages sensor data:\n");
@@ -332,7 +332,7 @@ std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorDa
     std::string str;
     int32_t dataLen = GetDataDimension(sensorId);
     if (sensorData.dataLen < sizeof(float)) {
-        SEN_HILOGE("SensorData dataLen less than float size.");
+        SEN_HILOGE("SensorData dataLen less than float size");
         return str;
     }
     auto data = reinterpret_cast<float *>(sensorData.data);
@@ -346,5 +346,5 @@ std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorDa
     str.append("\n");
     return str;
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS

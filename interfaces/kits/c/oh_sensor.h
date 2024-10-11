@@ -45,8 +45,10 @@ extern "C" {
  * @param infos - Double pointer to the information about all sensors on the device.
  * For details, see {@link Sensor_Info}.
  * @param count - Pointer to the number of sensors on the device.
- * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
- * returns an error code defined in {@link Sensor_Result} otherwise.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful; returns the following error code otherwise.
+ * {@link SENSOR_PARAMETER_ERROR} Parameter check failed. For example, the parameter is invalid,
+ * or the parameter type passed in is incorrect.\n
+ * {@link SENSOR_SERVICE_EXCEPTION} The sensor service is abnormal.\n
  *
  * @since 11
  */
@@ -65,8 +67,11 @@ Sensor_Result OH_Sensor_GetInfos(Sensor_Info **infos, uint32_t *count);
  * For details, see {@link Sensor_SubscriptionAttribute}.
  * @param subscriber - Pointer to the subscriber information, which is used to specify the callback function for
  * reporting the sensor data. For details, see {@link Sensor_Subscriber}.
- * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
- * returns an error code defined in {@link Sensor_Result} otherwise.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful; returns the following error code otherwise.
+ * {@link SENSOR_PERMISSION_DENIED} Permission verification failed.\n
+ * {@link SENSOR_PARAMETER_ERROR} Parameter check failed. For example, the parameter is invalid,
+ * or the parameter type passed in is incorrect.\n
+ * {@link SENSOR_SERVICE_EXCEPTION} The sensor service is abnormal.\n
  * @permission ohos.permission.ACCELEROMETER or ohos.permission.GYROSCOPE or
  *             ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  * @since 11
@@ -85,8 +90,11 @@ Sensor_Result OH_Sensor_Subscribe(const Sensor_SubscriptionId *id,
  * @param id - Pointer to the sensor subscription ID. For details, see {@link Sensor_SubscriptionId}.
  * @param subscriber - Pointer to the subscriber information, which is used to specify the callback function for
  * reporting the sensor data. For details, see {@link Sensor_Subscriber}.
- * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful;
- * returns an error code defined in {@link Sensor_Result} otherwise.
+ * @return Returns <b>SENSOR_SUCCESS</b> if the operation is successful; returns the following error code otherwise.
+ * {@link SENSOR_PERMISSION_DENIED} Permission verification failed.\n
+ * {@link SENSOR_PARAMETER_ERROR} Parameter check failed. For example, the parameter is invalid,
+ * or the parameter type passed in is incorrect.\n
+ * {@link SENSOR_SERVICE_EXCEPTION} The sensor service is abnormal.\n
  * @permission ohos.permission.ACCELEROMETER or ohos.permission.GYROSCOPE or
  *             ohos.permission.ACTIVITY_MOTION or ohos.permission.READ_HEALTH_DATA
  *
