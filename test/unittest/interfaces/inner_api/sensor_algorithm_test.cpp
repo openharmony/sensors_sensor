@@ -172,7 +172,7 @@ HWTEST_F(SensorAlgorithmTest, SensorAlgorithmTest_012, TestSize.Level1)
     SEN_HILOGD("SensorAlgorithmTest_012");
     std::vector<float> inRotationMatrix = {1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5,
                                            1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5};
-    std::vector<float> outRotationMatrix(FOUR_DIMENSIONAL_MATRIX_LENGTH);
+    std::vector<float> outRotationMatrix(ROUR_DIMENSIONAL_MATRIX_LENGTH);
     int32_t ret = sensorAlgorithm.TransformCoordinateSystem(inRotationMatrix, 1, 2, outRotationMatrix);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
@@ -343,7 +343,7 @@ HWTEST_F(SensorAlgorithmTest, SensorAlgorithmTest_030, TestSize.Level1)
 {
     SEN_HILOGI("SensorAlgorithmTest_029 in");
     std::vector<float> rotationVector = {0.0, 0.0, 0.0, 0.0};
-    std::vector<float> rotationMatrix(FOUR_DIMENSIONAL_MATRIX_LENGTH);
+    std::vector<float> rotationMatrix(ROUR_DIMENSIONAL_MATRIX_LENGTH);
     int32_t ret = sensorAlgorithm.CreateRotationMatrix(rotationVector, rotationMatrix);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
@@ -448,7 +448,7 @@ HWTEST_F(SensorAlgorithmTest, SensorAlgorithmTest_039, TestSize.Level1)
     SEN_HILOGI("SensorAlgorithmTest_038 in");
     std::vector<float> gravity = {9.0, 9.0, 9.0};
     std::vector<float> geomagnetic = {30.0, 25.0, 41.0};
-    std::vector<float> rotationMatrix(FOUR_DIMENSIONAL_MATRIX_LENGTH);
+    std::vector<float> rotationMatrix(ROUR_DIMENSIONAL_MATRIX_LENGTH);
     std::vector<float> inclinationMatrix(THREE_DIMENSIONAL_MATRIX_LENGTH);
     int32_t ret = sensorAlgorithm.CreateRotationAndInclination(gravity, geomagnetic, rotationMatrix, inclinationMatrix);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
