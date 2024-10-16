@@ -70,7 +70,7 @@ HWTEST_F(SensorBasicDataChannelTest, SensorBasicDataChannelTest_001, TestSize.Le
     ASSERT_EQ(ret, ERR_OK);
 
     ret = sensorChannel.ReceiveData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_NE(ret, ERROR);
+    ASSERT_NE(ret, SENSOR_CHANNEL_RECEIVE_ADDR_ERR);
 
     sensorChannel.DestroySensorBasicChannel();
 }
@@ -135,12 +135,12 @@ HWTEST_F(SensorBasicDataChannelTest, ReceiveData_001, TestSize.Level1)
     SensorBasicDataChannel sensorChannel = SensorBasicDataChannel();
     char buff[128] = {};
     int32_t ret = sensorChannel.ReceiveData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_EQ(ret, ERROR);
+    ASSERT_EQ(ret, SENSOR_CHANNEL_RECEIVE_ADDR_ERR);
 
     sensorChannel.CreateSensorBasicChannel();
     char *buff1 = nullptr;
     ret = sensorChannel.ReceiveData(static_cast<void *>(buff1), sizeof(buff1));
-    ASSERT_EQ(ret, ERROR);
+    ASSERT_EQ(ret, SENSOR_CHANNEL_RECEIVE_ADDR_ERR);
 
     sensorChannel.DestroySensorBasicChannel();
 }

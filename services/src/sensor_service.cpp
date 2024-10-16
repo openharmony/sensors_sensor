@@ -289,6 +289,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
         if (isReportActiveInfo_) {
             ReportActiveInfo(sensorId, pid);
         }
+        PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
         return ERR_OK;
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
@@ -312,6 +313,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
     if (isReportActiveInfo_) {
         ReportActiveInfo(sensorId, pid);
     }
+    PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
     return ret;
 }
 

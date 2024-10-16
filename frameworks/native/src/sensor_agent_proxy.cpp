@@ -82,6 +82,7 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
         for (const auto &callback : callbacks) {
             CHKPV(callback);
             callback(&eventStream);
+            PrintSensorData::GetInstance().ControlSensorClientPrint(callback, eventStream);
         }
     }
 }
@@ -258,6 +259,9 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     if (!status.second) {
         SEN_HILOGD("User has been subscribed");
     }
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+        PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
+    }
     return OHOS::Sensors::SUCCESS;
 }
 
@@ -290,6 +294,9 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     unsubscribeSet.erase(user);
     if (unsubscribeSet.empty()) {
         unsubscribeMap_.erase(sensorId);
+    }
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+        PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
     }
     return OHOS::Sensors::SUCCESS;
 }

@@ -80,6 +80,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
             sensorData.data[i] = event.data[i];
         }
     }
+    PrintSensorData::GetInstance().ControlSensorHdiPrint(sensorData);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
     ISensorHdiConnection::dataCondition_.notify_one();
