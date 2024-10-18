@@ -18,6 +18,7 @@ ohos_shared_library("libsensor_utils") {
   sources = [
     "src/active_info.cpp",
     "src/permission_util.cpp",
+    "src/print_sensor_data.cpp",
     "src/report_data_callback.cpp",
     "src/sensor.cpp",
     "src/sensor_basic_data_channel.cpp",

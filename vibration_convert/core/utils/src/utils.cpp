@@ -33,11 +33,11 @@
 
 namespace OHOS {
 namespace Sensors {
-namespace{
+namespace {
 constexpr double PERCENTAGE_RANGE = 100.0;
 constexpr int32_t VOICE_MIN_INTENSITY_NORM = 25;
 constexpr size_t MAX_SIZE = 26460000;
-}  // namespace
+} // namespace
 
 bool IsPowerOfTwo(uint32_t x)
 {
@@ -77,7 +77,7 @@ std::vector<double> TransposeMatrix(size_t rows, const std::vector<double> &valu
     size_t valuesSize = values.size();
     SEN_HILOGD("valuesSize:%{public}zu", valuesSize);
     if ((rows == 0) || (valuesSize == 0) || (valuesSize > MAX_SIZE)) {
-        SEN_HILOGE("Parameter is invalid");
+        SEN_HILOGE("Parameter error");
         return {};
     }
     std::vector<double> dst(valuesSize, 0.0);
@@ -100,7 +100,7 @@ int32_t UniqueIdx(const std::vector<int32_t> &idx, const std::vector<double> &ti
 {
     CALL_LOG_ENTER;
     if (idx.size() != time.size()) {
-        SEN_HILOGE("Size of idx and time vectors not equal");
+        SEN_HILOGE("size of idx and time vectors not equal");
         return Sensors::ERROR;
     }
     int32_t oldIdxLen = static_cast<int32_t>(idx.size());
@@ -123,7 +123,7 @@ int32_t UniqueIdx(const std::vector<int32_t> &idx, const std::vector<double> &ti
         ++i;
     }
     if (idxLen != oldIdxLen) {
-        SEN_HILOGI("idx unique process");
+        SEN_HILOGI("Idx unique process");
     }
     return Sensors::SUCCESS;
 }
@@ -259,5 +259,5 @@ std::vector<double> ObtainAmplitudeEnvelop(const std::vector<double> &data, size
     }
     return enery;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

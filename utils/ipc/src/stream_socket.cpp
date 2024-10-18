@@ -52,7 +52,7 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
         PackHead *head = reinterpret_cast<PackHead *>(buf);
         CHKPB(head);
         if (head->size < 0 || head->size > MAX_PACKET_BUF_SIZE) {
-            SEN_HILOGE("Packet header parsing error, and this error cannot be recovered. The buffer will be reset."
+            SEN_HILOGE("Packet header parsing error, and this error cannot be recovered. The buffer will be reset"
                 " head->size:%{public}zu, unreadSize:%{public}zu", head->size, unreadSize);
             circBuf.Reset();
             break;
@@ -67,7 +67,7 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
             break;
         }
         if (!circBuf.SeekReadPos(pkt.GetPacketLength())) {
-            SEN_HILOGW("Set read position error, and this error cannot be recovered, and the buffer will be reset."
+            SEN_HILOGW("Set read position error, and this error cannot be recovered, and the buffer will be reset"
                 " packetSize:%{public}zu, unreadSize:%{public}zu", pkt.GetPacketLength(), unreadSize);
             circBuf.Reset();
             break;
@@ -79,7 +79,7 @@ void StreamSocket::OnReadPackets(CircleStreamBuffer &circBuf, StreamSocket::Pack
         }
     }
 }
-#endif // OHOS_BUILD_ENABLE_RUST
+#endif  // OHOS_BUILD_ENABLE_RUST
 
 void StreamSocket::Close()
 {
@@ -104,5 +104,5 @@ int32_t StreamSocket::GetFd() const
     return fd_;
 #endif // OHOS_BUILD_ENABLE_RUST
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS

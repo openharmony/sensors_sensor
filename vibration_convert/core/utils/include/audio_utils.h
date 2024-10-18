@@ -34,7 +34,7 @@ namespace Sensors {
 namespace {
 constexpr double DB_TO_AMP_COEF { 0.05 };
 constexpr double AMP_TO_DB_COEF { 20.0 };
-}  // namespace
+} // namespace
 
 /**
  *@brief Basic processing of audio, called by other modules.
@@ -102,6 +102,6 @@ public:
      */
     std::vector<double> PadData(const std::vector<double> &data, int32_t hopLength);
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif

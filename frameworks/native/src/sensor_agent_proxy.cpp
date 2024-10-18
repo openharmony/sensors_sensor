@@ -17,6 +17,7 @@
 
 #include <cstring>
 
+#include "print_sensor_data.h"
 #include "securec.h"
 #include "sensor_errors.h"
 #include "sensor_service_client.h"
@@ -48,7 +49,7 @@ SensorAgentProxy::~SensorAgentProxy()
     ClearSensorInfos();
 }
 
-std::set<const SensorUser *> SensorAgentProxy::GetSubscribeUser(int32_t sensorId)
+std::set<RecordSensorCallback> SensorAgentProxy::GetSubscribeUserCallback(int32_t sensorId)
 {
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     auto iter = subscribeMap_.find(sensorId);
@@ -56,7 +57,14 @@ std::set<const SensorUser *> SensorAgentProxy::GetSubscribeUser(int32_t sensorId
         SEN_HILOGE("Sensor is not subscribed");
         return {};
     }
-    return {iter->second};
+    std::set<RecordSensorCallback> callback;
+    for (const auto &it : iter->second) {
+        auto ret = callback.insert(it->callback);
+        if (!ret.second) {
+            SEN_HILOGE("callback insert fail");
+        }
+    }
+    return callback;
 }
 
 void SensorAgentProxy::HandleSensorData(SensorEvent *events,
@@ -70,14 +78,20 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
     SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        std::set<const SensorUser *> users = GetSubscribeUser(eventStream.sensorTypeId);
-        for (const auto &user : users) {
-            CHKPV(user);
-            RecordSensorCallback fun = user->callback;
-            CHKPV(fun);
-            fun(&eventStream);
+        auto callbacks = GetSubscribeUserCallback(eventStream.sensorTypeId);
+        for (const auto &callback : callbacks) {
+            CHKPV(callback);
+            callback(&eventStream);
+            PrintSensorData::GetInstance().ControlSensorClientPrint(callback, eventStream);
         }
     }
+}
+
+void SensorAgentProxy::SetIsChannelCreated(bool isChannelCreated)
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> chanelLock(chanelMutex_);
+    isChannelCreated_ = isChannelCreated;
 }
 
 int32_t SensorAgentProxy::CreateSensorDataChannel()
@@ -245,6 +259,9 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     if (!status.second) {
         SEN_HILOGD("User has been subscribed");
     }
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+        PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
+    }
     return OHOS::Sensors::SUCCESS;
 }
 
@@ -277,6 +294,9 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     unsubscribeSet.erase(user);
     if (unsubscribeSet.empty()) {
         unsubscribeMap_.erase(sensorId);
+    }
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+        PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
     }
     return OHOS::Sensors::SUCCESS;
 }

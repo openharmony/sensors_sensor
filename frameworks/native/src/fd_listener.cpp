@@ -28,7 +28,7 @@ namespace Sensors {
 using namespace OHOS::AppExecFwk;
 namespace {
 constexpr int32_t MAX_DATA_BUF_SIZE = 256;
-}  // namespace
+}
 
 void FdListener::SetChannel(SensorDataChannel *channel)
 {

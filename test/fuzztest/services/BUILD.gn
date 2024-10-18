@@ -31,6 +31,17 @@ group("fuzztest") {
     "sensordisablestub_fuzzer:fuzztest",
     "sensorenablestub_fuzzer:fuzztest",
     "sensoronremoterequest_fuzzer:fuzztest",
+    "service/createsocketchannel_fuzzer:fuzztest",
+    "service/destroysensorchannel_fuzzer:fuzztest",
+    "service/getactiveinfolist_fuzzer:fuzztest",
+    "service/onstart_fuzzer:fuzztest",
+    "service/processdeathobserver_fuzzer:fuzztest",
+    "service/registerclientdeathrecipient_fuzzer:fuzztest",
+    "service/registerpermcallback_fuzzer:fuzztest",
+    "service/reportactiveinfo_fuzzer:fuzztest",
+    "service/reportonchangedata_fuzzer:fuzztest",
+    "service/reportsensorsysevent_fuzzer:fuzztest",
+    "service/transferdatachannel_fuzzer:fuzztest",
     "suspendsensorsstub_fuzzer:fuzztest",
   ]
 }

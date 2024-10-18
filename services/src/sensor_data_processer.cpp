@@ -274,9 +274,8 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
     int32_t eventNum = eventsBuf.eventNum;
     for (int32_t i = 0; i < eventNum; i++) {
         EventFilter(eventsBuf);
-
         eventsBuf.readPos++;
-        if (eventsBuf.readPos == CIRCULAR_BUF_LEN) {
+        if (eventsBuf.readPos >= CIRCULAR_BUF_LEN) {
             eventsBuf.readPos = 0;
         }
         eventsBuf.eventNum--;
@@ -313,5 +312,5 @@ int32_t SensorDataProcesser::DataThread(sptr<SensorDataProcesser> dataProcesser,
         }
     } while (1);
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS

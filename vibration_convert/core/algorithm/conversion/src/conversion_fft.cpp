@@ -27,7 +27,7 @@ namespace Sensors {
 namespace {
 constexpr int32_t SPECTRUM_COUNT_MAX { 8192 };
 constexpr int32_t MAX_FFT_SIZE { 10240 };
-} // namespace
+}  // namespace
 
 int32_t ConversionFFT::Init(const FFTInputPara &fftPara)
 {
@@ -96,7 +96,7 @@ int32_t ConversionFFT::Process(const std::vector<double> &values, int32_t &frame
     frameCount = 0;
     bool isFrameFull = false;
     size_t valuesSize = values.size();
-    for (size_t j = 0; j < valuesSize; ++j) {
+    for (size_t j = 0; j < valuesSize; j++) {
         // add value to buffer at current pos
         if (pos_ < static_cast<int32_t>(fftResult_.buffer.size())) {
             fftResult_.buffer[pos_++] = static_cast<float>(values[j]);
@@ -248,7 +248,7 @@ int32_t ConversionOctave::Init(float samplingRate, int32_t nBandsInTheFFT, int32
     // guessing that this is where it is (or possibly spectrumFrequencySpan/2?)
     // ... either way it's probably close enough for these purposes
     float spectrumFreq = spectrumFrequencySpan_;
-    for (int32_t speIdx = 0; speIdx < nSpectrum_; ++speIdx) {
+    for (int32_t speIdx = 0; speIdx < nSpectrum_; speIdx++) {
         while (spectrumFreq > averageFreq) {
             ++avgIdx;
             averageFreq *= averageFrequencyIncrement_;
@@ -268,6 +268,8 @@ int32_t ConversionOctave::Init(float samplingRate, int32_t nBandsInTheFFT, int32
     auto peakHoldTimes = new (std::nothrow) int32_t[nAverages_];
     CHKPR(peakHoldTimes, Sensors::ERROR);
     std::shared_ptr<int32_t> peakHoldTimesShared(peakHoldTimes, std::default_delete<int32_t[]>());
+    peakHoldTimes_ = std::move(peakHoldTimesShared);
+
     peakHoldTime_ = 0;
     peakDecayRate_ = 0.9F;
     linearEQIntercept_ = 1.0F;
@@ -288,12 +290,12 @@ int32_t ConversionOctave::Calculate(const std::vector<float> &fftData)
     int32_t lastAvgIdx = 0; // tracks when we've crossed into a new averaging bin, so store current average
     float sum = 0.0F;        // running total of spectrum data
     int32_t count = 0;       // count of spectrums accumulated (for averaging)
-    for (int32_t speIdx = 0; speIdx < nSpectrum_; ++speIdx) {
+    for (int32_t speIdx = 0; speIdx < nSpectrum_; speIdx++) {
         ++count;
         sum += (fftData[speIdx] * (linearEQIntercept_ + speIdx * linearEQSlope_));
         int32_t avgIdx = *(spe2avg_.get() + speIdx);
         if (avgIdx != lastAvgIdx) {
-            for (int32_t j = lastAvgIdx; j < avgIdx; ++j) {
+            for (int32_t j = lastAvgIdx; j < avgIdx; j++) {
                 *(averages_.get() + j) = sum / static_cast<float>(count);
             }
             count = 0;
@@ -322,5 +324,5 @@ int32_t ConversionOctave::Calculate(const std::vector<float> &fftData)
     }
     return Sensors::SUCCESS;
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS
