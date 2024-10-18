@@ -118,11 +118,13 @@ public:
             if (asyncWork != nullptr) {
                 SEN_HILOGD("Delete async work");
                 napi_delete_async_work(env, asyncWork);
+                asyncWork = nullptr;
             }
             for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
                 if (callback[i] != nullptr) {
                     SEN_HILOGD("Delete reference, i:%{public}d", i);
                     napi_delete_reference(env, callback[i]);
+                    callback[i] = nullptr;
                 }
             }
         }
