@@ -674,6 +674,14 @@ HWTEST_F(SensorAgentTest, OH_SensorSubscriber_SetCallback_002, TestSize.Level1)
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
 }
 
+HWTEST_F(SensorAgentTest, OH_SensorSubscriber_SetCallback_003, TestSize.Level1)
+{
+    SEN_HILOGI("OH_SensorSubscriber_SetCallback_003 in");
+    g_user = OH_Sensor_CreateSubscriber();
+    int32_t ret = OH_SensorSubscriber_SetCallback(g_user, SensorDataCallbackImpl);
+    ASSERT_EQ(ret, SENSOR_SUCCESS);
+}
+
 HWTEST_F(SensorAgentTest, OH_SensorSubscriber_GetCallback_001, TestSize.Level1)
 {
     SEN_HILOGI("OH_SensorSubscriber_GetCallback_001 in");
