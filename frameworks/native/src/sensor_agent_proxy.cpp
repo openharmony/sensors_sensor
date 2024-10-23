@@ -296,7 +296,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
         unsubscribeMap_.erase(sensorId);
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
-        PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
+        PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
     }
     return OHOS::Sensors::SUCCESS;
 }
