@@ -35,7 +35,8 @@ const std::set<int32_t> g_sensorTypeTrigger = {
     SENSOR_TYPE_ID_DROP_DETECTION,
     SENSOR_TYPE_ID_HALL,
     SENSOR_TYPE_ID_HALL_EXT,
-    SENSOR_TYPE_ID_PROXIMITY1
+    SENSOR_TYPE_ID_PROXIMITY1,
+    SENSOR_TYPE_ID_WEAR_DETECTION,
 };
 } // namespace
 
