@@ -265,6 +265,12 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     return OHOS::Sensors::SUCCESS;
 }
 
+bool SensorAgentProxy::IsSubscribeMapEmpty() const
+{
+    std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
+    return subscribeMap_.empty();
+}
+
 int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
     SEN_HILOGI("In, sensorId:%{public}d", sensorId);
@@ -274,26 +280,28 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
-    std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    if (unsubscribeMap_.find(sensorId) == unsubscribeMap_.end()) {
-        SEN_HILOGE("Deactivate sensorId first");
-        return OHOS::Sensors::ERROR;
+    {
+        std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
+        if (unsubscribeMap_.find(sensorId) == unsubscribeMap_.end()) {
+            SEN_HILOGE("Deactivate sensorId first");
+            return OHOS::Sensors::ERROR;
+        }
+        auto& unsubscribeSet = unsubscribeMap_[sensorId];
+        if (unsubscribeSet.find(user) == unsubscribeSet.end()) {
+            SEN_HILOGE("Deactivate user first");
+            return OHOS::Sensors::ERROR;
+        }
+        unsubscribeSet.erase(user);
+        if (unsubscribeSet.empty()) {
+            unsubscribeMap_.erase(sensorId);
+        }
     }
-    auto& unsubscribeSet = unsubscribeMap_[sensorId];
-    if (unsubscribeSet.find(user) == unsubscribeSet.end()) {
-        SEN_HILOGE("Deactivate user first");
-        return OHOS::Sensors::ERROR;
-    }
-    if (subscribeMap_.empty()) {
+    if (IsSubscribeMapEmpty()) {
         int32_t ret = DestroySensorDataChannel();
         if (ret != ERR_OK) {
             SEN_HILOGE("Destroy data channel fail, ret:%{public}d", ret);
             return ret;
         }
-    }
-    unsubscribeSet.erase(user);
-    if (unsubscribeSet.empty()) {
-        unsubscribeMap_.erase(sensorId);
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
