@@ -31,6 +31,7 @@ public:
     void OnShutdown(int32_t fileDescriptor) override;
     void OnException(int32_t fileDescriptor) override;
     void SetChannel(SensorDataChannel *channel);
+    void ExcuteCallback(int32_t length);
 
 private:
     SensorDataChannel *channel_ = nullptr;
