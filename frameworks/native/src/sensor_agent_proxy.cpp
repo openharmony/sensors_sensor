@@ -166,8 +166,6 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         return ERROR;
     }
     int32_t ret = SEN_CLIENT.EnableSensor(sensorId, samplingInterval_, reportInterval_);
-    samplingInterval_ = -1;
-    reportInterval_ = -1;
     if (ret != 0) {
         SEN_HILOGE("Enable sensor failed, ret:%{public}d", ret);
         subscribeSet.erase(user);
