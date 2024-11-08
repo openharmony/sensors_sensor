@@ -30,6 +30,7 @@ enum {
     ONE_DIMENSION = 1,
     TWO_DIMENSION = 2,
     THREE_DIMENSION = 3,
+    FOUR_DIMENSION = 4,
     SEVEN_DIMENSION = 7,
     DEFAULT_DIMENSION = 16
 };
@@ -50,6 +51,8 @@ const std::vector<int32_t> g_continuousSensorType = {
     SENSOR_TYPE_ID_AMBIENT_LIGHT1,
     SENSOR_TYPE_ID_GYROSCOPE,
     SENSOR_TYPE_ID_MAGNETIC_FIELD,
+    SENSOR_TYPE_ID_ORIENTATION,
+    SENSOR_TYPE_ID_ROTATION_VECTOR,
 };
 }
 
@@ -113,7 +116,10 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_ACCELEROMETER:
         case SENSOR_TYPE_ID_GYROSCOPE:
         case SENSOR_TYPE_ID_MAGNETIC_FIELD:
+        case SENSOR_TYPE_ID_ORIENTATION:
             return THREE_DIMENSION;
+        case SENSOR_TYPE_ID_ROTATION_VECTOR:
+            return FOUR_DIMENSION;
         default:
             SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, DEFAULT_DIMENSION);
             return DEFAULT_DIMENSION;
