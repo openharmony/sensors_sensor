@@ -96,7 +96,7 @@ void SensorAgentProxy::SetIsChannelCreated(bool isChannelCreated)
 
 int32_t SensorAgentProxy::CreateSensorDataChannel()
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In");
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (isChannelCreated_) {
         SEN_HILOGI("The channel has already been created");
@@ -117,12 +117,13 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         return ret;
     }
     isChannelCreated_ = true;
+    SEN_HILOGI("Done");
     return ERR_OK;
 }
 
 int32_t SensorAgentProxy::DestroySensorDataChannel()
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In");
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (!isChannelCreated_) {
         SEN_HILOGI("Channel has been destroyed");
@@ -140,11 +141,13 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
         return ret;
     }
     isChannelCreated_ = false;
+    SEN_HILOGI("Done");
     return ERR_OK;
 }
 
 int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (samplingInterval_ < 0 || reportInterval_ < 0) {
@@ -174,11 +177,13 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         }
         return ret;
     }
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return ret;
 }
 
 int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (!SEN_CLIENT.IsValid(sensorId)) {
@@ -208,6 +213,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
             return ret;
         }
     }
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return OHOS::Sensors::SUCCESS;
 }
 
@@ -260,6 +266,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
     }
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return OHOS::Sensors::SUCCESS;
 }
 
@@ -304,6 +311,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
     }
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return OHOS::Sensors::SUCCESS;
 }
 
