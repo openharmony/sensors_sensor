@@ -104,4 +104,4 @@ public:
 };
 } // namespace Sensors
 } // namespace OHOS
-#endif
+#endif // AUDIO_UTILS_H

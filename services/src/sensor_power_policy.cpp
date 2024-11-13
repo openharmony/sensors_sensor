@@ -35,7 +35,7 @@ SensorManager &sensorManager_ = SensorManager::GetInstance();
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-} // namespace
+}  // namespace
 
 bool SensorPowerPolicy::CheckFreezingSensor(int32_t sensorId)
 {
@@ -47,7 +47,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     CALL_LOG_ENTER;
     std::vector<int32_t> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
     if (sensorIdList.empty()) {
-        SEN_HILOGI("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
+        SEN_HILOGD("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
         return SUSPEND_ERR;
     }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
@@ -107,7 +107,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt == pidSensorInfoMap_.end()) {
-        SEN_HILOGI("Resume sensors failed, please suspend sensors first, pid:%{public}d", pid);
+        SEN_HILOGD("Resume sensors failed, please suspend sensors first, pid:%{public}d", pid);
         return RESUME_ERR;
     }
     bool isAllResume = true;
@@ -261,5 +261,5 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
         }
     }
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS
