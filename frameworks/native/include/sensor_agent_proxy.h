@@ -58,6 +58,7 @@ private:
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
     std::set<RecordSensorCallback> GetSubscribeUserCallback(int32_t sensorId);
+    bool IsSubscribeMapEmpty() const;
     static std::recursive_mutex subscribeMutex_;
     static std::mutex chanelMutex_;
     OHOS::sptr<OHOS::Sensors::SensorDataChannel> dataChannel_ = nullptr;
