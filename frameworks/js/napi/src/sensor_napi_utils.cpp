@@ -322,7 +322,7 @@ bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallb
 {
     CHKPF(asyncCallbackInfo);
     int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
-    std::lock_guard<std::mutex> sensorAttrListMutex(g_sensorAttrListMutex);
+    std::lock_guard<std::mutex> sensorAttrListLock(g_sensorAttrListMutex);
     CHKNCF(env, (g_sensorAttributeList.find(sensorTypeId) != g_sensorAttributeList.end()), "Invalid sensor type");
     if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
         return ConvertToBodyData(env, asyncCallbackInfo, result);
