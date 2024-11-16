@@ -34,7 +34,10 @@ using namespace OHOS::HiviewDFX;
 namespace {
 constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(SensorData) * 100;
 constexpr int32_t DEFAULT_CHANNEL_SIZE = 2 * 1024;
+constexpr int32_t MAX_RECV_LIMIT = 32;
 constexpr int32_t SOCKET_PAIR_SIZE = 2;
+constexpr int32_t SEND_RETRY_LIMIT = 32;
+constexpr int32_t SEND_RETRY_SLEEP_TIME = 500;
 }  // namespace
 
 SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), isActive_(false)
@@ -151,31 +154,75 @@ void SensorBasicDataChannel::CloseSendFd()
 int32_t SensorBasicDataChannel::SendData(const void *vaddr, size_t size)
 {
     CHKPR(vaddr, SENSOR_CHANNEL_SEND_ADDR_ERR);
-    std::unique_lock<std::mutex> lock(fdLock_);
-    if (sendFd_ < 0) {
-        SEN_HILOGE("Failed, param is invalid");
-        return SENSOR_CHANNEL_SEND_ADDR_ERR;
-    }
-    ssize_t length;
+    auto sensorData = reinterpret_cast<const char *>(vaddr);
+    int32_t idx = 0;
+    int32_t retryCount = 0;
+    int32_t buffSize = static_cast<int32_t>(size);
+    int32_t remSize = buffSize;
     do {
-        length = send(sendFd_, vaddr, size, MSG_DONTWAIT | MSG_NOSIGNAL);
-    } while (errno == EINTR);
-    if (length < 0) {
-        SEN_HILOGD("Send fail:%{public}d, length:%{public}d", errno, (int32_t)length);
+        std::unique_lock<std::mutex> lock(fdLock_);
+        if (sendFd_ < 0) {
+            SEN_HILOGE("Failed, param is invalid");
+            return SENSOR_CHANNEL_SEND_ADDR_ERR;
+        }
+        retryCount++;
+        ssize_t length = send(sendFd_, &sensorData[idx], remSize, MSG_DONTWAIT | MSG_NOSIGNAL);
+        if (length < 0) {
+            if (errno == EAGAIN || errno == EINTR || errno == EWOULDBLOCK) {
+                SEN_HILOGD("Continue for EAGAIN|EINTR|EWOULDBLOCK, errno:%{public}d, sendFd_:%{public}d",
+                    errno, sendFd_);
+                usleep(SEND_RETRY_SLEEP_TIME);
+                continue;
+            }
+            SEN_HILOGE("Send fail, errno:%{public}d, length:%{public}d, sendFd: %{public}d",
+                errno, static_cast<int32_t>(length), sendFd_);
+            return SENSOR_CHANNEL_SEND_DATA_ERR;
+        }
+        idx += length;
+        remSize -= length;
+        if (remSize > 0) {
+            usleep(SEND_RETRY_SLEEP_TIME);
+        }
+    } while (remSize > 0 && retryCount < SEND_RETRY_LIMIT);
+    if ((retryCount >= SEND_RETRY_LIMIT) && (remSize > 0)) {
+        SEN_HILOGE("Send fail, size:%{public}d, retryCount:%{public}d, idx:%{public}d, "
+            "buffSize:%{public}d, errno:%{public}d", buffSize, retryCount, idx, buffSize, errno);
         return SENSOR_CHANNEL_SEND_DATA_ERR;
     }
     return ERR_OK;
 }
 
-int32_t SensorBasicDataChannel::ReceiveData(void *vaddr, size_t size)
+int32_t SensorBasicDataChannel::ReceiveData(ClientExcuteCB callBack, void *vaddr, size_t size)
 {
-    std::unique_lock<std::mutex> lock(fdLock_);
-    if ((vaddr == nullptr) || (receiveFd_ < 0)) {
-        SEN_HILOGE("Failed, vaddr is null or receiveFd_ invalid");
+    if (vaddr == nullptr || callBack == nullptr) {
+        SEN_HILOGE("Failed, callBack is null or vaddr is null");
         return ERROR;
     }
-    ssize_t length = recv(receiveFd_, vaddr, size, 0);
-    return static_cast<int32_t>(length);
+    ssize_t length = 0;
+    int32_t retryCount = 0;
+    for (int32_t i = 0; i < MAX_RECV_LIMIT; i++) {
+        {
+            std::unique_lock<std::mutex> lock(fdLock_);
+            if (receiveFd_ < 0) {
+                SEN_HILOGE("Failed, receiveFd_ invalid");
+                return ERROR;
+            }
+            length = recv(receiveFd_, vaddr, size, MSG_DONTWAIT | MSG_NOSIGNAL);
+        }
+        retryCount++;
+        if (length > 0) {
+            callBack(static_cast<int32_t>(length));
+        } else {
+            if ((length < 0) && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)) {
+                SEN_HILOGD("Continue for EAGAIN|EINTR|EWOULDBLOCK, errno:%{public}d, sendFd_:%{public}d",
+                    errno, sendFd_);
+                continue;
+            }
+            SEN_HILOGE("recv failed:%{public}s", ::strerror(errno));
+            return ERROR;
+        }
+    };
+    return ERR_OK;
 }
 
 int32_t SensorBasicDataChannel::GetSendDataFd()
