@@ -24,7 +24,9 @@ StreamBuffer::StreamBuffer(const StreamBuffer &buf)
 
 StreamBuffer &StreamBuffer::operator=(const StreamBuffer &other)
 {
-    Clone(other);
+    if (this != &other) {
+        Clone(other);
+    }
     return *this;
 }
 

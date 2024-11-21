@@ -37,6 +37,10 @@ StreamServer::~StreamServer()
     std::lock_guard<std::mutex> sessionLock(sessionMutex_);
     idxPidMap_.clear();
     for (const auto &item : sessionsMap_) {
+        if (item.second == nullptr) {
+            SEN_HILOGE("SessionPtr is null");
+            continue;
+        }
         item.second->Close();
     }
     sessionsMap_.clear();

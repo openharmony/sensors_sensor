@@ -21,7 +21,6 @@
 #include "sensor_errors.h"
 #include "sensor_utils.h"
 
-using namespace std;
 using namespace OHOS::Sensors;
 namespace {
 constexpr float EARTH_MAJOR_AXIS_RADIUS = 6378.137f;
