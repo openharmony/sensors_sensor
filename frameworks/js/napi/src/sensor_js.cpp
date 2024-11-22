@@ -86,6 +86,10 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
             (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
         return true;
     }
+    if (sizeof(callbackInfo->data.sensorData.data) < event->dataLen) {
+        SEN_HILOGE("callbackInfo space is insufficient");
+        return false;
+    }
     if (memcpy_s(callbackInfo->data.sensorData.data, sizeof(callbackInfo->data.sensorData.data),
         data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");

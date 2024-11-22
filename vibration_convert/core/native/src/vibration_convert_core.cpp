@@ -143,6 +143,7 @@ int32_t VibrationConvertCore::ResampleAudioData(const std::vector<double> &srcDa
     }
     size_t originDataSize = srcDatas.size();
     srcAudioDatas_.clear();
+    srcAudioDatas_.reserve(originDataSize);
     for (size_t i = 0; i < (originDataSize - 1); i += RESAMPLE_MULTIPLE) {
         srcAudioDatas_.push_back(srcDatas[i]);
         srcAudioDatas_.push_back(srcDatas[i+1]);

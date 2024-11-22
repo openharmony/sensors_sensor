@@ -61,7 +61,7 @@ bool GetFloatArray(const napi_env &env, const napi_value &value, vector<float> &
     CALL_LOG_ENTER;
     uint32_t arrayLength = 0;
     CHKNRF(env, napi_get_array_length(env, value, &arrayLength), "napi_get_array_length");
-    for (size_t i = 0; i < arrayLength; ++i) {
+    for (uint32_t i = 0; i < arrayLength; ++i) {
         napi_value element = nullptr;
         CHKNRF(env, napi_get_element(env, value, i, &element), "napi_get_element");
         CHKNCF(env, IsMatchType(env, element, napi_number), "Wrong argument type. Number or function expected");
