@@ -62,12 +62,28 @@ void SetUpTestCase()
     delete[] perms;
 }
 
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
+
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
     MessageParcel datas;
+    int32_t fd = 0;
+    GetObject<int32_t>(fd, data, size);
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    if (g_remote == nullptr) {
+    if (g_remote == nullptr || g_service == nullptr) {
         return false;
     }
     datas.WriteRemoteObject(g_remote);
@@ -75,6 +91,15 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     MessageParcel reply;
     MessageOption option;
     g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL),
         datas, reply, option);
     return true;
 }

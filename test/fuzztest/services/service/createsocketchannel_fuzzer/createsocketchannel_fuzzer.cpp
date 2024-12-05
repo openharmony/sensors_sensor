@@ -78,12 +78,15 @@ void SetUpTestCase()
 bool CreateSocketChannelFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    if (g_remote == nullptr) {
+    if (g_remote == nullptr || g_service == nullptr) {
         return false;
     }
     int32_t clientFd = 0;
     GetObject<int32_t>(clientFd, data, size);
     g_service->CreateSocketChannel(g_remote, clientFd);
+    g_service->OnStart();
+    g_service->OnStop();
+    g_service->ProcessDeathObserver(g_remote);
     return true;
 }
 }  // namespace Sensors
