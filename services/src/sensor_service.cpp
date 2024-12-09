@@ -182,7 +182,8 @@ void SensorService::OnStop()
 #endif // MEMMGR_ENABLE
 }
 
-void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid)
+void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid, int64_t samplingPeriodNs,
+    int64_t maxReportDelayNs)
 {
     std::string packageName("");
     AccessTokenID tokenId = clientInfo_.GetTokenIdByPid(pid);
@@ -196,13 +197,16 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d", packageName.c_str(), sensorId);
+        SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d, pid:%{public}d, "
+            "samplingPeriodNs:%{public}" PRId64 ", samplingPeriodNs:%{public}" PRId64, packageName.c_str(),
+            sensorId, pid, samplingPeriodNs, maxReportDelayNs);
     } else {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
             "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d", packageName.c_str(), sensorId);
+        SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d, pid:%{public}d",
+            packageName.c_str(), sensorId, pid);
     }
 }
 
@@ -235,6 +239,7 @@ void SensorService::ReportOnChangeData(int32_t sensorId)
 
 ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     if (!sensorManager_.SaveSubscriber(sensorId, GetCallingPid(), samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SaveSubscriber failed");
         return UPDATE_SENSOR_INFO_ERR;
@@ -249,6 +254,7 @@ ErrCode SensorService::SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs
         return SET_SENSOR_CONFIG_ERR;
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return ERR_OK;
 }
 
@@ -289,7 +295,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
             SEN_HILOGE("SaveSubscriber failed");
             return ret;
         }
-        ReportSensorSysEvent(sensorId, true, pid);
+        ReportSensorSysEvent(sensorId, true, pid, samplingPeriodNs, maxReportDelayNs);
         if (ret != ERR_OK) {
             SEN_HILOGE("ret:%{public}d", ret);
         }
@@ -298,6 +304,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
             ReportActiveInfo(sensorId, pid);
         }
         PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
+        SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
         return ERR_OK;
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);
@@ -317,7 +324,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
     if ((!g_isRegister) && (RegisterPermCallback(sensorId))) {
         g_isRegister = true;
     }
-    ReportSensorSysEvent(sensorId, true, pid);
+    ReportSensorSysEvent(sensorId, true, pid, samplingPeriodNs, maxReportDelayNs);
     if (isReportActiveInfo_) {
         ReportActiveInfo(sensorId, pid);
     }
@@ -380,6 +387,7 @@ std::vector<Sensor> SensorService::GetSensorList()
 ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
                                            const sptr<IRemoteObject> &sensorClient)
 {
+    SEN_HILOGI("In");
     CHKPR(sensorBasicDataChannel, ERR_NO_INIT);
     auto pid = GetCallingPid();
     auto uid = GetCallingUid();
@@ -394,6 +402,7 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
     }
     sensorBasicDataChannel->SetSensorStatus(true);
     RegisterClientDeathRecipient(sensorClient, pid);
+    SEN_HILOGI("Done");
     return ERR_OK;
 }
 

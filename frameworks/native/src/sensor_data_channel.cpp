@@ -30,6 +30,7 @@ using namespace OHOS::AppExecFwk;
 
 int32_t SensorDataChannel::CreateSensorDataChannel(DataChannelCB callBack, void *data)
 {
+    SEN_HILOGI("In");
     CHKPR(callBack, SENSOR_NATIVE_REGSITER_CB_ERR);
     dataCB_ = callBack;
     privateData_ = data;
@@ -48,6 +49,7 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
 
 int32_t SensorDataChannel::InnerSensorDataChannel()
 {
+    SEN_HILOGI("In");
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     // create basic data channel
     int32_t ret = CreateSensorBasicChannel();
@@ -74,6 +76,7 @@ int32_t SensorDataChannel::InnerSensorDataChannel()
         SEN_HILOGE("ListenedFdSet insert fd fail, fd:%{public}d", receiveFd);
         return ERROR;
     }
+    SEN_HILOGI("Done");
     return ERR_OK;
 }
 
