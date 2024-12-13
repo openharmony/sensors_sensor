@@ -31,11 +31,12 @@ public:
     void OnShutdown(int32_t fileDescriptor) override;
     void OnException(int32_t fileDescriptor) override;
     void SetChannel(SensorDataChannel *channel);
+    void ExcuteCallback(int32_t length);
 
 private:
     SensorDataChannel *channel_ = nullptr;
     SensorData *receiveDataBuff_ = nullptr;
 };
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_FILE_DESCRIPTOR_LISTENER_H

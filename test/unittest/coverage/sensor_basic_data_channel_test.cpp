@@ -41,6 +41,7 @@ public:
     static void TearDownTestCase();
     void SetUp();
     void TearDown();
+    void ReceiveData(int32_t length);
 };
 
 void SensorBasicDataChannelTest::SetUpTestCase() {}
@@ -50,6 +51,8 @@ void SensorBasicDataChannelTest::TearDownTestCase() {}
 void SensorBasicDataChannelTest::SetUp() {}
 
 void SensorBasicDataChannelTest::TearDown() {}
+
+void SensorBasicDataChannelTest::ReceiveData(int32_t length) {}
 
 HWTEST_F(SensorBasicDataChannelTest, SensorBasicDataChannelTest_001, TestSize.Level1)
 {
@@ -65,12 +68,14 @@ HWTEST_F(SensorBasicDataChannelTest, SensorBasicDataChannelTest_001, TestSize.Le
     ret = sensorChannel.SendToBinder(data);
     ASSERT_EQ(ret, ERR_OK);
 
-    char buff[128] = {};
-    ret = sensorChannel.SendData(static_cast<void *>(buff), sizeof(buff));
+    SensorData sensorData;
+    ret = sensorChannel.SendData(static_cast<void *>(&sensorData), sizeof(sensorData));
     ASSERT_EQ(ret, ERR_OK);
 
-    ret = sensorChannel.ReceiveData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_NE(ret, SENSOR_CHANNEL_RECEIVE_ADDR_ERR);
+    ret = sensorChannel.ReceiveData([this] (int32_t length) {
+            this->ReceiveData(length);
+        }, static_cast<void *>(&sensorData), sizeof(sensorData));
+    ASSERT_NE(ret, ERROR);
 
     sensorChannel.DestroySensorBasicChannel();
 }
@@ -113,7 +118,7 @@ HWTEST_F(SensorBasicDataChannelTest, SendData_001, TestSize.Level1)
     SensorBasicDataChannel sensorChannel = SensorBasicDataChannel();
     char buff[128] = {};
     int32_t ret = sensorChannel.SendData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_EQ(ret, SENSOR_CHANNEL_SEND_ADDR_ERR);
+    ASSERT_EQ(ret, ERROR);
 }
 
 HWTEST_F(SensorBasicDataChannelTest, SendData_002, TestSize.Level1)
@@ -134,13 +139,17 @@ HWTEST_F(SensorBasicDataChannelTest, ReceiveData_001, TestSize.Level1)
     SEN_HILOGI("ReceiveData_001 in");
     SensorBasicDataChannel sensorChannel = SensorBasicDataChannel();
     char buff[128] = {};
-    int32_t ret = sensorChannel.ReceiveData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_EQ(ret, SENSOR_CHANNEL_RECEIVE_ADDR_ERR);
+    int32_t ret = sensorChannel.ReceiveData([this] (int32_t length) {
+    this->ReceiveData(length);
+    }, static_cast<void *>(buff), sizeof(buff));
+    ASSERT_EQ(ret, ERROR);
 
     sensorChannel.CreateSensorBasicChannel();
     char *buff1 = nullptr;
-    ret = sensorChannel.ReceiveData(static_cast<void *>(buff1), sizeof(buff1));
-    ASSERT_EQ(ret, SENSOR_CHANNEL_RECEIVE_ADDR_ERR);
+    ret = sensorChannel.ReceiveData([this] (int32_t length) {
+            this->ReceiveData(length);
+        }, static_cast<void *>(buff1), sizeof(buff1));
+    ASSERT_EQ(ret, ERROR);
 
     sensorChannel.DestroySensorBasicChannel();
 }
