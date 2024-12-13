@@ -57,24 +57,26 @@ void SensorFileDescriptorListener::OnReadable(int32_t fileDescriptor)
         SEN_HILOGE("Receive data buff_ is null");
         return;
     }
-    int32_t len =
-        recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
+    channel_->ReceiveData([this] (int32_t length) {
+            this->ExcuteCallback(length);
+        }, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE);
+}
+
+void SensorFileDescriptorListener::ExcuteCallback(int32_t length)
+{
     int32_t eventSize = static_cast<int32_t>(sizeof(SensorData));
-    while (len > 0) {
-        int32_t num = len / eventSize;
-        for (int i = 0; i < num; i++) {
-            SensorEvent event = {
-                .sensorTypeId = receiveDataBuff_[i].sensorTypeId,
-                .version = receiveDataBuff_[i].version,
-                .timestamp = receiveDataBuff_[i].timestamp,
-                .option = receiveDataBuff_[i].option,
-                .mode = receiveDataBuff_[i].mode,
-                .data = receiveDataBuff_[i].data,
-                .dataLen = receiveDataBuff_[i].dataLen
-            };
-            channel_->dataCB_(&event, 1, channel_->privateData_);
-        }
-        len = recv(fileDescriptor, receiveDataBuff_, sizeof(SensorData) * RECEIVE_DATA_SIZE, 0);
+    int32_t num = length / eventSize;
+    for (int i = 0; i < num; i++) {
+        SensorEvent event = {
+            .sensorTypeId = receiveDataBuff_[i].sensorTypeId,
+            .version = receiveDataBuff_[i].version,
+            .timestamp = receiveDataBuff_[i].timestamp,
+            .option = receiveDataBuff_[i].option,
+            .mode = receiveDataBuff_[i].mode,
+            .data = receiveDataBuff_[i].data,
+            .dataLen = receiveDataBuff_[i].dataLen
+        };
+        channel_->dataCB_(&event, 1, channel_->privateData_);
     }
 }
 

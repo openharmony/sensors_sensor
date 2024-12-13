@@ -26,6 +26,7 @@
 
 namespace OHOS {
 namespace Sensors {
+using ClientExcuteCB = std::function<void(int32_t)>;
 class SensorBasicDataChannel : public RefBase {
 public:
     SensorBasicDataChannel();
@@ -38,7 +39,7 @@ public:
     int32_t SendToBinder(MessageParcel &data);
     void CloseSendFd();
     int32_t SendData(const void *vaddr, size_t size);
-    int32_t ReceiveData(void *vaddr, size_t size);
+    int32_t ReceiveData(ClientExcuteCB callBack, void *vaddr, size_t size);
     bool GetSensorStatus() const;
     void SetSensorStatus(bool isActive);
     const std::unordered_map<int32_t, SensorData> &GetDataCacheBuf() const;
@@ -50,6 +51,6 @@ private:
     std::mutex statusLock_;
     std::unordered_map<int32_t, SensorData> dataCacheBuf_;
 };
-} // namespace Sensors
-} // namespace OHOS
-#endif // SENSOR_H
+}  // namespace Sensors
+}  // namespace OHOS
+#endif  // SENSOR_H
