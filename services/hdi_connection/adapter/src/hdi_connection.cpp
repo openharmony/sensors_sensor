@@ -117,6 +117,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 
 int32_t HdiConnection::EnableSensor(int32_t sensorId)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     int32_t ret = g_sensorInterface->Enable(sensorId);
     if (ret != 0) {
@@ -128,11 +129,13 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
         return ret;
     }
     SetSensorBasicInfoState(sensorId, true);
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return ERR_OK;
 }
 
 int32_t HdiConnection::DisableSensor(int32_t sensorId)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     int32_t ret = g_sensorInterface->Disable(sensorId);
     if (ret != 0) {
@@ -144,6 +147,7 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
         return ret;
     }
     DeleteSensorBasicInfoState(sensorId);
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return ERR_OK;
 }
 
@@ -249,6 +253,7 @@ void HdiConnection::UpdateSensorBasicInfo(int32_t sensorId, int64_t samplingPeri
 
 void HdiConnection::SetSensorBasicInfoState(int32_t sensorId, bool state)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = g_sensorBasicInfoMap.find(sensorId);
     if (it == g_sensorBasicInfoMap.end()) {
@@ -256,15 +261,18 @@ void HdiConnection::SetSensorBasicInfoState(int32_t sensorId, bool state)
         return;
     }
     g_sensorBasicInfoMap[sensorId].SetSensorState(state);
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
 }
 
 void HdiConnection::DeleteSensorBasicInfoState(int32_t sensorId)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = g_sensorBasicInfoMap.find(sensorId);
     if (it != g_sensorBasicInfoMap.end()) {
         g_sensorBasicInfoMap.erase(sensorId);
     }
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
 }
 
 void HdiConnection::RegisterHdiDeathRecipient()

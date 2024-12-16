@@ -47,6 +47,7 @@ SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), 
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
 {
+    SEN_HILOGI("In");
     std::unique_lock<std::mutex> lock(fdLock_);
     if ((sendFd_ != -1) || (receiveFd_ != -1)) {
         SEN_HILOGD("Already create socketpair");
@@ -89,6 +90,7 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
     }
     sendFd_ = socketPair[0];
     receiveFd_ = socketPair[1];
+    SEN_HILOGI("Done");
     return ERR_OK;
 
     CLOSE_SOCK:

@@ -82,6 +82,7 @@ void SensorFileDescriptorListener::ExcuteCallback(int32_t length)
 
 void SensorFileDescriptorListener::SetChannel(SensorDataChannel *channel)
 {
+    SEN_HILOGI("In");
     channel_ = channel;
 }
 

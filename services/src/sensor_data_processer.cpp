@@ -170,6 +170,7 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, Sens
     }
     uint64_t periodCount = clientInfo_.ComputeBestPeriodCount(sensorId, channel);
     if (periodCount == 0UL) {
+        SEN_HILOGE("periodCount is zero");
         return;
     }
     auto fifoCount = clientInfo_.ComputeBestFifoCount(sensorId, channel);
@@ -257,9 +258,11 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
     int32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId;
     std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
     for (auto &channel : channelList) {
-        if (channel->GetSensorStatus()) {
-            SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
+        if (!channel->GetSensorStatus()) {
+            SEN_HILOGW("Sensor status is not active");
+            continue;
         }
+        SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
     }
 }
 
