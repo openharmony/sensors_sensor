@@ -20,7 +20,7 @@ namespace Sensors {
 using namespace OHOS::AppExecFwk;
 
 namespace {
-}  // namespace
+} // namespace
 
 SensorEventHandler::SensorEventHandler(const std::shared_ptr<EventRunner> &runner):EventHandler(runner) {}
 
@@ -29,5 +29,5 @@ SensorEventHandler::SensorEventHandler(const std::shared_ptr<EventRunner> &runne
  * @param event The event need to be processed.
  */
 void SensorEventHandler::ProcessEvent(const InnerEvent::Pointer &event) {}
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

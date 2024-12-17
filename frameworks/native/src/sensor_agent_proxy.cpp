@@ -33,7 +33,7 @@ SensorInfo *sensorInfos_ = nullptr;
 std::mutex sensorActiveInfoMutex_;
 SensorActiveInfo *sensorActiveInfos_ = nullptr;
 int32_t sensorInfoCount_ = 0;
-}  // namespace
+} // namespace
 
 #define SEN_CLIENT SensorServiceClient::GetInstance()
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
@@ -510,5 +510,5 @@ int32_t SensorAgentProxy::ResetSensors() const
     }
     return ret;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

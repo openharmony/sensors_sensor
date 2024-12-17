@@ -28,7 +28,7 @@ namespace Sensors {
 using namespace OHOS::AppExecFwk;
 namespace {
 constexpr int32_t MAX_DATA_BUF_SIZE = 256;
-}  // namespace
+} // namespace
 
 void FdListener::SetChannel(SensorDataChannel *channel)
 {
@@ -88,5 +88,5 @@ void FdListener::OnException(int32_t fd)
     DisconnectFun disconnect = channel_->GetDisconnectFun();
     disconnect();
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

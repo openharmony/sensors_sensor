@@ -56,7 +56,7 @@ extern "C" {
     }
 }
 #endif // OHOS_BUILD_ENABLE_RUST
-}  // namespace
+} // namespace
 
 SensorServiceClient::~SensorServiceClient()
 {
@@ -596,5 +596,5 @@ int32_t SensorServiceClient::CreateSocketChannel()
     isConnected_ = true;
     return ERR_OK;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
