@@ -135,7 +135,7 @@ CArrFloat32 CJSensorImpl::ConvertVector2CArr(const std::vector<float> &in)
     for (; i < in.size(); ++i) {
         res.head[i] = in[i];
     }
-    res.size = i;
+    res.size = static_cast<int64_t>(i);
     return res;
 }
 
