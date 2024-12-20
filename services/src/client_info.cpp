@@ -209,7 +209,6 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
 
 std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t sensorId)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     if (sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid");
         return {};
@@ -232,7 +231,6 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t s
         }
         sensorChannel.push_back(channelIt->second);
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return sensorChannel;
 }
 
