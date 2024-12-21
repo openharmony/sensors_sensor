@@ -23,6 +23,7 @@
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
+#include "print_sensor_data.h"
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_basic_data_channel.h"
@@ -164,6 +165,9 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, Sens
 {
     CHKPV(channel);
     int32_t sensorId = data.sensorTypeId;
+    if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData::GetInstance().PrintSensorDataLog("ReportData", data);
+    }
     auto &cacheBuf = const_cast<std::unordered_map<int32_t, SensorData> &>(channel->GetDataCacheBuf());
     if (ReportNotContinuousData(cacheBuf, channel, data)) {
         return;
@@ -196,6 +200,9 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<int32_t, Se
         ((SENSOR_ONE_SHOT & sensor->second.GetFlags()) == SENSOR_ONE_SHOT)) {
         std::vector<SensorData> sendEvents;
         sendEvents.push_back(data);
+        if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+            PrintSensorData::GetInstance().PrintSensorDataLog("ReportNotContinuousData", data);
+        }
         SendRawData(cacheBuf, channel, sendEvents);
         return true;
     }
@@ -225,6 +232,9 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     int32_t ret = ERR_OK;
     auto &cacheBuf = const_cast<std::unordered_map<int32_t, SensorData> &>(channel->GetDataCacheBuf());
     int32_t sensorId = data.sensorTypeId;
+    if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData::GetInstance().PrintSensorDataLog("CacheSensorEvent", data);
+    }
     auto cacheEvent = cacheBuf.find(sensorId);
     if (cacheEvent != cacheBuf.end()) {
         // Try to send the last failed value, if it still fails, replace the previous cache directly
@@ -256,6 +266,9 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
 void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
     int32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId;
+    if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData::GetInstance().PrintSensorDataLog("EventFilter", eventsBuf.circularBuf[eventsBuf.readPos]);
+    }
     std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
     for (auto &channel : channelList) {
         if (!channel->GetSensorStatus()) {

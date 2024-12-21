@@ -81,6 +81,9 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
         auto callbacks = GetSubscribeUserCallback(eventStream.sensorTypeId);
         for (const auto &callback : callbacks) {
             CHKPV(callback);
+            if (eventStream.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
+                PrintSensorData::GetInstance().ControlSensorClientPrint(callback, eventStream);
+            }
             callback(&eventStream);
             PrintSensorData::GetInstance().ControlSensorClientPrint(callback, eventStream);
         }
