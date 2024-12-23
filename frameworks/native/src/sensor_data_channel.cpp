@@ -144,5 +144,5 @@ DisconnectFun SensorDataChannel::GetDisconnectFun() const
 {
     return disconnect_;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

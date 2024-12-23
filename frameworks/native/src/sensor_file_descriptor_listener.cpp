@@ -30,7 +30,7 @@ using namespace OHOS::AppExecFwk;
 
 namespace {
 constexpr int32_t RECEIVE_DATA_SIZE = 100;
-}  // namespace
+} // namespace
 
 SensorFileDescriptorListener::SensorFileDescriptorListener()
 {
@@ -115,5 +115,5 @@ void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
     CHKPV(channel_);
     channel_->DestroySensorDataChannel();
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS

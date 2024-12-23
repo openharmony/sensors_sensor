@@ -87,8 +87,8 @@ bool RegisterClientDeathRecipientFuzzTest(const uint8_t *data, size_t size)
     g_service->UnregisterClientDeathRecipient(g_remote);
     return true;
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {

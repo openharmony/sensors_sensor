@@ -379,5 +379,5 @@ ErrCode SensorServiceProxy::ResetSensors()
     }
     return static_cast<ErrCode>(ret);
 }
-}  // namespace Sensors
-}  // namespace OHOS
+} // namespace Sensors
+} // namespace OHOS
