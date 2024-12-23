@@ -75,6 +75,10 @@ int32_t SensorServiceClient::InitServiceClient()
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorServer_ != nullptr) {
         SEN_HILOGD("Already init");
+        if (sensorList_.empty()) {
+            sensorList_ = sensorServer_->GetSensorList();
+            SEN_HILOGW("sensorList is %{public}s", sensorList_.empty() ? "empty" : "not empty");
+        }
         return ERR_OK;
     }
     if (sensorClientStub_ == nullptr) {
@@ -95,6 +99,9 @@ int32_t SensorServiceClient::InitServiceClient()
             CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
             remoteObject->AddDeathRecipient(serviceDeathObserver_);
             sensorList_ = sensorServer_->GetSensorList();
+            if (sensorList_.empty()) {
+                SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
+            }
             return ERR_OK;
         }
         SEN_HILOGW("Get service failed, retry:%{public}d", retry);
