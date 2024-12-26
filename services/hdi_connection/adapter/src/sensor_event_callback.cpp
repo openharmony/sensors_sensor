@@ -87,6 +87,7 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
     if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
         SEN_HILOGI("dataCondition notify one sensorId: %{public}d", sensorData.sensorTypeId);
     }
+    ISensorHdiConnection::dataReady_.store(true);
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }
