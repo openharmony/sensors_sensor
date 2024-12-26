@@ -283,7 +283,8 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
 {
     CHKPR(dataCallback, INVALID_POINTER);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
-    ISensorHdiConnection::dataCondition_.wait(lk);
+    ISensorHdiConnection::dataCondition_.wait(lk, [this] { return ISensorHdiConnection::dataReady_.load(); });
+    ISensorHdiConnection::dataReady_.store(false);
     auto &eventsBuf = dataCallback->GetEventData();
     if (eventsBuf.eventNum <= 0) {
         SEN_HILOGE("Data cannot be empty");

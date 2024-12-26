@@ -28,6 +28,7 @@
 #define LOG_TAG "SensorHdiConnection"
 std::mutex OHOS::Sensors::ISensorHdiConnection::dataMutex_;
 std::condition_variable OHOS::Sensors::ISensorHdiConnection::dataCondition_;
+std::atomic<bool> OHOS::Sensors::ISensorHdiConnection::dataReady_ = false;
 
 namespace OHOS {
 namespace Sensors {
