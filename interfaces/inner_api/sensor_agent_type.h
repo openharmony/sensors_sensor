@@ -481,13 +481,19 @@ typedef struct RPCData {
  * This sensor measures the angle between two screens, in degrees. The angle ranges from 0 to 180.
  */
 typedef struct PostureData {
-    float gxm = 0.0; /**< The main screen acceleration on the x axis */
-    float gym = 0.0; /**< The main screen acceleration on the y axis */
-    float gzm = 0.0; /**< The main screen acceleration on the z axis */
-    float gxs = 0.0; /**< The second screen acceleration on the x axis */
-    float gys = 0.0; /**< The second screen acceleration on the y axis */
-    float gzs = 0.0; /**< The second screen acceleration on the z axis */
-    float angle = 0.0; /**< The angle between two screens. The angle ranges from 0 to 180 degrees. */
+    float gxm = 0.0f; /**< The main screen acceleration on the x axis */
+    float gym = 0.0f; /**< The main screen acceleration on the y axis */
+    float gzm = 0.0f; /**< The main screen acceleration on the z axis */
+    float gxs = 0.0f; /**< The second screen acceleration on the x axis */
+    float gys = 0.0f; /**< The second screen acceleration on the y axis */
+    float gzs = 0.0f; /**< The second screen acceleration on the z axis */
+    float angle = 0.0f; /**< The angle between two screens. The angle ranges from 0 to 180 degrees. */
+    float screenAndPostureStatus = 0.0f; /**< The screen and posture status. */
+    float gxt = 0.0f; /**< The third screen acceleration on the x axis */
+    float gyt = 0.0f; /**< The third screen acceleration on the y axis */
+    float gzt = 0.0f; /**< The third screen acceleration on the z axis */
+    float abAngle = 0.0f; /**< The angle between second and third screen. The angle ranges from 0 to 180 degrees. */
+    float abFoldedState = 0.0f; /**< The state between second and third screen. */
 } PostureData;
 
 /**

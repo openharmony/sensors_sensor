@@ -360,7 +360,8 @@ int32_t CJSensorImpl::GetAllSensorList(CSensorArray &sensorList)
     int32_t i = 0;
     for (; i < count; ++i) {
         if ((sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) ||
-            (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_PROXIMITY1)) {
+            (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_PROXIMITY1) ||
+            (sensorInfos[i].sensorTypeId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) {
             SEN_HILOGD("This sensor is secondary ambient light");
             continue;
         }

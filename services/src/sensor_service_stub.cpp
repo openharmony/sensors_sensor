@@ -131,7 +131,8 @@ ErrCode SensorServiceStub::SensorEnableInner(MessageParcel &data, MessageParcel 
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
-    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) && !IsSystemCalling()) {
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR ||
+        sensorId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE) && !IsSystemCalling()) {
         SEN_HILOGE("Permission check failed. A non-system application uses the system API");
         return NON_SYSTEM_API;
     }
@@ -157,7 +158,8 @@ ErrCode SensorServiceStub::SensorDisableInner(MessageParcel &data, MessageParcel
     (void)reply;
     int32_t sensorId;
     READINT32(data, sensorId, READ_PARCEL_ERR);
-    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR) && !IsSystemCalling()) {
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR ||
+        sensorId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE) && !IsSystemCalling()) {
         SEN_HILOGE("Permission check failed. A non-system application uses the system API");
         return NON_SYSTEM_API;
     }
