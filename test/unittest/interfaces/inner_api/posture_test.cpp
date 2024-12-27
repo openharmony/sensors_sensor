@@ -92,9 +92,12 @@ void PostureDataCallbackImpl(SensorEvent *event)
         return;
     }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, gxm:%{public}f, "
-        "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, postureData->gxm, postureData->gym,
-        postureData->gzm, postureData->gxs, postureData->gys, postureData->gzs, postureData->angle);
+               "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f, "
+               "screenAndPostureStatus:%{public}f, gxt:%{public}f, gyt:%{public}f, gzt:%{public}f, "
+               "abAngle:%{public}f, abFoldedState:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, postureData->gxm, postureData->gym, postureData->gzm,
+        postureData->gxs, postureData->gys, postureData->gzs, postureData->angle, postureData->screenAndPostureStatus,
+        postureData->gxt, postureData->gyt, postureData->gzt, postureData->abAngle, postureData->abFoldedState);
 }
 
 void PostureDataCallbackImpl2(SensorEvent *event)
@@ -119,9 +122,12 @@ void PostureDataCallbackImpl2(SensorEvent *event)
         return;
     }
     SEN_HILOGD("sensorId:%{public}d, version:%{public}d, dataLen:%{public}u, gxm:%{public}f, "
-        "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f",
-        event[0].sensorTypeId, event[0].version, event[0].dataLen, postureData->gxm, postureData->gym,
-        postureData->gzm, postureData->gxs, postureData->gys, postureData->gzs, postureData->angle);
+               "gym:%{public}f, gzm:%{public}f, gxs:%{public}f, gys:%{public}f, gzs:%{public}f, angle:%{public}f, "
+               "screenAndPostureStatus:%{public}f, gxt:%{public}f, gyt:%{public}f, gzt:%{public}f, "
+               "abAngle:%{public}f, abFoldedState:%{public}f",
+        event[0].sensorTypeId, event[0].version, event[0].dataLen, postureData->gxm, postureData->gym, postureData->gzm,
+        postureData->gxs, postureData->gys, postureData->gzs, postureData->angle, postureData->screenAndPostureStatus,
+        postureData->gxt, postureData->gyt, postureData->gzt, postureData->abAngle, postureData->abFoldedState);
 }
 
 HWTEST_F(PostureTest, PostureTest_001, TestSize.Level1)
