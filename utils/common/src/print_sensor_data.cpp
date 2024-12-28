@@ -85,8 +85,8 @@ void PrintSensorData::PrintHdiData(const SensorData &sensorData)
     str += "timestamp: " + std::to_string(sensorData.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
     auto data = reinterpret_cast<const float *>(sensorData.data);
-    CHKPV(data);
     for (int32_t i = 0; i < dataDim; ++i) {
+        CHKPV(data);
         str.append(std::to_string(*data));
         if (i != dataDim - 1) {
             str.append(", ");
@@ -157,8 +157,8 @@ void PrintSensorData::PrintClientData(const SensorEvent &event)
     str += "timestamp: " + std::to_string(event.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(event.sensorTypeId);
     auto data = reinterpret_cast<const float *>(event.data);
-    CHKPV(data);
     for (int32_t i = 0; i < dataDim; ++i) {
+        CHKPV(data);
         str.append(std::to_string(*data));
         if (i != dataDim - 1) {
             str.append(", ");
@@ -208,6 +208,25 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorId)
     }
     it->second.count = 0;
     it->second.lastTime = 0;
+}
+
+void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorData &data)
+{
+    std::string str;
+    str += "sensorId: " + std::to_string(data.sensorTypeId) + ", ";
+    str += "timestamp: " + std::to_string(data.timestamp / LOG_FORMAT_DIVIDER) + ", ";
+    int32_t dataDim = GetDataDimension(data.sensorTypeId);
+    auto tempData = reinterpret_cast<const float *>(data.data);
+    for (int32_t i = 0; i < dataDim; ++i) {
+        CHKPV(tempData);
+        str.append(std::to_string(*tempData));
+        if (i != dataDim - 1) {
+            str.append(", ");
+        }
+        ++tempData;
+    }
+    str.append("\n");
+    SEN_HILOGI("%{public}s SensorData: %{public}s", name.c_str(), str.c_str());
 }
 } // namespace Sensors
 } // namespace OHOS
