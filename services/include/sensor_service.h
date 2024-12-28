@@ -86,7 +86,8 @@ private:
     void UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient);
     bool InitSensorPolicy();
     void ReportOnChangeData(int32_t sensorId);
-    void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid);
+    void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid, int64_t samplingPeriodNs = 0,
+        int64_t maxReportDelayNs = 0);
     ErrCode DisableSensor(int32_t sensorId, int32_t pid);
     bool RegisterPermCallback(int32_t sensorId);
     void UnregisterPermCallback();

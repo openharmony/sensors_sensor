@@ -81,6 +81,9 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
         auto callbacks = GetSubscribeUserCallback(eventStream.sensorTypeId);
         for (const auto &callback : callbacks) {
             CHKPV(callback);
+            if (eventStream.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
+                PrintSensorData::GetInstance().ControlSensorClientPrint(callback, eventStream);
+            }
             callback(&eventStream);
             PrintSensorData::GetInstance().ControlSensorClientPrint(callback, eventStream);
         }
@@ -197,7 +200,7 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     }
     auto status = unsubscribeMap_[sensorId].insert(user);
     if (!status.second) {
-        SEN_HILOGD("User has been unsubscribed");
+        SEN_HILOGE("User has been unsubscribed");
     }
     subscribeSet.erase(user);
     if (subscribeSet.empty()) {
@@ -255,7 +258,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     auto status = subscribeMap_[sensorId].insert(user);
     if (!status.second) {
-        SEN_HILOGD("User has been subscribed");
+        SEN_HILOGE("User has been unsubscribed");
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);

@@ -40,7 +40,7 @@ constexpr int32_t MIN_MAP_SIZE = 0;
 constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
-} // namespace
+}  // namespace
 
 std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
     { ACTIVITY_MOTION_PERMISSION, { SENSOR_TYPE_ID_PEDOMETER_DETECTION, SENSOR_TYPE_ID_PEDOMETER } },
@@ -49,7 +49,7 @@ std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_
 
 bool ClientInfo::GetSensorState(int32_t sensorId)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     if (sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid");
         return false;
@@ -100,7 +100,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(int32_t sensorId)
 
 bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
         SEN_HILOGE("sensorId or pid is invalid");
         return false;
@@ -122,12 +122,13 @@ bool ClientInfo::OnlyCurPidSensorEnabled(int32_t sensorId, int32_t pid)
         }
         ret = true;
     }
+    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
     return ret;
 }
 
 bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, pid:%{public}d", pid);
     if ((uid == INVALID_UID) || (pid <= INVALID_PID)) {
         SEN_HILOGE("uid or pid is invalid");
         return false;
@@ -144,12 +145,13 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
         return ret.second;
     }
     appThreadInfoMap_[pid] = appThreadInfo;
+    SEN_HILOGI("Done, pid:%{public}d", pid);
     return true;
 }
 
 void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, pid:%{public}d", pid);
     if (pid == INVALID_PID) {
         SEN_HILOGE("pid is invalid");
         return;
@@ -161,11 +163,12 @@ void ClientInfo::DestroyAppThreadInfo(int32_t pid)
         return;
     }
     appThreadInfoMap_.erase(appThreadInfoItr);
+    SEN_HILOGI("Done, pid:%{public}d", pid);
 }
 
 std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int32_t uid)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In");
     if (uid == INVALID_UID) {
         SEN_HILOGE("uid is invalid");
         return {};
@@ -183,12 +186,13 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int3
         }
         sensorChannel.push_back(channelIt->second);
     }
+    SEN_HILOGI("Done");
     return sensorChannel;
 }
 
 sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, pid:%{public}d", pid);
     if (pid == INVALID_PID) {
         SEN_HILOGE("pid is invalid");
         return nullptr;
@@ -199,6 +203,7 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
         SEN_HILOGE("There is no channel belong to the pid");
         return nullptr;
     }
+    SEN_HILOGI("Done, pid:%{public}d", pid);
     return channelIt->second;
 }
 
@@ -231,7 +236,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(int32_t s
 
 bool ClientInfo::UpdateSensorInfo(int32_t sensorId, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
         SEN_HILOGE("Params are invalid");
         return false;
@@ -250,11 +255,13 @@ bool ClientInfo::UpdateSensorInfo(int32_t sensorId, int32_t pid, const SensorBas
         return ret.second;
     }
     it->second[pid] = sensorInfo;
+    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
     return true;
 }
 
 void ClientInfo::RemoveSubscriber(int32_t sensorId, uint32_t pid)
 {
+    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}u", sensorId, pid);
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorId);
     if (it == clientMap_.end()) {
@@ -265,10 +272,12 @@ void ClientInfo::RemoveSubscriber(int32_t sensorId, uint32_t pid)
     if (pidIt != it->second.end()) {
         it->second.erase(pidIt);
     }
+    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
 }
 
 bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel)
 {
+    SEN_HILOGI("In, pid:%{public}d", pid);
     CALL_LOG_ENTER;
     CHKPR(channel, false);
     if (pid <= INVALID_PID) {
@@ -287,11 +296,13 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
         return ret.second;
     }
     channelMap_[pid] = channel;
+    SEN_HILOGI("Done, pid:%{public}d", pid);
     return true;
 }
 
 void ClientInfo::ClearSensorInfo(int32_t sensorId)
 {
+    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid");
@@ -304,11 +315,12 @@ void ClientInfo::ClearSensorInfo(int32_t sensorId)
         return;
     }
     clientMap_.erase(it);
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
 }
 
 void ClientInfo::ClearCurPidSensorInfo(int32_t sensorId, int32_t pid)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
     if ((sensorId == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
         SEN_HILOGE("sensorId or pid is invalid");
         return;
@@ -328,6 +340,7 @@ void ClientInfo::ClearCurPidSensorInfo(int32_t sensorId, int32_t pid)
     if (it->second.size() == MIN_MAP_SIZE) {
         it = clientMap_.erase(it);
     }
+    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorId, pid);
 }
 
 bool ClientInfo::DestroySensorChannel(int32_t pid)
@@ -798,5 +811,5 @@ void ClientInfo::ChangeSensorPerm(AccessTokenID tokenId, const std::string &perm
         UpdatePermState(pid, sensorId, state);
     }
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS

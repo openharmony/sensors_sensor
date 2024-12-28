@@ -83,6 +83,9 @@ int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
     PrintSensorData::GetInstance().ControlSensorHdiPrint(sensorData);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
+    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
+        SEN_HILOGI("dataCondition notify one sensorId: %{public}d", sensorData.sensorTypeId);
+    }
     ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }

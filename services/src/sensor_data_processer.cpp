@@ -21,6 +21,7 @@
 #include <thread>
 
 #include "hisysevent.h"
+#include "print_sensor_data.h"
 #include "permission_util.h"
 #include "securec.h"
 #include "sensor_basic_data_channel.h"
@@ -162,12 +163,16 @@ void SensorDataProcesser::ReportData(sptr<SensorBasicDataChannel> &channel, Sens
 {
     CHKPV(channel);
     int32_t sensorId = data.sensorTypeId;
+    if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData::GetInstance().PrintSensorDataLog("ReportData", data);
+    }
     auto &cacheBuf = const_cast<std::unordered_map<int32_t, SensorData> &>(channel->GetDataCacheBuf());
     if (ReportNotContinuousData(cacheBuf, channel, data)) {
         return;
     }
     uint64_t periodCount = clientInfo_.ComputeBestPeriodCount(sensorId, channel);
     if (periodCount == 0UL) {
+        SEN_HILOGE("periodCount is zero");
         return;
     }
     auto fifoCount = clientInfo_.ComputeBestFifoCount(sensorId, channel);
@@ -193,6 +198,9 @@ bool SensorDataProcesser::ReportNotContinuousData(std::unordered_map<int32_t, Se
         ((SENSOR_ONE_SHOT & sensor->second.GetFlags()) == SENSOR_ONE_SHOT)) {
         std::vector<SensorData> sendEvents;
         sendEvents.push_back(data);
+        if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+            PrintSensorData::GetInstance().PrintSensorDataLog("ReportNotContinuousData", data);
+        }
         SendRawData(cacheBuf, channel, sendEvents);
         return true;
     }
