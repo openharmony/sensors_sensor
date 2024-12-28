@@ -102,6 +102,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_WEAR_DETECTION = 280,        /**< Wear detection sensor */
     SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED = 281,   /**< Uncalibrated acceleration sensor */
     SENSOR_TYPE_ID_RPC = 282,     /**< Radio power control sensor */
+    SENSOR_TYPE_ID_FUSION_PRESSURE = 283,     /**< Fusion pressure sensor */
     SENSOR_TYPE_ID_MAX = 30,      /**< Maximum number of sensor type IDs*/
 } SensorTypeId;
 
@@ -518,6 +519,10 @@ typedef struct SensorActiveInfo {
     int64_t samplingPeriodNs = -1;  /**< Sample period, in ns */
     int64_t maxReportDelayNs = -1;  /**< Maximum Report Delay, in ns */
 } SensorActiveInfo;
+
+typedef struct FusionPressureData {
+    float fusionPressure = 0.0;
+} FusionPressureData;
 
 typedef void (*SensorActiveInfoCB)(SensorActiveInfo &sensorActiveInfo);
 
