@@ -148,13 +148,13 @@ SensorBasicInfo SensorManager::GetSensorInfo(int32_t sensorId, int64_t samplingP
     sensorInfo.SetSamplingPeriodNs(curSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(curReportDelayNs);
     sensorInfo.SetSensorState(true);
-    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return sensorInfo;
 }
 
 bool SensorManager::IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid)
 {
-    CALL_LOG_ENTER;
+    SEN_HILOGI("In, sensorId:%{public}d, clientPid:%{public}d", sensorId, clientPid);
     if (clientInfo_.OnlyCurPidSensorEnabled(sensorId, clientPid)) {
         SEN_HILOGD("Only current client using this sensor");
         return false;
@@ -217,5 +217,5 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
         }
     }
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS
