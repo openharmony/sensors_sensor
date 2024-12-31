@@ -258,7 +258,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     auto status = subscribeMap_[sensorId].insert(user);
     if (!status.second) {
-        SEN_HILOGE("User has been unsubscribed");
+        SEN_HILOGE("User has been subscribed");
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);

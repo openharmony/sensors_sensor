@@ -230,6 +230,9 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     int32_t ret = ERR_OK;
     auto &cacheBuf = const_cast<std::unordered_map<int32_t, SensorData> &>(channel->GetDataCacheBuf());
     int32_t sensorId = data.sensorTypeId;
+    if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData::GetInstance().PrintSensorDataLog("CacheSensorEvent", data);
+    }
     auto cacheEvent = cacheBuf.find(sensorId);
     if (cacheEvent != cacheBuf.end()) {
         // Try to send the last failed value, if it still fails, replace the previous cache directly
@@ -261,11 +264,16 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
 void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
     int32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId;
+    if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
+        PrintSensorData::GetInstance().PrintSensorDataLog("EventFilter", eventsBuf.circularBuf[eventsBuf.readPos]);
+    }
     std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
     for (auto &channel : channelList) {
-        if (channel->GetSensorStatus()) {
-            SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
+        if (!channel->GetSensorStatus()) {
+            SEN_HILOGW("Sensor status is not active");
+            continue;
         }
+        SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
     }
 }
 
@@ -273,7 +281,8 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
 {
     CHKPR(dataCallback, INVALID_POINTER);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
-    ISensorHdiConnection::dataCondition_.wait(lk);
+    ISensorHdiConnection::dataCondition_.wait(lk, [this] { return ISensorHdiConnection::dataReady_.load(); });
+    ISensorHdiConnection::dataReady_.store(false);
     auto &eventsBuf = dataCallback->GetEventData();
     if (eventsBuf.eventNum <= 0) {
         SEN_HILOGE("Data cannot be empty");

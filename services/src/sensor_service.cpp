@@ -296,6 +296,7 @@ ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, 
             ReportActiveInfo(sensorId, pid);
         }
         PrintSensorData::GetInstance().ResetHdiCounter(sensorId);
+        SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
         return ERR_OK;
     }
     auto ret = SaveSubscriber(sensorId, samplingPeriodNs, maxReportDelayNs);

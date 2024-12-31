@@ -278,7 +278,6 @@ void ClientInfo::RemoveSubscriber(int32_t sensorId, uint32_t pid)
 bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel)
 {
     SEN_HILOGI("In, pid:%{public}d", pid);
-    CALL_LOG_ENTER;
     CHKPR(channel, false);
     if (pid <= INVALID_PID) {
         SEN_HILOGE("pid is invalid");
@@ -303,7 +302,6 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
 void ClientInfo::ClearSensorInfo(int32_t sensorId)
 {
     SEN_HILOGI("In, sensorId:%{public}d", sensorId);
-    CALL_LOG_ENTER;
     if (sensorId == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorId is invalid");
         return;

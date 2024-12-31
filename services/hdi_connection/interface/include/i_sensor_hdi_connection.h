@@ -37,10 +37,11 @@ public:
     virtual int32_t DestroyHdiConnection() = 0;
     static std::mutex dataMutex_;
     static std::condition_variable dataCondition_;
+    static std::atomic<bool> dataReady_;
 
 private:
     DISALLOW_COPY_AND_MOVE(ISensorHdiConnection);
 };
-} // namespace Sensors
-} // namespace OHOS
-#endif // I_SENSOR_HDI_CONNECTION_H
+}  // namespace Sensors
+}  // namespace OHOS
+#endif  // I_SENSOR_HDI_CONNECTION_H

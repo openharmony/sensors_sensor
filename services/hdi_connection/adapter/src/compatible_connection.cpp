@@ -137,6 +137,7 @@ void CompatibleConnection::ReportSensorDataCallback(SensorEvent *event)
     CHKPV(reportDataCb_);
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     (void)(reportDataCallback_->*reportDataCb_)(&sensorData, reportDataCallback_);
+    ISensorHdiConnection::dataReady_.store(true);
     ISensorHdiConnection::dataCondition_.notify_one();
 }
 
@@ -162,5 +163,5 @@ int32_t CompatibleConnection::DestroyHdiConnection()
     }
     return ERR_OK;
 }
-} // namespace Sensors
-} // namespace OHOS
+}  // namespace Sensors
+}  // namespace OHOS
