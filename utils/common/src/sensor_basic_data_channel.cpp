@@ -201,7 +201,6 @@ int32_t SensorBasicDataChannel::ReceiveData(ClientExcuteCB callBack, void *vaddr
         return ERROR;
     }
     ssize_t length = 0;
-    int32_t retryCount = 0;
     for (int32_t i = 0; i < MAX_RECV_LIMIT; i++) {
         {
             std::unique_lock<std::mutex> lock(fdLock_);
@@ -211,17 +210,21 @@ int32_t SensorBasicDataChannel::ReceiveData(ClientExcuteCB callBack, void *vaddr
             }
             length = recv(receiveFd_, vaddr, size, MSG_DONTWAIT | MSG_NOSIGNAL);
         }
-        retryCount++;
         if (length > 0) {
             callBack(static_cast<int32_t>(length));
-        } else {
-            if ((length < 0) && (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)) {
-                SEN_HILOGD("Continue for EAGAIN|EINTR|EWOULDBLOCK, errno:%{public}d, sendFd_:%{public}d",
-                    errno, sendFd_);
+        }
+        if (length < 0) {
+            if (errno == EINTR) {
+                SEN_HILOGD("Continue for EINTR, errno:%{public}d, sendFd_:%{public}d", errno, sendFd_);
                 continue;
             }
-            SEN_HILOGE("recv failed:%{public}s", ::strerror(errno));
-            return ERROR;
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                SEN_HILOGD("No available data");
+            } else {
+                SEN_HILOGE("recv failed:%{public}s", ::strerror(errno));
+                return ERROR;
+            }
+            return ERR_OK;
         }
     };
     return ERR_OK;
