@@ -103,7 +103,7 @@ typedef enum SensorTypeId {
     SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED = 281,   /**< Uncalibrated acceleration sensor */
     SENSOR_TYPE_ID_RPC = 282,     /**< Radio power control sensor */
     SENSOR_TYPE_ID_FUSION_PRESSURE = 283,     /**< Fusion pressure sensor */
-    SENSOR_TYPE_ID_MAX = 30,      /**< Maximum number of sensor type IDs*/
+    SENSOR_TYPE_ID_MAX = 300,      /**< Maximum number of sensor type IDs*/
 } SensorTypeId;
 
 /**
@@ -521,7 +521,7 @@ typedef struct SensorActiveInfo {
 } SensorActiveInfo;
 
 typedef struct FusionPressureData {
-    float fusionPressure = 0.0;
+    float fusionPressure = 0.0f;
 } FusionPressureData;
 
 typedef void (*SensorActiveInfoCB)(SensorActiveInfo &sensorActiveInfo);
