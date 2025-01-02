@@ -70,6 +70,7 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
+    void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     bool CheckParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
 
     class PermStateChangeCb : public Security::AccessToken::PermStateChangeCallbackCustomize {
@@ -116,6 +117,7 @@ private:
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
+    static std::atomic_bool isAccessTokenServiceActive_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()

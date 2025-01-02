@@ -47,7 +47,7 @@ public:
     SensorBasicInfo GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     bool IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid);
     ErrCode AfterDisableSensor(int32_t sensorId);
-    void GetPackageName(AccessTokenID tokenId, std::string &packageName);
+    void GetPackageName(AccessTokenID tokenId, std::string &packageName, bool isAccessTokenServiceActive = false);
 
 private:
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
