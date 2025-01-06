@@ -44,6 +44,13 @@ if (!defined(global_parts_info) ||
   sensor_memmgr_enable = false
 }
 
+if (!defined(global_parts_info) ||
+    defined(global_parts_info.security_access_token)) {
+  sensor_access_token_enable = true
+} else {
+  sensor_access_token_enable = false
+}
+
 if (build_variant == "root") {
   sensor_default_defines += [ "BUILD_VARIANT_ENG" ]
   sensor_build_eng = true
