@@ -204,6 +204,11 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    if (sensorList_.empty()) {
+        if (iSensorHdiConnection_->GetSensorList(sensorList_) != ERR_OK) {
+            SEN_HILOGW("Get sensor list failed");
+        }
+    }
     sensorList.assign(sensorList_.begin(), sensorList_.end());
 #ifdef BUILD_VARIANT_ENG
     if (!hdiConnectionStatus_) {
