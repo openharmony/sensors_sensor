@@ -16,13 +16,13 @@
 #ifndef SENSOR_EVENT_CALLBACK_H
 #define SENSOR_EVENT_CALLBACK_H
 
-#include "v2_0/isensor_callback.h"
-#include "v2_0/sensor_types.h"
+#include "v2_1/isensor_callback.h"
+#include "v2_1/sensor_types.h"
 
 #include "sensor_data_event.h"
 
-using OHOS::HDI::Sensor::V2_0::HdfSensorEvents;
-using OHOS::HDI::Sensor::V2_0::ISensorCallback;
+using OHOS::HDI::Sensor::V2_1::HdfSensorEvents;
+using OHOS::HDI::Sensor::V2_1::ISensorCallback;
 
 namespace OHOS {
 namespace Sensors {
@@ -30,6 +30,7 @@ class SensorEventCallback : public ISensorCallback {
 public:
     virtual ~SensorEventCallback() {}
     int32_t OnDataEvent(const HdfSensorEvents &event) override;
+    int32_t OnDataEventAsync(const std::vector<HdfSensorEvents> &events) override;
 };
 } // namespace Sensors
 } // namespace OHOS

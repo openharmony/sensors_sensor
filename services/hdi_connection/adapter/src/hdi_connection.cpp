@@ -22,7 +22,7 @@
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "iproxy_broker.h"
-#include "v2_0/isensor_interface.h"
+#include "v2_1/isensor_interface.h"
 
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
@@ -34,9 +34,9 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-using OHOS::HDI::Sensor::V2_0::ISensorInterface;
-using OHOS::HDI::Sensor::V2_0::ISensorCallback;
-using OHOS::HDI::Sensor::V2_0::HdfSensorInformation;
+using OHOS::HDI::Sensor::V2_1::ISensorInterface;
+using OHOS::HDI::Sensor::V2_1::ISensorCallback;
+using OHOS::HDI::Sensor::V2_1::HdfSensorInformation;
 namespace {
 sptr<ISensorInterface> g_sensorInterface = nullptr;
 sptr<ISensorCallback> g_eventCallback = nullptr;
@@ -57,7 +57,7 @@ int32_t HdiConnection::ConnectHdi()
     while (retry < GET_HDI_SERVICE_COUNT) {
         g_sensorInterface = ISensorInterface::Get();
         if (g_sensorInterface != nullptr) {
-            SEN_HILOGI("Connect V2_0 hdi success");
+            SEN_HILOGI("Connect v2_1 hdi success");
             g_eventCallback = new (std::nothrow) SensorEventCallback();
             CHKPR(g_eventCallback, ERR_NO_INIT);
             RegisterHdiDeathRecipient();
@@ -71,7 +71,7 @@ int32_t HdiConnection::ConnectHdi()
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "ConnectHdi", "ERROR_CODE", CONNECT_SENSOR_HDF_ERR);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-    SEN_HILOGE("Connect V2_0 hdi failed");
+    SEN_HILOGE("Connect v2_1 hdi failed");
     return ERR_NO_INIT;
 }
 
@@ -125,7 +125,7 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("Connect V2_0 hdi failed");
+        SEN_HILOGE("Connect v2_1 hdi failed");
         return ret;
     }
     SetSensorBasicInfoState(sensorId, true);
@@ -188,13 +188,13 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
     CALL_LOG_ENTER;
     CHKPR(reportDataCallback, ERR_NO_INIT);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
-    int32_t ret = g_sensorInterface->Register(0, g_eventCallback);
+    int32_t ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisterDataReport", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("Register is failed");
+        SEN_HILOGE("RegisterAsync is failed");
         return ret;
     }
     reportDataCb_ = cb;
@@ -206,13 +206,13 @@ int32_t HdiConnection::DestroyHdiConnection()
 {
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
-    int32_t ret = g_sensorInterface->Unregister(0, g_eventCallback);
+    int32_t ret = g_sensorInterface->UnregisterAsync(0, g_eventCallback);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroyHdiConnection", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("Unregister is failed");
+        SEN_HILOGE("UnregisterAsync is failed");
         return ret;
     }
     g_eventCallback = nullptr;
