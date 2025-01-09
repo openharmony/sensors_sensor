@@ -15,6 +15,8 @@
 #ifndef SENSOR_JS_H
 #define SENSOR_JS_H
 
+#include <map>
+
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 
@@ -29,6 +31,11 @@ int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCall
 napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
 napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
 napi_value GetBodyState(napi_env env, napi_callback_info info);
-}  // namespace Sensors
-}  // namespace OHOS
+void CleanCallbackInfo(napi_env env, std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> &callbackInfo);
+void CleanOnCallbackInfo(napi_env env);
+void CleanOnceCallbackInfo(napi_env env);
+void CleanSubscribeCallbackInfo(napi_env env);
+void CleanUp(void *data);
+} // namespace Sensors
+} // namespace OHOS
 #endif // SENSOR_JS_H

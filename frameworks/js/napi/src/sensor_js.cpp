@@ -14,9 +14,9 @@
  */
 #include "sensor_js.h"
 
+#include <algorithm>
 #include <cinttypes>
 #include <cstdlib>
-#include <map>
 #include <cmath>
 #include <string>
 #include <unistd.h>
@@ -48,18 +48,18 @@ static std::map<std::string, int64_t> g_samplingPeriod = {
     {"ui", 60000000},
     {"game", 20000000},
 };
-static std::mutex mutex_;
-static std::mutex bodyMutex_;
+static std::mutex g_mutex;
+static std::mutex g_bodyMutex;
 static float g_bodyState = -1.0f;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_subscribeCallbacks;
-static std::mutex onMutex_;
-static std::mutex onceMutex_;
+static std::mutex g_onMutex;
+static std::mutex g_onceMutex;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onceCallbackInfos;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
 
 static bool CheckSubscribe(int32_t sensorTypeId)
 {
-    std::lock_guard<std::mutex> onCallbackLock(onMutex_);
+    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     auto iter = g_onCallbackInfos.find(sensorTypeId);
     return iter != g_onCallbackInfos.end();
 }
@@ -80,7 +80,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
     }
     auto data = reinterpret_cast<float *>(event->data);
     if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && callbackInfo->type == SUBSCRIBE_CALLBACK) {
-        std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
+        std::lock_guard<std::mutex> onBodyLock(g_bodyMutex);
         g_bodyState = *data;
         callbackInfo->data.sensorData.data[0] =
             (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
@@ -96,7 +96,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
 
 static bool CheckSystemSubscribe(int32_t sensorTypeId)
 {
-    std::lock_guard<std::mutex> subscribeLock(mutex_);
+    std::lock_guard<std::mutex> subscribeLock(g_mutex);
     auto iter = g_subscribeCallbacks.find(sensorTypeId);
     if (iter == g_subscribeCallbacks.end()) {
         return false;
@@ -111,7 +111,7 @@ static void EmitSubscribeCallback(SensorEvent *event)
     if (!CheckSystemSubscribe(sensorTypeId)) {
         return;
     }
-    std::lock_guard<std::mutex> subscribeLock(mutex_);
+    std::lock_guard<std::mutex> subscribeLock(g_mutex);
     auto callbacks = g_subscribeCallbacks[sensorTypeId];
     for (auto &callback : callbacks) {
         if (!copySensorData(callback, event)) {
@@ -129,7 +129,7 @@ static void EmitOnCallback(SensorEvent *event)
     if (!CheckSubscribe(sensorTypeId)) {
         return;
     }
-    std::lock_guard<std::mutex> onCallbackLock(onMutex_);
+    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     auto onCallbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto &onCallbackInfo : onCallbackInfos) {
         if (!copySensorData(onCallbackInfo, event)) {
@@ -144,7 +144,7 @@ static void EmitOnceCallback(SensorEvent *event)
 {
     CHKPV(event);
     int32_t sensorTypeId = event->sensorTypeId;
-    std::lock_guard<std::mutex> onceCallbackLock(onceMutex_);
+    std::lock_guard<std::mutex> onceCallbackLock(g_onceMutex);
     auto iter = g_onceCallbackInfos.find(sensorTypeId);
     if (iter == g_onceCallbackInfos.end()) {
         return;
@@ -206,6 +206,46 @@ int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCall
     return ActivateSensor(sensorTypeId, &user);
 }
 
+void CleanCallbackInfo(napi_env env, std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> &callbackInfo)
+{
+    for (auto &event : callbackInfo) {
+        auto &vecCallbackInfo = event.second;
+        // Automatically call the destructor of the AsyncCallbackInfo
+        vecCallbackInfo.erase(std::remove_if(vecCallbackInfo.begin(), vecCallbackInfo.end(),
+            [&env](const sptr<AsyncCallbackInfo> &myCallbackInfo) {
+                return env == myCallbackInfo->env;
+            }), vecCallbackInfo.end());
+    }
+}
+
+void CleanOnCallbackInfo(napi_env env)
+{
+    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
+    CleanCallbackInfo(env, g_onCallbackInfos);
+}
+
+void CleanOnceCallbackInfo(napi_env env)
+{
+    std::lock_guard<std::mutex> onceCallbackLock(g_onceMutex);
+    CleanCallbackInfo(env, g_onceCallbackInfos);
+}
+
+void CleanSubscribeCallbackInfo(napi_env env)
+{
+    std::lock_guard<std::mutex> subscribeLock(g_mutex);
+    CleanCallbackInfo(env, g_subscribeCallbacks);
+}
+
+void CleanUp(void *data)
+{
+    auto env = *(reinterpret_cast<napi_env*>(data));
+    CleanOnCallbackInfo(env);
+    CleanOnceCallbackInfo(env);
+    CleanSubscribeCallbackInfo(env);
+    delete reinterpret_cast<napi_env*>(data);
+    data = nullptr;
+}
+
 static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     CALL_LOG_ENTER;
@@ -232,7 +272,7 @@ static bool IsOnceSubscribed(napi_env env, int32_t sensorTypeId, napi_value call
 static void UpdateOnceCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> onceCallbackLock(onceMutex_);
+    std::lock_guard<std::mutex> onceCallbackLock(g_onceMutex);
     CHKCV((!IsOnceSubscribed(env, sensorTypeId, callback)), "The callback has been subscribed");
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ONCE_CALLBACK);
     CHKPV(asyncCallbackInfo);
@@ -304,7 +344,7 @@ static bool IsSubscribed(napi_env env, int32_t sensorTypeId, napi_value callback
 static void UpdateCallbackInfos(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> onCallbackLock(onMutex_);
+    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     CHKCV((!IsSubscribed(env, sensorTypeId, callback)), "The callback has been subscribed");
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ON_CALLBACK);
     CHKPV(asyncCallbackInfo);
@@ -385,7 +425,7 @@ static napi_value On(napi_env env, napi_callback_info info)
 static int32_t RemoveAllCallback(napi_env env, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> onCallbackLock(onMutex_);
+    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
@@ -407,7 +447,7 @@ static int32_t RemoveAllCallback(napi_env env, int32_t sensorTypeId)
 static int32_t RemoveCallback(napi_env env, int32_t sensorTypeId, napi_value callback)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> onCallbackLock(onMutex_);
+    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
@@ -1183,7 +1223,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
         EmitAsyncCallbackWork(asyncCallbackInfo);
         return nullptr;
     }
-    std::lock_guard<std::mutex> subscribeLock(mutex_);
+    std::lock_guard<std::mutex> subscribeLock(g_mutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorTypeId];
     callbackInfos.push_back(asyncCallbackInfo);
     g_subscribeCallbacks[sensorTypeId] = callbackInfos;
@@ -1193,7 +1233,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
 static bool RemoveSubscribeCallback(napi_env env, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> subscribeCallbackLock(mutex_);
+    std::lock_guard<std::mutex> subscribeCallbackLock(g_mutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
@@ -1253,7 +1293,7 @@ napi_value GetBodyState(napi_env env, napi_callback_info info)
     CHKCP(IsMatchType(env, napiSuccess, napi_function), "get napiSuccess fail");
     CHKCP(RegisterNapiCallback(env, napiSuccess, asyncCallbackInfo->callback[0]),
         "register success callback fail");
-    std::lock_guard<std::mutex> onBodyLock(bodyMutex_);
+    std::lock_guard<std::mutex> onBodyLock(g_bodyMutex);
     asyncCallbackInfo->data.sensorData.data[0] =
         (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
     EmitUvEventLoop(asyncCallbackInfo);
@@ -1425,6 +1465,18 @@ static napi_value Init(napi_env env, napi_value exports)
     CHKCP(CreateEnumSensorType(env, exports), "Create enum sensor type fail");
     CHKCP(CreateEnumSensorId(env, exports), "Create enum sensor id fail");
     CHKCP(CreateEnumSensorAccuracy(env, exports), "Create enum sensor accuracy fail");
+    // 注册env清理钩子函数
+    napi_env *pEnv = new (std::nothrow) napi_env;
+    if (pEnv == nullptr) {
+        SEN_HILOGE("Init, pEnv is nullptr");
+        return exports;
+    }
+    *pEnv = env;
+    auto ret = napi_add_env_cleanup_hook(env, CleanUp, reinterpret_cast<void*>(pEnv));
+    if (ret != napi_status::napi_ok) {
+        SEN_HILOGE("Init, napi_add_env_cleanup_hook failed");
+    }
+
     return exports;
 }
 
