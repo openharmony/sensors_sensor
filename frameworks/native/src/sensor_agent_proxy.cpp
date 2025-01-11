@@ -38,6 +38,7 @@ int32_t sensorInfoCount_ = 0;
 #define SEN_CLIENT SensorServiceClient::GetInstance()
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
+std::mutex SensorAgentProxy::createChannelMutex_;
 
 SensorAgentProxy::SensorAgentProxy()
     : dataChannel_(new (std::nothrow) SensorDataChannel())
@@ -256,6 +257,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
         SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
         return PARAMETER_ERROR;
     }
+    std::lock_guard<std::mutex> createChannelLock(createChannelMutex_);
     int32_t ret = CreateSensorDataChannel();
     if (ret != ERR_OK) {
         SEN_HILOGE("Create sensor data chanel failed");
@@ -304,6 +306,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
             unsubscribeMap_.erase(sensorId);
         }
     }
+    std::lock_guard<std::mutex> createChannelLock(createChannelMutex_);
     if (IsSubscribeMapEmpty()) {
         int32_t ret = DestroySensorDataChannel();
         if (ret != ERR_OK) {
