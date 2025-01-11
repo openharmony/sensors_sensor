@@ -42,53 +42,60 @@ const std::set<int32_t> g_sensorTypeTrigger = {
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 {
+    return ERR_OK;
+}
+
+int32_t SensorEventCallback::OnDataEventAsync(const std::vector<HdfSensorEvents> &events)
+{
     ReportDataCb reportDataCb_ = HdiConnection_->GetReportDataCb();
     sptr<ReportDataCallback> reportDataCallback_ = HdiConnection_->GetReportDataCallback();
     CHKPR(reportDataCb_, ERR_NO_INIT);
     CHKPR(reportDataCallback_, ERR_NO_INIT);
-    int32_t dataSize = static_cast<int32_t>(event.data.size());
-    if (dataSize == 0) {
-        SEN_HILOGI("Data is empty");
-        return ERR_INVALID_VALUE;
-    }
-    SensorData sensorData = {
-        .sensorTypeId = event.sensorId,
-        .version = event.version,
-        .timestamp = event.timestamp,
-        .option = event.option,
-        .mode = event.mode,
-        .dataLen = event.dataLen
-    };
-    if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
-        sensorData.mode = SENSOR_ON_CHANGE;
-    }
-    CHKPR(sensorData.data, ERR_NO_INIT);
-    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
-        sensorData.dataLen = HEADPOSTURE_DATA_SIZE;
-        const float *inputFloatPtr = reinterpret_cast<const float *>(event.data.data());
-        float *outputFloatPtr = reinterpret_cast<float *>(sensorData.data);
-        int32_t *outputIntPtr = reinterpret_cast<int32_t *>(sensorData.data);
-        outputIntPtr[0] = static_cast<int32_t>(*(inputFloatPtr + 1));
-        if (outputIntPtr[0] < 0) {
-            SEN_HILOGE("The order of head posture sensor is invalid");
+    for (const auto &event : events) {
+        int32_t dataSize = static_cast<int32_t>(event.data.size());
+        if (dataSize == 0) {
+            SEN_HILOGI("Data is empty");
+            return ERR_INVALID_VALUE;
         }
-        outputFloatPtr[1] = *(inputFloatPtr + 3);
-        outputFloatPtr[2] = *(inputFloatPtr + 4);
-        outputFloatPtr[3] = *(inputFloatPtr + 5);
-        outputFloatPtr[4] = *(inputFloatPtr + 6);
-    } else {
-        for (int32_t i = 0; i < dataSize; i++) {
-            sensorData.data[i] = event.data[i];
+        SensorData sensorData = {
+            .sensorTypeId = event.sensorId,
+            .version = event.version,
+            .timestamp = event.timestamp,
+            .option = event.option,
+            .mode = event.mode,
+            .dataLen = event.dataLen
+        };
+        if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
+            sensorData.mode = SENSOR_ON_CHANGE;
         }
+        CHKPR(sensorData.data, ERR_NO_INIT);
+        if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
+            sensorData.dataLen = HEADPOSTURE_DATA_SIZE;
+            const float *inputFloatPtr = reinterpret_cast<const float *>(event.data.data());
+            float *outputFloatPtr = reinterpret_cast<float *>(sensorData.data);
+            int32_t *outputIntPtr = reinterpret_cast<int32_t *>(sensorData.data);
+            outputIntPtr[0] = static_cast<int32_t>(*(inputFloatPtr + 1));
+            if (outputIntPtr[0] < 0) {
+                SEN_HILOGE("The order of head posture sensor is invalid");
+            }
+            outputFloatPtr[1] = *(inputFloatPtr + 3);
+            outputFloatPtr[2] = *(inputFloatPtr + 4);
+            outputFloatPtr[3] = *(inputFloatPtr + 5);
+            outputFloatPtr[4] = *(inputFloatPtr + 6);
+        } else {
+            for (int32_t i = 0; i < dataSize; i++) {
+                sensorData.data[i] = event.data[i];
+            }
+        }
+        PrintSensorData::GetInstance().ControlSensorHdiPrint(sensorData);
+        std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
+        (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
+        if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
+            SEN_HILOGI("dataCondition notify one sensorId: %{public}d", sensorData.sensorTypeId);
+        }
+        ISensorHdiConnection::dataReady_.store(true);
+        ISensorHdiConnection::dataCondition_.notify_one();
     }
-    PrintSensorData::GetInstance().ControlSensorHdiPrint(sensorData);
-    std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
-    (void)(reportDataCallback_->*(reportDataCb_))(&sensorData, reportDataCallback_);
-    if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
-        SEN_HILOGI("dataCondition notify one sensorId: %{public}d", sensorData.sensorTypeId);
-    }
-    ISensorHdiConnection::dataReady_.store(true);
-    ISensorHdiConnection::dataCondition_.notify_one();
     return ERR_OK;
 }
 } // namespace Sensors
