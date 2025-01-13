@@ -71,6 +71,10 @@ ohos_shared_library("libsensor_service") {
     external_deps += [ "memmgr:memmgrclient" ]
   }
 
+  if (sensor_access_token_enable) {
+    defines += [ "ACCESS_TOKEN_ENABLE" ]
+  }
+
   if (hdf_drivers_interface_sensor) {
     sources += [
       "hdi_connection/adapter/src/hdi_connection.cpp",
@@ -158,6 +162,10 @@ ohos_static_library("libsensor_service_static") {
   if (sensor_memmgr_enable) {
     defines += [ "MEMMGR_ENABLE" ]
     external_deps += [ "memmgr:memmgrclient" ]
+  }
+
+  if (sensor_access_token_enable) {
+    defines += [ "ACCESS_TOKEN_ENABLE" ]
   }
 
   if (hdf_drivers_interface_sensor) {
