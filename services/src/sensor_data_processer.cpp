@@ -263,11 +263,15 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     return ret;
 }
 
-void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
+void SensorDataProcesser::EventFilter(SensorData *event)
 {
-    int32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId;
+    if (event == nullptr) {
+        SEN_HILOGE("event is nullptr");
+        return;
+    }
+    int32_t sensorId = event->sensorTypeId;
     if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
-        PrintSensorData::GetInstance().PrintSensorDataLog("EventFilter", eventsBuf.circularBuf[eventsBuf.readPos]);
+        PrintSensorData::GetInstance().PrintSensorDataLog("EventFilter", *event);
     }
     std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
     for (auto &channel : channelList) {
@@ -275,7 +279,7 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
             SEN_HILOGW("Sensor status is not active");
             continue;
         }
-        SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
+        SendEvents(channel, *event);
     }
 }
 
@@ -285,19 +289,14 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     ISensorHdiConnection::dataCondition_.wait(lk, [this] { return ISensorHdiConnection::dataReady_.load(); });
     ISensorHdiConnection::dataReady_.store(false);
-    auto &eventsBuf = dataCallback->GetEventData();
-    if (eventsBuf.eventNum <= 0) {
+    std::vector<SensorData*> events;
+    dataCallback->GetEventData(events);
+    if (events.empty()) {
         SEN_HILOGE("Data cannot be empty");
         return NO_EVENT;
     }
-    int32_t eventNum = eventsBuf.eventNum;
-    for (int32_t i = 0; i < eventNum; i++) {
-        EventFilter(eventsBuf);
-        eventsBuf.readPos++;
-        if (eventsBuf.readPos >= CIRCULAR_BUF_LEN) {
-            eventsBuf.readPos = 0;
-        }
-        eventsBuf.eventNum--;
+    for (size_t i = 0; i < events.size(); i++) {
+        EventFilter(events[i]);
     }
     return SUCCESS;
 }
