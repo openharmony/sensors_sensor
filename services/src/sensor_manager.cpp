@@ -187,9 +187,13 @@ ErrCode SensorManager::AfterDisableSensor(int32_t sensorId)
     return ERR_OK;
 }
 
-void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageName)
+void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageName, bool isAccessTokenServiceActive)
 {
     CALL_LOG_ENTER;
+    if (!isAccessTokenServiceActive) {
+        SEN_HILOGE("Access token service is inactive");
+        return;
+    }
     int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);
     switch (tokenType) {
         case ATokenTypeEnum::TOKEN_HAP: {

@@ -48,6 +48,8 @@ constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
 }  // namespace
 
+std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
+
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
 {
@@ -70,6 +72,21 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
             PROCESS_TYPE_SA, PROCESS_STATUS_STARTED, SENSOR_SERVICE_ABILITY_ID);
     }
 #endif // MEMMGR_ENABLE
+#ifdef ACCESS_TOKEN_ENABLE
+    if (systemAbilityId == ACCESS_TOKEN_MANAGER_SERVICE_ID) {
+        isAccessTokenServiceActive_ = true;
+    }
+#endif // ACCESS_TOKEN_ENABLE
+}
+
+void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
+{
+    SEN_HILOGI("OnRemoveSystemAbility systemAbilityId:%{public}d", systemAbilityId);
+#ifdef ACCESS_TOKEN_ENABLE
+    if (systemAbilityId == ACCESS_TOKEN_MANAGER_SERVICE_ID) {
+        isAccessTokenServiceActive_ = false;
+    }
+#endif // ACCESS_TOKEN_ENABLE
 }
 
 void SensorService::OnStart()
@@ -108,6 +125,9 @@ void SensorService::OnStart()
 #ifdef MEMMGR_ENABLE
     AddSystemAbilityListener(MEMORY_MANAGER_SA_ID);
 #endif // MEMMGR_ENABLE
+#ifdef ACCESS_TOKEN_ENABLE
+    AddSystemAbilityListener(ACCESS_TOKEN_MANAGER_SERVICE_ID);
+#endif // ACCESS_TOKEN_ENABLE
 }
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
@@ -185,7 +205,7 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
 {
     std::string packageName("");
     AccessTokenID tokenId = clientInfo_.GetTokenIdByPid(pid);
-    sensorManager_.GetPackageName(tokenId, packageName);
+    sensorManager_.GetPackageName(tokenId, packageName, isAccessTokenServiceActive_);
     const int logLevel = 4;
     int32_t uid = clientInfo_.GetUidByPid(pid);
     if (enable) {
