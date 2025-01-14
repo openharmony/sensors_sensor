@@ -38,13 +38,13 @@ ohos_shared_library("libsensor_ipc") {
   cflags = [
     "-ffunction-sections",
     "-fdata-sections",
-    "-Os",
+    "-Oz",
   ]
 
   cflags_cc = [
     "-ffunction-sections",
     "-fdata-sections",
-    "-Os",
+    "-Oz",
   ]
 
   defines = sensor_default_defines

@@ -36,15 +36,16 @@ ohos_shared_library("libsensor_service") {
   ]
 
   cflags = [
-    "-Wno-multichar",
     "-fvisibility=hidden",
+    "-ffunction-sections",
+    "-fdata-sections",
     "-Oz",
   ]
 
   cflags_cc = [
     "-fvisibility=hidden",
-    "-fstack-protector",
-    "-D_FORTIFY_SOURCE=2",
+    "-ffunction-sections",
+    "-fdata-sections",
     "-Oz",
   ]
 

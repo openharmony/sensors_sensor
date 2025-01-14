@@ -29,13 +29,13 @@ ohos_shared_library("libsensor_utils") {
   cflags = [
     "-ffunction-sections",
     "-fdata-sections",
-    "-Os",
+    "-Oz",
   ]
 
   cflags_cc = [
     "-ffunction-sections",
     "-fdata-sections",
-    "-Os",
+    "-Oz",
   ]
 
   branch_protector_ret = "pac_ret"
