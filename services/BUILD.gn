@@ -35,6 +35,19 @@ ohos_shared_library("libsensor_service") {
     "$SUBSYSTEM_DIR/utils/ipc/include",
   ]
 
+  cflags = [
+    "-Wno-multichar",
+    "-fvisibility=hidden",
+    "-Oz",
+  ]
+
+  cflags_cc = [
+    "-fvisibility=hidden",
+    "-fstack-protector",
+    "-D_FORTIFY_SOURCE=2",
+    "-Oz",
+  ]
+
   branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
@@ -132,6 +145,20 @@ ohos_static_library("libsensor_service_static") {
     "$SUBSYSTEM_DIR/services/include",
     "$SUBSYSTEM_DIR/utils/common/include",
     "$SUBSYSTEM_DIR/utils/ipc/include",
+  ]
+
+  cflags = [
+    "-fvisibility=hidden",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Oz",
+  ]
+
+  cflags_cc = [
+    "-fvisibility=hidden",
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Oz",
   ]
 
   branch_protector_ret = "pac_ret"
