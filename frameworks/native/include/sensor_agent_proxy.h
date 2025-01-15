@@ -67,6 +67,7 @@ private:
     int64_t reportInterval_ = -1;
     std::map<int32_t, std::set<const SensorUser *>> subscribeMap_;
     std::map<int32_t, std::set<const SensorUser *>> unsubscribeMap_;
+    static std::mutex createChannelMutex_;
 };
 
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
