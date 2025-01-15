@@ -42,8 +42,6 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr int32_t GET_SERVICE_MAX_COUNT = 3;
-constexpr uint32_t WAIT_MS = 200;
 #ifdef OHOS_BUILD_ENABLE_RUST
 extern "C" {
     void ReadClientPackets(RustStreamBuffer *, OHOS::Sensors::SensorServiceClient *,
@@ -86,28 +84,23 @@ int32_t SensorServiceClient::InitServiceClient()
     }
     auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     CHKPR(systemAbilityManager, SENSOR_NATIVE_SAM_ERR);
-    int32_t retry = 0;
-    while (retry < GET_SERVICE_MAX_COUNT) {
-        auto object = systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID);
-        CHKPR(object, SENSOR_NATIVE_GET_SERVICE_ERR);
-        sensorServer_ = iface_cast<ISensorService>(object);
-        if (sensorServer_ != nullptr) {
-            SEN_HILOGD("Get service success, retry:%{public}d", retry);
-            serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
-            CHKPR(serviceDeathObserver_, SENSOR_NATIVE_GET_SERVICE_ERR);
-            auto remoteObject = sensorServer_->AsObject();
-            CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
-            remoteObject->AddDeathRecipient(serviceDeathObserver_);
-            sensorList_ = sensorServer_->GetSensorList();
-            if (sensorList_.empty()) {
-                SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
-            }
-            return ERR_OK;
+    auto object = systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID);
+    CHKPR(object, SENSOR_NATIVE_GET_SERVICE_ERR);
+    sensorServer_ = iface_cast<ISensorService>(object);
+    if (sensorServer_ != nullptr) {
+        SEN_HILOGD("Get service success");
+        serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
+        CHKPR(serviceDeathObserver_, SENSOR_NATIVE_GET_SERVICE_ERR);
+        auto remoteObject = sensorServer_->AsObject();
+        CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
+        remoteObject->AddDeathRecipient(serviceDeathObserver_);
+        sensorList_ = sensorServer_->GetSensorList();
+        if (sensorList_.empty()) {
+            SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
         }
-        SEN_HILOGW("Get service failed, retry:%{public}d", retry);
-        std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
-        retry++;
+        return ERR_OK;
     }
+    SEN_HILOGW("Get service failed");
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
