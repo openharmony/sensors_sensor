@@ -23,6 +23,9 @@
 
 namespace OHOS {
 namespace Sensors {
+constexpr uint8_t EVENT_BLOCK_NUM = 64;
+constexpr uint8_t BLOCK_EVENT_BUF_LEN = 16;
+constexpr uint8_t RECENT_WRITE_BLOCK_NUM_SIZE = 5;
 
 struct SensorDataBlock {
     struct SensorData *dataBuf = nullptr;
@@ -40,10 +43,10 @@ public:
     ~ReportDataCallback();
     int32_t ReportEventCallback(SensorData *sensorData, sptr<ReportDataCallback> cb);
     void GetEventData(std::vector<SensorData*> &events);
+    SaveEventBuf eventsBuf_;
 private:
     void FreeRedundantEventBuffer();
 private:
-    SaveEventBuf eventsBuf_;
     std::vector<int32_t> recentWriteBlockNums_;
     int32_t blockNumsUpdateIndex_ = 0;
 };
