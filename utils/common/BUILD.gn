@@ -26,6 +26,18 @@ ohos_shared_library("libsensor_utils") {
     "src/sensor_channel_info.cpp",
   ]
 
+  cflags = [
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Oz",
+  ]
+
+  cflags_cc = [
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Oz",
+  ]
+
   branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true

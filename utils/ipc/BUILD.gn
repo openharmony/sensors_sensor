@@ -35,6 +35,18 @@ ohos_shared_library("libsensor_ipc") {
     debug = false
   }
 
+  cflags = [
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Oz",
+  ]
+
+  cflags_cc = [
+    "-ffunction-sections",
+    "-fdata-sections",
+    "-Oz",
+  ]
+
   defines = sensor_default_defines
 
   if (sensor_rust_socket_ipc) {
