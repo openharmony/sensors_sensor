@@ -46,25 +46,25 @@ int32_t ReportDataCallback::ReportEventCallback(SensorData *sensorData, sptr<Rep
 {
     CHKPR(sensorData, ERROR);
     if (cb == nullptr) {
-        SEN_HILOGE("Callback cannot be null");
+        SEN_HILOGE("Callback is null");
         return ERROR;
     }
     if (cb->eventsBuf_.writeFullBlockNum >= cb->eventsBuf_.blockList.size()) {
-        SEN_HILOGE("event buffer is full");
+        SEN_HILOGE("Event buffer more than the blockList size");
         return ERROR;
     }
     auto& block = cb->eventsBuf_.blockList[cb->eventsBuf_.writeFullBlockNum];
     if (block.dataBuf == nullptr) {
         block.dataBuf = new(std::nothrow) SensorData[BLOCK_EVENT_BUF_LEN];
         if (block.dataBuf == nullptr) {
-            SEN_HILOGE("new block buffer fail.");
+            SEN_HILOGE("New block buffer fail");
             return ERROR;
         }
         block.eventNum = 0;
     }
     if (block.eventNum < BLOCK_EVENT_BUF_LEN) {
         block.dataBuf[block.eventNum] = *sensorData;
-        block.eventNum += 1;
+        block.eventNum++;
     }
     if (block.eventNum >= BLOCK_EVENT_BUF_LEN) {
         cb->eventsBuf_.writeFullBlockNum++;
@@ -77,9 +77,11 @@ void ReportDataCallback::GetEventData(std::vector<SensorData*> &events)
     int32_t writeBlockNum = 0;
     for (auto& block : eventsBuf_.blockList) {
         if (block.dataBuf == nullptr) {
+            SEN_HILOGE("Data buf is null");
             break;
         }
         if (block.eventNum <= 0) {
+            SEN_HILOGE("Get eventNum fail");
             break;
         }
         writeBlockNum++;
@@ -95,14 +97,13 @@ void ReportDataCallback::GetEventData(std::vector<SensorData*> &events)
         blockNumsUpdateIndex_ = 0;
     }
     if (!events.empty()) {
-        // clear excess memory
         FreeRedundantEventBuffer();
     }
 }
 
 void ReportDataCallback::FreeRedundantEventBuffer()
 {
-    int maxWriteBlockNum = 0;
+    int32_t maxWriteBlockNum = 0;
     for (auto num : recentWriteBlockNums_) {
         maxWriteBlockNum = std::max(maxWriteBlockNum, num);
     }
