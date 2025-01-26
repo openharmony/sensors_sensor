@@ -244,11 +244,13 @@ int32_t SensorServiceClient::DestroyDataChannel()
 void SensorServiceClient::ReenableSensor()
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> mapLock(mapMutex_);
-    for (const auto &it : sensorInfoMap_) {
+    {
         std::lock_guard<std::mutex> clientLock(clientMutex_);
-        if (sensorServer_ != nullptr) {
-            sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+        std::lock_guard<std::mutex> mapLock(mapMutex_);
+        for (const auto &it : sensorInfoMap_) {
+            if (sensorServer_ != nullptr) {
+                sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+            }
         }
     }
     if (!isConnected_) {
