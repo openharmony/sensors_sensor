@@ -1,4 +1,4 @@
-#  Copyright (c) 2021 Huawei Device Co., Ltd.
+#  Copyright (c) 2021-2025 Huawei Device Co., Ltd.
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -49,3 +49,9 @@ SERVICE_EXCEPTION:
   __BASE: {type: FAULT, level: MINOR, desc: sensor service exception}
   PKG_NAME: {type: STRING, desc: package name}
   ERROR_CODE: {type: INT32, desc: error code}
+
+EVENT_REPORT:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, desc: Non consecutive and critical event reporting, preserve: true}
+  SENSOR_ID: {type: INT32, desc: Sensor Type}
+  TIMESTAMP: {type: STRING, desc: Timestamp}
+  DATA: {type: STRING, desc: Data Information}
