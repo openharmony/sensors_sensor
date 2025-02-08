@@ -23,9 +23,6 @@
 
 namespace OHOS {
 namespace Sensors {
-constexpr uint8_t EVENT_BLOCK_NUM = 64;
-constexpr uint8_t BLOCK_EVENT_BUF_LEN = 16;
-constexpr uint8_t RECENT_WRITE_BLOCK_NUM_SIZE = 5;
 
 struct SensorDataBlock {
     struct SensorData *dataBuf = nullptr;

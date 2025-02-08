@@ -23,8 +23,8 @@
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
-
 namespace {
+    constexpr uint8_t BLOCK_EVENT_BUF_LEN = 16;
     SensorData* g_sensorData = new (std::nothrow) SensorData[BLOCK_EVENT_BUF_LEN];
 } // namespace
 
