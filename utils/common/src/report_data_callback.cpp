@@ -113,7 +113,7 @@ void ReportDataCallback::FreeRedundantEventBuffer()
         return;
     }
 
-    for (int index = maxWriteBlockNum; index < eventsBuf_.blockList.size(); ++index) {
+    for (int32_t index = maxWriteBlockNum; index < eventsBuf_.blockList.size(); ++index) {
         if (eventsBuf_.blockList[index].dataBuf == nullptr) {
             break;
         }
