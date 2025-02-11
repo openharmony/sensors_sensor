@@ -23,9 +23,9 @@
 namespace OHOS {
 namespace Sensors {
 using namespace testing::ext;
-
 namespace {
-    SensorData* g_sensorData = new (std::nothrow) SensorData[CIRCULAR_BUF_LEN];
+    constexpr uint8_t BLOCK_EVENT_BUF_LEN = 16;
+    SensorData* g_sensorData = new (std::nothrow) SensorData[BLOCK_EVENT_BUF_LEN];
 } // namespace
 
 class SensorBasicDataChannelTest : public testing::Test {
@@ -60,11 +60,10 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_001, TestSize.Level1
     ASSERT_EQ(ret, ERROR);
 
     sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
-    if (callback->eventsBuf_.circularBuf != nullptr) {
-        delete[] callback->eventsBuf_.circularBuf;
-        callback->eventsBuf_.circularBuf = nullptr;
+    if (!callback->eventsBuf_.blockList.empty()) {
+        callback->eventsBuf_.blockList.clear();
     }
-    callback->eventsBuf_.circularBuf = nullptr;
+    callback->eventsBuf_.blockList.clear();
     ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
     ASSERT_EQ(ret, ERROR);
 }
@@ -75,14 +74,9 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_002, TestSize.Level1
 
     ReportDataCallback reportDataCallback = ReportDataCallback();
     sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
-    callback->eventsBuf_.eventNum = CIRCULAR_BUF_LEN + 1;
-    callback->eventsBuf_.writePosition = 1;
+
+    callback->eventsBuf_.writeFullBlockNum = -1;
     int32_t ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
-    ASSERT_EQ(ret, ERROR);
-    
-    callback->eventsBuf_.eventNum = 1;
-    callback->eventsBuf_.writePosition = CIRCULAR_BUF_LEN + 1;
-    ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
     ASSERT_EQ(ret, ERROR);
 }
 
@@ -91,8 +85,7 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_003, TestSize.Level1
     SEN_HILOGI("ReportDataCallbackTest_003 in");
     ReportDataCallback reportDataCallback = ReportDataCallback();
     sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
-    callback->eventsBuf_.eventNum = CIRCULAR_BUF_LEN;
-    callback->eventsBuf_.writePosition = CIRCULAR_BUF_LEN;
+    callback->eventsBuf_.writeFullBlockNum  = BLOCK_EVENT_BUF_LEN;
     int32_t ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
     ASSERT_EQ(ret, ERR_OK);
 }
@@ -102,8 +95,7 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_004, TestSize.Level1
     SEN_HILOGI("ReportDataCallbackTest_004 in");
     ReportDataCallback reportDataCallback = ReportDataCallback();
     sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
-    callback->eventsBuf_.eventNum = CIRCULAR_BUF_LEN;
-    callback->eventsBuf_.writePosition = 1;
+    callback->eventsBuf_.writeFullBlockNum  = BLOCK_EVENT_BUF_LEN + 1;
     int32_t ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
     ASSERT_EQ(ret, ERR_OK);
 }
@@ -113,8 +105,7 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_005, TestSize.Level1
     SEN_HILOGI("ReportDataCallbackTest_005 in");
     ReportDataCallback reportDataCallback = ReportDataCallback();
     sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
-    callback->eventsBuf_.eventNum = CIRCULAR_BUF_LEN;
-    callback->eventsBuf_.writePosition = CIRCULAR_BUF_LEN - 1;
+    callback->eventsBuf_.writeFullBlockNum  = BLOCK_EVENT_BUF_LEN - 1;
     int32_t ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
     ASSERT_EQ(ret, ERR_OK);
 }
