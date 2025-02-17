@@ -118,6 +118,23 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
     return ERR_OK;
 }
 
+int32_t SensorBasicDataChannel::CreateSensorBasicChannelBySendFd(int32_t sendFd)
+{
+    CALL_LOG_ENTER;
+    std::unique_lock<std::mutex> lock(fdLock_);
+    if (sendFd_ != -1) {
+        SEN_HILOGD("Already create socketpair");
+        return ERR_OK;
+    }
+    sendFd_ = sendFd;
+    if (sendFd_ < 0) {
+        SEN_HILOGE("ReadFileDescriptor is failed");
+        sendFd_ = -1;
+        return SENSOR_CHANNEL_READ_DESCRIPTOR_ERR;
+    }
+    return ERR_OK;
+}
+
 SensorBasicDataChannel::~SensorBasicDataChannel()
 {
     DestroySensorBasicChannel();

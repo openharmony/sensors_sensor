@@ -89,18 +89,19 @@ bool ActiveInfo::Marshalling(Parcel &parcel) const
     return true;
 }
 
-std::unique_ptr<ActiveInfo> ActiveInfo::Unmarshalling(Parcel &parcel)
+ActiveInfo* ActiveInfo::Unmarshalling(Parcel &parcel)
 {
     int32_t pid = -1;
     int32_t sensorId = -1;
     int64_t samplingPeriodNs = -1;
     int64_t maxReportDelayNs = -1;
-    if (!(parcel.ReadInt32(pid) && parcel.ReadInt32(sensorId) &&
-          parcel.ReadInt64(samplingPeriodNs) && parcel.ReadInt64(maxReportDelayNs))) {
+    auto activeInfo = new (std::nothrow) ActiveInfo();
+    if (activeInfo == nullptr || !(parcel.ReadInt32(pid) && parcel.ReadInt32(sensorId) &&
+        parcel.ReadInt64(samplingPeriodNs) && parcel.ReadInt64(maxReportDelayNs))) {
         SEN_HILOGE("Read from parcel is failed");
-        return nullptr;
+        activeInfo = nullptr;
+        return activeInfo;
     }
-    auto activeInfo = std::make_unique<ActiveInfo>();
     activeInfo->SetPid(pid);
     activeInfo->SetSensorId(sensorId);
     activeInfo->SetSamplingPeriodNs(samplingPeriodNs);

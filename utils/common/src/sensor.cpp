@@ -227,12 +227,12 @@ bool Sensor::Marshalling(Parcel &parcel) const
     return true;
 }
 
-std::unique_ptr<Sensor> Sensor::Unmarshalling(Parcel &parcel)
+Sensor* Sensor::Unmarshalling(Parcel &parcel)
 {
-    auto sensor = std::make_unique<Sensor>();
-    if (!sensor->ReadFromParcel(parcel)) {
+    auto sensor = new (std::nothrow) Sensor();
+    if (sensor != nullptr && !sensor->ReadFromParcel(parcel)) {
         SEN_HILOGE("ReadFromParcel is failed");
-        return nullptr;
+        sensor = nullptr;
     }
     return sensor;
 }

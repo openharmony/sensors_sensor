@@ -11,10 +11,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//build/config/components/idl_tool/idl.gni")
 import("//build/ohos.gni")
 import("./../../sensor.gni")
 
+idl_gen_interface("sensor_service_interface") {
+  sources = [ "ISensorService.idl" ]
+  log_domainid = "0xD002700"
+  log_tag = "ISensorServiceIdl"
+  part_name = "sensor"
+  subsystem_name = "sensors"
+}
+
+ohos_source_set("sensor_service_stub") {
+  public_configs = [ ":sensor_private_config" ]
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+  output_values = get_target_outputs(":sensor_service_interface")
+  sources = filter_include(output_values, [ "*_stub.cpp" ])
+  deps = [ ":sensor_service_interface" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+  part_name = "sensor"
+  subsystem_name = "sensors"
+}
+
 ohos_shared_library("libsensor_client") {
+  output_values = get_target_outputs(":sensor_service_interface")
   sources = [
     "src/fd_listener.cpp",
     "src/sensor_agent_proxy.cpp",
@@ -23,10 +53,11 @@ ohos_shared_library("libsensor_client") {
     "src/sensor_event_handler.cpp",
     "src/sensor_file_descriptor_listener.cpp",
     "src/sensor_service_client.cpp",
-    "src/sensor_service_proxy.cpp",
   ]
+  sources += filter_include(output_values, [ "*_proxy.cpp" ])
 
   include_dirs = [
+    "${target_gen_dir}",
     "$SUBSYSTEM_DIR/frameworks/native/include",
     "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/utils/common/include",
@@ -43,6 +74,7 @@ ohos_shared_library("libsensor_client") {
   defines = sensor_default_defines
 
   deps = [
+    ":sensor_service_interface",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
@@ -80,6 +112,7 @@ ohos_ndk_library("libsensor_ndk") {
 
 config("sensor_private_config") {
   include_dirs = [
+    "${target_gen_dir}",
     "$SUBSYSTEM_DIR/frameworks/native/include",
     "$SUBSYSTEM_DIR/interfaces/inner_api",
     "$SUBSYSTEM_DIR/utils/common/include",

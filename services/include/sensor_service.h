@@ -53,25 +53,25 @@ public:
     int Dump(int fd, const std::vector<std::u16string> &args) override;
     ErrCode EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
     ErrCode DisableSensor(int32_t sensorId) override;
-    std::vector<Sensor> GetSensorList() override;
-    ErrCode TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
-                                const sptr<IRemoteObject> &sensorClient) override;
-    ErrCode DestroySensorChannel(sptr<IRemoteObject> sensorClient) override;
+    ErrCode GetSensorList(std::vector<Sensor> &sensorList) override;
+    ErrCode TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient) override;
+    ErrCode DestroySensorChannel(const sptr<IRemoteObject> &sensorClient) override;
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
     ErrCode SuspendSensors(int32_t pid) override;
     ErrCode ResumeSensors(int32_t pid) override;
     ErrCode GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList) override;
-    ErrCode CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd) override;
-    ErrCode DestroySocketChannel(sptr<IRemoteObject> sensorClient) override;
+    ErrCode CreateSocketChannel(const sptr<IRemoteObject> &sensorClient, int32_t &clientFd) override;
+    ErrCode DestroySocketChannel(const sptr<IRemoteObject> &sensorClient) override;
     ErrCode EnableActiveInfoCB() override;
     ErrCode DisableActiveInfoCB() override;
     ErrCode ResetSensors() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
+    std::vector<Sensor> GetSensorList();
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
-    bool CheckParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode CheckAuthAndParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
 
     class PermStateChangeCb : public Security::AccessToken::PermStateChangeCallbackCustomize {
     public:
@@ -94,6 +94,8 @@ private:
     void UnregisterPermCallback();
     void ReportActiveInfo(int32_t sensorId, int32_t pid);
     bool CheckSensorId(int32_t sensorId);
+    bool IsSystemServiceCalling();
+    bool IsSystemCalling();
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

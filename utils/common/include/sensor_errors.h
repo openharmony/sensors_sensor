@@ -23,7 +23,7 @@
 
 namespace OHOS {
 namespace Sensors {
-constexpr uint32_t MAX_SENSOR_COUNT = 200;
+constexpr int32_t MAX_SENSOR_COUNT = 200;
 constexpr int32_t GL_SENSOR_TYPE_PRIVATE_MIN_VALUE = 512;
 // Error code for user
 enum ErrorCode : int32_t {
