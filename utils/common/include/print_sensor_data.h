@@ -43,6 +43,8 @@ private:
     void PrintClientData(const SensorEvent &event);
     void PrintHdiData(const SensorData &sensorData);
     int32_t GetDataDimension(int32_t sensorId);
+    void ProcessHdiDFX(const SensorData &sensorData);
+    void ProcessClientDFX(const SensorEvent &event);
     struct LogPrintInfo {
         int32_t count { 0 };
         int64_t lastTime { 0 };
