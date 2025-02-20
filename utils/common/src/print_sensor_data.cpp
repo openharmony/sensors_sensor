@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 
+#include "hisysevent.h"
+
 #include "sensor_errors.h"
 
 #undef LOG_TAG
@@ -25,6 +27,7 @@
 
 namespace OHOS {
 namespace Sensors {
+using namespace OHOS::HiviewDFX;
 namespace {
 enum {
     ONE_DIMENSION = 1,
@@ -42,6 +45,7 @@ const std::vector<int32_t> g_triggerSensorType = {
     SENSOR_TYPE_ID_PROXIMITY,
     SENSOR_TYPE_ID_HALL,
     SENSOR_TYPE_ID_WEAR_DETECTION,
+    SENSOR_TYPE_ID_PROXIMITY1,
 };
 const std::vector<int32_t> g_continuousSensorType = {
     SENSOR_TYPE_ID_ACCELEROMETER,
@@ -58,6 +62,10 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
     auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), sensorData.sensorTypeId);
     if (triggerIt != g_triggerSensorType.end()) {
         PrintHdiData(sensorData);
+        if (sensorData.sensorTypeId != SENSOR_TYPE_ID_PROXIMITY &&
+            sensorData.sensorTypeId != SENSOR_TYPE_ID_PROXIMITY1) {
+            ProcessHdiDFX(sensorData);
+        }
     }
     std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
     auto it = hdiLoginfo_.find(sensorData.sensorTypeId);
@@ -97,6 +105,24 @@ void PrintSensorData::PrintHdiData(const SensorData &sensorData)
     SEN_HILOGI("SensorData: %{public}s", str.c_str());
 }
 
+void PrintSensorData::ProcessHdiDFX(const SensorData &sensorData)
+{
+    std::string strData;
+    auto data = reinterpret_cast<const float *>(sensorData.data);
+    int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
+    for (int32_t i = 0; i < dataDim; i++) {
+        CHKPV(data);
+        strData.append(std::to_string(*data));
+        if (i != dataDim - 1) {
+            strData.append(", ");
+        }
+        ++data;
+    }
+    HiSysEventWrite(HiSysEvent::Domain::SENSOR, "EVENT_REPORT",
+        HiSysEvent::EventType::BEHAVIOR, "SENSOR_ID", sensorData.sensorTypeId, "TIMESTAMP",
+        std::to_string(sensorData.timestamp), "DATA", strData);
+}
+
 int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
 {
     switch (sensorId) {
@@ -125,6 +151,9 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
     auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), event.sensorTypeId);
     if (triggerIt != g_triggerSensorType.end()) {
         PrintClientData(event);
+        if (event.sensorTypeId != SENSOR_TYPE_ID_PROXIMITY && event.sensorTypeId != SENSOR_TYPE_ID_PROXIMITY1) {
+        ProcessClientDFX(event);
+        }
     }
 
     auto continuosIt = std::find(g_continuousSensorType.begin(), g_continuousSensorType.end(), event.sensorTypeId);
@@ -167,6 +196,24 @@ void PrintSensorData::PrintClientData(const SensorEvent &event)
     }
     str.append("\n");
     SEN_HILOGI("SensorData: %{public}s", str.c_str());
+}
+
+void PrintSensorData::ProcessClientDFX(const SensorEvent &event)
+{
+    std::string strData;
+    auto data = reinterpret_cast<const float *>(event.data);
+    int32_t dataDim = GetDataDimension(event.sensorTypeId);
+    for (int32_t i = 0; i < dataDim; i++) {
+        CHKPV(data);
+        strData.append(std::to_string(*data));
+        if (i != dataDim - 1) {
+            strData.append(", ");
+        }
+        ++data;
+    }
+    HiSysEventWrite(HiSysEvent::Domain::SENSOR, "EVENT_REPORT",
+        HiSysEvent::EventType::BEHAVIOR, "SENSOR_ID", event.sensorTypeId, "TIMESTAMP",
+        std::to_string(event.timestamp), "DATA", strData);
 }
 
 bool PrintSensorData::IsContinuousType(int32_t sensorId)
