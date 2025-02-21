@@ -81,7 +81,6 @@ void ReportDataCallback::GetEventData(std::vector<SensorData*> &events)
     int32_t writeBlockNum = 0;
     for (auto& block : eventsBuf_.blockList) {
         if (block.dataBuf == nullptr) {
-            SEN_HILOGE("Data buf is null");
             break;
         }
         if (block.eventNum <= 0) {
