@@ -23,7 +23,6 @@ ohos_shared_library("libsensor_service") {
     "src/sensor_manager.cpp",
     "src/sensor_power_policy.cpp",
     "src/sensor_service.cpp",
-    "src/sensor_service_stub.cpp",
     "src/stream_server.cpp",
   ]
 
@@ -59,6 +58,7 @@ ohos_shared_library("libsensor_service") {
   defines = sensor_default_defines
 
   deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_service_stub",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
@@ -136,7 +136,6 @@ ohos_static_library("libsensor_service_static") {
     "src/sensor_manager.cpp",
     "src/sensor_power_policy.cpp",
     "src/sensor_service.cpp",
-    "src/sensor_service_stub.cpp",
     "src/stream_server.cpp",
   ]
 
@@ -172,6 +171,7 @@ ohos_static_library("libsensor_service_static") {
   defines = sensor_default_defines
 
   deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_service_stub",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]

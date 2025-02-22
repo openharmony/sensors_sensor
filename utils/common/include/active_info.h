@@ -34,7 +34,7 @@ public:
     int64_t GetMaxReportDelayNs() const;
     void SetMaxReportDelayNs(int64_t maxReportDelayNs);
     bool Marshalling(Parcel &parcel) const;
-    std::unique_ptr<ActiveInfo> Unmarshalling(Parcel &parcel);
+    static ActiveInfo* Unmarshalling(Parcel &parcel);
 
 private:
     int32_t pid_ { -1 };

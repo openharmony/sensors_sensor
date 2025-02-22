@@ -18,8 +18,10 @@
 #include <cinttypes>
 #include <string_ex.h>
 #include <sys/socket.h>
+#include <tokenid_kit.h>
 #include <unistd.h>
 
+#include "accesstoken_kit.h"
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
@@ -27,6 +29,7 @@
 #ifdef MEMMGR_ENABLE
 #include "mem_mgr_client.h"
 #endif // MEMMGR_ENABLE
+#include "ipc_skeleton.h"
 #include "permission_util.h"
 
 #include "print_sensor_data.h"
@@ -289,22 +292,58 @@ bool SensorService::CheckSensorId(int32_t sensorId)
     return true;
 }
 
-bool SensorService::CheckParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+bool SensorService::IsSystemServiceCalling()
 {
-    if ((!CheckSensorId(sensorId)) ||
-        ((samplingPeriodNs != 0L) && ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
-        SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceeded the maximum value");
-        return false;
+    const auto tokenId = IPCSkeleton::GetCallingTokenID();
+    const auto flag = Security::AccessToken::AccessTokenKit::GetTokenTypeFlag(tokenId);
+    if (flag == Security::AccessToken::ATokenTypeEnum::TOKEN_NATIVE ||
+        flag == Security::AccessToken::ATokenTypeEnum::TOKEN_SHELL) {
+        SEN_HILOGD("system service calling, flag: %{public}u", flag);
+        return true;
     }
-    return true;
+    return false;
+}
+
+bool SensorService::IsSystemCalling()
+{
+    if (IsSystemServiceCalling()) {
+        return true;
+    }
+    return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID());
+}
+
+ErrCode SensorService::CheckAuthAndParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+{
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR ||
+            sensorId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE) &&
+        !IsSystemCalling()) {
+        SEN_HILOGE("Permission check failed. A non-system application uses the system API");
+        return NON_SYSTEM_API;
+    }
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
+    if (ret != PERMISSION_GRANTED) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL", HiSysEvent::EventType::SECURITY,
+            "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+        SEN_HILOGE("sensorId:%{public}d grant failed, ret:%{public}d", sensorId, ret);
+        return PERMISSION_DENIED;
+    }
+    if ((!CheckSensorId(sensorId)) || (maxReportDelayNs != 0L && samplingPeriodNs != 0L &&
+        ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
+        SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceeded the maximum value");
+        return ERR_NO_INIT;
+    }
+    return ERR_OK;
 }
 
 ErrCode SensorService::EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
-    if (!CheckParameter(sensorId, samplingPeriodNs, maxReportDelayNs)) {
-        SEN_HILOGE("sensorId, samplingPeriodNs or maxReportDelayNs is invalid");
-        return ERR_NO_INIT;
+    ErrCode checkResult = CheckAuthAndParameter(sensorId, samplingPeriodNs, maxReportDelayNs);
+    if (checkResult != ERR_OK) {
+        return checkResult;
     }
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
@@ -384,7 +423,37 @@ ErrCode SensorService::DisableSensor(int32_t sensorId, int32_t pid)
 ErrCode SensorService::DisableSensor(int32_t sensorId)
 {
     CALL_LOG_ENTER;
+    if ((sensorId == SENSOR_TYPE_ID_COLOR || sensorId == SENSOR_TYPE_ID_SAR ||
+            sensorId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE) &&
+        !IsSystemCalling()) {
+        SEN_HILOGE("Permission check failed. A non-system application uses the system API");
+        return NON_SYSTEM_API;
+    }
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorId);
+    if (ret != PERMISSION_GRANTED) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL", HiSysEvent::EventType::SECURITY,
+            "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+        SEN_HILOGE("sensorId:%{public}d grant failed, ret:%{public}d", sensorId, ret);
+        return PERMISSION_DENIED;
+    }
     return DisableSensor(sensorId, GetCallingPid());
+}
+
+ErrCode SensorService::GetSensorList(std::vector<Sensor> &sensorList)
+{
+    std::vector<Sensor> sensors = GetSensorList();
+    int32_t sensorCount = static_cast<int32_t>(sensors.size());
+    if (sensorCount > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("SensorCount:%{public}u", sensorCount);
+        sensorCount = MAX_SENSOR_COUNT;
+    }
+    for (int32_t i = 0; i < sensorCount; ++i) {
+        sensorList.push_back(sensors[i]);
+    }
+    return ERR_OK;
 }
 
 std::vector<Sensor> SensorService::GetSensorList()
@@ -404,10 +473,16 @@ std::vector<Sensor> SensorService::GetSensorList()
     return sensors_;
 }
 
-ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &sensorBasicDataChannel,
-                                           const sptr<IRemoteObject> &sensorClient)
+ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient)
 {
     SEN_HILOGI("In");
+    sptr<SensorBasicDataChannel> sensorBasicDataChannel = new (std::nothrow) SensorBasicDataChannel();
+    CHKPR(sensorBasicDataChannel, OBJECT_NULL);
+    auto ret = sensorBasicDataChannel->CreateSensorBasicChannelBySendFd(sendFd);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("CreateSensorBasicChannelBySendFd ret:%{public}d", ret);
+        return OBJECT_NULL;
+    }
     CHKPR(sensorBasicDataChannel, ERR_NO_INIT);
     auto pid = GetCallingPid();
     auto uid = GetCallingUid();
@@ -426,7 +501,7 @@ ErrCode SensorService::TransferDataChannel(const sptr<SensorBasicDataChannel> &s
     return ERR_OK;
 }
 
-ErrCode SensorService::DestroySensorChannel(sptr<IRemoteObject> sensorClient)
+ErrCode SensorService::DestroySensorChannel(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
     const int32_t clientPid = GetCallingPid();
@@ -527,6 +602,16 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
 ErrCode SensorService::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+        return PERMISSION_DENIED;
+    }
     if (pid < 0) {
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
@@ -537,6 +622,16 @@ ErrCode SensorService::SuspendSensors(int32_t pid)
 ErrCode SensorService::ResumeSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+        return PERMISSION_DENIED;
+    }
     if (pid < 0) {
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
@@ -547,18 +642,33 @@ ErrCode SensorService::ResumeSensors(int32_t pid)
 ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList)
 {
     CALL_LOG_ENTER;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     if (pid < 0) {
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
     activeInfoList = POWER_POLICY.GetActiveInfoList(pid);
+    uint32_t activeInfoCount = static_cast<uint32_t>(activeInfoList.size());
+    if (activeInfoCount > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("ActiveInfoCount:%{public}u", activeInfoCount);
+        activeInfoList.erase(activeInfoList.begin() + MAX_SENSOR_COUNT, activeInfoList.begin() + activeInfoCount - 1);
+    }
     return ERR_OK;
 }
 
-ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int32_t &clientFd)
+ErrCode SensorService::CreateSocketChannel(const sptr<IRemoteObject> &sensorClient, int32_t &clientFd)
 {
     CALL_LOG_ENTER;
     CHKPR(sensorClient, INVALID_POINTER);
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     int32_t serverFd = -1;
     int32_t ret = AddSocketPairInfo(GetCallingUid(), GetCallingPid(),
         AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()),
@@ -571,10 +681,15 @@ ErrCode SensorService::CreateSocketChannel(sptr<IRemoteObject> sensorClient, int
     return ERR_OK;
 }
 
-ErrCode SensorService::DestroySocketChannel(sptr<IRemoteObject> sensorClient)
+ErrCode SensorService::DestroySocketChannel(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
     CHKPR(sensorClient, INVALID_POINTER);
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     DelSession(GetCallingPid());
     UnregisterClientDeathRecipient(sensorClient);
     return ERR_OK;
@@ -583,6 +698,11 @@ ErrCode SensorService::DestroySocketChannel(sptr<IRemoteObject> sensorClient)
 ErrCode SensorService::EnableActiveInfoCB()
 {
     CALL_LOG_ENTER;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     isReportActiveInfo_ = true;
     return clientInfo_.AddActiveInfoCBPid(GetCallingPid());
 }
@@ -590,6 +710,11 @@ ErrCode SensorService::EnableActiveInfoCB()
 ErrCode SensorService::DisableActiveInfoCB()
 {
     CALL_LOG_ENTER;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     isReportActiveInfo_ = false;
     return clientInfo_.DelActiveInfoCBPid(GetCallingPid());
 }
@@ -597,6 +722,16 @@ ErrCode SensorService::DisableActiveInfoCB()
 ErrCode SensorService::ResetSensors()
 {
     CALL_LOG_ENTER;
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
+    int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
+    if (ret != PERMISSION_GRANTED) {
+        SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
+        return PERMISSION_DENIED;
+    }
     return POWER_POLICY.ResetSensors();
 }
 

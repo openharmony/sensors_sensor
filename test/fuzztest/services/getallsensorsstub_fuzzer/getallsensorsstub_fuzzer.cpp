@@ -70,7 +70,7 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::GET_SENSOR_LIST),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST),
         datas, reply, option);
     return true;
 }

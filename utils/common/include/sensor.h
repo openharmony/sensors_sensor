@@ -54,7 +54,7 @@ public:
     int64_t GetMaxSamplePeriodNs() const;
     void SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs);
     bool ReadFromParcel(Parcel &parcel);
-    static std::unique_ptr<Sensor> Unmarshalling(Parcel &parcel);
+    static Sensor* Unmarshalling(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
 
 private:

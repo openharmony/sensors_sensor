@@ -33,6 +33,7 @@ public:
     virtual ~SensorBasicDataChannel();
     int32_t CreateSensorBasicChannel();
     int32_t CreateSensorBasicChannel(MessageParcel &data);
+    int32_t CreateSensorBasicChannelBySendFd(int32_t sendFd);
     int32_t DestroySensorBasicChannel();
     int32_t GetSendDataFd();
     int32_t GetReceiveDataFd();

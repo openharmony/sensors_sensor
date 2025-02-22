@@ -15,7 +15,7 @@
 
 #include "oh_sensor.h"
 
-#include "i_sensor_service.h"
+#include "isensor_service.h"
 #include "native_sensor_impl.h"
 #include "securec.h"
 #include "sensor_agent.h"

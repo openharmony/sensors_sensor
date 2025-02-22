@@ -74,7 +74,7 @@ int32_t SensorServiceClient::InitServiceClient()
     if (sensorServer_ != nullptr) {
         SEN_HILOGD("Already init");
         if (sensorList_.empty()) {
-            sensorList_ = sensorServer_->GetSensorList();
+            sensorServer_->GetSensorList(sensorList_);
             SEN_HILOGW("sensorList is %{public}s", sensorList_.empty() ? "empty" : "not empty");
         }
         return ERR_OK;
@@ -94,7 +94,8 @@ int32_t SensorServiceClient::InitServiceClient()
         auto remoteObject = sensorServer_->AsObject();
         CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
         remoteObject->AddDeathRecipient(serviceDeathObserver_);
-        sensorList_ = sensorServer_->GetSensorList();
+        sensorList_.clear();
+        sensorServer_->GetSensorList(sensorList_);
         if (sensorList_.empty()) {
             SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
         }
@@ -210,7 +211,7 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
     CHKPR(sensorClientStub_, INVALID_POINTER);
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
-    ret = sensorServer_->TransferDataChannel(sensorDataChannel, remoteObject);
+    ret = sensorServer_->TransferDataChannel(sensorDataChannel->GetSendDataFd(), remoteObject);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -295,7 +296,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
                 auto remoteObject = sensorClientStub_->AsObject();
                 if (remoteObject != nullptr) {
-                    sensorServer_->TransferDataChannel(dataChannel_, remoteObject);
+                    sensorServer_->TransferDataChannel(dataChannel_->GetSendDataFd(), remoteObject);
                 }
             }
         }

@@ -90,16 +90,16 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::TRANSFER_DATA_CHANNEL),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_TRANSFER_DATA_CHANNEL),
         datas, reply, option);
     datas.RewindRead(0);
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SENSOR_CHANNEL),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_SENSOR_CHANNEL),
         datas, reply, option);
     datas.RewindRead(0);
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::CREATE_SOCKET_CHANNEL),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL),
         datas, reply, option);
     datas.RewindRead(0);
-    g_service->OnRemoteRequest(static_cast<uint32_t>(SensorInterfaceCode::DESTROY_SOCKET_CHANNEL),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_SOCKET_CHANNEL),
         datas, reply, option);
     return true;
 }
