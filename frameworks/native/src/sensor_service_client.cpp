@@ -280,8 +280,10 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
         } else {
             SEN_HILOGI("dataChannel_ is not nullptr");
             dataChannel_->DestroySensorDataChannel();
-            dataChannel_->RestoreSensorDataChannel();
-            SENSOR_AGENT_IMPL->SetIsChannelCreated(true);
+            int32_t ret = dataChannel_->RestoreSensorDataChannel();
+            if (ret == ERR_OK) {
+                SENSOR_AGENT_IMPL->SetIsChannelCreated(true);
+            }
             {
                 std::lock_guard<std::mutex> clientLock(clientMutex_);
                 sensorServer_ = nullptr;
