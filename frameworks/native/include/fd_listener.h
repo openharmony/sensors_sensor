@@ -16,8 +16,6 @@
 #ifndef FD_LISTENER_H
 #define FD_LISTENER_H
 
-#include "file_descriptor_listener.h"
-
 #include "sensor_data_channel.h"
 
 namespace OHOS {
@@ -28,7 +26,6 @@ public:
     ~FdListener() = default;
     void OnReadable(int32_t fd) override;
     void OnShutdown(int32_t fd) override;
-    void OnException(int32_t fd) override;
     void SetChannel(SensorDataChannel *channel);
     DISALLOW_COPY_AND_MOVE(FdListener);
 

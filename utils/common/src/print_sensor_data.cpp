@@ -15,9 +15,6 @@
 
 #include "print_sensor_data.h"
 
-#include <string>
-#include <vector>
-
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE

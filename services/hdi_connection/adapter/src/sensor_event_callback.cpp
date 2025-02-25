@@ -18,7 +18,6 @@
 
 #include "hdi_connection.h"
 #include "print_sensor_data.h"
-#include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
 #undef LOG_TAG

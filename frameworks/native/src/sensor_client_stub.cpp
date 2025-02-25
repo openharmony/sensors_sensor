@@ -15,7 +15,6 @@
 
 #include "sensor_client_stub.h"
 
-#include "message_parcel.h"
 #include "sensor_log.h"
 
 #undef LOG_TAG

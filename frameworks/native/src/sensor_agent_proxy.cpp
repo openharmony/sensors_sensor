@@ -15,11 +15,7 @@
 
 #include "sensor_agent_proxy.h"
 
-#include <cstring>
-
 #include "print_sensor_data.h"
-#include "securec.h"
-#include "sensor_errors.h"
 #include "sensor_service_client.h"
 #undef LOG_TAG
 #define LOG_TAG "SensorAgentProxy"

@@ -15,8 +15,6 @@
 
 #include "circle_stream_buffer.h"
 
-#include "sensor_errors.h"
-
 namespace OHOS {
 namespace Sensors {
 bool CircleStreamBuffer::CheckWrite(size_t size)

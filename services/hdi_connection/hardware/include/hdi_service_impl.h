@@ -16,9 +16,8 @@
 #ifndef HDI_SERVICE_IMPL_H
 #define HDI_SERVICE_IMPL_H
 
-#include <atomic>
 #include <thread>
-#include <vector>
+
 #include "sensor_agent_type.h"
 #include "singleton.h"
 

@@ -16,17 +16,8 @@
 #ifndef FLUSH_INFO_RECORD_H
 #define FLUSH_INFO_RECORD_H
 
-#include <mutex>
-#include <unordered_map>
-#include <vector>
-
-#include "nocopyable.h"
-#include "refbase.h"
-#include "singleton.h"
-
 #include "client_info.h"
 #include "sensor_agent_type.h"
-#include "sensor_basic_data_channel.h"
 #include "sensor_errors.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"

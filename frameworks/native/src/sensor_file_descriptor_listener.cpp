@@ -15,10 +15,7 @@
 
 #include "sensor_file_descriptor_listener.h"
 #include "print_sensor_data.h"
-#include "sensor_agent_type.h"
-#include "sensor_basic_data_channel.h"
 #include "sensor_errors.h"
-#include "sys/socket.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorFileDescriptorListener"
@@ -91,19 +88,6 @@ void SensorFileDescriptorListener::SetChannel(SensorDataChannel *channel)
 }
 
 void SensorFileDescriptorListener::OnShutdown(int32_t fileDescriptor)
-{
-    if (fileDescriptor < 0) {
-        SEN_HILOGE("Invalid fd:%{public}d", fileDescriptor);
-    }
-    if (receiveDataBuff_ != nullptr) {
-        delete[] receiveDataBuff_;
-        receiveDataBuff_ = nullptr;
-    }
-    CHKPV(channel_);
-    channel_->DestroySensorDataChannel();
-}
-
-void SensorFileDescriptorListener::OnException(int32_t fileDescriptor)
 {
     if (fileDescriptor < 0) {
         SEN_HILOGE("Invalid fd:%{public}d", fileDescriptor);

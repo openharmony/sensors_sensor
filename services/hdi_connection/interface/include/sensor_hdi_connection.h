@@ -16,7 +16,6 @@
 #ifndef SENSOR_HDI_CONNECTION_H
 #define SENSOR_HDI_CONNECTION_H
 
-#include <atomic>
 #include<unordered_set>
 
 #include "i_sensor_hdi_connection.h"

@@ -17,15 +17,11 @@
 
 #include <cinttypes>
 #include <string_ex.h>
-#include <sys/socket.h>
 #include <tokenid_kit.h>
-#include <unistd.h>
 
-#include "accesstoken_kit.h"
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-#include "iservice_registry.h"
 #ifdef MEMMGR_ENABLE
 #include "mem_mgr_client.h"
 #endif // MEMMGR_ENABLE
@@ -33,10 +29,8 @@
 #include "permission_util.h"
 
 #include "print_sensor_data.h"
-#include "securec.h"
-#include "sensor.h"
+#include "sensor_data_processer.h"
 #include "sensor_dump.h"
-#include "sensor_errors.h"
 #include "system_ability_definition.h"
 
 #undef LOG_TAG

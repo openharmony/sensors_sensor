@@ -15,11 +15,6 @@
 
 #include "sensor_service_client.h"
 
-#include <sys/socket.h>
-#include <thread>
-#include <unistd.h>
-#include <vector>
-
 #include "death_recipient_template.h"
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
@@ -27,12 +22,8 @@
 #ifdef HIVIEWDFX_HITRACE_ENABLE
 #include "hitrace_meter.h"
 #endif // HIVIEWDFX_HITRACE_ENABLE
-#include "ipc_skeleton.h"
 #include "sensor_agent_proxy.h"
-#include "sensor_errors.h"
-#include "sensor_service_proxy.h"
 #include "system_ability_definition.h"
-#include "rust_binding.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorServiceClient"

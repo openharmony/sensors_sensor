@@ -16,7 +16,6 @@
 #ifndef STREAM_SERVER_H
 #define STREAM_SERVER_H
 
-#include <map>
 #include <mutex>
 
 #include "stream_session.h"

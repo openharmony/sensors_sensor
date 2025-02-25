@@ -15,10 +15,6 @@
 
 #include "stream_socket.h"
 
-#include <cinttypes>
-
-#include "sensor_errors.h"
-
 namespace OHOS {
 namespace Sensors {
 #ifndef OHOS_BUILD_ENABLE_RUST

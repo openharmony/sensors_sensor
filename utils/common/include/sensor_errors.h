@@ -19,8 +19,6 @@
 #include <errors.h>
 #include <sensor_log.h>
 
-#include "hilog/log.h"
-
 namespace OHOS {
 namespace Sensors {
 constexpr int32_t MAX_SENSOR_COUNT = 200;

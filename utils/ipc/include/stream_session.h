@@ -19,10 +19,8 @@
 #include <map>
 
 #include "accesstoken_kit.h"
-#include "nocopyable.h"
 
 #include "net_packet.h"
-#include "proto.h"
 #ifdef OHOS_BUILD_ENABLE_RUST
 #include "rust_binding.h"
 #endif // OHOS_BUILD_ENABLE_RUST

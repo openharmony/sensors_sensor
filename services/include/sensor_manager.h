@@ -16,12 +16,8 @@
 #ifndef SENSOR_MANAGER_H
 #define SENSOR_MANAGER_H
 
-#include <mutex>
 #include <thread>
-#include <unordered_map>
 
-#include "client_info.h"
-#include "flush_info_record.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_data_processer.h"
 #include "sensor_hdi_connection.h"
@@ -57,7 +53,6 @@ private:
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
-    std::unordered_map<int32_t, Sensor> sensorMap_;
     std::mutex sensorMapMutex_;
 };
 } // namespace Sensors

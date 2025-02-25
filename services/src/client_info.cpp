@@ -13,13 +13,8 @@
  * limitations under the License.
  */
 
-#include "client_info.h"
-
-#include <mutex>
-
 #include "permission_util.h"
 #include "securec.h"
-#include "sensor_errors.h"
 #include "sensor_manager.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 #include "sensor_hdi_connection.h"

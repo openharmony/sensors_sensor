@@ -14,9 +14,6 @@
  */
 #include "sensor_algorithm.h"
 
-#include <cmath>
-#include <vector>
-
 #include "sensor_errors.h"
 #include "sensor_utils.h"
 

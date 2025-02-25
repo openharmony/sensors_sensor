@@ -17,12 +17,6 @@
 
 #include <cinttypes>
 
-#include "iservice_registry.h"
-
-#include "sensor.h"
-#include "sensor_data_event.h"
-#include "sensor_errors.h"
-
 #undef LOG_TAG
 #define LOG_TAG "SensorManager"
 

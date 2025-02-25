@@ -15,7 +15,6 @@
 #include "hdi_connection.h"
 
 #include <map>
-#include <mutex>
 #include <thread>
 
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE

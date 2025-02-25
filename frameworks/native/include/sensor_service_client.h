@@ -16,20 +16,14 @@
 #ifndef SENSOR_SERVICE_CLIENT_H
 #define SENSOR_SERVICE_CLIENT_H
 
-#include <map>
 #include <set>
-#include <vector>
 
 #include "iservice_registry.h"
 #include "singleton.h"
 
-#include "active_info.h"
-#include "sensor_agent_type.h"
-#include "sensor_basic_data_channel.h"
 #include "sensor_basic_info.h"
 #include "sensor_client_stub.h"
 #include "sensor_data_channel.h"
-#include "sensor.h"
 #include "sensor_service_proxy.h"
 #include "stream_socket.h"
 

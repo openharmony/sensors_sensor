@@ -17,7 +17,6 @@
 #define STREAM_BUFFER_H
 
 #include <string>
-#include <vector>
 
 #include "nocopyable.h"
 #include "securec.h"

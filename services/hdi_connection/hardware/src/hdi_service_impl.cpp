@@ -14,11 +14,8 @@
  */
 #include "hdi_service_impl.h"
 
-#include <cmath>
 #include <random>
 #include <sys/prctl.h>
-#include <thread>
-#include <unistd.h>
 
 #include "sensor_errors.h"
 

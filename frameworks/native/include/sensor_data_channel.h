@@ -16,9 +16,6 @@
 #ifndef SENSOR_DATA_CHANNEL_H
 #define SENSOR_DATA_CHANNEL_H
 
-#include <cstdint>
-#include <functional>
-#include <memory>
 #include <unordered_set>
 
 #include "sensor_agent_type.h"

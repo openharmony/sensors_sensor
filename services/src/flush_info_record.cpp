@@ -15,8 +15,6 @@
 
 #include "flush_info_record.h"
 
-#include "sensor_errors.h"
-
 #undef LOG_TAG
 #define LOG_TAG "FlushInfoRecord"
 

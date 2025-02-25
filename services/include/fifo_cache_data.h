@@ -16,11 +16,7 @@
 #ifndef FIFO_CACHE_DATA_H
 #define FIFO_CACHE_DATA_H
 
-#include <vector>
-
-#include "nocopyable.h"
 #include "refbase.h"
-#include "sensor_data_event.h"
 #include "sensor_basic_data_channel.h"
 
 namespace OHOS {

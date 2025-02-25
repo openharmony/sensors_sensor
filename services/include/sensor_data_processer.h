@@ -16,23 +16,15 @@
 #ifndef SENSORS_DATA_PROCESSER_H
 #define SENSORS_DATA_PROCESSER_H
 
-#include <unordered_map>
-#include <vector>
-
-#include "refbase.h"
-
-#include "nocopyable.h"
-
-#include "client_info.h"
 #include "fifo_cache_data.h"
 #include "flush_info_record.h"
-#include "report_data_callback.h"
-#include "sensor.h"
 #include "sensor_hdi_connection.h"
-#include "sensor_data_event.h"
 
 namespace OHOS {
 namespace Sensors {
+namespace {
+    std::unordered_map<int32_t, Sensor> sensorMap_;
+}
 class SensorDataProcesser : public RefBase {
 public:
     explicit SensorDataProcesser(const std::unordered_map<int32_t, Sensor> &sensorMap);
@@ -60,7 +52,6 @@ private:
     std::mutex dataCountMutex_;
     std::unordered_map<int32_t, std::vector<sptr<FifoCacheData>>> dataCountMap_;
     std::mutex sensorMutex_;
-    std::unordered_map<int32_t, Sensor> sensorMap_;
 };
 } // namespace Sensors
 } // namespace OHOS

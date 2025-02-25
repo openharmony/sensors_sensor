@@ -16,9 +16,6 @@
 #ifndef SENSOR_FILE_DESCRIPTOR_LISTENER_H
 #define SENSOR_FILE_DESCRIPTOR_LISTENER_H
 
-#include <cstdint>
-
-#include "file_descriptor_listener.h"
 #include "sensor_data_channel.h"
 
 namespace OHOS {
@@ -29,7 +26,6 @@ public:
     ~SensorFileDescriptorListener();
     void OnReadable(int32_t fileDescriptor) override;
     void OnShutdown(int32_t fileDescriptor) override;
-    void OnException(int32_t fileDescriptor) override;
     void SetChannel(SensorDataChannel *channel);
     void ExcuteCallback(int32_t length);
 

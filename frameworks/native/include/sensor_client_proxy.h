@@ -17,9 +17,7 @@
 #define SENSOR_CLIENT_PROXY_H
 
 #include "iremote_proxy.h"
-#include "nocopyable.h"
 
-#include "i_sensor_client.h"
 #include "sensor_agent_type.h"
 
 namespace OHOS {
