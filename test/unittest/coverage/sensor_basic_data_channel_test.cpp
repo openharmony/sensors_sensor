@@ -118,7 +118,7 @@ HWTEST_F(SensorBasicDataChannelTest, SendData_001, TestSize.Level1)
     SensorBasicDataChannel sensorChannel = SensorBasicDataChannel();
     char buff[128] = {};
     int32_t ret = sensorChannel.SendData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_EQ(ret, ERROR);
+    ASSERT_EQ(ret, SENSOR_CHANNEL_SEND_ADDR_ERR);
 }
 
 HWTEST_F(SensorBasicDataChannelTest, SendData_002, TestSize.Level1)
