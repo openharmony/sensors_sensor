@@ -218,7 +218,7 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
     if (enable) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+            "LEVEL", logLevel, "PKG_NAME", packageName, "TYPE", sensorId, "UID", uid, "PID", pid);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d, pid:%{public}d, "
             "samplingPeriodNs:%{public}" PRId64 ", samplingPeriodNs:%{public}" PRId64, packageName.c_str(),
@@ -226,7 +226,7 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
     } else {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+            "LEVEL", logLevel, "TYPE", sensorId, "PKG_NAME", packageName, "UID", uid, "PID", pid);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d, pid:%{public}d",
             packageName.c_str(), sensorId, pid);
