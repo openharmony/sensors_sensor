@@ -17,7 +17,6 @@
 #define SENSOR_CLIENT_STUB_H
 
 #include "iremote_stub.h"
-#include "message_parcel.h"
 
 #include "i_sensor_client.h"
 

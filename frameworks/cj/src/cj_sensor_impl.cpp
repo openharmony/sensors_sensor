@@ -15,13 +15,7 @@
 
 #include "cj_sensor_impl.h"
 
-#include <cstddef>
-#include <cstdint>
-#include <optional>
-
 #include "cj_lambda.h"
-#include "cj_sensor_ffi.h"
-#include "errors.h"
 #include "geomagnetic_field.h"
 #include "sensor_agent.h"
 #include "sensor_algorithm.h"

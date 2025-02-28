@@ -15,9 +15,6 @@
 
 #include "fd_listener.h"
 
-#include <cinttypes>
-
-#include "sensor_errors.h"
 #include "stream_socket.h"
 
 #undef LOG_TAG
@@ -68,17 +65,6 @@ void FdListener::OnReadable(int32_t fd)
 }
 
 void FdListener::OnShutdown(int32_t fd)
-{
-    CALL_LOG_ENTER;
-    if (fd < 0) {
-        SEN_HILOGE("Invalid fd, fd:%{public}d", fd);
-    }
-    CHKPV(channel_);
-    DisconnectFun disconnect = channel_->GetDisconnectFun();
-    disconnect();
-}
-
-void FdListener::OnException(int32_t fd)
 {
     CALL_LOG_ENTER;
     if (fd < 0) {

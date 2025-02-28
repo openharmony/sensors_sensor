@@ -17,10 +17,8 @@
 #define SENSOR_BASIC_DATA_CHANNEL_H
 
 #include <mutex>
-#include <unordered_map>
 
 #include "message_parcel.h"
-#include "refbase.h"
 
 #include "sensor_data_event.h"
 

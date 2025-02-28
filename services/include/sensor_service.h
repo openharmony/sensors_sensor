@@ -16,18 +16,10 @@
 #ifndef SENSOR_SERVICE_H
 #define SENSOR_SERVICE_H
 
-#include <mutex>
-#include <thread>
-#include <unordered_map>
-
-#include "nocopyable.h"
 #include "system_ability.h"
 
-#include "client_info.h"
 #include "death_recipient_template.h"
-#include "sensor_data_event.h"
 #include "sensor_delayed_sp_singleton.h"
-#include "sensor_manager.h"
 #include "sensor_power_policy.h"
 #include "sensor_service_stub.h"
 #include "stream_server.h"
@@ -101,7 +93,6 @@ private:
     std::mutex sensorsMutex_;
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
-    std::unordered_map<int32_t, Sensor> sensorMap_;
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     bool InitInterface();
     bool InitDataCallback();

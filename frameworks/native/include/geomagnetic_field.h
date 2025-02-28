@@ -16,7 +16,6 @@
 #ifndef GEOMAGNETIC_FIELD_H
 #define GEOMAGNETIC_FIELD_H
 
-#include <cstdint>
 #include <vector>
 
 class GeomagneticField {

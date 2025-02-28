@@ -16,8 +16,6 @@
 #ifndef OHOS_CJ_SENSOR_FFI_H
 #define OHOS_CJ_SENSOR_FFI_H
 
-#include <cstdint>
-
 #include "cj_sensor_visibility.h"
 #include "sensor_agent_type.h"
 

@@ -18,12 +18,8 @@
 #include <getopt.h>
 
 #include <cinttypes>
-#include <cstring>
-#include <ctime>
-#include <queue>
 
 #include "securec.h"
-#include "sensor_agent_type.h"
 #include "sensor_errors.h"
 
 #undef LOG_TAG

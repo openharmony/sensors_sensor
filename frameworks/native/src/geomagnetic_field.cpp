@@ -15,10 +15,8 @@
 
 #include "geomagnetic_field.h"
 
-#include <cmath>
 #include <mutex>
 
-#include "sensor_errors.h"
 #include "sensor_utils.h"
 
 using namespace OHOS::Sensors;

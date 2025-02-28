@@ -16,12 +16,6 @@
 #ifndef SENSOR_DUMP_H
 #define SENSOR_DUMP_H
 
-#include <vector>
-
-#include "singleton.h"
-
-#include "nocopyable.h"
-
 #include "client_info.h"
 #include "sensor.h"
 #include "sensor_agent_type.h"

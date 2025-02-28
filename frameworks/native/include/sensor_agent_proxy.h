@@ -16,14 +16,10 @@
 #ifndef SENSOR_PROXY_H
 #define SENSOR_PROXY_H
 
-#include <atomic>
-#include <map>
 #include <set>
 #include <thread>
-#include "refbase.h"
 #include "singleton.h"
 
-#include "sensor_agent_type.h"
 #include "sensor_data_channel.h"
 
 namespace OHOS {

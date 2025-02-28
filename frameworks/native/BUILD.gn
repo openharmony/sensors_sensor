@@ -143,17 +143,13 @@ ohos_shared_library("sensor_interface_native") {
     ubsan = true
   }
 
-  deps = [
-    "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
-    "$SUBSYSTEM_DIR/frameworks/native:libsensor_ndk",
-  ]
+  deps = [ "$SUBSYSTEM_DIR/frameworks/native:libsensor_client" ]
 
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "ipc:ipc_single",
-    "safwk:system_ability_fwk",
   ]
 
   part_name = "sensor"
@@ -182,7 +178,6 @@ ohos_shared_library("ohsensor") {
 
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
-    "$SUBSYSTEM_DIR/frameworks/native:libsensor_ndk",
     "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
@@ -192,7 +187,6 @@ ohos_shared_library("ohsensor") {
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "ipc:ipc_single",
-    "safwk:system_ability_fwk",
   ]
 
   relative_install_dir = "ndk"

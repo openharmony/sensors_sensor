@@ -16,12 +16,9 @@
 #ifndef STREAM_SOCKET_H
 #define STREAM_SOCKET_H
 
-#include <functional>
 
 #include <sys/socket.h>
 #include <unistd.h>
-
-#include "nocopyable.h"
 
 #include "circle_stream_buffer.h"
 #include "net_packet.h"

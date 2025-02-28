@@ -15,8 +15,6 @@
 
 #include "sensor_power_policy.h"
 
-#include "sensor.h"
-#include "sensor_agent_type.h"
 #ifdef OHOS_BUILD_ENABLE_RUST
 #include "rust_binding.h"
 #endif // OHOS_BUILD_ENABLE_RUST

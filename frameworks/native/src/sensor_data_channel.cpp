@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 
-#include "sensor_data_channel.h"
-
-#include "errors.h"
-
 #include "fd_listener.h"
 #include "sensor_errors.h"
 #include "sensor_file_descriptor_listener.h"

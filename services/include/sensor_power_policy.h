@@ -16,15 +16,7 @@
 #ifndef SENSOR_POWER_POLICY_H
 #define SENSOR_POWER_POLICY_H
 
-#include <mutex>
-#include <unordered_map>
-#include <vector>
-
-#include "nocopyable.h"
-
 #include "active_info.h"
-#include "client_info.h"
-#include "sensor_errors.h"
 #include "sensor_manager.h"
 #include "stream_session.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR

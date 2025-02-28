@@ -19,22 +19,16 @@
 #include <map>
 #include <queue>
 #include <set>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
-#include "refbase.h"
 #include "singleton.h"
 
 #include "accesstoken_kit.h"
 #include "iremote_object.h"
-#include "nocopyable.h"
 
 #include "app_thread_info.h"
 #include "sensor_basic_data_channel.h"
 #include "sensor_basic_info.h"
 #include "sensor_channel_info.h"
-#include "sensor_data_event.h"
 
 namespace OHOS {
 namespace Sensors {

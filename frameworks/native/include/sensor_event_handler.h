@@ -17,7 +17,6 @@
 #define SENSOR_EVENT_HANDLER_H
 
 #include "event_handler.h"
-#include "event_runner.h"
 
 namespace OHOS {
 namespace Sensors {

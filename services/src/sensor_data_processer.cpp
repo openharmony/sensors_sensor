@@ -18,17 +18,11 @@
 #include <cinttypes>
 #include <sys/prctl.h>
 #include <sys/socket.h>
-#include <thread>
 
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "print_sensor_data.h"
-#include "permission_util.h"
-#include "securec.h"
-#include "sensor_basic_data_channel.h"
-#include "sensor_errors.h"
-#include "system_ability_definition.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorDataProcesser"

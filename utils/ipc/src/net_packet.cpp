@@ -15,8 +15,6 @@
 
 #include "net_packet.h"
 
-#include "sensor_errors.h"
-
 namespace OHOS {
 namespace Sensors {
 NetPacket::NetPacket(MessageId msgId) : msgId_(msgId)

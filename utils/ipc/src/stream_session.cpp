@@ -15,11 +15,8 @@
 
 #include "stream_session.h"
 
-#include <cinttypes>
 #include <sstream>
 
-#include "proto.h"
-#include "sensor_errors.h"
 #include "stream_socket.h"
 
 #undef LOG_TAG
