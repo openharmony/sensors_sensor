@@ -45,7 +45,7 @@ private:
     void FreeRedundantEventBuffer();
 private:
     std::vector<int32_t> recentWriteBlockNums_;
-    int32_t blockNumsUpdateIndex_ = 0;
+    uint32_t blockNumsUpdateIndex_ = 0;
 };
 
 using ReportDataCb = int32_t (ReportDataCallback::*)(SensorData *sensorData, sptr<ReportDataCallback> cb);

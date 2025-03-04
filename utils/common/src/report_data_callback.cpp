@@ -53,7 +53,7 @@ int32_t ReportDataCallback::ReportEventCallback(SensorData *sensorData, sptr<Rep
         SEN_HILOGE("Callback is null");
         return ERROR;
     }
-    if (cb->eventsBuf_.writeFullBlockNum >= cb->eventsBuf_.blockList.size()) {
+    if (cb->eventsBuf_.writeFullBlockNum >= static_cast<int32_t>(cb->eventsBuf_.blockList.size())) {
         SEN_HILOGE("Event buffer more than the blockList size");
         return ERROR;
     }
@@ -116,7 +116,7 @@ void ReportDataCallback::FreeRedundantEventBuffer()
         return;
     }
 
-    for (int32_t index = maxWriteBlockNum; index < eventsBuf_.blockList.size(); ++index) {
+    for (int32_t index = maxWriteBlockNum; index < static_cast<int32_t>(eventsBuf_.blockList.size()); ++index) {
         if (eventsBuf_.blockList[index].dataBuf == nullptr) {
             break;
         }
