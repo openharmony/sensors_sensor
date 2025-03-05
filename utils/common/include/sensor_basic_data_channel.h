@@ -44,6 +44,7 @@ public:
     const std::unordered_map<int32_t, SensorData> &GetDataCacheBuf() const;
 
 private:
+    uint64_t tag();
     std::mutex fdLock_;
     int32_t sendFd_;
     int32_t receiveFd_;
