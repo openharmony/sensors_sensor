@@ -91,6 +91,8 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
         SEN_HILOGE("Socketpair failed, errno:%{public}d", errno);
         return ERROR;
     }
+    fdsan_exchange_owner_tag(sockFds[0], 0, TAG);
+    fdsan_exchange_owner_tag(sockFds[1], 0, TAG);
     serverFd = sockFds[0];
     clientFd = sockFds[1];
     if (serverFd < 0 || clientFd < 0) {
@@ -124,8 +126,10 @@ int32_t StreamServer::AddSocketPairInfo(int32_t uid, int32_t pid, int32_t tokenT
     return ERR_OK;
 
 CLOSE_SOCK:
-    close(serverFd);
-    close(clientFd);
+    fdsan_close_with_tag(sockFds[0], TAG);
+    fdsan_close_with_tag(sockFds[1], TAG);
+    serverFd = -1;
+    clientFd = -1;
     return ERROR;
 }
 
@@ -169,7 +173,7 @@ void StreamServer::DelSession(int32_t pid)
         sessionsMap_.erase(fdIt);
     }
     if (fd >= 0) {
-        int32_t ret = close(fd);
+        int32_t ret = fdsan_close_with_tag(fd, TAG);
         if (ret != 0) {
             SEN_HILOGE("Socket fd close failed, ret:%{public}d, errno:%{public}d", ret, errno);
         }
