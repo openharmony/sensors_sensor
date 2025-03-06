@@ -22,6 +22,10 @@ namespace Sensors {
 #undef LOG_DOMAIN
 #define LOG_DOMAIN 0xD002700
 
+#ifndef TAG
+#define TAG static_cast<uint64_t>(LOG_DOMAIN)
+#endif
+
 #ifndef SENSOR_FUNC_FMT
 #define SENSOR_FUNC_FMT "in %{public}s, "
 #endif

@@ -83,7 +83,7 @@ void StreamSocket::Close()
     StreamSocketClose(streamSocketPtr_.get());
 #else
     if (fd_ >= 0) {
-        auto rf = close(fd_);
+        auto rf = fdsan_close_with_tag(fd_, TAG);
         if (rf != 0) {
             SEN_HILOGE("Socket close failed, rf:%{public}d", rf);
         }

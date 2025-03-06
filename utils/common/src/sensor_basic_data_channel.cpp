@@ -64,8 +64,8 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
         receiveFd_ = -1;
         return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
     }
-    fdsan_exchange_owner_tag(socketPair[0], 0, tag());
-    fdsan_exchange_owner_tag(socketPair[1], 0, tag());
+    fdsan_exchange_owner_tag(socketPair[0], 0, TAG);
+    fdsan_exchange_owner_tag(socketPair[1], 0, TAG);
     if (setsockopt(socketPair[0], SOL_SOCKET, SO_SNDBUF, &SENSOR_READ_DATA_SIZE, sizeof(SENSOR_READ_DATA_SIZE)) != 0) {
         SEN_HILOGE("setsockopt socketpair 0, SNDBUF failed, errno:%{public}d", errno);
         goto CLOSE_SOCK;
@@ -96,8 +96,8 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel()
     return ERR_OK;
 
     CLOSE_SOCK:
-    fdsan_close_with_tag(socketPair[0], tag());
-    fdsan_close_with_tag(socketPair[1], tag());
+    fdsan_close_with_tag(socketPair[0], TAG);
+    fdsan_close_with_tag(socketPair[1], TAG);
     sendFd_ = -1;
     receiveFd_ = -1;
     return SENSOR_CHANNEL_SOCKET_CREATE_ERR;
@@ -166,7 +166,7 @@ void SensorBasicDataChannel::CloseSendFd()
 {
     std::unique_lock<std::mutex> lock(fdLock_);
     if (sendFd_ != -1) {
-        fdsan_close_with_tag(sendFd_, tag());
+        fdsan_close_with_tag(sendFd_, TAG);
         sendFd_ = -1;
         SEN_HILOGD("Close sendFd_");
     }
@@ -265,12 +265,12 @@ int32_t SensorBasicDataChannel::DestroySensorBasicChannel()
 {
     std::unique_lock<std::mutex> lock(fdLock_);
     if (sendFd_ >= 0) {
-        fdsan_close_with_tag(sendFd_, tag());
+        fdsan_close_with_tag(sendFd_, TAG);
         sendFd_ = -1;
         SEN_HILOGD("Close sendFd_ success");
     }
     if (receiveFd_ >= 0) {
-        fdsan_close_with_tag(receiveFd_, tag());
+        fdsan_close_with_tag(receiveFd_, TAG);
         receiveFd_ = -1;
         SEN_HILOGD("Close receiveFd_ success");
     }
@@ -293,11 +293,6 @@ void SensorBasicDataChannel::SetSensorStatus(bool isActive)
     std::unique_lock<std::mutex> lock(statusLock_);
     isActive_ = isActive;
     return;
-}
-
-uint64_t SensorBasicDataChannel::tag()
-{
-    return static_cast<uint64_t>(LOG_DOMAIN);
 }
 } // namespace Sensors
 } // namespace OHOS
