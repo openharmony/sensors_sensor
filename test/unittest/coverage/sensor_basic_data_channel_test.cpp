@@ -140,7 +140,7 @@ HWTEST_F(SensorBasicDataChannelTest, ReceiveData_001, TestSize.Level1)
     SensorBasicDataChannel sensorChannel = SensorBasicDataChannel();
     char buff[128] = {};
     int32_t ret = sensorChannel.ReceiveData([this] (int32_t length) {
-    this->ReceiveData(length);
+        this->ReceiveData(length);
     }, static_cast<void *>(buff), sizeof(buff));
     ASSERT_EQ(ret, ERROR);
 

@@ -15,15 +15,17 @@ domain: SENSOR
 
 ENABLE_SENSOR:
   __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: When registering enable sensor}
-  UID: {type: INT32, desc: calling uid}
   PKG_NAME: {type: STRING, desc: package name}
   TYPE: {type: INT32, desc: type}
+  UID: {type: INT32, desc: calling uid}
+  PID: {type: INT32, desc: calling pid}
 
 DISABLE_SENSOR:
   __BASE: {type: STATISTIC, level: MINOR, tag: PowerStats, desc: When unregistering disable sensor}
-  UID: {type: INT32, desc: calling uid}
-  PKG_NAME: {type: STRING, desc: package name}
   TYPE: {type: INT32, desc: type}
+  PKG_NAME: {type: STRING, desc: package name}
+  UID: {type: INT32, desc: calling uid}
+  PID: {type: INT32, desc: calling pid}
 
 DATA_CHANNEL_EXCEPTION:
   __BASE: {type: FAULT, level: MINOR, desc: sensor data channel exception}
