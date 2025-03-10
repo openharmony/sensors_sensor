@@ -58,6 +58,7 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_001, TestSize.Level1
     int32_t ret = reportDataCallback.ReportEventCallback(g_sensorData, cb);
     ASSERT_EQ(ret, ERROR);
 
+    sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
     if (callback->eventsBuf_.circularBuf != nullptr) {
         delete[] callback->eventsBuf_.circularBuf;
         callback->eventsBuf_.circularBuf = nullptr;
@@ -75,7 +76,9 @@ HWTEST_F(SensorBasicDataChannelTest, ReportDataCallbackTest_002, TestSize.Level1
     sptr<ReportDataCallback> callback = new (std::nothrow) ReportDataCallback();
     callback->eventsBuf_.eventNum = CIRCULAR_BUF_LEN + 1;
     callback->eventsBuf_.writePosition = 1;
-
+    int32_t ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
+    ASSERT_EQ(ret, ERROR);
+    
     callback->eventsBuf_.eventNum = 1;
     callback->eventsBuf_.writePosition = CIRCULAR_BUF_LEN + 1;
     ret = reportDataCallback.ReportEventCallback(g_sensorData, callback);
