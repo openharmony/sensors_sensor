@@ -537,6 +537,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
     clientInfo_.DestroyCmd(clientInfo_.GetUidByPid(pid));
+    POWER_POLICY.DeleteDeathPidSensorInfo(pid);
 }
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)

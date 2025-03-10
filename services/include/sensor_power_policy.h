@@ -32,6 +32,7 @@ public:
     ErrCode ResetSensors();
     std::vector<ActiveInfo> GetActiveInfoList(int32_t pid);
     void ReportActiveInfo(const ActiveInfo &activeInfo, const std::vector<SessionPtr> &sessionList);
+    void DeleteDeathPidSensorInfo(int32_t pid);
 
 private:
     bool CheckFreezingSensor(int32_t sensorId);
