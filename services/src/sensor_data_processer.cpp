@@ -257,7 +257,7 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     return ret;
 }
 
-void SensorDataProcesser::EventFilter(SensorData *event)
+void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
     int32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId;
     if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
