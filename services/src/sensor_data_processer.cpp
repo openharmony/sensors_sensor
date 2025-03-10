@@ -259,13 +259,9 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
 
 void SensorDataProcesser::EventFilter(SensorData *event)
 {
-    if (event == nullptr) {
-        SEN_HILOGE("event is nullptr");
-        return;
-    }
-    int32_t sensorId = event->sensorTypeId;
+    int32_t sensorId = eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId;
     if (sensorId == SENSOR_TYPE_ID_HALL_EXT) {
-        PrintSensorData::GetInstance().PrintSensorDataLog("EventFilter", *event);
+        PrintSensorData::GetInstance().PrintSensorDataLog("EventFilter", eventsBuf.circularBuf[eventsBuf.readPos]);
     }
     std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
     for (auto &channel : channelList) {
@@ -273,7 +269,7 @@ void SensorDataProcesser::EventFilter(SensorData *event)
             SEN_HILOGW("Sensor status is not active");
             continue;
         }
-        SendEvents(channel, *event);
+        SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
     }
 }
 
@@ -283,14 +279,19 @@ int32_t SensorDataProcesser::ProcessEvents(sptr<ReportDataCallback> dataCallback
     std::unique_lock<std::mutex> lk(ISensorHdiConnection::dataMutex_);
     ISensorHdiConnection::dataCondition_.wait(lk, [this] { return ISensorHdiConnection::dataReady_.load(); });
     ISensorHdiConnection::dataReady_.store(false);
-    std::vector<SensorData*> events;
-    dataCallback->GetEventData(events);
-    if (events.empty()) {
+    auto &eventsBuf = dataCallback->GetEventData();
+    if (eventsBuf.eventNum <= 0) {
         SEN_HILOGE("Data cannot be empty");
         return NO_EVENT;
     }
-    for (size_t i = 0; i < events.size(); i++) {
-        EventFilter(events[i]);
+    int32_t eventNum = eventsBuf.eventNum;
+    for (int32_t i = 0; i < eventNum; i++) {
+        EventFilter(eventsBuf);
+        eventsBuf.readPos++;
+        if (eventsBuf.readPos >= CIRCULAR_BUF_LEN) {
+            eventsBuf.readPos = 0;
+        }
+        eventsBuf.eventNum--;
     }
     return SUCCESS;
 }

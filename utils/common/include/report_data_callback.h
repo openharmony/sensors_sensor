@@ -24,14 +24,14 @@
 namespace OHOS {
 namespace Sensors {
 
-struct SensorDataBlock {
-    struct SensorData *dataBuf = nullptr;
-    int32_t eventNum = 0;
-};
+constexpr int32_t CIRCULAR_BUF_LEN = 1024;
+constexpr int32_t SENSOR_DATA_LENGTH = 64;
 
-struct SaveEventBuf {
-    std::vector<SensorDataBlock> blockList;
-    int32_t writeFullBlockNum;
+struct CircularEventBuf {
+    struct SensorData *circularBuf;
+    int32_t readPos;
+    int32_t writePosition;
+    int32_t eventNum;
 };
 
 class ReportDataCallback : public RefBase {
@@ -39,13 +39,8 @@ public:
     ReportDataCallback();
     ~ReportDataCallback();
     int32_t ReportEventCallback(SensorData *sensorData, sptr<ReportDataCallback> cb);
-    void GetEventData(std::vector<SensorData*> &events);
-    SaveEventBuf eventsBuf_;
-private:
-    void FreeRedundantEventBuffer();
-private:
-    std::vector<int32_t> recentWriteBlockNums_;
-    uint32_t blockNumsUpdateIndex_ = 0;
+    CircularEventBuf &GetEventData();
+    CircularEventBuf eventsBuf_;
 };
 
 using ReportDataCb = int32_t (ReportDataCallback::*)(SensorData *sensorData, sptr<ReportDataCallback> cb);
