@@ -56,6 +56,7 @@ private:
     int32_t CreateSocketClientFd(int32_t &clientFd);
     int32_t CreateSocketChannel();
     void ReenableSensor();
+    void WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret);
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
     sptr<ISensorService> sensorServer_ = nullptr;
