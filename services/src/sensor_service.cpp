@@ -210,13 +210,13 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
     int32_t uid = clientInfo_.GetUidByPid(pid);
     if (enable) {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+            "LEVEL", logLevel, "PKG_NAME", packageName, "TYPE", sensorId, "UID", uid, "PID", pid);
         SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d, pid:%{public}d, "
             "samplingPeriodNs:%{public}" PRId64 ", samplingPeriodNs:%{public}" PRId64, packageName.c_str(),
             sensorId, pid, samplingPeriodNs, maxReportDelayNs);
     } else {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "UID", uid, "PKG_NAME", packageName, "TYPE", sensorId);
+            "LEVEL", logLevel, "PKG_NAME", packageName, "TYPE", sensorId, "UID", uid, "PID", pid);
         SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d, pid:%{public}d",
             packageName.c_str(), sensorId, pid);
     }
