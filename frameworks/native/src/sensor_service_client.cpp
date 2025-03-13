@@ -65,7 +65,8 @@ int32_t SensorServiceClient::InitServiceClient()
     if (sensorServer_ != nullptr) {
         SEN_HILOGD("Already init");
         if (sensorList_.empty()) {
-            sensorServer_->GetSensorList(sensorList_);
+            int32_t ret = sensorServer_->GetSensorList(sensorList_);
+            WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST, ret);
             SEN_HILOGW("sensorList is %{public}s", sensorList_.empty() ? "empty" : "not empty");
         }
         return ERR_OK;
@@ -86,7 +87,8 @@ int32_t SensorServiceClient::InitServiceClient()
         CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
         remoteObject->AddDeathRecipient(serviceDeathObserver_);
         sensorList_.clear();
-        sensorServer_->GetSensorList(sensorList_);
+        int32_t ret = sensorServer_->GetSensorList(sensorList_);
+        WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST, ret);
         if (sensorList_.empty()) {
             SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
         }
@@ -134,6 +136,7 @@ int32_t SensorServiceClient::EnableSensor(int32_t sensorId, int64_t samplingPeri
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -157,6 +160,7 @@ int32_t SensorServiceClient::DisableSensor(int32_t sensorId)
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->DisableSensor(sensorId);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_DISABLE_SENSOR, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -203,6 +207,7 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->TransferDataChannel(sensorDataChannel->GetSendDataFd(), remoteObject);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_TRANSFER_DATA_CHANNEL, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -227,6 +232,12 @@ int32_t SensorServiceClient::DestroyDataChannel()
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->DestroySensorChannel(remoteObject);
+    if (ret != NO_ERROR) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT, "PKG_NAME",
+            "DestroySensorChannel", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+    }
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -241,7 +252,9 @@ void SensorServiceClient::ReenableSensor()
         std::lock_guard<std::mutex> mapLock(mapMutex_);
         for (const auto &it : sensorInfoMap_) {
             if (sensorServer_ != nullptr) {
-                sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+                int32_t ret = sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(),
+                    it.second.GetMaxReportDelayNs());
+                WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR, ret);
             }
         }
     }
@@ -251,6 +264,55 @@ void SensorServiceClient::ReenableSensor()
     }
     Disconnect();
     CreateSocketChannel();
+}
+
+void SensorServiceClient::WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret)
+{
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+    if (ret != NO_ERROR) {
+        switch (code) {
+            case ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_DISABLE_SENSOR:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "DisableSensor", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "GetSensorList", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_TRANSFER_DATA_CHANNEL:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "TransferDataChannel", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "CreateSocketChannel", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_DESTROY_SOCKET_CHANNEL:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "DestroySocketChannel", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_ENABLE_ACTIVE_INFO_C_B:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "EnableActiveInfoCB", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_DISABLE_ACTIVE_INFO_C_B:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "DisableActiveInfoCB", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_RESET_SENSORS:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "ResetSensors", "ERROR_CODE", ret);
+                break;
+            default:
+                SEN_HILOGW("Code does not exist, code:%{public}d", static_cast<int32_t>(code));
+                break;
+        }
+    }
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 }
 
 void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
@@ -289,7 +351,8 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
             if (sensorServer_ != nullptr && sensorClientStub_ != nullptr) {
                 auto remoteObject = sensorClientStub_->AsObject();
                 if (remoteObject != nullptr) {
-                    sensorServer_->TransferDataChannel(dataChannel_->GetSendDataFd(), remoteObject);
+                    ret = sensorServer_->TransferDataChannel(dataChannel_->GetSendDataFd(), remoteObject);
+                    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_TRANSFER_DATA_CHANNEL, ret);
                 }
             }
         }
@@ -423,6 +486,7 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
     StartTrace(HITRACE_TAG_SENSORS, "DisableActiveInfoCB");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->DisableActiveInfoCB();
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_DISABLE_ACTIVE_INFO_C_B, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -438,6 +502,7 @@ int32_t SensorServiceClient::Unregister(SensorActiveInfoCB callback)
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     ret = sensorServer_->DestroySocketChannel(remoteObject);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_DESTROY_SOCKET_CHANNEL, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -463,6 +528,7 @@ int32_t SensorServiceClient::ResetSensors()
     StartTrace(HITRACE_TAG_SENSORS, "ResetSensors");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->ResetSensors();
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_RESET_SENSORS, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -540,6 +606,7 @@ int32_t SensorServiceClient::CreateSocketClientFd(int32_t &clientFd)
     auto remoteObject = sensorClientStub_->AsObject();
     CHKPR(remoteObject, INVALID_POINTER);
     int ret = sensorServer_->CreateSocketChannel(remoteObject, clientFd);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
@@ -582,6 +649,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
     StartTrace(HITRACE_TAG_SENSORS, "EnableActiveInfoCB");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     ret = sensorServer_->EnableActiveInfoCB();
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_ACTIVE_INFO_C_B, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
