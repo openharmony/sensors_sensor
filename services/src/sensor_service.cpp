@@ -29,7 +29,6 @@
 #include "permission_util.h"
 
 #include "print_sensor_data.h"
-#include "sensor_data_processer.h"
 #include "sensor_dump.h"
 #include "system_ability_definition.h"
 
