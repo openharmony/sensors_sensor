@@ -216,7 +216,7 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
             sensorId, pid, samplingPeriodNs, maxReportDelayNs);
     } else {
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "PKG_NAME", packageName, "TYPE", sensorId, "UID", uid, "PID", pid);
+            "LEVEL", logLevel, "TYPE", sensorId, "PKG_NAME", packageName, "UID", uid, "PID", pid);
         SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d, pid:%{public}d",
             packageName.c_str(), sensorId, pid);
     }
