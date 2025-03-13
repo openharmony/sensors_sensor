@@ -53,6 +53,7 @@ private:
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
+    std::unordered_map<int32_t, Sensor> sensorMap_;
     std::mutex sensorMapMutex_;
 };
 } // namespace Sensors

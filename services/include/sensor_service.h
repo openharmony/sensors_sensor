@@ -93,6 +93,7 @@ private:
     std::mutex sensorsMutex_;
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
+    std::unordered_map<int32_t, Sensor> sensorMap_;
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     bool InitInterface();
     bool InitDataCallback();

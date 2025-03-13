@@ -22,9 +22,6 @@
 
 namespace OHOS {
 namespace Sensors {
-namespace {
-    std::unordered_map<int32_t, Sensor> sensorMap_;
-}
 class SensorDataProcesser : public RefBase {
 public:
     explicit SensorDataProcesser(const std::unordered_map<int32_t, Sensor> &sensorMap);
@@ -52,6 +49,7 @@ private:
     std::mutex dataCountMutex_;
     std::unordered_map<int32_t, std::vector<sptr<FifoCacheData>>> dataCountMap_;
     std::mutex sensorMutex_;
+    std::unordered_map<int32_t, Sensor> sensorMap_;
 };
 } // namespace Sensors
 } // namespace OHOS
