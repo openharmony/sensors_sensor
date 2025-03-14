@@ -32,7 +32,8 @@
         "memmgr",
         "safwk",
         "samgr",
-        "eventhandler"
+        "eventhandler",
+        "hicollie"
       ],
       "third_party": []
     },

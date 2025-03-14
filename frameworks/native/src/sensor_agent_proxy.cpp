@@ -17,6 +17,7 @@
 
 #include "print_sensor_data.h"
 #include "sensor_service_client.h"
+#include "sensor_xcollie.h"
 #undef LOG_TAG
 #define LOG_TAG "SensorAgentProxy"
 using namespace OHOS::HiviewDFX;
@@ -110,7 +111,10 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         SEN_HILOGE("Create data channel failed, ret:%{public}d", ret);
         return ret;
     }
-    ret = SEN_CLIENT.TransferDataChannel(dataChannel_);
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:TransferDataChannel", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.TransferDataChannel(dataChannel_);
+    }
     if (ret != ERR_OK) {
         auto destroyRet = dataChannel_->DestroySensorDataChannel();
         SEN_HILOGE("Transfer data channel failed, ret:%{public}d, destroyRet:%{public}d", ret, destroyRet);
@@ -135,7 +139,10 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
         SEN_HILOGE("Destroy data channel failed, ret:%{public}d", ret);
         return ret;
     }
-    ret = SEN_CLIENT.DestroyDataChannel();
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:DestroyDataChannel", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.DestroyDataChannel();
+    }
     if (ret != ERR_OK) {
         SEN_HILOGE("Destroy service data channel fail, ret:%{public}d", ret);
         return ret;
@@ -168,7 +175,11 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
         SEN_HILOGE("Subscribe user first");
         return ERROR;
     }
-    int32_t ret = SEN_CLIENT.EnableSensor(sensorId, samplingInterval_, reportInterval_);
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:EnableSensor", XCOLLIE_TIMEOUT_15S);
+        ret = SEN_CLIENT.EnableSensor(sensorId, samplingInterval_, reportInterval_);
+    }
     if (ret != 0) {
         SEN_HILOGE("Enable sensor failed, ret:%{public}d", ret);
         subscribeSet.erase(user);
@@ -207,7 +218,11 @@ int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *u
     subscribeSet.erase(user);
     if (subscribeSet.empty()) {
         subscribeMap_.erase(sensorId);
-        int32_t ret = SEN_CLIENT.DisableSensor(sensorId);
+        int32_t ret = 0;
+        {
+            SensorXcollie SensorXcollie("SensorAgentProxy:DisableSensor", XCOLLIE_TIMEOUT_15S);
+            ret = SEN_CLIENT.DisableSensor(sensorId);
+        }
         if (ret != 0) {
             SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
             return ret;
@@ -352,7 +367,11 @@ void SensorAgentProxy::ClearSensorInfos() const
 int32_t SensorAgentProxy::ConvertSensorInfos() const
 {
     CALL_LOG_ENTER;
-    std::vector<Sensor> sensorList = SEN_CLIENT.GetSensorList();
+    std::vector<Sensor> sensorList;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:GetSensorList", XCOLLIE_TIMEOUT_5S);
+        sensorList = SEN_CLIENT.GetSensorList();
+    }
     if (sensorList.empty()) {
         SEN_HILOGE("Get sensor lists failed");
         return ERROR;
@@ -416,7 +435,11 @@ int32_t SensorAgentProxy::SuspendSensors(int32_t pid)
         SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
-    int32_t ret = SEN_CLIENT.SuspendSensors(pid);
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:SuspendSensors", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.SuspendSensors(pid);
+    }
     if (ret != ERR_OK) {
         SEN_HILOGD("Suspend sensors failed, ret:%{public}d", ret);
     }
@@ -430,7 +453,11 @@ int32_t SensorAgentProxy::ResumeSensors(int32_t pid)
         SEN_HILOGE("Pid is invalid, pid:%{public}d", pid);
         return PARAMETER_ERROR;
     }
-    int32_t ret = SEN_CLIENT.ResumeSensors(pid);
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:ResumeSensors", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.ResumeSensors(pid);
+    }
     if (ret != ERR_OK) {
         SEN_HILOGD("Resume sensors failed, ret:%{public}d", ret);
     }
@@ -453,7 +480,11 @@ int32_t SensorAgentProxy::GetSensorActiveInfos(int32_t pid,
         sensorActiveInfos_ = nullptr;
     }
     std::vector<ActiveInfo> activeInfoList;
-    int32_t ret = SEN_CLIENT.GetActiveInfoList(pid, activeInfoList);
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:GetActiveInfoList", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.GetActiveInfoList(pid, activeInfoList);
+    }
     if (ret != ERR_OK) {
         SEN_HILOGE("Get active info list failed, ret:%{public}d", ret);
         return ret;
@@ -487,7 +518,11 @@ int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback)
 {
     CHKPR(callback, OHOS::Sensors::ERROR);
     CHKPR(dataChannel_, INVALID_POINTER);
-    int32_t ret = SEN_CLIENT.Register(callback, dataChannel_);
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:Register", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.Register(callback, dataChannel_);
+    }
     if (ret != ERR_OK) {
         SEN_HILOGE("Register sensor active info callback failed, ret:%{public}d", ret);
     }
@@ -497,7 +532,11 @@ int32_t SensorAgentProxy::Register(SensorActiveInfoCB callback)
 int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
 {
     CHKPR(callback, OHOS::Sensors::ERROR);
-    int32_t ret = SEN_CLIENT.Unregister(callback);
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:Unregister", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.Unregister(callback);
+    }
     if (ret != ERR_OK) {
         SEN_HILOGE("Unregister sensor active info callback failed, ret:%{public}d", ret);
     }
@@ -506,7 +545,11 @@ int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
 
 int32_t SensorAgentProxy::ResetSensors() const
 {
-    int32_t ret = SEN_CLIENT.ResetSensors();
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:ResetSensors", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.ResetSensors();
+    }
     if (ret != ERR_OK) {
         SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
     }
