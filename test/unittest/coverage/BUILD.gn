@@ -15,7 +15,7 @@ import("//build/test.gni")
 import("./../../../sensor.gni")
 
 ohos_unittest("SensorBasicDataChannelTest") {
-  module_out_path = "sensor/coverage"
+  module_out_path = "sensor/sensor/coverage"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/coverage/sensor_basic_data_channel_test.cpp",
@@ -44,7 +44,7 @@ ohos_unittest("SensorBasicDataChannelTest") {
 }
 
 ohos_unittest("ReportDataCallbackTest") {
-  module_out_path = "sensor/coverage"
+  module_out_path = "sensor/sensor/coverage"
 
   sources =
       [ "$SUBSYSTEM_DIR/test/unittest/coverage/report_data_callback_test.cpp" ]
