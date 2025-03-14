@@ -15,7 +15,7 @@ import("//build/test.gni")
 import("./../../../../sensor.gni")
 
 ohos_unittest("SensorNativeTest") {
-  module_out_path = "sensor/interfaces"
+  module_out_path = "sensor/sensor/interfaces/kits"
 
   sources =
       [ "$SUBSYSTEM_DIR/test/unittest/interfaces/kits/sensor_native_test.cpp" ]

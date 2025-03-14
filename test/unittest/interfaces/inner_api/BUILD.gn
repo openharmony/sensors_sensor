@@ -15,7 +15,7 @@ import("//build/test.gni")
 import("./../../../../sensor.gni")
 
 ohos_unittest("SensorAgentTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/common/src/system_info.cpp",
@@ -47,7 +47,7 @@ ohos_unittest("SensorAgentTest") {
 }
 
 ohos_unittest("SensorAlgorithmTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/sensor_algorithm_test.cpp" ]
 
@@ -73,7 +73,7 @@ ohos_unittest("SensorAlgorithmTest") {
 }
 
 ohos_unittest("SensorPowerTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/sensor_power_test.cpp",
@@ -109,7 +109,7 @@ ohos_unittest("SensorPowerTest") {
 }
 
 ohos_unittest("PostureTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources =
       [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/posture_test.cpp" ]
@@ -135,7 +135,7 @@ ohos_unittest("PostureTest") {
 }
 
 ohos_unittest("HeadPostureTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//head_posture_test.cpp",
@@ -162,7 +162,7 @@ ohos_unittest("HeadPostureTest") {
 }
 
 ohos_unittest("Ambientlight1Test") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//ambient_light1_test.cpp" ]
 
@@ -187,7 +187,7 @@ ohos_unittest("Ambientlight1Test") {
 }
 
 ohos_unittest("DropDetectionTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [ "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api//drop_detection_test.cpp" ]
 
@@ -212,7 +212,7 @@ ohos_unittest("DropDetectionTest") {
 }
 
 ohos_unittest("RPCSensorTest") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/rpc_sensor_test.cpp",
@@ -239,7 +239,7 @@ ohos_unittest("RPCSensorTest") {
 }
 
 ohos_unittest("Proximity1Test") {
-  module_out_path = "sensor/interfaces/inner_api"
+  module_out_path = "sensor/sensor/interfaces/inner_api"
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/proximity1_test.cpp",

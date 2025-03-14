@@ -13,7 +13,7 @@
 
 import("//build/test.gni")
 
-module_output_path = "sensor/interfaces/js"
+module_output_path = "sensor/sensor/interfaces/js"
 ohos_js_unittest("SensorJsTest") {
   module_out_path = module_output_path
   hap_profile = "./config.json"
