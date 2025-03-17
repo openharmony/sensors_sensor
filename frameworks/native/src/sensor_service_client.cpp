@@ -76,9 +76,7 @@ int32_t SensorServiceClient::InitServiceClient()
     }
     auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     CHKPR(systemAbilityManager, SENSOR_NATIVE_SAM_ERR);
-    auto object = systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID);
-    CHKPR(object, SENSOR_NATIVE_GET_SERVICE_ERR);
-    sensorServer_ = iface_cast<ISensorService>(object);
+    sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
     if (sensorServer_ != nullptr) {
         SEN_HILOGD("Get service success");
         serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
