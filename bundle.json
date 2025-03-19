@@ -62,6 +62,13 @@
             ],
             "header_base": "//base/sensors/sensor/interfaces/inner_api"
           }
+        },
+        {
+          "name": "//base/sensors/sensor/frameworks/cj:cj_sensor_ffi",
+          "header": {
+            "header_base": "//base/sensors/sensor/frameworks/cj/include",
+            "header_files":[]
+          }
         }
       ],
       "test": [
