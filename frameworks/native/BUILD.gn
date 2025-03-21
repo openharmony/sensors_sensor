@@ -25,6 +25,7 @@ idl_gen_interface("sensor_service_interface") {
 
 ohos_source_set("sensor_service_stub") {
   public_configs = [ ":sensor_private_config" ]
+  branch_protector_ret = "pac_ret"
   sanitize = {
     cfi = true
     cfi_cross_dso = true
