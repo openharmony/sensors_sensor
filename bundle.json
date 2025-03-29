@@ -32,7 +32,8 @@
         "memmgr",
         "safwk",
         "samgr",
-        "eventhandler"
+        "eventhandler",
+        "runtime_core"
       ],
       "third_party": []
     },
@@ -41,6 +42,7 @@
         "base_group": [],
         "fwk_group": [
           "//base/sensors/sensor/frameworks/js/napi:sensor_js_target",
+          "//base/sensors/sensor/frameworks/js/ani:sensor_ani_target",
           "//base/sensors/sensor/frameworks/cj:cj_sensor_ffi",
           "//base/sensors/sensor/frameworks/native:sensor_target",
           "//base/sensors/sensor/frameworks/native:ohsensor",
