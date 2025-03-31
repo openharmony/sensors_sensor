@@ -380,4 +380,34 @@ std::optional<std::string> OptionalAccessor::Convert<std::string>()
     std::string content = std::string(utf8_buffer);
     return content;
 }
+
+class AniLocalScopeGuard {
+public:
+    AniLocalScopeGuard(ani_env *env, size_t nrRefs) : env_(env)
+    {
+        status_ = env_->CreateLocalScope(nrRefs);
+    }
+
+    ~AniLocalScopeGuard()
+    {
+        if (ANI_OK != status_) {
+            return;
+        }
+        env_->DestroyLocalScope();
+    }
+
+    bool IsStatusOK()
+    {
+        return ANI_OK == status_;
+    }
+
+    ani_status GetStatus()
+    {
+        return status_;
+    }
+
+private:
+    ani_env *env_ = nullptr;
+    ani_status status_ = ANI_ERROR;
+};
 #endif

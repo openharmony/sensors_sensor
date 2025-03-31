@@ -43,4 +43,12 @@ export default namespace sensor {
         beta: number;
         gamma: number;
     }
+
+    class OrientationResponseImpl implements OrientationResponse {
+        timestamp: number;
+        accuracy: SensorAccuracy;
+        alpha: number;
+        beta: number;
+        gamma: number;
+    }
 }

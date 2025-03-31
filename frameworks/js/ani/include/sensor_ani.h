@@ -15,8 +15,16 @@
 #ifndef SENSOR_ANI_H
 #define SENSOR_ANI_H
 
-#include "refbase.h"
+#include <ani.h>
+#include <string>
+#include <iostream>
+#include <unordered_map>
+#include <cctype>
+#include <map>
+#include <unistd.h>
+#include <vector>
 
+#include "refbase.h"
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
 #include "sensor_log.h"
