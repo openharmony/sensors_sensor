@@ -104,8 +104,13 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
         return ERR_OK;
     }
     CHKPR(dataChannel_, INVALID_POINTER);
-    auto ret = dataChannel_->CreateSensorDataChannel([this] (SensorEvent *events, int32_t num, void *data) {
-        this->HandleSensorData(events, num, data);
+    auto ret = dataChannel_->CreateSensorDataChannel(
+        [weakSelf = std::weak_ptr<SensorAgentProxy>(SENSOR_AGENT_IMPL)](SensorEvent *events, int32_t num, void *data) {
+        if (auto sharedSelf = weakSelf.lock()) {
+            sharedSelf->HandleSensorData(events, num, data);
+        } else {
+            SEN_HILOGD("SensorAgentProxy object has been released");
+        }
     }, nullptr);
     if (ret != ERR_OK) {
         SEN_HILOGE("Create data channel failed, ret:%{public}d", ret);
