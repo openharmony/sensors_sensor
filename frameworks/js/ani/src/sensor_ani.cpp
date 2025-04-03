@@ -173,12 +173,12 @@ static bool SendEventToMainThread(const std::function<void()> func)
         SEN_HILOGE("func == nullptr");
         return false;
     }
-    std::shared_ptr<OHOS::AppExecFwk::EventRunner> runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
+    auto runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
     if (!runner) {
         SEN_HILOGE("runner == nullptr");
         return false;
     }
-    std::shared_ptr<OHOS::AppExecFwk::EventHandler> handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
+    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
     handler->PostTask(func, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
     SEN_HILOGD("PostTask success");
     return true;
@@ -234,35 +234,77 @@ bool ValidateAndInitialize(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object
     return true;
 }
 
+ani_enum_item GetEnumItem(ani_env *env, int32_t accuracy)
+{
+    ani_namespace ns;
+    static const char *namespaceName = "L@ohos/sensor/sensor;";
+    if (ANI_OK != env->FindNamespace(namespaceName, &ns)) {
+        SEN_HILOGE("Not found '%{public}s'", namespaceName);
+        return nullptr;
+    }
+
+    ani_enum aniEnum{};
+    const char *enumName = "LSensorAccuracy;";
+    if (ANI_OK != env->Namespace_FindEnum(ns, enumName, &aniEnum)) {
+        SEN_HILOGE("Not found '%{public}s'", enumName);
+        return nullptr;
+    }
+
+    constexpr int32_t loopMaxNum = 1000;
+    for (int32_t index = 0U; index < loopMaxNum; index++) {
+        ani_enum_item enumItem{};
+        if (ANI_OK != env->Enum_GetEnumItemByIndex(aniEnum, index, &enumItem)) {
+            SEN_HILOGE("Enum_GetIntemByIndex failed");
+            return nullptr;
+        }
+        ani_int intValue = -1;
+        if (ANI_OK != env->EnumItem_GetValue_Int(enumItem, &intValue)) {
+            SEN_HILOGE("EnumItem_GetValue_Int FAILD.");
+            return nullptr;
+        }
+        if (intValue == accuracy) {
+            return enumItem;
+        }
+    }
+    SEN_HILOGE("Get enumItem by %{public}d failed.", accuracy);
+    return nullptr;
+}
+
 bool SetSensorPropertiesAndPushData(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object obj,
     std::vector<ani_ref> &data)
 {
+    CALL_LOG_ENTER;
     int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
     size_t size = g_sensorAttributeList[sensorTypeId].size();
     auto sensorAttributes = g_sensorAttributeList[sensorTypeId];
     for (uint32_t i = 0; i < size; ++i) {
-        if (ANI_OK != asyncCallbackInfo->env->Object_SetPropertyByName_Float(obj, sensorAttributes[i].c_str(),
+        if (ANI_OK != asyncCallbackInfo->env->Object_SetPropertyByName_Double(obj, sensorAttributes[i].c_str(),
             asyncCallbackInfo->data.sensorData.data[i])) {
             SEN_HILOGE("Object_SetPropertyByName_Double failed");
             return false;
         }
     }
 
-    if (ANI_OK != asyncCallbackInfo->env->Object_SetPropertyByName_Long(obj, "timestamp",
+    if (ANI_OK != asyncCallbackInfo->env->Object_SetPropertyByName_Double(obj, "timestamp",
         asyncCallbackInfo->data.sensorData.timestamp)) {
-        SEN_HILOGE("Object_SetPropertyByName_Long failed");
+        SEN_HILOGE("Object_SetPropertyByName_Double timestamp failed");
         return false;
     }
 
-    if (ANI_OK != asyncCallbackInfo->env->Object_SetPropertyByName_Int(obj, "accuracy",
-        asyncCallbackInfo->data.sensorData.sensorAccuracy)) {
-        SEN_HILOGE("Object_SetPropertyByName_Int failed");
+    ani_enum_item accuracy = GetEnumItem(asyncCallbackInfo->env, asyncCallbackInfo->data.sensorData.sensorAccuracy);
+    if (accuracy == nullptr) {
+        SEN_HILOGE("GetEnumItem failed");
+        return false;
+    }
+    if (ANI_OK != asyncCallbackInfo->env->Object_SetPropertyByName_Ref(obj, "accuracy", accuracy)) {
+        SEN_HILOGE("Object_SetPropertyByName_Ref accuracy failed");
         return false;
     }
 
     data.push_back(obj);
     return true;
 }
+
 bool ConvertToSensorData(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::vector<ani_ref> &data)
 {
     ani_object obj;
