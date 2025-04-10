@@ -523,6 +523,7 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
         SEN_HILOGE("pid is invalid");
         return;
     }
+    POWER_POLICY.DeleteDeathPidSensorInfo(pid);
     SEN_HILOGI("pid is %{public}d", pid);
     std::vector<int32_t> activeSensors = clientInfo_.GetSensorIdByPid(pid);
     for (size_t i = 0; i < activeSensors.size(); ++i) {
@@ -536,7 +537,6 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     clientInfo_.DestroySensorChannel(pid);
     clientInfo_.DestroyClientPid(client);
     clientInfo_.DestroyCmd(clientInfo_.GetUidByPid(pid));
-    POWER_POLICY.DeleteDeathPidSensorInfo(pid);
 }
 
 void SensorService::RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid)
