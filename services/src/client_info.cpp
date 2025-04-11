@@ -804,5 +804,15 @@ void ClientInfo::ChangeSensorPerm(AccessTokenID tokenId, const std::string &perm
         UpdatePermState(pid, sensorId, state);
     }
 }
+
+void ClientInfo::SetDeviceStatus(uint32_t deviceStatus)
+{
+    deviceStatus_ = deviceStatus;
+}
+
+uint32_t ClientInfo::GetDeviceStatus()
+{
+    return deviceStatus_;
+}
 } // namespace Sensors
 } // namespace OHOS

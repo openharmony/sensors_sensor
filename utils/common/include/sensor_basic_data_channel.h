@@ -42,6 +42,8 @@ public:
     bool GetSensorStatus() const;
     void SetSensorStatus(bool isActive);
     const std::unordered_map<int32_t, SensorData> &GetDataCacheBuf() const;
+    std::string GetPackageName();
+    void SetPackageName(std::string packageName);
 
 private:
     std::mutex fdLock_;
@@ -50,6 +52,8 @@ private:
     bool isActive_;
     std::mutex statusLock_;
     std::unordered_map<int32_t, SensorData> dataCacheBuf_;
+    std::string packageName_;
+    std::mutex pkNameLock_;
 };
 } // namespace Sensors
 } // namespace OHOS

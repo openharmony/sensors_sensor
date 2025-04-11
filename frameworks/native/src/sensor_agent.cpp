@@ -170,3 +170,8 @@ int32_t ResetSensors()
     }
     return ret;
 }
+
+void SetDeviceStatus(uint32_t deviceStatus)
+{
+    SENSOR_AGENT_IMPL->SetDeviceStatus(deviceStatus);
+}

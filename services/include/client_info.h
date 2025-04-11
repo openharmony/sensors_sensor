@@ -77,6 +77,8 @@ public:
     int32_t GetPidByTokenId(AccessTokenID tokenId);
     void UpdatePermState(int32_t pid, int32_t sensorId, bool state);
     void ChangeSensorPerm(AccessTokenID tokenId, const std::string &permName, bool state);
+    void SetDeviceStatus(uint32_t deviceStatus);
+    uint32_t GetDeviceStatus();
 
 private:
     DISALLOW_COPY_AND_MOVE(ClientInfo);
@@ -98,6 +100,7 @@ private:
     std::mutex activeInfoCBPidMutex_;
     std::unordered_set<int32_t> activeInfoCBPidSet_;
     static std::unordered_map<std::string, std::set<int32_t>> userGrantPermMap_;
+    std::atomic<uint32_t> deviceStatus_;
 };
 } // namespace Sensors
 } // namespace OHOS

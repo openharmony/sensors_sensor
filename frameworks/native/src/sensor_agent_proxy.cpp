@@ -560,5 +560,11 @@ int32_t SensorAgentProxy::ResetSensors() const
     }
     return ret;
 }
+
+void SensorAgentProxy::SetDeviceStatus(uint32_t deviceStatus) const
+{
+    SEN_HILOGI("SetDeviceStatus in, deviceStatus:%{public}d", deviceStatus);
+    SEN_CLIENT.SetDeviceStatus(deviceStatus);
+}
 } // namespace Sensors
 } // namespace OHOS

@@ -31,4 +31,5 @@ interface OHOS.Sensors.ISensorService {
     void EnableActiveInfoCB();
     void DisableActiveInfoCB();
     void ResetSensors();
+    void SetDeviceStatus([in] unsigned int deviceStatus);
  }

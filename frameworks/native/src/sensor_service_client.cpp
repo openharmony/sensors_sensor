@@ -305,6 +305,10 @@ void SensorServiceClient::WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t
                 HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
                     "PKG_NAME", "ResetSensors", "ERROR_CODE", ret);
                 break;
+            case ISensorServiceIpcCode::COMMAND_SET_DEVICE_STATUS:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "SetDeviceStatus", "ERROR_CODE", ret);
+                break;
             default:
                 SEN_HILOGW("Code does not exist, code:%{public}d", static_cast<int32_t>(code));
                 break;
@@ -658,6 +662,29 @@ int32_t SensorServiceClient::CreateSocketChannel()
     }
     isConnected_ = true;
     return ERR_OK;
+}
+
+void SensorServiceClient::SetDeviceStatus(uint32_t deviceStatus)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return;
+    }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    CHKPV(sensorServer_);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    StartTrace(HITRACE_TAG_SENSORS, "SetDeviceStatus");
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    ret = sensorServer_->SetDeviceStatus(deviceStatus);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("SetDeviceStatus failed, ret:%{public}d", ret);
+    }
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_SET_DEVICE_STATUS, ret);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
 }
 } // namespace Sensors
 } // namespace OHOS

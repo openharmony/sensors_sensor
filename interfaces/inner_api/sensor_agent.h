@@ -189,6 +189,8 @@ int32_t Unregister(SensorActiveInfoCB callback);
  */
 int32_t ResetSensors();
 
+void SetDeviceStatus(uint32_t deviceStatus);
+
 #ifdef __cplusplus
 #if __cplusplus
 }

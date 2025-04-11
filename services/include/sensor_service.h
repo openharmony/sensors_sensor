@@ -57,6 +57,7 @@ public:
     ErrCode EnableActiveInfoCB() override;
     ErrCode DisableActiveInfoCB() override;
     ErrCode ResetSensors() override;
+    ErrCode SetDeviceStatus(uint32_t deviceStatus) override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);

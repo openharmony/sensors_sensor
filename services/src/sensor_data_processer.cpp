@@ -22,6 +22,7 @@
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
+#include "motion_plugin.h"
 #include "print_sensor_data.h"
 
 #undef LOG_TAG
@@ -265,11 +266,19 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
     }
     std::vector<sptr<SensorBasicDataChannel>> channelList = clientInfo_.GetSensorChannel(sensorId);
     for (auto &channel : channelList) {
+        if (channel == nullptr) {
+            SEN_HILOGE("channel is null");
+            continue;
+        }
         if (!channel->GetSensorStatus()) {
             SEN_HILOGW("Sensor status is not active");
             continue;
         }
-        SendEvents(channel, eventsBuf.circularBuf[eventsBuf.readPos]);
+        SensorData sensorData = eventsBuf.circularBuf[eventsBuf.readPos];
+#ifdef MSDP_MOTION_ENABLE
+        MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
+#endif // MSDP_MOTION_ENABLE
+        SendEvents(channel, sensorData);
     }
 }
 

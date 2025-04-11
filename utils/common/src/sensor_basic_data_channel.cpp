@@ -295,5 +295,18 @@ void SensorBasicDataChannel::SetSensorStatus(bool isActive)
     isActive_ = isActive;
     return;
 }
+
+std::string SensorBasicDataChannel::GetPackageName()
+{
+    std::unique_lock<std::mutex> lock(pkNameLock_);
+    return packageName_;
+}
+
+void SensorBasicDataChannel::SetPackageName(std::string packageName)
+{
+    SEN_HILOGD("SetPackageName in, packageName:%{public}s", packageName.c_str());
+    std::unique_lock<std::mutex> lock(pkNameLock_);
+    packageName_ = packageName;
+}
 } // namespace Sensors
 } // namespace OHOS

@@ -184,10 +184,6 @@ ErrCode SensorManager::AfterDisableSensor(int32_t sensorId)
 void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageName, bool isAccessTokenServiceActive)
 {
     CALL_LOG_ENTER;
-    if (!isAccessTokenServiceActive) {
-        SEN_HILOGE("Access token service is inactive");
-        return;
-    }
     int32_t tokenType = AccessTokenKit::GetTokenTypeFlag(tokenId);
     switch (tokenType) {
         case ATokenTypeEnum::TOKEN_HAP: {
@@ -201,6 +197,10 @@ void SensorManager::GetPackageName(AccessTokenID tokenId, std::string &packageNa
         }
         case ATokenTypeEnum::TOKEN_NATIVE:
         case ATokenTypeEnum::TOKEN_SHELL: {
+            if (!isAccessTokenServiceActive) {
+                SEN_HILOGE("Access token service is inactive");
+                return;
+            }
             NativeTokenInfo tokenInfo;
             if (AccessTokenKit::GetNativeTokenInfo(tokenId, tokenInfo) != 0) {
                 SEN_HILOGE("Get native token info fail");
