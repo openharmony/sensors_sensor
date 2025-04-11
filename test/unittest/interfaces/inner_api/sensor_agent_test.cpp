@@ -350,7 +350,7 @@ HWTEST_F(SensorAgentTest, SetModeTest_003, TestSize.Level1)
  * EnvConditions: mobile that can run ohos test framework
  * CaseDescription: Verify the sensor service framework process.
  */
-HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level1)
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_001, TestSize.Level0)
 {
     SEN_HILOGI("SensorNativeApiTest_001 in");
 
