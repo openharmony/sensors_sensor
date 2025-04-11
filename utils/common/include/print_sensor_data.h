@@ -38,6 +38,7 @@ public:
     void SavePrintUserInfo(const RecordSensorCallback callback);
     void RemovePrintUserInfo(const RecordSensorCallback callback);
     void PrintSensorDataLog(const std::string &name, const SensorData &data);
+    void PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount);
 
 private:
     void PrintClientData(const SensorEvent &event);
