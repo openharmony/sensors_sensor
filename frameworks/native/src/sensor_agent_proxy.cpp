@@ -386,6 +386,13 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         SEN_HILOGE("The number of sensors exceeds the maximum value");
         return ERROR;
     }
+    if (sensorInfoCount_ > 0 && sensorInfoCount_ == static_cast<int32_t>(count)) {
+        return SUCCESS;
+    } else if (sensorInfoCount_ > 0 && sensorInfoCount_ != static_cast<int32_t>(count)) {
+        SEN_HILOGW("sensorInfos_ error, sensorInfoCount_:%{public}d, sensorListCount:%{public}d", sensorInfoCount_,
+            static_cast<int32_t>(count));
+        ClearSensorInfos();
+    }
     sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
     CHKPR(sensorInfos_, ERROR);
     for (size_t i = 0; i < count; ++i) {
@@ -420,16 +427,15 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     CHKPR(sensorInfo, OHOS::Sensors::ERROR);
     CHKPR(count, OHOS::Sensors::ERROR);
     std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
-    if (sensorInfos_ == nullptr) {
-        int32_t ret = ConvertSensorInfos();
-        if (ret != SUCCESS) {
-            SEN_HILOGE("Convert sensor lists failed");
-            ClearSensorInfos();
-            return ERROR;
-        }
+    int32_t ret = ConvertSensorInfos();
+    if (ret != SUCCESS) {
+        SEN_HILOGE("Convert sensor lists failed");
+        ClearSensorInfos();
+        return ERROR;
     }
     *sensorInfo = sensorInfos_;
     *count = sensorInfoCount_;
+    PrintSensorData::GetInstance().PrintSensorInfo(sensorInfos_, sensorInfoCount_);
     return SUCCESS;
 }
 
