@@ -33,7 +33,8 @@
         "safwk",
         "samgr",
         "eventhandler",
-        "hicollie"
+        "hicollie",
+        "window_manager"
       ],
       "third_party": []
     },

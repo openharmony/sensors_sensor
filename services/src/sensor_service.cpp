@@ -19,12 +19,14 @@
 #include <string_ex.h>
 #include <tokenid_kit.h>
 
+#include "display_manager.h"
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #ifdef MEMMGR_ENABLE
 #include "mem_mgr_client.h"
 #endif // MEMMGR_ENABLE
+#include "motion_plugin.h"
 #include "ipc_skeleton.h"
 #include "permission_util.h"
 
@@ -75,6 +77,18 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         isAccessTokenServiceActive_ = true;
     }
 #endif // ACCESS_TOKEN_ENABLE
+#ifdef MSDP_MOTION_ENABLE
+    if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
+        if (!LoadMotionSensor()) {
+            SEN_HILOGI("LoadMotionSensor fail");
+        }
+    }
+#endif // MSDP_MOTION_ENABLE
+    if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
+        uint32_t status = Rosen::DisplayManager::GetInstance().GetDeviceStatus();
+        clientInfo_.SetDeviceStatus(status);
+        SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
+    }
 }
 
 void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
@@ -126,6 +140,10 @@ void SensorService::OnStart()
 #ifdef ACCESS_TOKEN_ENABLE
     AddSystemAbilityListener(ACCESS_TOKEN_MANAGER_SERVICE_ID);
 #endif // ACCESS_TOKEN_ENABLE
+#ifdef MSDP_MOTION_ENABLE
+    AddSystemAbilityListener(MSDP_MOTION_SERVICE_ID);
+#endif // MSDP_MOTION_ENABLE
+    AddSystemAbilityListener(DISPLAY_MANAGER_SERVICE_SA_ID);
 }
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
@@ -489,6 +507,10 @@ ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObj
         return UPDATE_SENSOR_CHANNEL_ERR;
     }
     sensorBasicDataChannel->SetSensorStatus(true);
+    std::string packageName("");
+    sensorManager_.GetPackageName(callerToken, packageName, isAccessTokenServiceActive_);
+    SEN_HILOGI("Calling packageName:%{public}s", packageName.c_str());
+    sensorBasicDataChannel->SetPackageName(packageName);
     RegisterClientDeathRecipient(sensorClient, pid);
     SEN_HILOGI("Done");
     return ERR_OK;
@@ -784,6 +806,13 @@ void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessT
     CHKPV(server_);
     server_->clientInfo_.ChangeSensorPerm(result.tokenID, result.permissionName,
         (result.permStateChangeType != 0));
+}
+
+ErrCode SensorService::SetDeviceStatus(uint32_t deviceStatus)
+{
+    SEN_HILOGI("SetDeviceStatus in, deviceStatus:%{public}d", deviceStatus);
+    clientInfo_.SetDeviceStatus(deviceStatus);
+    return ERR_OK;
 }
 } // namespace Sensors
 } // namespace OHOS

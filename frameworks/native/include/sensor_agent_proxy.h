@@ -47,6 +47,7 @@ public:
     int32_t Unregister(SensorActiveInfoCB callback);
     void HandleSensorData(SensorEvent *events, int32_t num, void *data);
     int32_t ResetSensors() const;
+    void SetDeviceStatus(uint32_t deviceStatus) const;
 
 private:
     int32_t CreateSensorDataChannel();

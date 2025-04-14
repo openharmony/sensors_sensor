@@ -76,6 +76,7 @@ ohos_shared_library("libsensor_service") {
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "window_manager:libdm",
   ]
 
   if (sensor_memmgr_enable) {
@@ -85,6 +86,10 @@ ohos_shared_library("libsensor_service") {
 
   if (sensor_access_token_enable) {
     defines += [ "ACCESS_TOKEN_ENABLE" ]
+  }
+
+  if (sensor_msdp_motion_enable) {
+    defines += [ "MSDP_MOTION_ENABLE" ]
   }
 
   if (hiviewdfx_hisysevent_enable) {
@@ -189,6 +194,7 @@ ohos_static_library("libsensor_service_static") {
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "window_manager:libdm",
   ]
 
   if (sensor_memmgr_enable) {
@@ -198,6 +204,10 @@ ohos_static_library("libsensor_service_static") {
 
   if (sensor_access_token_enable) {
     defines += [ "ACCESS_TOKEN_ENABLE" ]
+  }
+
+  if (sensor_msdp_motion_enable) {
+    defines += [ "MSDP_MOTION_ENABLE" ]
   }
 
   if (hiviewdfx_hisysevent_enable) {

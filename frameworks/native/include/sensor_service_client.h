@@ -48,6 +48,7 @@ public:
     void ReceiveMessage(const char *buf, size_t size);
     void Disconnect();
     void HandleNetPacke(NetPacket &pkt);
+    void SetDeviceStatus(uint32_t deviceStatus);
 
 private:
     int32_t InitServiceClient();
