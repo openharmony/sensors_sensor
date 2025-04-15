@@ -78,9 +78,13 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
         }
         it->second.count++;
     } else {
+        it->second.hdiTimes++;
         if (sensorData.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintHdiData(sensorData);
             it->second.lastTime = sensorData.timestamp;
+            SEN_HILOGI("sensorId: %{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
+                std::to_string(it->second.hdiTimes).c_str());
+                it->second.hdiTimes = 0;
         }
     }
 }
@@ -174,9 +178,13 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
         }
         it->second.count++;
     } else {
+        clientTimes_++;
         if (event.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintClientData(event);
             it->second.lastTime = event.timestamp;
+            SEN_HILOGI("sensorId: %{public}d, clientTimes:%{public}s", event.sensorTypeId,
+                std::to_string(clientTimes_).c_str());
+                clientTimes_ = 0;
         }
     }
 }
@@ -259,6 +267,7 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorId)
     }
     it->second.count = 0;
     it->second.lastTime = 0;
+    it->second.hdiTimes = 0;
 }
 
 void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorData &data)
@@ -288,6 +297,11 @@ void PrintSensorData::PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInf
     }
     SEN_HILOGI("PrintSensorInfo success, sensorIds:%{public}s, sensorInfoCount:%{public}d", combineSensorIds.c_str(),
         sensorInfoCount);
+}
+
+void PrintSensorData::ResetClientTimes()
+{
+    clientTimes_ = 0;
 }
 } // namespace Sensors
 } // namespace OHOS

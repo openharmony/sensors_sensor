@@ -286,6 +286,7 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
+        PrintSensorData::GetInstance().ResetClientTimes();
     }
     SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return OHOS::Sensors::SUCCESS;
@@ -332,6 +333,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
         PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
+        PrintSensorData::GetInstance().ResetClientTimes();
     }
     SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
     return OHOS::Sensors::SUCCESS;
