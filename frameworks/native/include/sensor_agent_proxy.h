@@ -72,7 +72,7 @@ const int32_t CHECK_CODE = 0x00ABCDEF;
 struct SensorInfoCheck {
     int32_t checkCode = CHECK_CODE;
     SensorInfo *sensorInfos = nullptr;
-}
+};
 
 #define SENSOR_AGENT_IMPL OHOS::DelayedSingleton<SensorAgentProxy>::GetInstance()
 } // namespace Sensors
