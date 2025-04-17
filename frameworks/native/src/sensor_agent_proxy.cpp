@@ -370,6 +370,7 @@ void SensorAgentProxy::ClearSensorInfos() const
     free(sensorInfoCheck_.sensorInfos);
     sensorInfoCheck_.sensorInfos = nullptr;
     sensorInfoCheck_.checkCode = CHECK_CODE;
+    sensorInfoCount_ = 0;
 }
 
 int32_t SensorAgentProxy::ConvertSensorInfos() const
@@ -443,6 +444,12 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
         ClearSensorInfos();
         return ERROR;
     }
+    if (sensorInfoCheck_.checkCode != CHECK_CODE) {
+        SEN_HILOGE("CheckCode has been modified, %{public}d", sensorInfoCheck_.checkCode);
+        ClearSensorInfos();
+        return ERROR;
+    }
+    CHKPR(sensorInfoCheck_.sensorInfos, OHOS::Sensors::ERROR);
     *sensorInfo = sensorInfoCheck_.sensorInfos;
     *count = sensorInfoCount_;
     PrintSensorData::GetInstance().PrintSensorInfo(sensorInfoCheck_.sensorInfos, sensorInfoCount_);
