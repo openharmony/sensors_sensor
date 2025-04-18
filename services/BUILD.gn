@@ -73,10 +73,10 @@ ohos_shared_library("libsensor_service") {
     "access_token:libtokenid_sdk",
     "c_utils:utils",
     "hilog:libhilog",
+    "init:libbegetutil",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "window_manager:libdm",
   ]
 
   if (sensor_memmgr_enable) {
@@ -191,10 +191,10 @@ ohos_static_library("libsensor_service_static") {
     "access_token:libtokenid_sdk",
     "c_utils:utils",
     "hilog:libhilog",
+    "init:libbegetutil",
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
-    "window_manager:libdm",
   ]
 
   if (sensor_memmgr_enable) {

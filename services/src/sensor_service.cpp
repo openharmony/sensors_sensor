@@ -19,7 +19,6 @@
 #include <string_ex.h>
 #include <tokenid_kit.h>
 
-#include "display_manager.h"
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
@@ -29,6 +28,7 @@
 #include "motion_plugin.h"
 #include "ipc_skeleton.h"
 #include "permission_util.h"
+#include "parameters.h"
 
 #include "print_sensor_data.h"
 #include "sensor_dump.h"
@@ -63,6 +63,11 @@ void SensorService::OnDump()
     SEN_HILOGI("OnDump");
 }
 
+std::string GetDmsDeviceStatus()
+{
+    return OHOS::system::GetParameter("persist.dms.set.device.status", "0");
+}
+
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
@@ -85,7 +90,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     }
 #endif // MSDP_MOTION_ENABLE
     if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
-        uint32_t status = Rosen::DisplayManager::GetInstance().GetDeviceStatus();
+        uint32_t status = static_cast<uint32_t>(std::stoi(GetDmsDeviceStatus()));
         clientInfo_.SetDeviceStatus(status);
         SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
     }
