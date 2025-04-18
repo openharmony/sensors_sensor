@@ -65,7 +65,7 @@ void SensorService::OnDump()
 
 std::string GetDmsDeviceStatus()
 {
-    return OHOS::system::GetParameter("persist.dms.set.device.status", "0");
+    return OHOS::system::GetParameter("persist.dms.device.status", "0");
 }
 
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
