@@ -34,7 +34,7 @@
         "samgr",
         "eventhandler",
         "hicollie",
-        "window_manager"
+        "init"
       ],
       "third_party": []
     },
