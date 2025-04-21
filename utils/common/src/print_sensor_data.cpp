@@ -279,5 +279,15 @@ void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorDa
     str.append("\n");
     SEN_HILOGI("%{public}s SensorData: %{public}s", name.c_str(), str.c_str());
 }
+
+void PrintSensorData::PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount)
+{
+    std::string combineSensorIds = "";
+    for (int32_t i = 0; i < sensorInfoCount; ++i) {
+        combineSensorIds = combineSensorIds + std::to_string(sensorInfos[i].sensorTypeId) + " ";
+    }
+    SEN_HILOGI("PrintSensorInfo success, sensorIds:%{public}s, sensorInfoCount:%{public}d", combineSensorIds.c_str(),
+        sensorInfoCount);
+}
 } // namespace Sensors
 } // namespace OHOS

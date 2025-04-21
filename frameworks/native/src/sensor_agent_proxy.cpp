@@ -26,7 +26,7 @@ namespace Sensors {
 namespace {
 constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
 std::mutex sensorInfoMutex_;
-SensorInfo *sensorInfos_ = nullptr;
+SensorInfoCheck sensorInfoCheck_;
 std::mutex sensorActiveInfoMutex_;
 SensorActiveInfo *sensorActiveInfos_ = nullptr;
 int32_t sensorInfoCount_ = 0;
@@ -359,9 +359,11 @@ void SensorAgentProxy::ClearSensorInfos() const
         free(sensorActiveInfos_);
         sensorActiveInfos_ = nullptr;
     }
-    CHKPV(sensorInfos_);
-    free(sensorInfos_);
-    sensorInfos_ = nullptr;
+    CHKPV(sensorInfoCheck_.sensorInfos);
+    free(sensorInfoCheck_.sensorInfos);
+    sensorInfoCheck_.sensorInfos = nullptr;
+    sensorInfoCheck_.checkCode = CHECK_CODE;
+    sensorInfoCount_ = 0;
 }
 
 int32_t SensorAgentProxy::ConvertSensorInfos() const
@@ -381,10 +383,22 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         SEN_HILOGE("The number of sensors exceeds the maximum value");
         return ERROR;
     }
-    sensorInfos_ = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
-    CHKPR(sensorInfos_, ERROR);
+    if (sensorInfoCount_ > 0 && sensorInfoCount_ == static_cast<int32_t>(count)) {
+        return SUCCESS;
+    } else if (sensorInfoCount_ > 0 && sensorInfoCount_ != static_cast<int32_t>(count) &&
+        sensorInfoCheck_.checkCode == CHECK_CODE) {
+        SEN_HILOGW("sensorInfos_ error, sensorInfoCount_:%{public}d, sensorListCount:%{public}d", sensorInfoCount_,
+            static_cast<int32_t>(count));
+        ClearSensorInfos();
+    } else if (sensorInfoCheck_.checkCode != CHECK_CODE) {
+        SEN_HILOGE("CheckCode has been modified, %{public}d", sensorInfoCheck_.checkCode);
+        ClearSensorInfos();
+    }
+    sensorInfoCheck_.sensorInfos = (SensorInfo *)malloc(sizeof(SensorInfo) * count);
+    CHKPR(sensorInfoCheck_.sensorInfos, ERROR);
+    SEN_HILOGI("Sensor count is %{public}zu", count);
     for (size_t i = 0; i < count; ++i) {
-        SensorInfo *sensorInfo = sensorInfos_ + i;
+        SensorInfo *sensorInfo = sensorInfoCheck_.sensorInfos + i;
         errno_t ret = strcpy_s(sensorInfo->sensorName, NAME_MAX_LEN,
             sensorList[i].GetSensorName().c_str());
         CHKCR(ret == EOK, ERROR);
@@ -404,6 +418,8 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         sensorInfo->power = sensorList[i].GetPower();
         sensorInfo->minSamplePeriod = sensorList[i].GetMinSamplePeriodNs();
         sensorInfo->maxSamplePeriod = sensorList[i].GetMaxSamplePeriodNs();
+        SEN_HILOGI("Sensor %{public}zu: sensorId is %{public}d, sensorTypeId is %{public}d",
+            i, sensorInfo->sensorId, sensorInfo->sensorTypeId);
     }
     sensorInfoCount_ = static_cast<int32_t>(count);
     return SUCCESS;
@@ -415,16 +431,21 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     CHKPR(sensorInfo, OHOS::Sensors::ERROR);
     CHKPR(count, OHOS::Sensors::ERROR);
     std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
-    if (sensorInfos_ == nullptr) {
-        int32_t ret = ConvertSensorInfos();
-        if (ret != SUCCESS) {
-            SEN_HILOGE("Convert sensor lists failed");
-            ClearSensorInfos();
-            return ERROR;
-        }
+    int32_t ret = ConvertSensorInfos();
+    if (ret != SUCCESS) {
+        SEN_HILOGE("Convert sensor lists failed");
+        ClearSensorInfos();
+        return ERROR;
     }
-    *sensorInfo = sensorInfos_;
+    if (sensorInfoCheck_.checkCode != CHECK_CODE) {
+        SEN_HILOGE("CheckCode has been modified, %{public}d", sensorInfoCheck_.checkCode);
+        ClearSensorInfos();
+        return ERROR;
+    }
+    CHKPR(sensorInfoCheck_.sensorInfos, OHOS::Sensors::ERROR);
+    *sensorInfo = sensorInfoCheck_.sensorInfos;
     *count = sensorInfoCount_;
+    PrintSensorData::GetInstance().PrintSensorInfo(sensorInfoCheck_.sensorInfos, sensorInfoCount_);
     return SUCCESS;
 }
 
