@@ -209,5 +209,15 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorId)
     it->second.count = 0;
     it->second.lastTime = 0;
 }
+
+void PrintSensorData::PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount)
+{
+    std::string combineSensorIds = "";
+    for (int32_t i = 0; i < sensorInfoCount; ++i) {
+        combineSensorIds = combineSensorIds + std::to_string(sensorInfos[i].sensorTypeId) + " ";
+    }
+    SEN_HILOGI("PrintSensorInfo success, sensorIds:%{public}s, sensorInfoCount:%{public}d", combineSensorIds.c_str(),
+        sensorInfoCount);
+}
 } // namespace Sensors
 } // namespace OHOS

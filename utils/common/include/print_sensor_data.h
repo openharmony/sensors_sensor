@@ -37,6 +37,7 @@ public:
     bool IsContinuousType(int32_t sensorId);
     void SavePrintUserInfo(const RecordSensorCallback callback);
     void RemovePrintUserInfo(const RecordSensorCallback callback);
+    void PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount);
 
 private:
     void PrintClientData(const SensorEvent &event);
