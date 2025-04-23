@@ -40,6 +40,7 @@ constexpr float POWER = 20.0;
 constexpr float RESOLUTION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
+constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 const std::string VERSION_NAME = "1.0.1";
 std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_COLOR,
@@ -293,11 +294,14 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
-    if (ret != ERR_OK) {
+    if ((ret != ERR_OK) && (ret != HDI_DISABLE_SENSOR_TIMEOUT)) {
         SEN_HILOGI("Disable sensor failed, sensorId:%{public}d", sensorId);
         return DISABLE_SENSOR_ERR;
     }
-    return ret;
+    if (ret == HDI_DISABLE_SENSOR_TIMEOUT) {
+        SEN_HILOGI("Hdi DisableSensor timeout, ret:%{public}d", ret);
+    }
+    return ERR_OK;
 }
 
 int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
