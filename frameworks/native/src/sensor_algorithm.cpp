@@ -347,7 +347,7 @@ int32_t SensorAlgorithm::CreateRotationAndInclination(std::vector<float> gravity
     inclinationMatrix[6 % ROTATION_VECTOR_LENGTH + (6 / ROTATION_VECTOR_LENGTH) * inclinationMatrixDimension] = 0;
     inclinationMatrix[7 % ROTATION_VECTOR_LENGTH + (7 / ROTATION_VECTOR_LENGTH) * inclinationMatrixDimension] = -s;
     inclinationMatrix[8 % ROTATION_VECTOR_LENGTH + (8 / ROTATION_VECTOR_LENGTH) * inclinationMatrixDimension] = c;
-    if (rotationMatrixLength == FOUR_DIMENSIONAL_MATRIX_LENGTH) {
+    if (inclinationMatrixLength == FOUR_DIMENSIONAL_MATRIX_LENGTH) {
         inclinationMatrix[3] = inclinationMatrix[7] = inclinationMatrix[11] = inclinationMatrix[12]
             = inclinationMatrix[13] = inclinationMatrix[14] = 0.0f;
         inclinationMatrix[15] = 1.0f;
