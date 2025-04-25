@@ -40,7 +40,6 @@ constexpr float POWER = 20.0;
 constexpr float RESOLUTION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
-constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 const std::string VERSION_NAME = "1.0.1";
 std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_COLOR,
@@ -49,6 +48,7 @@ std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_PROXIMITY1
 };
 #endif // BUILD_VARIANT_ENG
+constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 } // namespace
 
 int32_t SensorHdiConnection::ConnectHdi()
