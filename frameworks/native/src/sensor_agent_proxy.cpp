@@ -438,6 +438,10 @@ int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count)
     CHKPR(sensorInfo, OHOS::Sensors::ERROR);
     CHKPR(count, OHOS::Sensors::ERROR);
     std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
+    if ((*sensorInfo) == nullptr) {
+        SEN_HILOGE("sensorInfo pointer is null");
+        return ERROR;
+    }
     int32_t ret = ConvertSensorInfos();
     if (ret != SUCCESS) {
         SEN_HILOGE("Convert sensor lists failed");
