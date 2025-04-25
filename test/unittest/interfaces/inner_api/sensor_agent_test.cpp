@@ -38,6 +38,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
+constexpr int32_t DEVICE_STATUS { 0 };
 
 PermissionStateFull g_infoManagerTestState = {
     .grantFlags = {1},
@@ -470,6 +471,16 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_003, TestSize.Level1)
 HWTEST_F(SensorAgentTest, SensorNativeApiTest_004, TestSize.Level1)
 {
     SEN_HILOGI("SensorNativeApiTest_004 in");
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+    int32_t ret = SetMode(SENSOR_ID, &user, SENSOR_DEFAULT_MODE);
+    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, SensorNativeApiTest_005, TestSize.Level1)
+{
+    SEN_HILOGI("SensorNativeApiTest_005 in");
+    SetDeviceStatus(DEVICE_STATUS);
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SetMode(SENSOR_ID, &user, SENSOR_DEFAULT_MODE);
