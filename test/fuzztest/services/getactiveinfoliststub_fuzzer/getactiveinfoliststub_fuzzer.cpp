@@ -37,6 +37,20 @@ auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
 } // namespace
 
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
+
 void SetUpTestCase()
 {
     const char **perms = new (std::nothrow) const char *[2];
@@ -64,14 +78,15 @@ void SetUpTestCase()
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    MessageParcel datas;
-    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    datas.WriteBuffer(data, size);
-    datas.RewindRead(0);
-    MessageParcel reply;
-    MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_GET_ACTIVE_INFO_LIST),
-        datas, reply, option);
+    if (g_service == nullptr) {
+        return false;
+    }
+    std::vector<ActiveInfo> activeInfoList;
+    int32_t pid = 0;
+    GetObject<int32_t>(pid, data, size);
+    g_service->GetActiveInfoList(pid, activeInfoList);
+    g_service->EnableActiveInfoCB();
+    g_service->DisableActiveInfoCB();
     return true;
 }
 } // namespace Sensors
