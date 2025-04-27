@@ -35,6 +35,8 @@ namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+int64_t g_samplingPeriod = 100000000;
+int64_t g_maxReportDelay = 100000000;
 } // namespace
 
 template<class T>
@@ -78,23 +80,19 @@ void SetUpTestCase()
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    MessageParcel datas;
-    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
+    if (g_service == nullptr) {
+        return false;
+    }
+    g_service->EnableSensor(SENSOR_TYPE_ID_ACCELEROMETER, g_samplingPeriod, g_maxReportDelay);
+    g_service->ResetSensors();
     size_t startPos = 0;
     int32_t sensorId = 0;
     startPos += GetObject<int32_t>(sensorId, data + startPos, size - startPos);
-    datas.WriteInt32(sensorId);
     int64_t samplingPeriod = 0;
     startPos += GetObject<int64_t>(samplingPeriod, data + startPos, size - startPos);
-    datas.WriteInt64(samplingPeriod);
     int64_t maxReportDelay = 0;
     GetObject<int64_t>(maxReportDelay, data + startPos, size - startPos);
-    datas.WriteInt64(maxReportDelay);
-    datas.RewindRead(0);
-    MessageParcel reply;
-    MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR),
-        datas, reply, option);
+    g_service->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
     return true;
 }
 }  // namespace Sensors

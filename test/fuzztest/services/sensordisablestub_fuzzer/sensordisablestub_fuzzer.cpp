@@ -78,16 +78,13 @@ void SetUpTestCase()
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    MessageParcel datas;
-    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
+    if (g_service == nullptr) {
+        return false;
+    }
+    g_service->DisableSensor(SENSOR_TYPE_ID_ACCELEROMETER);
     int32_t sensorId = 0;
     GetObject<int32_t>(sensorId, data, size);
-    datas.WriteInt32(sensorId);
-    datas.RewindRead(0);
-    MessageParcel reply;
-    MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DISABLE_SENSOR),
-        datas, reply, option);
+    g_service->DisableSensor(sensorId);
     return true;
 }
 } // namespace Sensors

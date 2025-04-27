@@ -79,28 +79,15 @@ size_t GetObject(T &object, const uint8_t *data, size_t size)
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
-    MessageParcel datas;
-    int32_t fd = 0;
-    GetObject<int32_t>(fd, data, size);
-    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
     if (g_remote == nullptr || g_service == nullptr) {
         return false;
     }
-    datas.WriteRemoteObject(g_remote);
-    datas.RewindRead(0);
-    MessageParcel reply;
-    MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_TRANSFER_DATA_CHANNEL),
-        datas, reply, option);
-    datas.RewindRead(0);
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_SENSOR_CHANNEL),
-        datas, reply, option);
-    datas.RewindRead(0);
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL),
-        datas, reply, option);
-    datas.RewindRead(0);
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_SOCKET_CHANNEL),
-        datas, reply, option);
+    int32_t clientFd = 0;
+    GetObject<int32_t>(clientFd, data, size);
+    g_service->CreateSocketChannel(g_remote, clientFd);
+    g_service->DestroySocketChannel(g_remote);
+    g_service->TransferDataChannel(clientFd, g_remote);
+    g_service->DestroySensorChannel(g_remote);
     return true;
 }
 } // namespace Sensors
