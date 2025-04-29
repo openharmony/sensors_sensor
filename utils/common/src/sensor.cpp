@@ -232,6 +232,7 @@ Sensor* Sensor::Unmarshalling(Parcel &parcel)
     auto sensor = new (std::nothrow) Sensor();
     if (sensor != nullptr && !sensor->ReadFromParcel(parcel)) {
         SEN_HILOGE("ReadFromParcel is failed");
+        delete sensor;
         sensor = nullptr;
     }
     return sensor;

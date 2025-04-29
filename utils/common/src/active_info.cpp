@@ -99,7 +99,10 @@ ActiveInfo* ActiveInfo::Unmarshalling(Parcel &parcel)
     if (activeInfo == nullptr || !(parcel.ReadInt32(pid) && parcel.ReadInt32(sensorId) &&
         parcel.ReadInt64(samplingPeriodNs) && parcel.ReadInt64(maxReportDelayNs))) {
         SEN_HILOGE("Read from parcel is failed");
-        activeInfo = nullptr;
+        if (activeInfo != nullptr) {
+            delete activeInfo;
+            activeInfo = nullptr;
+        }
         return activeInfo;
     }
     activeInfo->SetPid(pid);
