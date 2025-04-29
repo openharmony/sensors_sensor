@@ -25,7 +25,8 @@
 namespace OHOS {
 namespace Sensors {
 const std::map<int32_t, std::string> ERROR_MESSAGES = {
-    {SERVICE_EXCEPTION,  "Service exception."},
+    {SERVICE_EXCEPTION,  "Service exception.Possible causes:"
+        "1. Sensor hdf service exception;2. Sensor service ipc exception;3. Sensor data channel exception."},
     {PERMISSION_DENIED,  "Permission denied."},
     {PARAMETER_ERROR,  "The parameter invalid."},
     {SENSOR_NO_SUPPORT,  "The sensor is not supported by the device."},
