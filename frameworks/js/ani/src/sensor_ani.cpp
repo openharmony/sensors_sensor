@@ -86,7 +86,7 @@ static float g_bodyState = -1.0f;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_subscribeCallbacks;
 static std::mutex onMutex_;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
-static thread_local std::shared_ptr<OHOS::AppExecFwk::EventHandler> mainHandler;
+static thread_local std::shared_ptr<OHOS::AppExecFwk::EventHandler> mainHandler = nullptr;
 
 static void ThrowBusinessError(ani_env *env, int errCode, std::string&& errMsg)
 {
@@ -344,6 +344,16 @@ static void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKPV(asyncCallbackInfo);
     auto task = [asyncCallbackInfo]() {
         SEN_HILOGD("Begin to call task");
+        ani_env *env = nullptr;
+        ani_options aniArgs {0, nullptr};
+        if (ANI_ERROR == asyncCallbackInfo->vm->AttachCurrentThread(&aniArgs, ANI_VERSION_1, &env)) {
+            if (ANI_OK != asyncCallbackInfo->vm->GetEnv(ANI_VERSION_1, &env)) {
+                SEN_HILOGE("GetEnv failed");
+                return;
+            }
+        }
+        asyncCallbackInfo->env = env;
+
         AniLocalScopeGuard aniLocalScopeGuard(asyncCallbackInfo->env, ANI_SCOPE_SIZE);
         if (!aniLocalScopeGuard.IsStatusOK()) {
             SEN_HILOGE("CreateLocalScope failed");
@@ -452,12 +462,19 @@ static bool IsSubscribed(ani_env *env, int32_t sensorTypeId, ani_object callback
     }
     return false;
 }
+
 static void UpdateCallbackInfos(ani_env *env, int32_t sensorTypeId, ani_object callback)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
     CHKCV((!IsSubscribed(env, sensorTypeId, callback)), "The callback has been subscribed");
-    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ON_CALLBACK);
+
+    ani_vm *vm = nullptr;
+    if (ANI_OK != env->GetVM(&vm)) {
+        SEN_HILOGE("GetVM failed.");
+        return;
+    }
+    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(vm, env, ON_CALLBACK);
     CHKPV(asyncCallbackInfo);
 
     if (ANI_OK != env->GlobalReference_Create(callback, &asyncCallbackInfo->callback[0])) {
