@@ -106,13 +106,14 @@ struct BusinessError {
 
 class AsyncCallbackInfo : public RefBase {
 public:
-    ani_env* env = nullptr;
+    ani_vm *vm = nullptr;
+    ani_env *env = nullptr;
     ani_ref callback[CALLBACK_NUM] = { 0 };
     CallbackData data;
     BusinessError error;
     CallbackDataType type;
     vector<SensorInfo> sensorInfos;
-    AsyncCallbackInfo(ani_env* env, CallbackDataType type) : env(env), type(type) {}
+    AsyncCallbackInfo(ani_vm *vm, ani_env *env, CallbackDataType type) : vm(vm), env(env), type(type) {}
     ~AsyncCallbackInfo()
     {
         CALL_LOG_ENTER;
@@ -122,6 +123,8 @@ public:
                     SEN_HILOGD("Delete reference, i:%{public}d", i);
                     env->GlobalReference_Delete(callback[i]);
                     callback[i] = nullptr;
+                    env = nullptr;
+                    vm = nullptr;
                 }
             }
         }

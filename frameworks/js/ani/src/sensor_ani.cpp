@@ -86,25 +86,43 @@ static float g_bodyState = -1.0f;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_subscribeCallbacks;
 static std::mutex onMutex_;
 static std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
+static thread_local std::shared_ptr<OHOS::AppExecFwk::EventHandler> mainHandler = nullptr;
 
-static ani_error CreateAniError(ani_env *env, std::string &&errMsg)
+static void ThrowBusinessError(ani_env *env, int errCode, std::string&& errMsg)
 {
-    static const char *errorClsName = "Lescompat/Error;";
+    SEN_HILOGD("Begin ThrowBusinessError.");
+    static const char *errorClsName = "L@ohos/base/BusinessError;";
     ani_class cls {};
     if (ANI_OK != env->FindClass(errorClsName, &cls)) {
-        SEN_HILOGE("Not found namespace %{public}s.", errorClsName);
-        return nullptr;
+        SEN_HILOGE("find class BusinessError %{public}s failed", errorClsName);
+        return;
     }
     ani_method ctor;
-    if (ANI_OK != env->Class_FindMethod(cls, "<ctor>", "Lstd/core/String;:V", &ctor)) {
-        SEN_HILOGE("Not found <ctor> in %{public}s.", errorClsName);
-        return nullptr;
+    if (ANI_OK != env->Class_FindMethod(cls, "<ctor>", ":V", &ctor)) {
+        SEN_HILOGE("find method BusinessError.constructor failed");
+        return;
     }
-    ani_string error_msg;
-    env->String_NewUTF8(errMsg.c_str(), 17U, &error_msg);
     ani_object errorObject;
-    env->Object_New(cls, ctor, &errorObject, error_msg);
-    return static_cast<ani_error>(errorObject);
+    if (ANI_OK != env->Object_New(cls, ctor, &errorObject)) {
+        SEN_HILOGE("create BusinessError object failed");
+        return;
+    }
+    ani_double aniErrCode = static_cast<ani_double>(errCode);
+    ani_string errMsgStr;
+    if (ANI_OK != env->String_NewUTF8(errMsg.c_str(), errMsg.size(), &errMsgStr)) {
+        SEN_HILOGE("convert errMsg to ani_string failed");
+        return;
+    }
+    if (ANI_OK != env->Object_SetFieldByName_Double(errorObject, "code", aniErrCode)) {
+        SEN_HILOGE("set error code failed");
+        return;
+    }
+    if (ANI_OK != env->Object_SetPropertyByName_Ref(errorObject, "message", errMsgStr)) {
+        SEN_HILOGE("set error message failed");
+        return;
+    }
+    env->ThrowError(static_cast<ani_error>(errorObject));
+    return;
 }
 
 static bool CheckSubscribe(int32_t sensorTypeId)
@@ -170,17 +188,19 @@ static ani_boolean IsInstanceOf(ani_env *env, const std::string &cls_name, ani_o
 static bool SendEventToMainThread(const std::function<void()> func)
 {
     if (func == nullptr) {
-        SEN_HILOGE("func == nullptr");
+        SEN_HILOGE("func is nullptr!");
         return false;
     }
-    auto runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
-    if (!runner) {
-        SEN_HILOGE("runner == nullptr");
-        return false;
+
+    if (!mainHandler) {
+        auto runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
+        if (!runner) {
+            SEN_HILOGE("get main event runner failed!");
+            return false;
+        }
+        mainHandler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
     }
-    auto handler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
-    handler->PostTask(func, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
-    SEN_HILOGD("PostTask success");
+    mainHandler->PostTask(func, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
     return true;
 }
 
@@ -324,17 +344,25 @@ static void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
     CHKPV(asyncCallbackInfo);
     auto task = [asyncCallbackInfo]() {
         SEN_HILOGD("Begin to call task");
+        ani_env *env = nullptr;
+        ani_options aniArgs {0, nullptr};
+        if (ANI_ERROR == asyncCallbackInfo->vm->AttachCurrentThread(&aniArgs, ANI_VERSION_1, &env)) {
+            if (ANI_OK != asyncCallbackInfo->vm->GetEnv(ANI_VERSION_1, &env)) {
+                SEN_HILOGE("GetEnv failed");
+                return;
+            }
+        }
+        asyncCallbackInfo->env = env;
+
         AniLocalScopeGuard aniLocalScopeGuard(asyncCallbackInfo->env, ANI_SCOPE_SIZE);
         if (!aniLocalScopeGuard.IsStatusOK()) {
             SEN_HILOGE("CreateLocalScope failed");
             return;
         }
 
-        ani_error error;
         if (!(g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end())) {
             SEN_HILOGE("asyncCallbackInfo type is invalid");
-            error = CreateAniError(asyncCallbackInfo->env, "asyncCallbackInfo type is invalid");
-            asyncCallbackInfo->env->ThrowError(error);
+            ThrowBusinessError(asyncCallbackInfo->env, EINVAL, "asyncCallbackInfo type is invalid");
             return;
         }
         std::vector<ani_ref> args;
@@ -344,22 +372,19 @@ static void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         SEN_HILOGD("Begin to call FunctionalObject_Call");
         if (fnObj == nullptr) {
             SEN_HILOGE("fnObj == nullptr");
-            error = CreateAniError(asyncCallbackInfo->env, "fnObj == nullptr");
-            asyncCallbackInfo->env->ThrowError(error);
+            ThrowBusinessError(asyncCallbackInfo->env, EINVAL, "fnObj == nullptr");
             return;
         }
         if (IsInstanceOf(asyncCallbackInfo->env, "Lstd/core/Function1;", fnObj) == 0) {
             SEN_HILOGE("fnObj is not instance Of function");
-            error = CreateAniError(asyncCallbackInfo->env, "fnObj is not instance Of function");
-            asyncCallbackInfo->env->ThrowError(error);
+            ThrowBusinessError(asyncCallbackInfo->env, EINVAL, "fnObj is not instance Of function");
             return;
         }
 
         ani_ref result;
         if (ANI_OK != asyncCallbackInfo->env->FunctionalObject_Call(fnObj, 1, args.data(), &result)) {
             SEN_HILOGE("FunctionalObject_Call failed");
-            error = CreateAniError(asyncCallbackInfo->env, "FunctionalObject_Call failed");
-            asyncCallbackInfo->env->ThrowError(error);
+            ThrowBusinessError(asyncCallbackInfo->env, EINVAL, "FunctionalObject_Call failed");
             return;
         }
         SEN_HILOGD("FunctionalObject_Call success");
@@ -437,12 +462,19 @@ static bool IsSubscribed(ani_env *env, int32_t sensorTypeId, ani_object callback
     }
     return false;
 }
+
 static void UpdateCallbackInfos(ani_env *env, int32_t sensorTypeId, ani_object callback)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onCallbackLock(onMutex_);
     CHKCV((!IsSubscribed(env, sensorTypeId, callback)), "The callback has been subscribed");
-    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, ON_CALLBACK);
+
+    ani_vm *vm = nullptr;
+    if (ANI_OK != env->GetVM(&vm)) {
+        SEN_HILOGE("GetVM failed.");
+        return;
+    }
+    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(vm, env, ON_CALLBACK);
     CHKPV(asyncCallbackInfo);
 
     if (ANI_OK != env->GlobalReference_Create(callback, &asyncCallbackInfo->callback[0])) {
@@ -535,8 +567,7 @@ static void On([[maybe_unused]] ani_env *env, ani_string typeId, ani_object call
     }
     int32_t ret = SubscribeSensor(sensorTypeId, interval, DataCallbackImpl);
     if (ret != ERR_OK) {
-        auto error = CreateAniError(env, "SubscribeSensor fail");
-        env->ThrowError(error);
+        ThrowBusinessError(env, ret, "SubscribeSensor fail");
         return;
     }
     UpdateCallbackInfos(env, sensorTypeId, callback);
@@ -612,11 +643,9 @@ static void Off([[maybe_unused]] ani_env *env, ani_string type, ani_object callb
     CALL_LOG_ENTER;
     int32_t sensorTypeId = INVALID_SENSOR_ID;
     auto typeStr = AniStringUtils::ToStd(env, static_cast<ani_string>(type));
-    ani_error error;
     if (stringToNumberMap.find(typeStr) == stringToNumberMap.end()) {
         SEN_HILOGE("Invalid sensor type: %{public}s", typeStr.c_str());
-        error = CreateAniError(env, "Invalid sensor type");
-        env->ThrowError(error);
+        ThrowBusinessError(env, PARAMETER_ERROR, "Invalid sensor type");
         return;
     }
     sensorTypeId = stringToNumberMap[typeStr];
@@ -633,8 +662,7 @@ static void Off([[maybe_unused]] ani_env *env, ani_string type, ani_object callb
         } else if (IsInstanceOf(env, "Lstd/core/Function1;", callback)) {
             subscribeSize = RemoveCallback(env, sensorTypeId, callback);
         } else {
-            error = CreateAniError(env, "Invalid sensor type");
-            env->ThrowError(error);
+            ThrowBusinessError(env, PARAMETER_ERROR, "Invalid callback");
             return;
         }
     }
@@ -645,8 +673,7 @@ static void Off([[maybe_unused]] ani_env *env, ani_string type, ani_object callb
     }
     int32_t ret = UnsubscribeSensor(sensorTypeId);
     if (ret == PARAMETER_ERROR || ret == PERMISSION_DENIED) {
-        error = CreateAniError(env, "UnsubscribeSensor fail");
-        env->ThrowError(error);
+        ThrowBusinessError(env, ret, "UnsubscribeSensor fail");
     }
     return;
 }
