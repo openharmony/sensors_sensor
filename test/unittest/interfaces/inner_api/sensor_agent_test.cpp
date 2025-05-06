@@ -39,6 +39,7 @@ namespace {
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
 constexpr int32_t DEVICE_STATUS { 0 };
+static int32_t localDeviceId = -1;
 
 PermissionStateFull g_infoManagerTestState = {
     .grantFlags = {1},
@@ -138,6 +139,14 @@ void SensorDataCallbackImpl2(SensorEvent *event)
         "x:%{public}f, y:%{public}f,z:%{public}f, option:%{public}d",
         event[0].sensorTypeId, event[0].version, event[0].dataLen,
         accelData->x, accelData->y, accelData->z, event[0].option);
+}
+
+void SensorDataCallbackImpl3(SensorStatusEvent *statusEvent)
+{
+    if (statusEvent == nullptr) {
+        SEN_HILOGE("statusEvent is null");
+        return;
+    }
 }
 
 HWTEST_F(SensorAgentTest, GetAllSensorsTest_001, TestSize.Level1)
@@ -403,6 +412,9 @@ HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
     int32_t ret = GetAllSensors(&sensorInfo, &count);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     for (int32_t i = 0; i < count; ++i) {
+        if (sensorInfo[i].location == 1) {
+            localDeviceId = sensorInfo[i].deviceId;
+        }
         SEN_HILOGD("sensorName:%{public}s, sensorId:%{public}d, minSamplePeriod:%{public}" PRId64
             " ns, maxSamplePeriod:%{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
             sensorInfo[i].minSamplePeriod, sensorInfo[i].maxSamplePeriod);
@@ -485,6 +497,165 @@ HWTEST_F(SensorAgentTest, SensorNativeApiTest_005, TestSize.Level1)
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SetMode(SENSOR_ID, &user, SENSOR_DEFAULT_MODE);
     ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+}
+
+HWTEST_F(SensorAgentTest, GetDeviceSensorsTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("GetDeviceSensorsTest_001 in");
+    SensorInfo *sensorInfos { nullptr };
+    int32_t count { 0 };
+    int32_t deviceId = localDeviceId;
+    int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ASSERT_EQ(count, 0);
+}
+
+HWTEST_F(SensorAgentTest, GetDeviceSensorsTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("GetDeviceSensorsTest_002 in");
+    SensorInfo *sensorInfos { nullptr };
+    int32_t deviceId = localDeviceId;
+    int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SubscribeSensorEnhancedTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("SubscribeSensorEnhancedTest_001 in");
+    SensorDescription sensorDesc;
+    int32_t ret = SubscribeSensorEnhanced(sensorDesc, nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SubscribeSensorEnhancedTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("SubscribeSensorEnhancedTest_002 in");
+    SensorDescription sensorDesc {
+        .deviceId = localDeviceId,
+        .sensorType = 1,
+        .sensorId = 0,
+        .location = 1,
+    };
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+    int32_t ret = SubscribeSensorEnhanced(sensorDesc, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, UnsubscribeSensorEnhancedTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("UnsubscribeSensorEnhancedTest_001 in");
+    SensorDescription sensorDesc {
+        .deviceId = localDeviceId,
+        .sensorType = 1,
+        .sensorId = 0,
+        .location = 1,
+    };
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+    int32_t ret = SubscribeSensorEnhanced(sensorDesc, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = SetBatchEnhanced(sensorDesc, &user, 100000000, 100000000);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = ActivateSensorEnhanced(sensorDesc, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = DeactivateSensorEnhanced(sensorDesc, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = UnsubscribeSensorEnhanced(sensorDesc, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+
+}
+
+HWTEST_F(SensorAgentTest, UnsubscribeSensorEnhancedTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("UnsubscribeSensorEnhancedTest_002 in");
+    SensorDescription sensorDesc;
+    int32_t ret = UnsubscribeSensorEnhanced(sensorDesc, nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SetBatchEnhancedTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("SetBatchEnhancedTest_001 in");
+    SensorDescription sensorDesc;
+    int32_t ret = SetBatchEnhanced(sensorDesc, nullptr, 100, 100);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+
+HWTEST_F(SensorAgentTest, ActivateSensorEnhancedTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("ActivateSensorEnhancedTest_001 in");
+    SensorDescription sensorDesc;
+    int32_t ret = ActivateSensorEnhanced(sensorDesc, nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, DeactivateSensorEnhancedTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("DeactivateSensorEnhancedTest_001 in");
+    SensorDescription sensorDesc;
+    int32_t ret = DeactivateSensorEnhanced(sensorDesc, nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SetModeEnhancedTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("SetModeEnhancedTest_001 in");
+    SensorDescription sensorDesc;
+    int32_t ret = SetModeEnhanced(sensorDesc, nullptr, 1);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SetModeEnhancedTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("SetModeEnhancedTest_002 in");
+    SensorDescription sensorDesc {
+        .deviceId = localDeviceId,
+        .sensorType = 1,
+        .sensorId = 0,
+        .location = 1,
+    };
+    SensorUser user;
+    user.callback = SensorDataCallbackImpl;
+    int32_t ret = SubscribeSensorEnhanced(sensorDesc, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = SetModeEnhanced(sensorDesc, &user, 1);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SubscribeSensorPlugTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("SubscribeSensorPlugTest_001 in");
+    int32_t ret = SubscribeSensorPlug(nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, SubscribeSensorPlugTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("SubscribeSensorPlugTest_002 in");
+    SensorUser user;
+    user.plugCallback = SensorDataCallbackImpl3;
+    int32_t ret = SubscribeSensorPlug(&user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, UnsubscribeSensorPlugTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("UnsubscribeSensorPlugTest_001 in");
+    int32_t ret = UnsubscribeSensorPlug(nullptr);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+HWTEST_F(SensorAgentTest, UnsubscribeSensorPlugTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("UnsubscribeSensorPlugTest_002 in");
+    SensorUser user;
+    user.plugCallback = SensorDataCallbackImpl3;
+    int32_t ret = SubscribeSensorPlug(&user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = UnsubscribeSensorPlug(&user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
 }
 } // namespace Sensors
 } // namespace OHOS

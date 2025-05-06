@@ -55,6 +55,7 @@ enum CallbackDataType {
     SUBSCRIBE_CALLBACK = 14,
     SUBSCRIBE_COMPASS = 15,
     GET_BODY_STATE = 16,
+    SENSOR_STATE_CHANGE = 17,
 };
 
 struct GeomagneticData {
@@ -110,6 +111,7 @@ public:
     BusinessError error;
     CallbackDataType type;
     vector<SensorInfo> sensorInfos;
+    SensorStatusEvent sensorStatusEvent;
     AsyncCallbackInfo(napi_env env, CallbackDataType type) : env(env), type(type) {}
     ~AsyncCallbackInfo()
     {

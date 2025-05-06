@@ -78,11 +78,14 @@ bool ReportActiveInfoFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
     size_t startPos = 0;
-    int32_t sensorId = 0;
-    startPos += GetObject<int32_t>(sensorId, data + startPos, size - startPos);
+    SensorDescription sensorDesc;
+    startPos += GetObject<int32_t>(sensorDesc.deviceId, data + startPos, size - startPos);
+    startPos += GetObject<int32_t>(sensorDesc.sensorType, data + startPos, size - startPos);
+    startPos += GetObject<int32_t>(sensorDesc.sensorId, data + startPos, size - startPos);
+    startPos += GetObject<int32_t>(sensorDesc.location, data + startPos, size - startPos);
     int32_t pid = 0;
     startPos += GetObject<int32_t>(pid, data + startPos, size - startPos);
-    g_service->ReportActiveInfo(sensorId, pid);
+    g_service->ReportActiveInfo(sensorDesc, pid);
     return true;
 }
 }  // namespace Sensors

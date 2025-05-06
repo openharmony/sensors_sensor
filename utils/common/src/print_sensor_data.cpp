@@ -92,7 +92,10 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
 void PrintSensorData::PrintHdiData(const SensorData &sensorData)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + ", ";
+    str += "deviceId: " + std::to_string(sensorData.deviceId) + ", ";
+    str += "sensorType: " + std::to_string(sensorData.sensorTypeId) + ", ";
+    str += "sensorId: " + std::to_string(sensorData.sensorId) + ", ";
+    str += "location: " + std::to_string(sensorData.location) + ", ";
     str += "timestamp: " + std::to_string(sensorData.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
     auto data = reinterpret_cast<const float *>(sensorData.data);
@@ -192,7 +195,10 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
 void PrintSensorData::PrintClientData(const SensorEvent &event)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(event.sensorTypeId) + ", ";
+    str += "deviceId: " + std::to_string(event.deviceId) + ", ";
+    str += "sensorType: " + std::to_string(event.sensorTypeId) + ", ";
+    str += "sensorId: " + std::to_string(event.sensorId) + ", ";
+    str += "location: " + std::to_string(event.location) + ", ";
     str += "timestamp: " + std::to_string(event.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(event.sensorTypeId);
     auto data = reinterpret_cast<const float *>(event.data);
@@ -273,7 +279,10 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorId)
 void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorData &data)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(data.sensorTypeId) + ", ";
+    str += "deviceId: " + std::to_string(data.deviceId) + ", ";
+    str += "sensorType: " + std::to_string(data.sensorTypeId) + ", ";
+    str += "sensorId: " + std::to_string(data.sensorId) + ", ";
+    str += "location: " + std::to_string(data.location) + ", ";
     str += "timestamp: " + std::to_string(data.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(data.sensorTypeId);
     auto tempData = reinterpret_cast<const float *>(data.data);

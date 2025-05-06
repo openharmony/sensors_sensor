@@ -19,21 +19,28 @@
 #include <mutex>
 #include "report_data_callback.h"
 #include "sensor.h"
+#include "sensor_agent_type.h"
+#include "v3_0/sensor_types.h"
 
 namespace OHOS {
 namespace Sensors {
+using OHOS::HDI::Sensor::V3_0::SensorPlugInfo;
+using DevicePlugCallback = std::function<void(const SensorPlugInfo sensorPlugInfo)>;
 class ISensorHdiConnection {
 public:
     ISensorHdiConnection() = default;
     virtual ~ISensorHdiConnection() = default;
     virtual int32_t ConnectHdi() = 0;
     virtual int32_t GetSensorList(std::vector<Sensor> &sensorList) = 0;
-    virtual int32_t EnableSensor(int32_t sensorId) = 0;
-    virtual int32_t DisableSensor(int32_t sensorId)  = 0;
-    virtual int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) = 0;
-    virtual int32_t SetMode(int32_t sensorId, int32_t mode) = 0;
+    virtual int32_t GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors) = 0;
+    virtual int32_t EnableSensor(SensorDescription sensorDesc) = 0;
+    virtual int32_t DisableSensor(SensorDescription sensorDesc)  = 0;
+    virtual int32_t SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval) = 0;
+    virtual int32_t SetMode(SensorDescription sensorDesc, int32_t mode) = 0;
     virtual int32_t RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) = 0;
     virtual int32_t DestroyHdiConnection() = 0;
+    virtual int32_t RegSensorPlugCallback(DevicePlugCallback cb) = 0;
+    virtual DevicePlugCallback GetSensorPlugCb() = 0;
     static std::mutex dataMutex_;
     static std::condition_variable dataCondition_;
     static std::atomic<bool> dataReady_;

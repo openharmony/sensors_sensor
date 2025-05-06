@@ -72,7 +72,10 @@ void SensorFileDescriptorListener::ExcuteCallback(int32_t length)
             .option = receiveDataBuff_[i].option,
             .mode = receiveDataBuff_[i].mode,
             .data = receiveDataBuff_[i].data,
-            .dataLen = receiveDataBuff_[i].dataLen
+            .dataLen = receiveDataBuff_[i].dataLen,
+            .deviceId = receiveDataBuff_[i].deviceId,
+            .sensorId = receiveDataBuff_[i].sensorId,
+            .location = receiveDataBuff_[i].location
         };
         if (receiveDataBuff_[i].sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
             PrintSensorData::GetInstance().PrintSensorDataLog("ExcuteCallback", receiveDataBuff_[i]);

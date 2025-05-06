@@ -20,6 +20,16 @@
 
 namespace OHOS {
 namespace Sensors {
+struct SensorDescriptionIPC : public Parcelable {
+    int32_t deviceId;
+    int32_t sensorType;
+    int32_t sensorId;
+    int32_t location;
+    SensorDescriptionIPC();
+    SensorDescriptionIPC(int32_t deviceId, int32_t sensorType, int32_t sensorId, int32_t location);
+    static SensorDescriptionIPC* Unmarshalling(Parcel &parcel);
+    bool Marshalling(Parcel &parcel) const;
+};
 class Sensor : public Parcelable {
 public:
     Sensor();
@@ -50,6 +60,10 @@ public:
     void SetMinSamplePeriodNs(int64_t minSamplePeriodNs);
     int64_t GetMaxSamplePeriodNs() const;
     void SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs);
+    int32_t GetDeviceId() const;
+    void SetDeviceId(int32_t deviceId);
+    int32_t GetLocation() const;
+    void SetLocation(int32_t location);
     bool ReadFromParcel(Parcel &parcel);
     static Sensor* Unmarshalling(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
@@ -68,6 +82,8 @@ private:
     int32_t fifoMaxEventCount_;
     int64_t minSamplePeriodNs_;
     int64_t maxSamplePeriodNs_;
+    int32_t deviceId_;
+    int32_t location_;
 };
 } // namespace Sensors
 } // namespace OHOS

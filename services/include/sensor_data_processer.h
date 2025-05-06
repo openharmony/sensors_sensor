@@ -24,7 +24,7 @@ namespace OHOS {
 namespace Sensors {
 class SensorDataProcesser : public RefBase {
 public:
-    explicit SensorDataProcesser(const std::unordered_map<int32_t, Sensor> &sensorMap);
+    explicit SensorDataProcesser(const std::unordered_map<std::string, Sensor> &sensorMap);
     virtual ~SensorDataProcesser();
     int32_t ProcessEvents(sptr<ReportDataCallback> dataCallback);
     int32_t SendEvents(sptr<SensorBasicDataChannel> &channel, SensorData &data);
@@ -34,22 +34,23 @@ public:
 private:
     DISALLOW_COPY_AND_MOVE(SensorDataProcesser);
     void ReportData(sptr<SensorBasicDataChannel> &channel, SensorData &data);
-    bool ReportNotContinuousData(std::unordered_map<int32_t, SensorData> &cacheBuf,
+    bool ReportNotContinuousData(std::unordered_map<std::string, SensorData> &cacheBuf,
                                  sptr<SensorBasicDataChannel> &channel, SensorData &data);
-    void SendNoneFifoCacheData(std::unordered_map<int32_t, SensorData> &cacheBuf,
+    void SendNoneFifoCacheData(std::unordered_map<std::string, SensorData> &cacheBuf,
                                sptr<SensorBasicDataChannel> &channel, SensorData &data, uint64_t periodCount);
-    void SendFifoCacheData(std::unordered_map<int32_t, SensorData> &cacheBuf,
+    void SendFifoCacheData(std::unordered_map<std::string, SensorData> &cacheBuf,
                            sptr<SensorBasicDataChannel> &channel, SensorData &data, uint64_t periodCount,
                            uint64_t fifoCount);
-    void SendRawData(std::unordered_map<int32_t, SensorData> &cacheBuf, sptr<SensorBasicDataChannel> channel,
+    void SendRawData(std::unordered_map<std::string, SensorData> &cacheBuf, sptr<SensorBasicDataChannel> channel,
                      std::vector<SensorData> events);
     void EventFilter(CircularEventBuf &eventsBuf);
+    void UpdataFifoDataChannel(sptr<SensorBasicDataChannel> &channel, std::vector<sptr<FifoCacheData>> &dataCount);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
     std::mutex dataCountMutex_;
-    std::unordered_map<int32_t, std::vector<sptr<FifoCacheData>>> dataCountMap_;
+    std::unordered_map<std::string, std::vector<sptr<FifoCacheData>>> dataCountMap_;
     std::mutex sensorMutex_;
-    std::unordered_map<int32_t, Sensor> sensorMap_;
+    std::unordered_map<std::string, Sensor> sensorMap_;
 };
 } // namespace Sensors
 } // namespace OHOS

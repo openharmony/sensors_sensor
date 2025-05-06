@@ -17,7 +17,8 @@
 
 namespace OHOS {
 namespace Sensors {
-SensorChannelInfo::SensorChannelInfo() : uid_(0), sensorId_(0), samplingPeriodNs_(0), fifoCount_(0)
+SensorChannelInfo::SensorChannelInfo() : uid_(0), deviceId_(0), sensorType_(0), sensorId_(0), samplingPeriodNs_(0),
+    fifoCount_(0)
 {}
 
 int32_t SensorChannelInfo::GetUid() const
@@ -38,6 +39,26 @@ std::string SensorChannelInfo::GetPackageName() const
 void SensorChannelInfo::SetPackageName(const std::string &packageName)
 {
     packageName_ = packageName;
+}
+
+int32_t SensorChannelInfo::GetDeviceId() const
+{
+    return deviceId_;
+}
+
+void SensorChannelInfo::SetDeviceId(int32_t deviceId)
+{
+    deviceId_ = deviceId;
+}
+
+int32_t SensorChannelInfo::GetSensorType() const
+{
+    return sensorType_;
+}
+
+void SensorChannelInfo::SetSensorType(int32_t sensorType)
+{
+    sensorType_ = sensorType;
 }
 
 int32_t SensorChannelInfo::GetSensorId() const

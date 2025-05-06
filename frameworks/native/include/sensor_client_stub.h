@@ -28,6 +28,7 @@ public:
     virtual ~SensorClientStub() = default;
     virtual int32_t OnRemoteRequest(uint32_t code, MessageParcel &data, MessageParcel &reply,
                                     MessageOption &option) override;
+    int32_t ProcessPlugEvent(SensorPlugData info) override;
 };
 } // namespace Sensors
 } // namespace OHOS

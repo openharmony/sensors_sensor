@@ -16,11 +16,13 @@
 sequenceable active_info..OHOS.Sensors.ActiveInfo;
 sequenceable OHOS.IRemoteObject;
 sequenceable sensor..OHOS.Sensors.Sensor;
+sequenceable sensor..OHOS.Sensors.SensorDescriptionIPC;
 
 interface OHOS.Sensors.ISensorService {
-    void EnableSensor([in] int sensorId, [in] long samplingPeriodNs, [in] long maxReportDelayNs);
-    void DisableSensor([in] int sensorId);
+    void EnableSensor([in] struct SensorDescriptionIPC sensorDesc, [in] long samplingPeriodNs, [in] long maxReportDelayNs);
+    void DisableSensor([in] struct SensorDescriptionIPC sensorDesc);
     void GetSensorList([out] Sensor[] sensorList);
+    void GetSensorListByDevice([in] int deviceId, [out] Sensor[] singleDevSensors);
     void TransferDataChannel([in] FileDescriptor sendFd, [in] IRemoteObject sensorClient);
     void DestroySensorChannel([in] IRemoteObject sensorClient);
     void SuspendSensors([in] int pid);
@@ -32,4 +34,6 @@ interface OHOS.Sensors.ISensorService {
     void DisableActiveInfoCB();
     void ResetSensors();
     void SetDeviceStatus([in] unsigned int deviceStatus);
+    void TransferClientRemoteObject([in] IRemoteObject sensorClient);
+    void DestroyClientRemoteObject([in] IRemoteObject sensorClient);
  }

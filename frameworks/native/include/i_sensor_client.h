@@ -17,13 +17,18 @@
 #define I_SENSOR_CLIENT_H
 
 #include "iremote_broker.h"
+#include "sensor_data_event.h"
 
 namespace OHOS {
 namespace Sensors {
 class ISensorClient : public IRemoteBroker {
 public:
+    enum SensorClientInterfaceId {
+        PROCESS_PLUG_EVENT = 1,
+    };
     ISensorClient() = default;
     virtual ~ISensorClient() = default;
+    virtual int32_t ProcessPlugEvent(SensorPlugData info) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ISensorClient");
 };
 } // namespace Sensors

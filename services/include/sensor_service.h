@@ -43,9 +43,11 @@ public:
     void OnStart() override;
     void OnStop() override;
     int Dump(int fd, const std::vector<std::u16string> &args) override;
-    ErrCode EnableSensor(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs) override;
-    ErrCode DisableSensor(int32_t sensorId) override;
+    ErrCode EnableSensor(const SensorDescriptionIPC &sensorDesc, int64_t samplingPeriodNs,
+        int64_t maxReportDelayNs) override;
+    ErrCode DisableSensor(const SensorDescriptionIPC &sensorDesc) override;
     ErrCode GetSensorList(std::vector<Sensor> &sensorList) override;
+    ErrCode GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &sensorList) override;
     ErrCode TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient) override;
     ErrCode DestroySensorChannel(const sptr<IRemoteObject> &sensorClient) override;
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
@@ -58,13 +60,19 @@ public:
     ErrCode DisableActiveInfoCB() override;
     ErrCode ResetSensors() override;
     ErrCode SetDeviceStatus(uint32_t deviceStatus) override;
+    ErrCode TransferClientRemoteObject(const sptr<IRemoteObject> &sensorClient) override;
+    ErrCode DestroyClientRemoteObject(const sptr<IRemoteObject> &sensorClient) override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);
     std::vector<Sensor> GetSensorList();
+    std::vector<Sensor> GetSensorListByDevice(int32_t deviceId);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
-    ErrCode CheckAuthAndParameter(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode CheckAuthAndParameter(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    void ReportPlugEventCallback(const SensorPlugInfo sensorPlugInfo);
+    ErrCode EnableSensorSplit(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs,
+        int32_t pid);
 
     class PermStateChangeCb : public Security::AccessToken::PermStateChangeCallbackCustomize {
     public:
@@ -79,26 +87,28 @@ private:
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);
     void UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient);
     bool InitSensorPolicy();
-    void ReportOnChangeData(int32_t sensorId);
+    void ReportOnChangeData(SensorDescription sensorDesc);
     void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid, int64_t samplingPeriodNs = 0,
         int64_t maxReportDelayNs = 0);
-    ErrCode DisableSensor(int32_t sensorId, int32_t pid);
+    ErrCode DisableSensor(SensorDescription sensorDesc, int32_t pid);
     bool RegisterPermCallback(int32_t sensorId);
     void UnregisterPermCallback();
-    void ReportActiveInfo(int32_t sensorId, int32_t pid);
-    bool CheckSensorId(int32_t sensorId);
+    void ReportActiveInfo(SensorDescription sensorDesc, int32_t pid);
+    bool CheckSensorId(SensorDescription sensorDesc);
     bool IsSystemServiceCalling();
     bool IsSystemCalling();
+    void GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
-    std::unordered_map<int32_t, Sensor> sensorMap_;
+    std::unordered_map<std::string, Sensor> sensorMap_;
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     bool InitInterface();
     bool InitDataCallback();
     bool InitSensorList();
+    bool InitPlugCallback();
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
     sptr<SensorDataProcesser> sensorDataProcesser_ = nullptr;
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
@@ -111,6 +121,7 @@ private:
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
     ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode SaveSubscriber(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
     static std::atomic_bool isAccessTokenServiceActive_;
 };

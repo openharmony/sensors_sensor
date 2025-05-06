@@ -15,6 +15,8 @@
 
 #include "sensor_client_stub.h"
 
+#include "sensor_agent_proxy.h"
+#include "sensor_errors.h"
 #include "sensor_log.h"
 
 #undef LOG_TAG
@@ -33,6 +35,52 @@ int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
         return OBJECT_NULL;
     }
     SEN_HILOGD("Begin, cmd:%{public}u", code);
+    if (code != PROCESS_PLUG_EVENT) {
+        SEN_HILOGE("code parameter error.");
+        return PARAMETER_ERROR;
+    }
+    SensorPlugData info;
+    if (!data.ReadInt32(info.deviceId)) {
+        SEN_HILOGE("Read deviceId failed.");
+        return PARAMETER_ERROR;
+    }
+    if (!data.ReadInt32(info.sensorTypeId)) {
+        SEN_HILOGE("Read sensorTypeId failed.");
+        return PARAMETER_ERROR;
+    }
+    if (!data.ReadInt32(info.sensorId)) {
+        SEN_HILOGE("Read sensorId failed.");
+        return PARAMETER_ERROR;
+    }
+    if (!data.ReadInt32(info.location)) {
+        SEN_HILOGE("Read location failed.");
+        return PARAMETER_ERROR;
+    }
+    if (!data.ReadString(info.deviceName)) {
+        SEN_HILOGE("Read deviceName failed.");
+        return PARAMETER_ERROR;
+    }
+    if (!data.ReadInt32(info.status)) {
+        SEN_HILOGE("Read status failed.");
+        return PARAMETER_ERROR;
+    }
+    if (!data.ReadInt32(info.reserved)) {
+        SEN_HILOGE("Read reserved failed.");
+        return PARAMETER_ERROR;
+    }
+    int32_t result = ProcessPlugEvent(info);
+    reply.WriteInt32(result);
+    return NO_ERROR;
+}
+
+int32_t SensorClientStub::ProcessPlugEvent(SensorPlugData info)
+{
+    CALL_LOG_ENTER;
+    if (!(SENSOR_AGENT_IMPL->HandlePlugSensorData(info))) {
+        SEN_HILOGE("Handle sensor data failed");
+        return PARAMETER_ERROR;
+    }
+    SEN_HILOGD("Success to process plug event");
     return NO_ERROR;
 }
 } // namespace Sensors

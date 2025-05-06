@@ -60,6 +60,7 @@ bool ConvertToBodyData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbac
 bool ConvertToCompass(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 void ReleaseCallback(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 bool GetSelfTargetVersion(uint32_t &targetVersion);
+bool ConvertToSensorState(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 
 
 #define CHKNCF(env, cond, message) \

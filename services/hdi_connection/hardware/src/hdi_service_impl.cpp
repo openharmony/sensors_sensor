@@ -30,9 +30,12 @@ namespace {
 constexpr int64_t SAMPLING_INTERVAL_NS = 200000000;
 constexpr float TARGET_SUM = 9.8F * 9.8F;
 constexpr float MAX_RANGE = 9999.0F;
+constexpr int32_t DEFAULT_DEVICE_ID = -1;
+constexpr int32_t DEFAULT_SENSOR_ID = 0;
+constexpr int32_t IS_LOCAL_DEVICE = 1;
 const std::string SENSOR_PRODUCE_THREAD_NAME = "OS_SenMock";
 std::vector<SensorInfo> g_sensorInfos = {
-    {"sensor_test", "default", "1.0.0", "1.0.0", 1, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000},
+    {"sensor_test", "default", "1.0.0", "1.0.0", 1, 0, 9999.0, 0.000001, 23.0, 100000000, 1000000000, -1, 1},
 };
 std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_ACCELEROMETER,
@@ -49,27 +52,42 @@ float g_proximityData[1];
 SensorEvent g_accEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER,
     .option = 3,
-    .dataLen = 12
+    .dataLen = 12,
+    .deviceId = DEFAULT_DEVICE_ID,
+    .sensorId = DEFAULT_SENSOR_ID,
+    .location = IS_LOCAL_DEVICE
 };
 SensorEvent g_colorEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_COLOR,
     .option = 3,
-    .dataLen = 8
+    .dataLen = 8,
+    .deviceId = DEFAULT_DEVICE_ID,
+    .sensorId = DEFAULT_SENSOR_ID,
+    .location = IS_LOCAL_DEVICE
 };
 SensorEvent g_sarEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_SAR,
     .option = 3,
-    .dataLen = 4
+    .dataLen = 4,
+    .deviceId = DEFAULT_DEVICE_ID,
+    .sensorId = DEFAULT_SENSOR_ID,
+    .location = IS_LOCAL_DEVICE
 };
 SensorEvent g_headPostureEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_HEADPOSTURE,
     .option = 3,
-    .dataLen = 20
+    .dataLen = 20,
+    .deviceId = DEFAULT_DEVICE_ID,
+    .sensorId = DEFAULT_SENSOR_ID,
+    .location = IS_LOCAL_DEVICE
 };
 SensorEvent g_proximityEvent = {
     .sensorTypeId = SENSOR_TYPE_ID_PROXIMITY1,
     .option = 3,
-    .dataLen = 4
+    .dataLen = 4,
+    .deviceId = DEFAULT_DEVICE_ID,
+    .sensorId = DEFAULT_SENSOR_ID,
+    .location = IS_LOCAL_DEVICE
 };
 } // namespace
 std::vector<int32_t> HdiServiceImpl::enableSensors_;
@@ -188,6 +206,16 @@ int32_t HdiServiceImpl::GetSensorList(std::vector<SensorInfo> &sensorList)
     return ERR_OK;
 }
 
+int32_t HdiServiceImpl::GetSensorListByDevice(int32_t deviceId, std::vector<SensorInfo> &singleDevSensors)
+{
+    CALL_LOG_ENTER;
+    singleDevSensors.assign(g_sensorInfos.begin(), g_sensorInfos.end());
+    for (auto& sensor : singleDevSensors) {
+        sensor.deviceId = deviceId;
+    }
+    return ERR_OK;
+}
+
 void HdiServiceImpl::DataReportThread()
 {
     CALL_LOG_ENTER;
@@ -231,18 +259,18 @@ void HdiServiceImpl::DataReportThread()
     return;
 }
 
-int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
+int32_t HdiServiceImpl::EnableSensor(SensorDescription sensorDesc)
 {
     CALL_LOG_ENTER;
-    if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorId) == g_supportSensors.end()) {
-        SEN_HILOGE("Not support enable sensorId:%{public}d", sensorId);
+    if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorDesc.sensorType) == g_supportSensors.end()) {
+        SEN_HILOGE("Not support enable sensorId:%{public}d", sensorDesc.sensorType);
         return ERR_NO_INIT;
     }
-    if (std::find(enableSensors_.begin(), enableSensors_.end(), sensorId) != enableSensors_.end()) {
-        SEN_HILOGI("sensorId:%{public}d has been enabled", sensorId);
+    if (std::find(enableSensors_.begin(), enableSensors_.end(), sensorDesc.sensorType) != enableSensors_.end()) {
+        SEN_HILOGI("sensorId:%{public}d has been enabled", sensorDesc.sensorType);
         return ERR_OK;
     }
-    enableSensors_.push_back(sensorId);
+    enableSensors_.push_back(sensorDesc.sensorType);
     if (!dataReportThread_.joinable() || isStop_) {
         if (dataReportThread_.joinable()) {
             dataReportThread_.join();
@@ -254,20 +282,21 @@ int32_t HdiServiceImpl::EnableSensor(int32_t sensorId)
     return ERR_OK;
 };
 
-int32_t HdiServiceImpl::DisableSensor(int32_t sensorId)
+int32_t HdiServiceImpl::DisableSensor(SensorDescription sensorDesc)
 {
     CALL_LOG_ENTER;
-    if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorId) == g_supportSensors.end()) {
-        SEN_HILOGE("Not support disable sensorId:%{public}d", sensorId);
+    if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorDesc.sensorType) == g_supportSensors.end()) {
+        SEN_HILOGE("Not support disable deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ERR_NO_INIT;
     }
-    if (std::find(enableSensors_.begin(), enableSensors_.end(), sensorId) == enableSensors_.end()) {
-        SEN_HILOGE("sensorId:%{public}d should be enable first", sensorId);
+    if (std::find(enableSensors_.begin(), enableSensors_.end(), sensorDesc.sensorType) == enableSensors_.end()) {
+        SEN_HILOGE("sensorId:%{public}d should be enable first", sensorDesc.sensorType);
         return ERR_NO_INIT;
     }
     std::vector<int32_t>::iterator iter;
     for (iter = enableSensors_.begin(); iter != enableSensors_.end();) {
-        if (*iter == sensorId) {
+        if (*iter == sensorDesc.sensorType) {
             iter = enableSensors_.erase(iter);
             break;
         } else {
@@ -280,7 +309,7 @@ int32_t HdiServiceImpl::DisableSensor(int32_t sensorId)
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
+int32_t HdiServiceImpl::SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval)
 {
     CALL_LOG_ENTER;
     if (samplingInterval < 0 || reportInterval < 0) {
@@ -292,7 +321,7 @@ int32_t HdiServiceImpl::SetBatch(int32_t sensorId, int64_t samplingInterval, int
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::SetMode(int32_t sensorId, int32_t mode)
+int32_t HdiServiceImpl::SetMode(SensorDescription sensorDesc, int32_t mode)
 {
     return ERR_OK;
 }

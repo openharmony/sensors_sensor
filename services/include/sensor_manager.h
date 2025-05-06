@@ -31,19 +31,21 @@ using namespace Security::AccessToken;
 class SensorManager : public Singleton<SensorManager> {
 public:
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
-    void InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap, sptr<SensorDataProcesser> dataProcesser,
-                       sptr<ReportDataCallback> dataCallback);
-    bool SetBestSensorParams(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    bool ResetBestSensorParams(int32_t sensorId);
+    void InitSensorMap(const std::unordered_map<std::string, Sensor> &sensorMap,
+        sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback);
+    bool SetBestSensorParams(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool ResetBestSensorParams(SensorDescription sensorDesc);
     void StartDataReportThread();
 #else
-    void InitSensorMap(const std::unordered_map<int32_t, Sensor> &sensorMap);
+    void InitSensorMap(const std::unordered_map<std::string, Sensor> &sensorMap);
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-    bool SaveSubscriber(int32_t sensorId, uint32_t pid, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    SensorBasicInfo GetSensorInfo(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    bool IsOtherClientUsingSensor(int32_t sensorId, int32_t clientPid);
-    ErrCode AfterDisableSensor(int32_t sensorId);
+    bool SaveSubscriber(SensorDescription sensorDesc, uint32_t pid, int64_t samplingPeriodNs,
+        int64_t maxReportDelayNs);
+    SensorBasicInfo GetSensorInfo(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool IsOtherClientUsingSensor(SensorDescription sensorDesc, int32_t clientPid);
+    ErrCode AfterDisableSensor(SensorDescription sensorDesc);
     void GetPackageName(AccessTokenID tokenId, std::string &packageName, bool isAccessTokenServiceActive = false);
+    void UpdataSensorMap(SensorPlugData sensorPlugData);
 
 private:
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
@@ -53,7 +55,7 @@ private:
     sptr<ReportDataCallback> reportDataCallback_ = nullptr;
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
-    std::unordered_map<int32_t, Sensor> sensorMap_;
+    std::unordered_map<std::string, Sensor> sensorMap_;
     std::mutex sensorMapMutex_;
 };
 } // namespace Sensors

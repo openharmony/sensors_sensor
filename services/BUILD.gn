@@ -104,6 +104,7 @@ ohos_shared_library("libsensor_service") {
     sources += [
       "hdi_connection/adapter/src/hdi_connection.cpp",
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
+      "hdi_connection/adapter/src/sensor_plug_callback.cpp",
       "hdi_connection/interface/src/sensor_hdi_connection.cpp",
       "src/sensor_data_processer.cpp",
     ]
@@ -123,7 +124,10 @@ ohos_shared_library("libsensor_service") {
           [ "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include" ]
     }
 
-    external_deps += [ "drivers_interface_sensor:libsensor_proxy_2.1" ]
+    external_deps += [
+      "drivers_interface_sensor:libsensor_proxy_2.1",
+      "drivers_interface_sensor:libsensor_proxy_3.0"
+    ]
   }
 
   shlib_type = "sa"
@@ -222,6 +226,7 @@ ohos_static_library("libsensor_service_static") {
     sources += [
       "hdi_connection/adapter/src/hdi_connection.cpp",
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
+      "hdi_connection/adapter/src/sensor_plug_callback.cpp",
       "hdi_connection/interface/src/sensor_hdi_connection.cpp",
       "src/sensor_data_processer.cpp",
     ]
@@ -241,7 +246,10 @@ ohos_static_library("libsensor_service_static") {
           [ "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include" ]
     }
 
-    external_deps += [ "drivers_interface_sensor:libsensor_proxy_2.1" ]
+    external_deps += [
+      "drivers_interface_sensor:libsensor_proxy_2.1",
+      "drivers_interface_sensor:libsensor_proxy_3.0"
+    ]
   }
 
   part_name = "sensor"

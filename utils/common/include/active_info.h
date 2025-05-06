@@ -23,10 +23,15 @@ namespace Sensors {
 class ActiveInfo : public Parcelable {
 public:
     ActiveInfo() = default;
-    ActiveInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ActiveInfo(int32_t pid, int32_t deviceId, int32_t sensorTypeId, int32_t sensorId, int64_t samplingPeriodNs,
+        int64_t maxReportDelayNs);
     ~ActiveInfo() = default;
     int32_t GetPid() const;
     void SetPid(int32_t pid);
+    int32_t GetDeviceId() const;
+    void SetDeviceId(int32_t deviceId);
+    int32_t GetSensorTypeId() const;
+    void SetSensorTypeId(int32_t sensorTypeId);
     int32_t GetSensorId() const;
     void SetSensorId(int32_t sensorId);
     int64_t GetSamplingPeriodNs() const;
@@ -38,6 +43,8 @@ public:
 
 private:
     int32_t pid_ { -1 };
+    int32_t deviceId_ { -1 };
+    int32_t sensorTypeId_ { -1 };
     int32_t sensorId_ { -1 };
     int64_t samplingPeriodNs_ { -1 };
     int64_t maxReportDelayNs_ { -1 };
