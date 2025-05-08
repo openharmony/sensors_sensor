@@ -47,6 +47,7 @@
           "//base/sensors/sensor/frameworks/cj:cj_sensor_ffi",
           "//base/sensors/sensor/frameworks/native:sensor_target",
           "//base/sensors/sensor/frameworks/native:ohsensor",
+          "//base/sensors/sensor/frameworks/ets/taihe:sensor_taihe",
           "//base/sensors/sensor/utils:sensor_utils_target"
         ],
         "service_group": [ 
@@ -55,6 +56,9 @@
         ]
       },
       "inner_kits": [
+        {
+          "name": "//base/sensors/sensor/frameworks/ets/taihe:copy_taihe"
+        },
         {
           "name": "//base/sensors/sensor/frameworks/native:sensor_interface_native",
           "header": {
