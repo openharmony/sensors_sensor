@@ -816,6 +816,11 @@ void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessT
 ErrCode SensorService::SetDeviceStatus(uint32_t deviceStatus)
 {
     SEN_HILOGI("SetDeviceStatus in, deviceStatus:%{public}d", deviceStatus);
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     clientInfo_.SetDeviceStatus(deviceStatus);
     return ERR_OK;
 }
