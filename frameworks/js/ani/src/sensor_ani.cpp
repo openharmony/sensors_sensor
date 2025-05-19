@@ -63,7 +63,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
     { SENSOR_TYPE_ID_SAR, { "absorptionRatio" } }
 };
 
-std::unordered_map<std::string, int> stringToNumberMap = {
+static std::unordered_map<std::string, int> stringToNumberMap = {
     {"ORIENTATION", 256},
 };
 
@@ -74,9 +74,9 @@ static std::map<std::string, int64_t> g_samplingPeriod = {
 };
 
 using ConvertDataFunc = bool(*)(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::vector<ani_ref> &data);
-bool ConvertToSensorData(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::vector<ani_ref> &data);
+static bool ConvertToSensorData(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::vector<ani_ref> &data);
 
-std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
+static std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
     {ON_CALLBACK, ConvertToSensorData},
 };
 
@@ -204,7 +204,7 @@ static bool SendEventToMainThread(const std::function<void()> func)
     return true;
 }
 
-bool ValidateAndInitialize(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object &obj)
+static bool ValidateAndInitialize(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object &obj)
 {
     CHKPF(asyncCallbackInfo);
     int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
@@ -254,7 +254,7 @@ bool ValidateAndInitialize(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object
     return true;
 }
 
-ani_enum_item GetEnumItem(ani_env *env, int32_t accuracy)
+static ani_enum_item GetEnumItem(ani_env *env, int32_t accuracy)
 {
     ani_namespace ns;
     static const char *namespaceName = "L@ohos/sensor/sensor;";
@@ -290,7 +290,7 @@ ani_enum_item GetEnumItem(ani_env *env, int32_t accuracy)
     return nullptr;
 }
 
-bool SetSensorPropertiesAndPushData(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object obj,
+static bool SetSensorPropertiesAndPushData(sptr<AsyncCallbackInfo> asyncCallbackInfo, ani_object obj,
     std::vector<ani_ref> &data)
 {
     CALL_LOG_ENTER;
@@ -325,7 +325,7 @@ bool SetSensorPropertiesAndPushData(sptr<AsyncCallbackInfo> asyncCallbackInfo, a
     return true;
 }
 
-bool ConvertToSensorData(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::vector<ani_ref> &data)
+static bool ConvertToSensorData(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::vector<ani_ref> &data)
 {
     ani_object obj;
     if (!ValidateAndInitialize(asyncCallbackInfo, obj)) {
@@ -411,17 +411,17 @@ static void EmitOnCallback(SensorEvent *event)
     }
 }
 
-void DataCallbackImpl(SensorEvent *event)
+static void DataCallbackImpl(SensorEvent *event)
 {
     CHKPV(event);
     EmitOnCallback(event);
 }
 
-const SensorUser user = {
+static const SensorUser user = {
     .callback = DataCallbackImpl
 };
 
-int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback)
+static int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback)
 {
     CALL_LOG_ENTER;
     int32_t ret = SubscribeSensor(sensorTypeId, &user);
@@ -487,7 +487,7 @@ static void UpdateCallbackInfos(ani_env *env, int32_t sensorTypeId, ani_object c
     g_onCallbackInfos[sensorTypeId] = callbackInfos;
 }
 
-bool GetIntervalValue(ani_env *env, ani_object options, int64_t& interval)
+static bool GetIntervalValue(ani_env *env, ani_object options, int64_t& interval)
 {
     ani_boolean isUndefined;
     env->Reference_IsUndefined(options, &isUndefined);
@@ -628,7 +628,7 @@ static int32_t RemoveCallback(ani_env *env, int32_t sensorTypeId, ani_object cal
     return callbackInfos.size();
 }
 
-int32_t UnsubscribeSensor(int32_t sensorTypeId)
+static int32_t UnsubscribeSensor(int32_t sensorTypeId)
 {
     int32_t ret = DeactivateSensor(sensorTypeId, &user);
     if (ret != ERR_OK) {
