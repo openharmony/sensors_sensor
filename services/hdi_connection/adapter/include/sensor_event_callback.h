@@ -16,11 +16,11 @@
 #ifndef SENSOR_EVENT_CALLBACK_H
 #define SENSOR_EVENT_CALLBACK_H
 
-#include "v2_1/isensor_callback.h"
-#include "v2_1/sensor_types.h"
+#include "v3_0/isensor_callback.h"
+#include "v3_0/sensor_types.h"
 
-using OHOS::HDI::Sensor::V2_1::HdfSensorEvents;
-using OHOS::HDI::Sensor::V2_1::ISensorCallback;
+using OHOS::HDI::Sensor::V3_0::HdfSensorEvents;
+using OHOS::HDI::Sensor::V3_0::ISensorCallback;
 
 namespace OHOS {
 namespace Sensors {

@@ -21,7 +21,7 @@
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "iproxy_broker.h"
-#include "v2_1/isensor_interface.h"
+#include "v3_0/isensor_interface.h"
 
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
@@ -33,9 +33,10 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
-using OHOS::HDI::Sensor::V2_1::ISensorInterface;
-using OHOS::HDI::Sensor::V2_1::ISensorCallback;
-using OHOS::HDI::Sensor::V2_1::HdfSensorInformation;
+using OHOS::HDI::Sensor::V3_0::DeviceSensorInfo;
+using OHOS::HDI::Sensor::V3_0::ISensorInterface;
+using OHOS::HDI::Sensor::V3_0::ISensorCallback;
+using OHOS::HDI::Sensor::V3_0::HdfSensorInformation;
 namespace {
 sptr<ISensorInterface> g_sensorInterface = nullptr;
 sptr<ISensorCallback> g_eventCallback = nullptr;
@@ -56,7 +57,7 @@ int32_t HdiConnection::ConnectHdi()
     while (retry < GET_HDI_SERVICE_COUNT) {
         g_sensorInterface = ISensorInterface::Get();
         if (g_sensorInterface != nullptr) {
-            SEN_HILOGI("Connect v2_1 hdi success");
+            SEN_HILOGI("Connect v3_0 hdi success");
             g_eventCallback = new (std::nothrow) SensorEventCallback();
             CHKPR(g_eventCallback, ERR_NO_INIT);
             RegisterHdiDeathRecipient();
@@ -70,7 +71,7 @@ int32_t HdiConnection::ConnectHdi()
     HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
         HiSysEvent::EventType::FAULT, "PKG_NAME", "ConnectHdi", "ERROR_CODE", CONNECT_SENSOR_HDF_ERR);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-    SEN_HILOGE("Connect v2_1 hdi failed");
+    SEN_HILOGE("Connect v3_0 hdi failed");
     return ERR_NO_INIT;
 }
 
@@ -95,8 +96,8 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     }
     for (size_t i = 0; i < count; i++) {
         Sensor sensor;
-        sensor.SetSensorId(sensorInfos[i].sensorId);
-        sensor.SetSensorTypeId(sensorInfos[i].sensorId);
+        sensor.SetSensorId(sensorInfos[i].deviceSensorInfo.sensorType);
+        sensor.SetSensorTypeId(sensorInfos[i].deviceSensorInfo.sensorType);
         sensor.SetFirmwareVersion(sensorInfos[i].firmwareVersion);
         sensor.SetHardwareVersion(sensorInfos[i].hardwareVersion);
         sensor.SetMaxRange(sensorInfos[i].maxRange);
@@ -106,7 +107,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
-        if (sensorInfos[i].sensorId == SENSOR_TYPE_ID_HEADPOSTURE) {
+        if (sensorInfos[i].deviceSensorInfo.sensorId == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
         sensorList.push_back(sensor);
@@ -118,13 +119,19 @@ int32_t HdiConnection::EnableSensor(int32_t sensorId)
 {
     SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
-    int32_t ret = g_sensorInterface->Enable(sensorId);
+    DeviceSensorInfo deviceSensorInfo = {
+        .deviceId = 0,
+        .sensorType = sensorId,
+        .sensorId = 0,
+        .location = 0
+    };
+    int32_t ret = g_sensorInterface->Enable(deviceSensorInfo);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "EnableSensor", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("Connect v2_1 hdi failed");
+        SEN_HILOGE("Connect v3_0 hdi failed");
         return ret;
     }
     SetSensorBasicInfoState(sensorId, true);
@@ -136,7 +143,13 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
 {
     SEN_HILOGI("In, sensorId:%{public}d", sensorId);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
-    int32_t ret = g_sensorInterface->Disable(sensorId);
+    DeviceSensorInfo deviceSensorInfo = {
+        .deviceId = 0,
+        .sensorType = sensorId,
+        .sensorId = 0,
+        .location = 0
+    };
+    int32_t ret = g_sensorInterface->Disable(deviceSensorInfo);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
@@ -153,7 +166,13 @@ int32_t HdiConnection::DisableSensor(int32_t sensorId)
 int32_t HdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
 {
     CHKPR(g_sensorInterface, ERR_NO_INIT);
-    int32_t ret = g_sensorInterface->SetBatch(sensorId, samplingInterval, reportInterval);
+    DeviceSensorInfo deviceSensorInfo = {
+        .deviceId = 0,
+        .sensorType = sensorId,
+        .sensorId = 0,
+        .location = 0
+    };
+    int32_t ret = g_sensorInterface->SetBatch(deviceSensorInfo, samplingInterval, reportInterval);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
@@ -170,7 +189,13 @@ int32_t HdiConnection::SetMode(int32_t sensorId, int32_t mode)
 {
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
-    int32_t ret = g_sensorInterface->SetMode(sensorId, mode);
+    DeviceSensorInfo deviceSensorInfo = {
+        .deviceId = 0,
+        .sensorType = sensorId,
+        .sensorId = 0,
+        .location = 0
+    };
+    int32_t ret = g_sensorInterface->SetMode(deviceSensorInfo, mode);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
@@ -331,12 +356,18 @@ void HdiConnection::Reconnect()
             SEN_HILOGE("sensorTypeId:%{public}d don't need enable sensor", sensorTypeId);
             continue;
         }
-        ret = g_sensorInterface->SetBatch(sensorTypeId, info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
+        DeviceSensorInfo deviceSensorInfo = {
+            .deviceId = 0,
+            .sensorType = sensorTypeId,
+            .sensorId = 0,
+            .location = 0
+        };
+        ret = g_sensorInterface->SetBatch(deviceSensorInfo, info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
         if (ret != 0) {
             SEN_HILOGE("sensorTypeId:%{public}d set batch fail, error:%{public}d", sensorTypeId, ret);
             continue;
         }
-        ret = g_sensorInterface->Enable(sensorTypeId);
+        ret = g_sensorInterface->Enable(deviceSensorInfo);
         if (ret != 0) {
             SEN_HILOGE("Enable sensor fail, sensorTypeId:%{public}d, error:%{public}d", sensorTypeId, ret);
         }

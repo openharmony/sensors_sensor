@@ -123,7 +123,7 @@ ohos_shared_library("libsensor_service") {
           [ "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include" ]
     }
 
-    external_deps += [ "drivers_interface_sensor:libsensor_proxy_2.1" ]
+    external_deps += [ "drivers_interface_sensor:libsensor_proxy_3.0" ]
   }
 
   shlib_type = "sa"
@@ -241,7 +241,7 @@ ohos_static_library("libsensor_service_static") {
           [ "$SUBSYSTEM_DIR/services/hdi_connection/hardware/include" ]
     }
 
-    external_deps += [ "drivers_interface_sensor:libsensor_proxy_2.1" ]
+    external_deps += [ "drivers_interface_sensor:libsensor_proxy_3.0" ]
   }
 
   part_name = "sensor"
