@@ -46,6 +46,8 @@ ohos_fuzztest("SensorAgentFuzzTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
+    "selinux_adapter:librestorecon",
+    "cJSON:cjson_static",
   ]
 }
 

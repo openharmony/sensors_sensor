@@ -34,7 +34,9 @@
         "samgr",
         "eventhandler",
         "hicollie",
-        "init"
+        "init",
+        "selinux_adapter",
+        "cJSON"
       ],
       "third_party": []
     },
