@@ -15,6 +15,7 @@
 
 #include "sensor_service.h"
 
+#include <charconv>
 #include <cinttypes>
 #include <string_ex.h>
 #include <tokenid_kit.h>
@@ -90,7 +91,14 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     }
 #endif // MSDP_MOTION_ENABLE
     if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
-        uint32_t status = static_cast<uint32_t>(std::stoi(GetDmsDeviceStatus()));
+        std::string statusStr = GetDmsDeviceStatus();
+        int32_t statusNum;
+        auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
+        if (res.ec != std::errc()) {
+            SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
+            return;
+        }
+        uint32_t status = static_cast<uint32_t>(statusNum);
         clientInfo_.SetDeviceStatus(status);
         SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
     }
