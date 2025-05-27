@@ -37,7 +37,7 @@ constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
 constexpr int32_t REPORTING_INTERVAL = 200000000;
 constexpr int32_t INVALID_SENSOR_TYPE = -1;
-constexpr int32_t DEFAULT_DEVICE_ID = 0;
+constexpr int32_t DEFAULT_DEVICE_ID = -1;
 constexpr int32_t DEFAULT_SENSOR_ID = 0;
 constexpr int32_t IS_LOCAL_DEVICE = 1;
 constexpr int32_t NON_LOCAL_DEVICE = 0;
@@ -48,6 +48,8 @@ constexpr int32_t INPUT_ERROR = 202;
 constexpr float BODY_STATE_EXCEPT = 1.0f;
 constexpr float THRESHOLD = 0.000001f;
 constexpr uint32_t COMPATIBILITY_CHANGE_VERSION_API12 = 12;
+constexpr int32_t ARGC_NUM_THREE = 3;
+constexpr int32_t ARGS_NUM_TWO = 2;
 } // namespace
 static std::map<std::string, int64_t> g_samplingPeriod = {
     {"normal", 200000000},
@@ -57,27 +59,18 @@ static std::map<std::string, int64_t> g_samplingPeriod = {
 static std::mutex g_mutex;
 static std::mutex g_bodyMutex;
 static float g_bodyState = -1.0f;
-static std::map<std::string, std::vector<sptr<AsyncCallbackInfo>>> g_subscribeCallbacks;
+static std::map<SensorDescription, std::vector<sptr<AsyncCallbackInfo>>> g_subscribeCallbacks;
 static std::mutex g_onMutex;
 static std::mutex g_onceMutex;
 static std::mutex g_plugMutex;
-static std::map<std::string, std::vector<sptr<AsyncCallbackInfo>>> g_onceCallbackInfos;
-static std::map<std::string, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
+static std::map<SensorDescription, std::vector<sptr<AsyncCallbackInfo>>> g_onceCallbackInfos;
+static std::map<SensorDescription, std::vector<sptr<AsyncCallbackInfo>>> g_onCallbackInfos;
 static std::vector<sptr<AsyncCallbackInfo>> g_plugCallbackInfo;
-
-static void GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName)
-{
-    sensorDescName = std::to_string(sensorDesc.deviceId) + "#" + std::to_string(sensorDesc.sensorType) +
-        "#" + std::to_string(sensorDesc.sensorId)+ "#" + std::to_string(sensorDesc.location);
-    return;
-}
 
 static bool CheckSubscribe(SensorDescription sensorDesc)
 {
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto iter = g_onCallbackInfos.find(sensorDescName);
+    auto iter = g_onCallbackInfos.find(sensorDesc);
     return iter != g_onCallbackInfos.end();
 }
 
@@ -118,9 +111,7 @@ static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *ev
 static bool CheckSystemSubscribe(SensorDescription sensorDesc)
 {
     std::lock_guard<std::mutex> subscribeLock(g_mutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto iter = g_subscribeCallbacks.find(sensorDescName);
+    auto iter = g_subscribeCallbacks.find(sensorDesc);
     return iter != g_subscribeCallbacks.end();
 }
 
@@ -131,9 +122,7 @@ static void EmitSubscribeCallback(SensorEvent *event)
         return;
     }
     std::lock_guard<std::mutex> subscribeLock(g_mutex);
-    std::string sensorDescName;
-    GetSensorDescName({event->deviceId, event->sensorTypeId, event->sensorId, event->location}, sensorDescName);
-    auto callbacks = g_subscribeCallbacks[sensorDescName];
+    auto callbacks = g_subscribeCallbacks[{event->deviceId, event->sensorTypeId, event->sensorId, event->location}];
     for (auto &callback : callbacks) {
         if (!copySensorData(callback, event)) {
             SEN_HILOGE("Copy sensor data failed");
@@ -150,9 +139,7 @@ static void EmitOnCallback(SensorEvent *event)
         return;
     }
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
-    std::string sensorDescName;
-    GetSensorDescName({event->deviceId, event->sensorTypeId, event->sensorId, event->location}, sensorDescName);
-    auto onCallbackInfos = g_onCallbackInfos[sensorDescName];
+    auto onCallbackInfos = g_onCallbackInfos[{event->deviceId, event->sensorTypeId, event->sensorId, event->location}];
     for (auto &onCallbackInfo : onCallbackInfos) {
         if (!copySensorData(onCallbackInfo, event)) {
             SEN_HILOGE("Copy sensor data failed");
@@ -166,9 +153,7 @@ static void EmitOnceCallback(SensorEvent *event)
 {
     CHKPV(event);
     std::lock_guard<std::mutex> onceCallbackLock(g_onceMutex);
-    std::string sensorDescName;
-    GetSensorDescName({event->deviceId, event->sensorTypeId, event->sensorId, event->location}, sensorDescName);
-    auto iter = g_onceCallbackInfos.find(sensorDescName);
+    auto iter = g_onceCallbackInfos.find({event->deviceId, event->sensorTypeId, event->sensorId, event->location});
     if (iter == g_onceCallbackInfos.end()) {
         return;
     }
@@ -183,7 +168,7 @@ static void EmitOnceCallback(SensorEvent *event)
         }
         EmitUvEventLoop(std::move(onceCallbackInfo));
     }
-    g_onceCallbackInfos.erase(sensorDescName);
+    g_onceCallbackInfos.erase({event->deviceId, event->sensorTypeId, event->sensorId, event->location});
 
     CHKCV((!CheckSubscribe({event->deviceId, event->sensorTypeId, event->sensorId, event->location})),
         "Has client subscribe, not need cancel subscribe");
@@ -217,7 +202,7 @@ void PlugDataCallbackImpl(SensorStatusEvent *plugEvent)
     std::lock_guard<std::mutex> plugCallbackLock(g_plugMutex);
     for (auto& callback : g_plugCallbackInfo) {
         UpdatePlugInfo(plugEvent, callback);
-        EmitAsyncCallbackWork(callback);
+        EmitUvEventLoop(callback);
     }
 }
 
@@ -229,31 +214,36 @@ const SensorUser user = {
 int32_t UnsubscribeSensor(SensorDescription sensorDesc)
 {
     CALL_LOG_ENTER;
-    int32_t ret = DeactivateSensorEnhanced(sensorDesc, &user);
+    int32_t ret = DeactivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
     if (ret != ERR_OK) {
         SEN_HILOGE("DeactivateSensor failed");
         return ret;
     }
-    return UnsubscribeSensorEnhanced(sensorDesc, &user);
+    return UnsubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
 }
 
 int32_t SubscribeSensor(SensorDescription sensorDesc, int64_t interval, RecordSensorCallback callback)
 {
     CALL_LOG_ENTER;
-    int32_t ret = SubscribeSensorEnhanced(sensorDesc, &user);
+    int32_t ret = SubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
     if (ret != ERR_OK) {
         SEN_HILOGE("SubscribeSensor failed");
         return ret;
     }
-    ret = SetBatchEnhanced(sensorDesc, &user, interval, 0);
+    ret = SetBatchEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user, interval, 0);
     if (ret != ERR_OK) {
         SEN_HILOGE("SetBatch failed");
         return ret;
     }
-    return ActivateSensorEnhanced(sensorDesc, &user);
+    return ActivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
 }
 
-void CleanCallbackInfo(napi_env env, std::map<std::string, std::vector<sptr<AsyncCallbackInfo>>> &callbackInfo)
+void CleanCallbackInfo(napi_env env, std::map<SensorDescription, std::vector<sptr<AsyncCallbackInfo>>> &callbackInfo)
 {
     for (auto &event : callbackInfo) {
         auto &vecCallbackInfo = event.second;
@@ -296,15 +286,13 @@ void CleanUp(void *data)
 static bool IsOnceSubscribed(napi_env env, SensorDescription sensorDesc, napi_value callback)
 {
     CALL_LOG_ENTER;
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto iter = g_onceCallbackInfos.find(sensorDescName);
+    auto iter = g_onceCallbackInfos.find(sensorDesc);
     if (iter == g_onceCallbackInfos.end()) {
         SEN_HILOGW("Already subscribed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return false;
     }
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorDesc];
     for (auto callbackInfo : callbackInfos) {
         CHKPC(callbackInfo);
         if (callbackInfo->env != env) {
@@ -332,11 +320,9 @@ static void UpdateOnceCallback(napi_env env, SensorDescription sensorDesc, napi_
         ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
         return;
     }
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onceCallbackInfos[sensorDesc];
     callbackInfos.push_back(asyncCallbackInfo);
-    g_onceCallbackInfos[sensorDescName] = callbackInfos;
+    g_onceCallbackInfos[sensorDesc] = callbackInfos;
 }
 
 static bool GetDeviceId(napi_env env, napi_value value, int32_t &deviceId)
@@ -355,9 +341,9 @@ static bool GetDeviceId(napi_env env, napi_value value, int32_t &deviceId)
 
 static bool GetSensorId(napi_env env, napi_value value, int32_t &sensorId)
 {
-    napi_value napi_sensorId = GetNamedProperty(env, value, "sensorId");
+    napi_value napi_sensorId = GetNamedProperty(env, value, "sensorIndex");
     if (!IsMatchType(env, napi_sensorId, napi_number)) {
-        SEN_HILOGE("sensorId failed");
+        SEN_HILOGE("sensorIndex failed");
         return false;
     }
     if (!GetNativeInt32(env, napi_sensorId, sensorId)) {
@@ -386,27 +372,26 @@ static bool GetLocationDeviceId(int32_t &deviceId)
     return false;
 }
 
-static bool GetDeviceInfoParameter(napi_env env, size_t argc, napi_value args, SensorDescription &sensorDesc)
+static bool GetSensorInfoParameter(napi_env env, size_t argc, napi_value args, SensorDescription &sensorDesc)
 {
-    int32_t locationDeviceId = DEFAULT_DEVICE_ID;
-    if (!GetLocationDeviceId(locationDeviceId)) {
-        ThrowErr(env, SERVICE_EXCEPTION, "location deviceId fail");
-        return false;
+    int32_t localDeviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(localDeviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
     }
-    sensorDesc.deviceId = locationDeviceId;
+    sensorDesc.deviceId = localDeviceId;
     sensorDesc.sensorId = DEFAULT_SENSOR_ID;
     sensorDesc.location = IS_LOCAL_DEVICE;
-    if (argc >= 3 && IsMatchType(env, args, napi_object)) {
+    if (argc >= ARGC_NUM_THREE && IsMatchType(env, args, napi_object)) {
         if (!GetDeviceId(env, args, sensorDesc.deviceId)) {
             SEN_HILOGW("No deviceId, This device is selected by default");
-            sensorDesc.deviceId = locationDeviceId;
+            sensorDesc.deviceId = localDeviceId;
         }
         if (!GetSensorId(env, args, sensorDesc.sensorId)) {
             sensorDesc.sensorId = DEFAULT_SENSOR_ID;
             SEN_HILOGW("No sensorId, The first sensor of the type is selected by default");
         }
     }
-    if (sensorDesc.deviceId != locationDeviceId) {
+    if (sensorDesc.deviceId != localDeviceId) {
         sensorDesc.location = NON_LOCAL_DEVICE;
     }
     return true;
@@ -427,40 +412,34 @@ static napi_value Once(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type");
         return nullptr;
     }
-    SensorDescription sensorDesc;
-    sensorDesc.sensorType = INVALID_SENSOR_TYPE;
-    if (!GetNativeInt32(env, args[0], sensorDesc.sensorType)) {
+    int32_t sensorType = INVALID_SENSOR_TYPE;
+    if (!GetNativeInt32(env, args[0], sensorType)) {
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
         return nullptr;
     }
-    if (!GetDeviceInfoParameter(env, argc, args[2], sensorDesc)) {
-        SEN_HILOGE("location deviceId fail");
-        return nullptr;
-    }
-    if (!CheckSubscribe(sensorDesc)) {
+    if (!CheckSubscribe({DEFAULT_DEVICE_ID, sensorType, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE})) {
         SEN_HILOGD("No subscription to change sensor data, registration is required");
-        int32_t ret = SubscribeSensor(sensorDesc, REPORTING_INTERVAL, DataCallbackImpl);
+        int32_t ret = SubscribeSensor({DEFAULT_DEVICE_ID, sensorType, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE},
+            REPORTING_INTERVAL, DataCallbackImpl);
         if (ret != ERR_OK) {
             ThrowErr(env, ret, "SubscribeSensor fail");
             return nullptr;
         }
     }
-    UpdateOnceCallback(env, sensorDesc, args[1]);
+    UpdateOnceCallback(env, {DEFAULT_DEVICE_ID, sensorType, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE}, args[1]);
     return nullptr;
 }
 
 static bool IsSubscribed(napi_env env, SensorDescription sensorDesc, napi_value callback)
 {
     CALL_LOG_ENTER;
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto iter = g_onCallbackInfos.find(sensorDescName);
+    auto iter = g_onCallbackInfos.find(sensorDesc);
     if (iter == g_onCallbackInfos.end()) {
         SEN_HILOGW("No client subscribe, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return false;
     }
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     for (auto callbackInfo : callbackInfos) {
         CHKPC(callbackInfo);
         if (callbackInfo->env != env) {
@@ -488,11 +467,9 @@ static void UpdateCallbackInfos(napi_env env, SensorDescription sensorDesc, napi
         ThrowErr(env, PARAMETER_ERROR, "napi_create_reference fail");
         return;
     }
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     callbackInfos.push_back(asyncCallbackInfo);
-    g_onCallbackInfos[sensorDescName] = callbackInfos;
+    g_onCallbackInfos[sensorDesc] = callbackInfos;
 }
 
 static bool GetInterval(napi_env env, napi_value value, int64_t &interval)
@@ -584,27 +561,27 @@ static napi_value OnPlugSensor(napi_env env, const napi_value type, const napi_v
     return nullptr;
 }
 
-static bool GetDeviceIdByDeviceInfo(napi_env env, napi_value value, int32_t &deviceId)
+static bool GetDeviceIdBySensorInfoParam(napi_env env, napi_value value, int32_t &deviceId)
 {
-    napi_value napiDeviceInfo = GetNamedProperty(env, value, "deviceInfo");
-    if (!IsMatchType(env, napiDeviceInfo, napi_object)) {
-        SEN_HILOGW("deviceInfo failed");
+    napi_value napiSensorInfoParam = GetNamedProperty(env, value, "sensorInfoParam");
+    if (!IsMatchType(env, napiSensorInfoParam, napi_object)) {
+        SEN_HILOGW("sensorInfoParam failed");
         return false;
     }
-    if (!GetDeviceId(env, napiDeviceInfo, deviceId)) {
+    if (!GetDeviceId(env, napiSensorInfoParam, deviceId)) {
         return false;
     }
     return true;
 }
 
-static bool GetSensorIdByDeviceInfo(napi_env env, napi_value value, int32_t &sensorId)
+static bool GetSensorIdBySensorInfoParam(napi_env env, napi_value value, int32_t &sensorId)
 {
-    napi_value napiDeviceInfo = GetNamedProperty(env, value, "deviceInfo");
-    if (!IsMatchType(env, napiDeviceInfo, napi_object)) {
-        SEN_HILOGW("deviceInfo failed");
+    napi_value napiSensorInfoParam = GetNamedProperty(env, value, "sensorInfoParam");
+    if (!IsMatchType(env, napiSensorInfoParam, napi_object)) {
+        SEN_HILOGW("sensorInfoParam failed");
         return false;
     }
-    if (!GetSensorId(env, napiDeviceInfo, sensorId)) {
+    if (!GetSensorId(env, napiSensorInfoParam, sensorId)) {
         return false;
     }
     return true;
@@ -613,28 +590,27 @@ static bool GetSensorIdByDeviceInfo(napi_env env, napi_value value, int32_t &sen
 static bool GetOptionalParameter(napi_env env, size_t argc, napi_value args, int64_t &interval,
     SensorDescription &sensorDesc)
 {
-    int32_t locationDeviceId = DEFAULT_DEVICE_ID;
-    if (!GetLocationDeviceId(locationDeviceId)) {
-        ThrowErr(env, SERVICE_EXCEPTION, "location deviceId fail");
-        return false;
+    int32_t localDeviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(localDeviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
     }
-    sensorDesc.deviceId = locationDeviceId;
+    sensorDesc.deviceId = localDeviceId;
     sensorDesc.sensorId = DEFAULT_SENSOR_ID;
     sensorDesc.location = IS_LOCAL_DEVICE;
-    if (argc >= 3 && IsMatchType(env, args, napi_object)) {
+    if (argc >= ARGC_NUM_THREE && IsMatchType(env, args, napi_object)) {
         if (!GetInterval(env, args, interval)) {
             SEN_HILOGW("Get interval failed");
         }
-        if (!GetDeviceIdByDeviceInfo(env, args, sensorDesc.deviceId)) {
+        if (!GetDeviceIdBySensorInfoParam(env, args, sensorDesc.deviceId)) {
             SEN_HILOGW("No deviceId, This device is selected by default");
-            sensorDesc.deviceId = locationDeviceId;
+            sensorDesc.deviceId = localDeviceId;
         }
-        if (!GetSensorIdByDeviceInfo(env, args, sensorDesc.sensorId)) {
+        if (!GetSensorIdBySensorInfoParam(env, args, sensorDesc.sensorId)) {
             sensorDesc.sensorId = DEFAULT_SENSOR_ID;
             SEN_HILOGW("No sensorId, The first sensor of the type is selected by default");
         }
     }
-    if (sensorDesc.deviceId != locationDeviceId) {
+    if (sensorDesc.deviceId != localDeviceId) {
         sensorDesc.location = NON_LOCAL_DEVICE;
     }
     SEN_HILOGD("Interval is %{public}" PRId64, interval);
@@ -666,7 +642,7 @@ static napi_value On(napi_env env, napi_callback_info info)
         return nullptr;
     }
     int64_t interval = REPORTING_INTERVAL;
-    if (!GetOptionalParameter(env, argc, args[2], interval, sensorDesc)) {
+    if (!GetOptionalParameter(env, argc, args[ARGS_NUM_TWO], interval, sensorDesc)) {
         SEN_HILOGE("location deviceId fail");
         return nullptr;
     }
@@ -763,9 +739,7 @@ static int32_t RemoveAllCallback(napi_env env, SensorDescription sensorDesc)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
         if ((*iter)->env != env) {
@@ -776,10 +750,10 @@ static int32_t RemoveAllCallback(napi_env env, SensorDescription sensorDesc)
     }
     if (callbackInfos.empty()) {
         SEN_HILOGD("No subscription to change sensor data");
-        g_onCallbackInfos.erase(sensorDescName);
+        g_onCallbackInfos.erase(sensorDesc);
         return DEFAULT_SUBSCRIBE_SIZE;
     }
-    g_onCallbackInfos[sensorDescName] = callbackInfos;
+    g_onCallbackInfos[sensorDesc] = callbackInfos;
     return callbackInfos.size();
 }
 
@@ -787,9 +761,7 @@ static int32_t RemoveCallback(napi_env env, SensorDescription sensorDesc, napi_v
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
         if ((*iter)->env != env) {
@@ -810,10 +782,10 @@ static int32_t RemoveCallback(napi_env env, SensorDescription sensorDesc, napi_v
     }
     if (callbackInfos.empty()) {
         SEN_HILOGD("No subscription to change sensor data");
-        g_onCallbackInfos.erase(sensorDescName);
+        g_onCallbackInfos.erase(sensorDesc);
         return DEFAULT_SUBSCRIBE_SIZE;
     }
-    g_onCallbackInfos[sensorDescName] = callbackInfos;
+    g_onCallbackInfos[sensorDesc] = callbackInfos;
     return callbackInfos.size();
 }
 
@@ -837,19 +809,20 @@ static napi_value Off(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type or get number fail");
         return nullptr;
     }
-    if (!GetDeviceInfoParameter(env, argc, args[2], sensorDesc)) {
+    if (!GetSensorInfoParameter(env, argc, args[1], sensorDesc)) {
         SEN_HILOGE("location deviceId fail");
         return nullptr;
     }
     int32_t subscribeSize = INVALID_SUBSCRIBE_SIZE;
     if (argc == 1) {
         subscribeSize = RemoveAllCallback(env, sensorDesc);
-    } else if (IsMatchType(env, args[1], napi_undefined) || IsMatchType(env, args[1], napi_null)) {
+    } else if (IsMatchType(env, args[ARGS_NUM_TWO], napi_undefined) ||
+        IsMatchType(env, args[ARGS_NUM_TWO], napi_null)) {
         subscribeSize = RemoveAllCallback(env, sensorDesc);
-    } else if (IsMatchType(env, args[1], napi_function)) {
-        subscribeSize = RemoveCallback(env, sensorDesc, args[1]);
+    } else if (IsMatchType(env, args[ARGS_NUM_TWO], napi_function)) {
+        subscribeSize = RemoveCallback(env, sensorDesc, args[ARGS_NUM_TWO]);
     } else {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, args[1] should is napi_function");
+        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, args[2] should is napi_function");
         return nullptr;
     }
     if (CheckSystemSubscribe(sensorDesc) || (subscribeSize > DEFAULT_SUBSCRIBE_SIZE)) {
@@ -1541,52 +1514,6 @@ static void FilteringSensorList(SensorInfo *sensorInfos, vector<SensorInfo> &cal
     return;
 }
 
-static napi_value GetSensorListByDevice(napi_env env, napi_callback_info info)
-{
-    CALL_LOG_ENTER;
-    size_t argc = 1;
-    napi_value args[1] = { 0 };
-    napi_value thisVar = nullptr;
-    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc < 0) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
-        return nullptr;
-    }
-    int32_t locationDeviceId = DEFAULT_DEVICE_ID;
-    if (!GetLocationDeviceId(locationDeviceId)) {
-        ThrowErr(env, SERVICE_EXCEPTION, "location deviceId fail");
-        return nullptr;
-    }
-    int32_t deviceId = locationDeviceId;
-    if (IsMatchType(env, args[0], napi_number)) {
-        if (!GetNativeInt32(env,  args[0], deviceId)) {
-            deviceId = locationDeviceId;
-        }
-    }
-    SensorInfo *sensorInfos = nullptr;
-    int32_t count = 0;
-    int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
-    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, GET_SENSOR_LIST);
-    CHKPP(asyncCallbackInfo);
-    if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get sensor list fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
-    } else {
-        FilteringSensorList(sensorInfos, asyncCallbackInfo->sensorInfos, count);
-        if (asyncCallbackInfo->sensorInfos.empty()) {
-            uint32_t targetVersion = 0;
-            if (GetSelfTargetVersion(targetVersion) && (targetVersion < COMPATIBILITY_CHANGE_VERSION_API12)) {
-                ThrowErr(env, PARAMETER_ERROR, "The sensor is not supported by the device");
-                return nullptr;
-            }
-            ThrowErr(env, SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
-            return nullptr;
-        }
-    }
-    return EmitAsyncWork(nullptr, asyncCallbackInfo);
-}
-
 static napi_value GetSensorListByDeviceSync(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -1597,38 +1524,37 @@ static napi_value GetSensorListByDeviceSync(napi_env env, napi_callback_info inf
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
     if (status != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
+        SEN_HILOGE("napi_get_cb_info fail or number of parameter invalid");
         return result;
     }
     int32_t deviceId = DEFAULT_DEVICE_ID;
     if (!GetNativeInt32(env, args[0], deviceId)) {
         SEN_HILOGW("Get deviceId failed");
         if (!GetLocationDeviceId(deviceId)) {
-            ThrowErr(env, PARAMETER_ERROR, "Failed to obtain the deviceId of the local device");
-            return result;
+            SEN_HILOGW("Cant fand local deviceId, default deviceId :%{public}d", deviceId);
         }
     }
     SensorInfo *sensorInfos = nullptr;
     int32_t count = 0;
     int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
     if (ret != OHOS::ERR_OK) {
-        ThrowErr(env, ret, "Get sensor list fail");
+        SEN_HILOGE("Get deviceSensorList failed, ret:%{public}d", deviceId);
         return result;
     }
     vector<SensorInfo> sensorInfoVec;
     FilteringSensorList(sensorInfos, sensorInfoVec, count);
     if (napi_create_array(env, &result) != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_array fail");
+        SEN_HILOGE("napi_create_array fail");
         return result;
     }
     for (uint32_t i = 0; i < sensorInfoVec.size(); ++i) {
         napi_value value = nullptr;
         if (!ConvertToSensorInfo(env, sensorInfoVec[i], value)) {
-            ThrowErr(env, PARAMETER_ERROR, "Convert sensor info fail");
+            SEN_HILOGE("Convert sensor info fail");
             return result;
         }
         if (napi_set_element(env, result, i, value) != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_set_element fail");
+            SEN_HILOGE("napi_set_element fail");
         }
     }
     return result;
@@ -1651,58 +1577,7 @@ static void FilteringSingleSensorList(SensorInfo *sensorInfos, vector<SensorInfo
     return;
 }
 
-static napi_value GetSingleSensorTypeByDevice(napi_env env, napi_callback_info info)
-{
-    CALL_LOG_ENTER;
-    size_t argc = 2;
-    napi_value args[2] = { 0 };
-    napi_value thisVar = nullptr;
-    napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc < 1) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
-        return nullptr;
-    }
-    int32_t sensorTypeId = INVALID_SENSOR_TYPE;
-    if (!GetNativeInt32(env, args[0], sensorTypeId)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
-        return nullptr;
-    }
-    int32_t locationDeviceId = DEFAULT_DEVICE_ID;
-    if (!GetLocationDeviceId(locationDeviceId)) {
-        ThrowErr(env, SERVICE_EXCEPTION, "location deviceId fail");
-        return nullptr;
-    }
-    int32_t deviceId = locationDeviceId;
-    if (IsMatchType(env, args[1], napi_number)) {
-        if (!GetNativeInt32(env, args[1], deviceId)) {
-            deviceId = locationDeviceId;
-        }
-    }
-    SensorInfo *sensorInfos = nullptr;
-    int32_t count = 0;
-    int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
-    sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, GET_SENSOR_LIST);
-    CHKPP(asyncCallbackInfo);
-    if (ret != OHOS::ERR_OK) {
-        SEN_HILOGE("Get sensor list fail");
-        asyncCallbackInfo->type = FAIL;
-        asyncCallbackInfo->error.code = ret;
-    } else {
-        FilteringSingleSensorList(sensorInfos, asyncCallbackInfo->sensorInfos, count, sensorTypeId);
-        if (asyncCallbackInfo->sensorInfos.empty()) {
-            uint32_t targetVersion = 0;
-            if (GetSelfTargetVersion(targetVersion) && (targetVersion < COMPATIBILITY_CHANGE_VERSION_API12)) {
-                ThrowErr(env, PARAMETER_ERROR, "The sensor is not supported by the device");
-                return nullptr;
-            }
-            ThrowErr(env, SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
-            return nullptr;
-        }
-    }
-    return EmitAsyncWork(nullptr, asyncCallbackInfo);
-}
-
-static napi_value GetSingleSensorTypeByDeviceSync(napi_env env, napi_callback_info info)
+static napi_value GetSingleSensorByDeviceSync(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
     size_t argc = 2;
@@ -1712,43 +1587,42 @@ static napi_value GetSingleSensorTypeByDeviceSync(napi_env env, napi_callback_in
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
     if (status != napi_ok || argc < 1) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
+        SEN_HILOGE("napi_get_cb_info fail or number of parameter invalid");
         return result;
     }
     int32_t sensorTypeId = INVALID_SENSOR_TYPE;
     if (!GetNativeInt32(env, args[0], sensorTypeId)) {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
+        SEN_HILOGE("Wrong argument type, get number fail");
         return result;
     }
     int32_t deviceId = DEFAULT_DEVICE_ID;
     if (!GetNativeInt32(env, args[1], deviceId)) {
         SEN_HILOGW("Get deviceId failed");
         if (!GetLocationDeviceId(deviceId)) {
-            ThrowErr(env, PARAMETER_ERROR, "Failed to obtain the deviceId of the local device");
-            return result;
+            SEN_HILOGW("Cant fand local deviceId, default deviceId :%{public}d", deviceId);
         }
     }
     SensorInfo *sensorInfos = nullptr;
     int32_t count = 0;
     int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
     if (ret != OHOS::ERR_OK) {
-        ThrowErr(env, ret, "Get sensor list fail");
+        SEN_HILOGE("Get sensor list fail");
         return result;
     }
     vector<SensorInfo> sensorInfoVec;
     FilteringSingleSensorList(sensorInfos, sensorInfoVec, count, sensorTypeId);
     if (napi_create_array(env, &result) != napi_ok) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_create_array fail");
+        SEN_HILOGE("napi_create_array fail");
         return result;
     }
     for (uint32_t i = 0; i < sensorInfoVec.size(); ++i) {
         napi_value value = nullptr;
         if (!ConvertToSensorInfo(env, sensorInfoVec[i], value)) {
-            ThrowErr(env, PARAMETER_ERROR, "Convert sensor info fail");
+            SEN_HILOGE("Convert sensor info fail");
             return result;
         }
         if (napi_set_element(env, result, i, value) != napi_ok) {
-            ThrowErr(env, PARAMETER_ERROR, "napi_set_element fail");
+            SEN_HILOGE("napi_set_element fail");
         }
     }
     return result;
@@ -1814,8 +1688,7 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
     CHKCP(RegisterSubscribeCallback(env, args[0], asyncCallbackInfo, napiFail, interval), "register callback failed");
     int32_t deviceId = DEFAULT_DEVICE_ID;
     if (!GetLocationDeviceId(deviceId)) {
-        ThrowErr(env, SERVICE_EXCEPTION, "location deviceId fail");
-        return nullptr;
+        SEN_HILOGW("Cant fand local deviceId, default deviceId :%{public}d", deviceId);
     }
     int32_t ret = SubscribeSensor({deviceId, sensorTypeId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE},
         g_samplingPeriod[interval], DataCallbackImpl);
@@ -1826,11 +1699,10 @@ napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId
         return nullptr;
     }
     std::lock_guard<std::mutex> subscribeLock(g_mutex);
-    std::string sensorDescName;
-    GetSensorDescName({deviceId, sensorTypeId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE}, sensorDescName);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[{deviceId, sensorTypeId,
+        DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE}];
     callbackInfos.push_back(asyncCallbackInfo);
-    g_subscribeCallbacks[sensorDescName] = callbackInfos;
+    g_subscribeCallbacks[{deviceId, sensorTypeId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE}] = callbackInfos;
     return nullptr;
 }
 
@@ -1838,9 +1710,7 @@ static bool RemoveSubscribeCallback(napi_env env, SensorDescription sensorDesc)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> subscribeCallbackLock(g_mutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorDescName];
+    std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
         if ((*iter)->env != env) {
@@ -1850,7 +1720,7 @@ static bool RemoveSubscribeCallback(napi_env env, SensorDescription sensorDesc)
         iter = callbackInfos.erase(iter);
     }
     if (callbackInfos.empty()) {
-        g_subscribeCallbacks.erase(sensorDescName);
+        g_subscribeCallbacks.erase(sensorDesc);
         return true;
     }
     return false;
@@ -1869,8 +1739,7 @@ napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorType
     }
     int32_t deviceId = DEFAULT_DEVICE_ID;
     if (!GetLocationDeviceId(deviceId)) {
-        ThrowErr(env, SERVICE_EXCEPTION, "location deviceId fail");
-        return nullptr;
+        SEN_HILOGW("Cant fand local deviceId, default deviceId :%{public}d", deviceId);
     }
     if (!RemoveSubscribeCallback(env, {deviceId, sensorTypeId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE}) ||
         CheckSubscribe({deviceId, sensorTypeId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE})) {
@@ -2044,10 +1913,8 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getSensorListSync", GetSensorListSync),
         DECLARE_NAPI_FUNCTION("getSingleSensor", GetSingleSensor),
         DECLARE_NAPI_FUNCTION("getSingleSensorSync", GetSingleSensorSync),
-        DECLARE_NAPI_FUNCTION("getSensorListbyDevice", GetSensorListByDevice),
         DECLARE_NAPI_FUNCTION("getSensorListbyDeviceSync", GetSensorListByDeviceSync),
-        DECLARE_NAPI_FUNCTION("getSingleSensorTypebyDevice", GetSingleSensorTypeByDevice),
-        DECLARE_NAPI_FUNCTION("getSingleSensorTypebyDeviceSync", GetSingleSensorTypeByDeviceSync),
+        DECLARE_NAPI_FUNCTION("getSingleSensorByDeviceSync", GetSingleSensorByDeviceSync),
         DECLARE_NAPI_FUNCTION("subscribeAccelerometer", SubscribeAccelerometer),
         DECLARE_NAPI_FUNCTION("unsubscribeAccelerometer", UnsubscribeAccelerometer),
         DECLARE_NAPI_FUNCTION("subscribeCompass", SubscribeCompass),

@@ -35,32 +35,32 @@ SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
 } // namespace
 
-bool SensorPowerPolicy::CheckFreezingSensor(int32_t sensorId)
+bool SensorPowerPolicy::CheckFreezingSensor(int32_t sensorType)
 {
-    return ((sensorId == SENSOR_TYPE_ID_PEDOMETER_DETECTION) || (sensorId == SENSOR_TYPE_ID_PEDOMETER));
+    return ((sensorType == SENSOR_TYPE_ID_PEDOMETER_DETECTION) || (sensorType == SENSOR_TYPE_ID_PEDOMETER));
 }
 
 ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
-    std::vector<std::string> sensorIndexList = clientInfo_.GetSensorIdByPid(pid);
-    if (sensorIndexList.empty()) {
+    std::vector<SensorDescription> sensorDescList = clientInfo_.GetSensorIdByPid(pid);
+    if (sensorDescList.empty()) {
         SEN_HILOGD("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
         return SUSPEND_ERR;
     }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt != pidSensorInfoMap_.end()) {
-        std::unordered_map<std::string, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
-        if (!Suspend(pid, sensorIndexList, sensorInfoMap)) {
+        std::unordered_map<SensorDescription, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
+        if (!Suspend(pid, sensorDescList, sensorInfoMap)) {
             SEN_HILOGE("Suspend part sensors, but some failed, pid:%{public}d", pid);
             return SUSPEND_ERR;
         }
         SEN_HILOGI("Suspend sensors success, pid:%{public}d", pid);
         return ERR_OK;
     }
-    std::unordered_map<std::string, SensorBasicInfo> sensorInfoMap;
-    auto isAllSuspend = Suspend(pid, sensorIndexList, sensorInfoMap);
+    std::unordered_map<SensorDescription, SensorBasicInfo> sensorInfoMap;
+    auto isAllSuspend = Suspend(pid, sensorDescList, sensorInfoMap);
     pidSensorInfoMap_.insert(std::make_pair(pid, sensorInfoMap));
     if (!isAllSuspend) {
         SEN_HILOGE("Suspend all sensors, but some failed, pid:%{public}d", pid);
@@ -70,34 +70,31 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     return ERR_OK;
 }
 
-bool SensorPowerPolicy::Suspend(int32_t pid, const std::vector<std::string> &sensorIndexList,
-    std::unordered_map<std::string, SensorBasicInfo> &sensorInfoMap)
+bool SensorPowerPolicy::Suspend(int32_t pid, const std::vector<SensorDescription> &sensorDescList,
+    std::unordered_map<SensorDescription, SensorBasicInfo> &sensorInfoMap)
 {
     CALL_LOG_ENTER;
     bool isAllSuspend = true;
-    for (const auto &sensorIndex : sensorIndexList) {
-        SensorDescription sensorDesc;
-        clientInfo_.ParseIndex(sensorIndex, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-            sensorDesc.location);
+    for (const auto &sensorDesc : sensorDescList) {
         if (CheckFreezingSensor(sensorDesc.sensorType)) {
             SEN_HILOGD("Current sensor is pedometer detection or pedometer, can not suspend");
             continue;
         }
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorDesc, pid);
         if (sensorManager_.IsOtherClientUsingSensor(sensorDesc, pid)) {
-            SEN_HILOGD("Other client is using this sensor now, cannot suspend, sensorId:%{public}d",
+            SEN_HILOGD("Other client is using this sensor now, cannot suspend, sensorType:%{public}d",
                 sensorDesc.sensorType);
-            sensorInfoMap.insert(std::make_pair(sensorIndex, sensorInfo));
+            sensorInfoMap.insert(std::make_pair(sensorDesc, sensorInfo));
             continue;
         }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
         auto ret = sensorHdiConnection_.DisableSensor(sensorDesc);
         if (ret != ERR_OK) {
             isAllSuspend = false;
-            SEN_HILOGE("Hdi disable sensor failed, sensorId:%{public}d, ret:%{public}d", sensorDesc.sensorType, ret);
+            SEN_HILOGE("Hdi disable sensor failed, sensorType:%{public}d, ret:%{public}d", sensorDesc.sensorType, ret);
         }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-        sensorInfoMap.insert(std::make_pair(sensorIndex, sensorInfo));
+        sensorInfoMap.insert(std::make_pair(sensorDesc, sensorInfo));
         sensorManager_.AfterDisableSensor(sensorDesc);
     }
     return isAllSuspend;
@@ -113,15 +110,12 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
         return RESUME_ERR;
     }
     bool isAllResume = true;
-    std::unordered_map<std::string, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
+    std::unordered_map<SensorDescription, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;
     for (auto sensorIt = sensorInfoMap.begin(); sensorIt != sensorInfoMap.end();) {
-        SensorDescription sensorDesc;
-        clientInfo_.ParseIndex(sensorIt->first, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-            sensorDesc.location);
         int64_t samplingPeriodNs = sensorIt->second.GetSamplingPeriodNs();
         int64_t maxReportDelayNs = sensorIt->second.GetMaxReportDelayNs();
-        if (!Resume(pid, sensorDesc, samplingPeriodNs, maxReportDelayNs)) {
-            SEN_HILOGE("Resume sensor failed, sensorId:%{public}d", sensorDesc.sensorType);
+        if (!Resume(pid, sensorIt->first, samplingPeriodNs, maxReportDelayNs)) {
+            SEN_HILOGE("Resume sensor failed, sensorType:%{public}d", sensorIt->first.sensorType);
             isAllResume = false;
             ++sensorIt;
         } else {
@@ -137,17 +131,17 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
     return ERR_OK;
 }
 
-bool SensorPowerPolicy::Resume(int32_t pid, SensorDescription sensorDesc, int64_t samplingPeriodNs,
+bool SensorPowerPolicy::Resume(int32_t pid, const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (samplingPeriodNs <= 0) ||
         ((samplingPeriodNs != 0L) && (maxReportDelayNs / samplingPeriodNs > MAX_EVENT_COUNT))) {
-        SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceed the maximum value");
+        SEN_HILOGE("sensorType is invalid or maxReportDelayNs exceed the maximum value");
         return false;
     }
     if (clientInfo_.GetSensorState(sensorDesc)) {
-        SEN_HILOGD("Sensor is enable, sensorId:%{public}d", sensorDesc.sensorType);
+        SEN_HILOGD("Sensor is enable, sensorType:%{public}d", sensorDesc.sensorType);
         auto ret = RestoreSensorInfo(pid, sensorDesc, samplingPeriodNs, maxReportDelayNs);
         if (ret != ERR_OK) {
             SEN_HILOGE("Restore sensor info failed, ret:%{public}d", ret);
@@ -163,7 +157,7 @@ bool SensorPowerPolicy::Resume(int32_t pid, SensorDescription sensorDesc, int64_
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     ret = sensorHdiConnection_.EnableSensor(sensorDesc);
     if (ret != ERR_OK) {
-        SEN_HILOGE("Hdi enable sensor failed, sensorId:%{public}d, ret:%{public}d", sensorDesc.sensorType, ret);
+        SEN_HILOGE("Hdi enable sensor failed, sensorType:%{public}d, ret:%{public}d", sensorDesc.sensorType, ret);
         clientInfo_.RemoveSubscriber(sensorDesc, pid);
         return false;
     }
@@ -171,7 +165,7 @@ bool SensorPowerPolicy::Resume(int32_t pid, SensorDescription sensorDesc, int64_
     return true;
 }
 
-ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, SensorDescription sensorDesc, int64_t samplingPeriodNs,
+ErrCode SensorPowerPolicy::RestoreSensorInfo(int32_t pid, const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     CALL_LOG_ENTER;
@@ -224,11 +218,8 @@ std::vector<ActiveInfo> SensorPowerPolicy::GetActiveInfoList(int32_t pid)
 {
     CALL_LOG_ENTER;
     std::vector<ActiveInfo> activeInfoList;
-    std::vector<std::string> sensorIdList = clientInfo_.GetSensorIdByPid(pid);
-    for (const auto &sensorId : sensorIdList) {
-        SensorDescription sensorDesc;
-        clientInfo_.ParseIndex(sensorId, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-            sensorDesc.location);
+    std::vector<SensorDescription> sensorDescList = clientInfo_.GetSensorIdByPid(pid);
+    for (const auto &sensorDesc : sensorDescList) {
         auto sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorDesc, pid);
         ActiveInfo activeInfo(pid, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
             sensorInfo.GetSamplingPeriodNs(), sensorInfo.GetMaxReportDelayNs());

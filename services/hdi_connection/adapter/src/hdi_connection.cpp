@@ -42,12 +42,11 @@ namespace {
 sptr<ISensorInterface> g_sensorInterface = nullptr;
 sptr<ISensorCallback> g_eventCallback = nullptr;
 sptr<ISensorPlugCallback> g_plugCallback = nullptr;
-std::map<std::string, SensorBasicInfo> g_sensorBasicInfoMap;
+std::map<SensorDescription, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
 constexpr uint32_t WAIT_MS = 200;
 constexpr int32_t HEADPOSTURE_FIFO_COUNT = 5;
-constexpr int32_t DEFAULT_BASE = 10;
 }  // namespace
 
 ReportDataCb HdiConnection::reportDataCb_ = nullptr;
@@ -115,7 +114,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
-        if (sensorInfos[i].deviceSensorInfo.sensorId == SENSOR_TYPE_ID_HEADPOSTURE) {
+        if (sensorInfos[i].deviceSensorInfo.sensorType == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
         sensorList.push_back(sensor);
@@ -123,7 +122,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     return ERR_OK;
 }
 
-int32_t HdiConnection::EnableSensor(SensorDescription sensorDesc)
+int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -144,7 +143,7 @@ int32_t HdiConnection::EnableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 }
 
-int32_t HdiConnection::DisableSensor(SensorDescription sensorDesc)
+int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -165,7 +164,7 @@ int32_t HdiConnection::DisableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 }
 
-int32_t HdiConnection::SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval)
+int32_t HdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval)
 {
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     int32_t ret = g_sensorInterface->SetBatch({sensorDesc.deviceId, sensorDesc.sensorType,
@@ -182,7 +181,7 @@ int32_t HdiConnection::SetBatch(SensorDescription sensorDesc, int64_t samplingIn
     return ERR_OK;
 }
 
-int32_t HdiConnection::SetMode(SensorDescription sensorDesc, int32_t mode)
+int32_t HdiConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
@@ -288,51 +287,45 @@ sptr<ReportDataCallback> HdiConnection::GetReportDataCallback()
     return reportDataCallback_;
 }
 
-void HdiConnection::UpdateSensorBasicInfo(SensorDescription sensorDesc, int64_t samplingPeriodNs,
+void HdiConnection::UpdateSensorBasicInfo(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     SensorBasicInfo sensorBasicInfo;
     sensorBasicInfo.SetSamplingPeriodNs(samplingPeriodNs);
     sensorBasicInfo.SetMaxReportDelayNs(maxReportDelayNs);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = g_sensorBasicInfoMap.find(sensorDescName);
+    auto it = g_sensorBasicInfoMap.find(sensorDesc);
     if (it != g_sensorBasicInfoMap.end()) {
-        if (g_sensorBasicInfoMap[sensorDescName].GetSensorState()) {
+        if (g_sensorBasicInfoMap[sensorDesc].GetSensorState()) {
             sensorBasicInfo.SetSensorState(true);
         }
     }
-    g_sensorBasicInfoMap[sensorDescName] = sensorBasicInfo;
+    g_sensorBasicInfoMap[sensorDesc] = sensorBasicInfo;
 }
 
-void HdiConnection::SetSensorBasicInfoState(SensorDescription sensorDesc, bool state)
+void HdiConnection::SetSensorBasicInfoState(const SensorDescription &sensorDesc, bool state)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = g_sensorBasicInfoMap.find(sensorDescName);
+    auto it = g_sensorBasicInfoMap.find(sensorDesc);
     if (it == g_sensorBasicInfoMap.end()) {
         SEN_HILOGW("Should set batch first");
         return;
     }
-    g_sensorBasicInfoMap[sensorDescName].SetSensorState(state);
+    g_sensorBasicInfoMap[sensorDesc].SetSensorState(state);
     SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
 }
 
-void HdiConnection::DeleteSensorBasicInfoState(SensorDescription sensorDesc)
+void HdiConnection::DeleteSensorBasicInfoState(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = g_sensorBasicInfoMap.find(sensorDescName);
+    auto it = g_sensorBasicInfoMap.find(sensorDesc);
     if (it != g_sensorBasicInfoMap.end()) {
-        g_sensorBasicInfoMap.erase(sensorDescName);
+        g_sensorBasicInfoMap.erase(sensorDesc);
     }
     SEN_HILOGI("Done,deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -394,27 +387,25 @@ void HdiConnection::Reconnect()
     }
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     for (const auto &sensorInfo: g_sensorBasicInfoMap) {
-        SensorDescription sensorDesc;
-        ParseIndex(sensorInfo.first, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-            sensorDesc.location);
         SensorBasicInfo info = sensorInfo.second;
         if (info.GetSensorState() != true) {
             SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d don't need enable sensor",
-                sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId);
             continue;
         }
-        ret = g_sensorInterface->SetBatch({sensorDesc.deviceId, sensorDesc.sensorType,
-            sensorDesc.sensorId, sensorDesc.location}, info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
+        ret = g_sensorInterface->SetBatch({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
+            sensorInfo.first.sensorId, sensorInfo.first.location},
+            info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
         if (ret != 0) {
-            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d set batch fail,"
-                "error:%{public}d", sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, ret);
+            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d set batch fail, err:%{public}d",
+                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
             continue;
         }
-        ret = g_sensorInterface->Enable({sensorDesc.deviceId, sensorDesc.sensorType,
-            sensorDesc.sensorId, sensorDesc.location});
+        ret = g_sensorInterface->Enable({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
+            sensorInfo.first.sensorId, sensorInfo.first.location});
         if (ret != 0) {
-            SEN_HILOGE("Enable fail, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d,"
-                "error:%{public}d", sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, ret);
+            SEN_HILOGE("Enable fail, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d, err:%{public}d",
+                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
         }
     }
 }
@@ -453,35 +444,12 @@ int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
-        if (sensorInfos[i].deviceSensorInfo.sensorId == SENSOR_TYPE_ID_HEADPOSTURE) {
+        if (sensorInfos[i].deviceSensorInfo.sensorType == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
         singleDevSensors.push_back(sensor);
     }
     return ERR_OK;
-}
-
-void HdiConnection::GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName)
-{
-    sensorDescName = std::to_string(sensorDesc.deviceId) + "#" + std::to_string(sensorDesc.sensorType) +
-        "#" + std::to_string(sensorDesc.sensorId)+ "#" + std::to_string(sensorDesc.location);
-    return;
-}
-
-void HdiConnection::ParseIndex(const std::string &sensorDescName, int32_t &deviceId, int32_t &sensorType,
-    int32_t &sensorId, int32_t &location)
-{
-    size_t first_hash = sensorDescName.find('#');
-    size_t second_hash = sensorDescName.find('#', first_hash + 1);
-    size_t third_hash = sensorDescName.find('#', second_hash + 1);
-
-    deviceId = static_cast<int32_t>(strtol(sensorDescName.substr(0, first_hash).c_str(), nullptr, DEFAULT_BASE));
-    sensorType = static_cast<int32_t>(strtol(sensorDescName.substr(first_hash + 1,
-        second_hash - first_hash - 1).c_str(), nullptr, DEFAULT_BASE));
-    sensorId = static_cast<int32_t>(strtol(sensorDescName.substr(second_hash + 1,
-        third_hash - second_hash - 1).c_str(), nullptr, DEFAULT_BASE));
-    location = static_cast<int32_t>(strtol(sensorDescName.substr(third_hash + 1).c_str(), nullptr, DEFAULT_BASE));
-    return;
 }
 } // namespace Sensors
 } // namespace OHOS

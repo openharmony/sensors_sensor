@@ -278,7 +278,7 @@ int32_t SensorBasicDataChannel::DestroySensorBasicChannel()
     return ERR_OK;
 }
 
-const std::unordered_map<std::string, SensorData> &SensorBasicDataChannel::GetDataCacheBuf() const
+const std::unordered_map<SensorDescription, SensorData> &SensorBasicDataChannel::GetDataCacheBuf() const
 {
     return dataCacheBuf_;
 }

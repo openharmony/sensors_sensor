@@ -18,6 +18,41 @@
 
 #include "parcel.h"
 
+struct SensorDescription {
+    int32_t deviceId;
+    int32_t sensorType;
+    int32_t sensorId;
+    int32_t location;
+    bool operator < (const SensorDescription& other) const
+    {
+        if (deviceId != other.deviceId) return deviceId < other.deviceId;
+        if (sensorType != other.sensorType) return sensorType < other.sensorType;
+        if (sensorId != other.sensorId) return sensorId < other.sensorId;
+        return location < other.location;
+    }
+    
+    bool operator == (const SensorDescription& other) const
+    {
+        return deviceId == other.deviceId && sensorType == other.sensorType && sensorId == other.sensorId &&
+                location == other.location;
+    }
+};
+
+namespace std {
+    template <>
+    struct hash<SensorDescription> {
+        std::size_t operator()(const SensorDescription& obj) const
+        {
+            std::size_t h1 = std::hash<int32_t>{}(obj.deviceId);
+            std::size_t h2 = std::hash<int32_t>{}(obj.sensorType);
+            std::size_t h3 = std::hash<int32_t>{}(obj.sensorId);
+            std::size_t h4 = std::hash<int32_t>{}(obj.location);
+
+            return h1 ^ h2 ^ h3 ^ h4;
+        }
+    };
+}
+
 namespace OHOS {
 namespace Sensors {
 struct SensorDescriptionIPC : public Parcelable {

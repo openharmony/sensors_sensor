@@ -28,7 +28,7 @@ public:
     };
     ISensorClient() = default;
     virtual ~ISensorClient() = default;
-    virtual int32_t ProcessPlugEvent(SensorPlugData info) = 0;
+    virtual int32_t ProcessPlugEvent(const SensorPlugData &info) = 0;
     DECLARE_INTERFACE_DESCRIPTOR(u"ISensorClient");
 };
 } // namespace Sensors

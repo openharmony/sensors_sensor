@@ -32,14 +32,14 @@ typedef int32_t (*SensorDataCallback)(struct SensorNativeData *events, uint32_t 
 class SensorAgentProxy {
     DECLARE_DELAYED_SINGLETON(SensorAgentProxy);
 public:
-    int32_t ActivateSensor(SensorDescription sensorDesc, const SensorUser *user);
-    int32_t DeactivateSensor(SensorDescription sensorDesc, const SensorUser *user);
-    int32_t SetBatch(SensorDescription sensorDesc, const SensorUser *user, int64_t samplingInterval,
+    int32_t ActivateSensor(const SensorDescription &sensorDesc, const SensorUser *user);
+    int32_t DeactivateSensor(const SensorDescription &sensorDesc, const SensorUser *user);
+    int32_t SetBatch(const SensorDescription &sensorDesc, const SensorUser *user, int64_t samplingInterval,
         int64_t reportInterval);
-    int32_t SubscribeSensor(SensorDescription sensorDesc, const SensorUser *user);
-    int32_t UnsubscribeSensor(SensorDescription sensorDesc, const SensorUser *user);
-    int32_t SetMode(SensorDescription sensorDesc, const SensorUser *user, int32_t mode);
-    int32_t SetOption(SensorDescription sensorDesc, const SensorUser *user, int32_t option);
+    int32_t SubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user);
+    int32_t UnsubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user);
+    int32_t SetMode(const SensorDescription &sensorDesc, const SensorUser *user, int32_t mode);
+    int32_t SetOption(const SensorDescription &sensorDesc, const SensorUser *user, int32_t option);
     void SetIsChannelCreated(bool isChannelCreated);
     int32_t GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const;
     int32_t GetDeviceSensors(int32_t deviceId, SensorInfo **singleDevSensorInfo, int32_t *count);
@@ -54,14 +54,14 @@ public:
     void SetDeviceStatus(uint32_t deviceStatus) const;
     int32_t SubscribeSensorPlug(const SensorUser *user);
     int32_t UnsubscribeSensorPlug(const SensorUser *user);
-    bool HandlePlugSensorData(SensorPlugData info);
+    bool HandlePlugSensorData(const SensorPlugData &info);
 
 private:
     int32_t CreateSensorDataChannel();
     int32_t DestroySensorDataChannel();
     int32_t ConvertSensorInfos() const;
     void ClearSensorInfos() const;
-    std::set<RecordSensorCallback> GetSubscribeUserCallback(SensorDescription sensorDesc);
+    std::set<RecordSensorCallback> GetSubscribeUserCallback(const SensorDescription &sensorDesc);
     bool IsSubscribeMapEmpty() const;
     int32_t UpdateSensorInfo(SensorInfo* sensorInfo, const Sensor& sensor);
     int32_t UpdateSensorInfosCache(const std::vector<Sensor>& deviceSensorList);
@@ -76,8 +76,8 @@ private:
     std::atomic_bool isChannelCreated_ = false;
     int64_t samplingInterval_ = -1;
     int64_t reportInterval_ = -1;
-    std::map<std::string, std::set<const SensorUser *>> subscribeMap_;
-    std::map<std::string, std::set<const SensorUser *>> unsubscribeMap_;
+    std::map<SensorDescription, std::set<const SensorUser *>> subscribeMap_;
+    std::map<SensorDescription, std::set<const SensorUser *>> unsubscribeMap_;
     std::set<const SensorUser *> subscribeSet_;
     static std::mutex createChannelMutex_;
 };

@@ -74,7 +74,7 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor> &sensorList)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::EnableSensor(SensorDescription sensorDesc)
+int32_t CompatibleConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorDesc);
     if (ret != 0) {
@@ -85,7 +85,7 @@ int32_t CompatibleConnection::EnableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 };
 
-int32_t CompatibleConnection::DisableSensor(SensorDescription sensorDesc)
+int32_t CompatibleConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorDesc);
     if (ret != 0) {
@@ -96,7 +96,8 @@ int32_t CompatibleConnection::DisableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval)
+int32_t CompatibleConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval,
+    int64_t reportInterval)
 {
     int32_t ret = hdiServiceImpl_.SetBatch(sensorDesc, samplingInterval, reportInterval);
     if (ret != 0) {
@@ -107,7 +108,7 @@ int32_t CompatibleConnection::SetBatch(SensorDescription sensorDesc, int64_t sam
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::SetMode(SensorDescription sensorDesc, int32_t mode)
+int32_t CompatibleConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
     int32_t ret = hdiServiceImpl_.SetMode(sensorDesc, mode);
     if (ret != 0) {

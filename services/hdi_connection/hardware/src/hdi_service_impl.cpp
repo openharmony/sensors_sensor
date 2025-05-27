@@ -98,8 +98,8 @@ std::atomic_bool HdiServiceImpl::isStop_ = false;
 
 void HdiServiceImpl::GenerateEvent()
 {
-    for (const auto &sensorId : enableSensors_) {
-        switch (sensorId) {
+    for (const auto &sensorType : enableSensors_) {
+        switch (sensorType) {
             case SENSOR_TYPE_ID_ACCELEROMETER:
                 GenerateAccelerometerEvent();
                 break;
@@ -116,7 +116,7 @@ void HdiServiceImpl::GenerateEvent()
                 GenerateProximityEvent();
                 break;
             default:
-                SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
+                SEN_HILOGW("Unknown sensorType:%{public}d", sensorType);
                 break;
         }
     }
@@ -228,8 +228,8 @@ void HdiServiceImpl::DataReportThread()
                 SEN_HILOGW("RecordSensorCallback is null");
                 continue;
             }
-            for (const auto &sensorId : enableSensors_) {
-                switch (sensorId) {
+            for (const auto &sensorType : enableSensors_) {
+                switch (sensorType) {
                     case SENSOR_TYPE_ID_ACCELEROMETER:
                         it(&g_accEvent);
                         break;
@@ -246,7 +246,7 @@ void HdiServiceImpl::DataReportThread()
                         it(&g_proximityEvent);
                         break;
                     default:
-                        SEN_HILOGW("Unknown sensorId:%{public}d", sensorId);
+                        SEN_HILOGW("Unknown sensorType:%{public}d", sensorType);
                         break;
                 }
             }
@@ -259,15 +259,15 @@ void HdiServiceImpl::DataReportThread()
     return;
 }
 
-int32_t HdiServiceImpl::EnableSensor(SensorDescription sensorDesc)
+int32_t HdiServiceImpl::EnableSensor(const SensorDescription &sensorDesc)
 {
     CALL_LOG_ENTER;
     if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorDesc.sensorType) == g_supportSensors.end()) {
-        SEN_HILOGE("Not support enable sensorId:%{public}d", sensorDesc.sensorType);
+        SEN_HILOGE("Not support enable sensorType:%{public}d", sensorDesc.sensorType);
         return ERR_NO_INIT;
     }
     if (std::find(enableSensors_.begin(), enableSensors_.end(), sensorDesc.sensorType) != enableSensors_.end()) {
-        SEN_HILOGI("sensorId:%{public}d has been enabled", sensorDesc.sensorType);
+        SEN_HILOGI("sensorType:%{public}d has been enabled", sensorDesc.sensorType);
         return ERR_OK;
     }
     enableSensors_.push_back(sensorDesc.sensorType);
@@ -282,7 +282,7 @@ int32_t HdiServiceImpl::EnableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 };
 
-int32_t HdiServiceImpl::DisableSensor(SensorDescription sensorDesc)
+int32_t HdiServiceImpl::DisableSensor(const SensorDescription &sensorDesc)
 {
     CALL_LOG_ENTER;
     if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorDesc.sensorType) == g_supportSensors.end()) {
@@ -291,7 +291,7 @@ int32_t HdiServiceImpl::DisableSensor(SensorDescription sensorDesc)
         return ERR_NO_INIT;
     }
     if (std::find(enableSensors_.begin(), enableSensors_.end(), sensorDesc.sensorType) == enableSensors_.end()) {
-        SEN_HILOGE("sensorId:%{public}d should be enable first", sensorDesc.sensorType);
+        SEN_HILOGE("sensorType:%{public}d should be enable first", sensorDesc.sensorType);
         return ERR_NO_INIT;
     }
     std::vector<int32_t>::iterator iter;
@@ -309,7 +309,7 @@ int32_t HdiServiceImpl::DisableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval)
+int32_t HdiServiceImpl::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval)
 {
     CALL_LOG_ENTER;
     if (samplingInterval < 0 || reportInterval < 0) {
@@ -321,7 +321,7 @@ int32_t HdiServiceImpl::SetBatch(SensorDescription sensorDesc, int64_t samplingI
     return ERR_OK;
 }
 
-int32_t HdiServiceImpl::SetMode(SensorDescription sensorDesc, int32_t mode)
+int32_t HdiServiceImpl::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
     return ERR_OK;
 }

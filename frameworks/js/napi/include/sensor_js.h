@@ -21,6 +21,7 @@
 #include "napi/native_node_api.h"
 
 #include "async_callback_info.h"
+#include "sensor.h"
 #include "sensor_agent.h"
 
 namespace OHOS {
@@ -31,7 +32,7 @@ int32_t SubscribeSensor(SensorDescription sensorDesc, int64_t interval, RecordSe
 napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
 napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
 napi_value GetBodyState(napi_env env, napi_callback_info info);
-void CleanCallbackInfo(napi_env env, std::map<int32_t, std::vector<sptr<AsyncCallbackInfo>>> &callbackInfo);
+void CleanCallbackInfo(napi_env env, std::map<SensorDescription, std::vector<sptr<AsyncCallbackInfo>>> &callbackInfo);
 void CleanOnCallbackInfo(napi_env env);
 void CleanOnceCallbackInfo(napi_env env);
 void CleanSubscribeCallbackInfo(napi_env env);

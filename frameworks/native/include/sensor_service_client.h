@@ -35,12 +35,12 @@ public:
     std::vector<Sensor> GetSensorList();
     std::vector<Sensor> GetSensorListByDevice(int32_t deviceId);
     int32_t GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors);
-    int32_t EnableSensor(SensorDescription sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
-    int32_t DisableSensor(SensorDescription sensorDesc);
+    int32_t EnableSensor(const SensorDescription &sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
+    int32_t DisableSensor(const SensorDescription &sensorDesc);
     int32_t TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel);
     int32_t DestroyDataChannel();
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
-    bool IsValid(SensorDescription sensorDesc);
+    bool IsValid(const SensorDescription &sensorDesc);
     int32_t SuspendSensors(int32_t pid);
     int32_t ResumeSensors(int32_t pid);
     int32_t GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList);
@@ -51,9 +51,6 @@ public:
     void Disconnect();
     void HandleNetPacke(NetPacket &pkt);
     void SetDeviceStatus(uint32_t deviceStatus);
-    void GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName);
-    void ParseIndex(const std::string &sensorDescName, int32_t &deviceId, int32_t &sensorType, int32_t &sensorId,
-        int32_t &location);
     int32_t CreateClientRemoteObject();
     int32_t TransferClientRemoteObject();
     int32_t DestroyClientRemoteObject();
@@ -62,8 +59,8 @@ public:
 
 private:
     int32_t InitServiceClient();
-    void UpdateSensorInfoMap(SensorDescription sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
-    void DeleteSensorInfoItem(SensorDescription sensorDesc);
+    void UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
+    void DeleteSensorInfoItem(const SensorDescription &sensorDesc);
     int32_t CreateSocketClientFd(int32_t &clientFd);
     int32_t CreateSocketChannel();
     void ReenableSensor();
@@ -77,7 +74,7 @@ private:
     sptr<SensorDataChannel> dataChannel_ = nullptr;
     sptr<SensorClientStub> sensorClientStub_ = nullptr;
     std::mutex mapMutex_;
-    std::map<std::string, SensorBasicInfo> sensorInfoMap_;
+    std::map<SensorDescription, SensorBasicInfo> sensorInfoMap_;
     std::atomic_bool isConnected_ = false;
     CircleStreamBuffer circBuf_;
     std::mutex activeInfoCBMutex_;

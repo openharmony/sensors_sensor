@@ -33,7 +33,6 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr int32_t DEFAULT_BASE = 10;
 #ifdef OHOS_BUILD_ENABLE_RUST
 extern "C" {
     void ReadClientPackets(RustStreamBuffer *, OHOS::Sensors::SensorServiceClient *,
@@ -108,7 +107,7 @@ int32_t SensorServiceClient::InitServiceClient()
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }
 
-bool SensorServiceClient::IsValid(SensorDescription sensorDesc)
+bool SensorServiceClient::IsValid(const SensorDescription &sensorDesc)
 {
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -128,7 +127,8 @@ bool SensorServiceClient::IsValid(SensorDescription sensorDesc)
     return false;
 }
 
-int32_t SensorServiceClient::EnableSensor(SensorDescription sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay)
+int32_t SensorServiceClient::EnableSensor(const SensorDescription &sensorDesc, int64_t samplingPeriod,
+    int64_t maxReportDelay)
 {
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
@@ -153,7 +153,7 @@ int32_t SensorServiceClient::EnableSensor(SensorDescription sensorDesc, int64_t 
     return ret;
 }
 
-int32_t SensorServiceClient::DisableSensor(SensorDescription sensorDesc)
+int32_t SensorServiceClient::DisableSensor(const SensorDescription &sensorDesc)
 {
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
@@ -333,12 +333,8 @@ void SensorServiceClient::ReenableSensor()
         std::lock_guard<std::mutex> mapLock(mapMutex_);
         for (const auto &it : sensorInfoMap_) {
             if (sensorServer_ != nullptr) {
-                SensorDescription sensorDesc;
-                ParseIndex(it.first, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-                    sensorDesc.location);
-                int32_t ret = sensorServer_->EnableSensor({sensorDesc.deviceId,
-                    sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location},
-                    it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
+                int32_t ret = sensorServer_->EnableSensor({it.first.deviceId, it.first.sensorType, it.first.sensorId,
+                    it.first.location}, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
                 WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR, ret);
             }
         }
@@ -354,15 +350,11 @@ void SensorServiceClient::ReenableSensor()
 int32_t SensorServiceClient::CreateClientRemoteObject()
 {
     CALL_LOG_ENTER;
-    if (sensorServer_ == nullptr) {
-        int32_t ret = InitServiceClient();
-        if (ret != ERR_OK) {
-            SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
-            return ret;
-        }
-        return ret;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
     }
-    return ERR_OK;
+    return ret;
 }
 
 int32_t SensorServiceClient::TransferClientRemoteObject()
@@ -528,7 +520,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     ReenableSensor();
 }
 
-void SensorServiceClient::UpdateSensorInfoMap(SensorDescription sensorDesc, int64_t samplingPeriod,
+void SensorServiceClient::UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod,
     int64_t maxReportDelay)
 {
     SEN_HILOGI("In");
@@ -537,20 +529,16 @@ void SensorServiceClient::UpdateSensorInfoMap(SensorDescription sensorDesc, int6
     sensorInfo.SetMaxReportDelayNs(maxReportDelay);
     sensorInfo.SetSensorState(true);
     std::lock_guard<std::mutex> mapLock(mapMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    sensorInfoMap_[sensorDescName] = sensorInfo;
+    sensorInfoMap_[sensorDesc] = sensorInfo;
     SEN_HILOGI("Done");
     return;
 }
 
-void SensorServiceClient::DeleteSensorInfoItem(SensorDescription sensorDesc)
+void SensorServiceClient::DeleteSensorInfoItem(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In");
     std::lock_guard<std::mutex> mapLock(mapMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = sensorInfoMap_.find(sensorDescName);
+    auto it = sensorInfoMap_.find(sensorDesc);
     if (it != sensorInfoMap_.end()) {
         sensorInfoMap_.erase(it);
     }
@@ -856,29 +844,6 @@ void SensorServiceClient::SetDeviceStatus(uint32_t deviceStatus)
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
-}
-
-void SensorServiceClient::GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName)
-{
-    sensorDescName = std::to_string(sensorDesc.deviceId) + "#" + std::to_string(sensorDesc.sensorType) +
-        "#" + std::to_string(sensorDesc.sensorId)+ "#" + std::to_string(sensorDesc.location);
-    return;
-}
-
-void SensorServiceClient::ParseIndex(const std::string &sensorDescName, int32_t &deviceId, int32_t &sensorType,
-    int32_t &sensorId, int32_t &location)
-{
-    size_t first_hash = sensorDescName.find('#');
-    size_t second_hash = sensorDescName.find('#', first_hash + 1);
-    size_t third_hash = sensorDescName.find('#', second_hash + 1);
-
-    deviceId = static_cast<int32_t>(strtol(sensorDescName.substr(0, first_hash).c_str(), nullptr, DEFAULT_BASE));
-    sensorType = static_cast<int32_t>(strtol(sensorDescName.substr(first_hash + 1,
-        second_hash - first_hash - 1).c_str(), nullptr, DEFAULT_BASE));
-    sensorId = static_cast<int32_t>(strtol(sensorDescName.substr(second_hash + 1,
-        third_hash - second_hash - 1).c_str(), nullptr, DEFAULT_BASE));
-    location = static_cast<int32_t>(strtol(sensorDescName.substr(third_hash + 1).c_str(), nullptr, DEFAULT_BASE));
-    return;
 }
 
 bool SensorServiceClient::EraseCacheSensorList(SensorPlugData info)

@@ -33,8 +33,8 @@ public:
     virtual ~PrintSensorData() {};
     void ControlSensorClientPrint(const RecordSensorCallback callback, const SensorEvent &event);
     void ControlSensorHdiPrint(const SensorData &sensorData);
-    void ResetHdiCounter(int32_t sensorId);
-    bool IsContinuousType(int32_t sensorId);
+    void ResetHdiCounter(int32_t sensorType);
+    bool IsContinuousType(int32_t sensorType);
     void SavePrintUserInfo(const RecordSensorCallback callback);
     void RemovePrintUserInfo(const RecordSensorCallback callback);
     void PrintSensorDataLog(const std::string &name, const SensorData &data);
@@ -44,7 +44,7 @@ public:
 private:
     void PrintClientData(const SensorEvent &event);
     void PrintHdiData(const SensorData &sensorData);
-    int32_t GetDataDimension(int32_t sensorId);
+    int32_t GetDataDimension(int32_t sensorType);
     void ProcessHdiDFX(const SensorData &sensorData);
     void ProcessClientDFX(const SensorEvent &event);
     struct LogPrintInfo {

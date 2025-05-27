@@ -341,7 +341,7 @@ bool ConvertToSensorState(const napi_env &env, sptr<AsyncCallbackInfo> asyncCall
     value = nullptr;
     CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->sensorStatusEvent.sensorType, &value),
         "napi_create_int32");
-    CHKNRF(env, napi_set_named_property(env, result[0], "sensorType", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[0], "sensorId", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->sensorStatusEvent.sensorId, &value),
         "napi_create_int32");

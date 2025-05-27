@@ -69,9 +69,10 @@ private:
     std::vector<Sensor> GetSensorListByDevice(int32_t deviceId);
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
-    ErrCode CheckAuthAndParameter(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode CheckAuthAndParameter(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
+        int64_t maxReportDelayNs);
     void ReportPlugEventCallback(const SensorPlugInfo sensorPlugInfo);
-    ErrCode EnableSensorSplit(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs,
+    ErrCode SensorReportEvent(const SensorDescription &sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs,
         int32_t pid);
 
     class PermStateChangeCb : public Security::AccessToken::PermStateChangeCallbackCustomize {
@@ -87,23 +88,22 @@ private:
     void RegisterClientDeathRecipient(sptr<IRemoteObject> sensorClient, int32_t pid);
     void UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorClient);
     bool InitSensorPolicy();
-    void ReportOnChangeData(SensorDescription sensorDesc);
-    void ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid, int64_t samplingPeriodNs = 0,
+    void ReportOnChangeData(const SensorDescription &sensorDesc);
+    void ReportSensorSysEvent(int32_t sensorType, bool enable, int32_t pid, int64_t samplingPeriodNs = 0,
         int64_t maxReportDelayNs = 0);
-    ErrCode DisableSensor(SensorDescription sensorDesc, int32_t pid);
-    bool RegisterPermCallback(int32_t sensorId);
+    ErrCode DisableSensor(const SensorDescription &sensorDesc, int32_t pid);
+    bool RegisterPermCallback(int32_t sensorType);
     void UnregisterPermCallback();
-    void ReportActiveInfo(SensorDescription sensorDesc, int32_t pid);
-    bool CheckSensorId(SensorDescription sensorDesc);
+    bool CheckSensorId(const SensorDescription &sensorDesc);
+    void ReportActiveInfo(const SensorDescription &sensorDesc, int32_t pid);
     bool IsSystemServiceCalling();
     bool IsSystemCalling();
-    void GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
     std::mutex sensorMapMutex_;
     std::vector<Sensor> sensors_;
-    std::unordered_map<std::string, Sensor> sensorMap_;
+    std::unordered_map<SensorDescription, Sensor> sensorMap_;
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     bool InitInterface();
     bool InitDataCallback();
@@ -120,8 +120,7 @@ private:
     std::mutex clientDeathObserverMutex_;
     sptr<IRemoteObject::DeathRecipient> clientDeathObserver_ = nullptr;
     std::shared_ptr<PermStateChangeCb> permStateChangeCb_ = nullptr;
-    ErrCode SaveSubscriber(int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    ErrCode SaveSubscriber(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode SaveSubscriber(const SensorDescription &sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
     static std::atomic_bool isAccessTokenServiceActive_;
 };

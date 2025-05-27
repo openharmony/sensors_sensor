@@ -27,6 +27,7 @@ using OHOS::Sensors::PERMISSION_DENIED;
 using OHOS::Sensors::NON_SYSTEM_API;
 constexpr int32_t DEFAULT_SENSOR_ID = 0;
 constexpr int32_t DEFAULT_LOCATION = 1;
+constexpr int32_t DEFAULT_DEVICE_ID = -1;
 
 static int32_t NormalizeErrCode(int32_t code)
 {
@@ -70,8 +71,8 @@ int32_t ActivateSensor(int32_t sensorId, const SensorUser *user)
 {
     int32_t deviceId;
     if (SENSOR_AGENT_IMPL->GetLocalDeviceId(deviceId) != OHOS::ERR_OK) {
-        SEN_HILOGE("The local deviceId cannot be found");
-        return SERVICE_EXCEPTION;
+        SEN_HILOGW("The local deviceId cannot be found");
+        deviceId = DEFAULT_DEVICE_ID;
     }
     int32_t ret = SENSOR_AGENT_IMPL->ActivateSensor({deviceId, sensorId, DEFAULT_SENSOR_ID, DEFAULT_LOCATION}, user);
     if (ret != OHOS::ERR_OK) {
@@ -85,8 +86,8 @@ int32_t DeactivateSensor(int32_t sensorId, const SensorUser *user)
 {
     int32_t deviceId;
     if (SENSOR_AGENT_IMPL->GetLocalDeviceId(deviceId) != OHOS::ERR_OK) {
-        SEN_HILOGE("The local deviceId cannot be found");
-        return SERVICE_EXCEPTION;
+        SEN_HILOGW("The local deviceId cannot be found");
+        deviceId = DEFAULT_DEVICE_ID;
     }
     int32_t ret = SENSOR_AGENT_IMPL->DeactivateSensor({deviceId, sensorId, DEFAULT_SENSOR_ID, DEFAULT_LOCATION}, user);
     if (ret != OHOS::ERR_OK) {
@@ -100,8 +101,8 @@ int32_t SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInter
 {
     int32_t deviceId;
     if (SENSOR_AGENT_IMPL->GetLocalDeviceId(deviceId) != OHOS::ERR_OK) {
-        SEN_HILOGE("The local deviceId cannot be found");
-        return SERVICE_EXCEPTION;
+        SEN_HILOGW("The local deviceId cannot be found");
+        deviceId = DEFAULT_DEVICE_ID;
     }
     int32_t ret = SENSOR_AGENT_IMPL->SetBatch({deviceId, sensorId, DEFAULT_SENSOR_ID, DEFAULT_LOCATION},
         user, samplingInterval, reportInterval);
@@ -116,8 +117,8 @@ int32_t SubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
     int32_t deviceId;
     if (SENSOR_AGENT_IMPL->GetLocalDeviceId(deviceId) != OHOS::ERR_OK) {
-        SEN_HILOGE("The local deviceId cannot be found");
-        return SERVICE_EXCEPTION;
+        SEN_HILOGW("The local deviceId cannot be found");
+        deviceId = DEFAULT_DEVICE_ID;
     }
     int32_t ret = SENSOR_AGENT_IMPL->SubscribeSensor({deviceId, sensorId, DEFAULT_SENSOR_ID, DEFAULT_LOCATION}, user);
     if (ret != OHOS::ERR_OK) {
@@ -131,8 +132,8 @@ int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
 {
     int32_t deviceId;
     if (SENSOR_AGENT_IMPL->GetLocalDeviceId(deviceId) != OHOS::ERR_OK) {
-        SEN_HILOGE("The local deviceId cannot be found");
-        return SERVICE_EXCEPTION;
+        SEN_HILOGW("The local deviceId cannot be found");
+        deviceId = DEFAULT_DEVICE_ID;
     }
     int32_t ret = SENSOR_AGENT_IMPL->UnsubscribeSensor(
         {deviceId, sensorId, DEFAULT_SENSOR_ID, DEFAULT_LOCATION}, user);
@@ -147,8 +148,8 @@ int32_t SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
 {
     int32_t deviceId;
     if (SENSOR_AGENT_IMPL->GetLocalDeviceId(deviceId) != OHOS::ERR_OK) {
-        SEN_HILOGE("The local deviceId cannot be found");
-        return SERVICE_EXCEPTION;
+        SEN_HILOGW("The local deviceId cannot be found");
+        deviceId = DEFAULT_DEVICE_ID;
     }
     return SENSOR_AGENT_IMPL->SetMode({deviceId, sensorId, DEFAULT_SENSOR_ID, DEFAULT_LOCATION}, user, mode);
 }
@@ -220,9 +221,10 @@ void SetDeviceStatus(uint32_t deviceStatus)
     SENSOR_AGENT_IMPL->SetDeviceStatus(deviceStatus);
 }
 
-int32_t ActivateSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user)
+int32_t ActivateSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user)
 {
-    int32_t ret = SENSOR_AGENT_IMPL->ActivateSensor(sensorDesc, user);
+    int32_t ret = SENSOR_AGENT_IMPL->ActivateSensor({sensorIdentifier.deviceId, sensorIdentifier.sensorType,
+        sensorIdentifier.sensorId, sensorIdentifier.location}, user);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("ActivateSensor failed");
         return NormalizeErrCode(ret);
@@ -230,9 +232,10 @@ int32_t ActivateSensorEnhanced(SensorDescription sensorDesc, const SensorUser *u
     return ret;
 }
 
-int32_t DeactivateSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user)
+int32_t DeactivateSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user)
 {
-    int32_t ret = SENSOR_AGENT_IMPL->DeactivateSensor(sensorDesc, user);
+    int32_t ret = SENSOR_AGENT_IMPL->DeactivateSensor({sensorIdentifier.deviceId, sensorIdentifier.sensorType,
+        sensorIdentifier.sensorId, sensorIdentifier.location}, user);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("DeactivateSensor failed");
         return NormalizeErrCode(ret);
@@ -240,10 +243,11 @@ int32_t DeactivateSensorEnhanced(SensorDescription sensorDesc, const SensorUser 
     return ret;
 }
 
-int32_t SetBatchEnhanced(SensorDescription sensorDesc, const SensorUser *user, int64_t samplingInterval,
+int32_t SetBatchEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user, int64_t samplingInterval,
     int64_t reportInterval)
 {
-    int32_t ret = SENSOR_AGENT_IMPL->SetBatch(sensorDesc, user, samplingInterval, reportInterval);
+    int32_t ret = SENSOR_AGENT_IMPL->SetBatch({sensorIdentifier.deviceId, sensorIdentifier.sensorType,
+        sensorIdentifier.sensorId, sensorIdentifier.location}, user, samplingInterval, reportInterval);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("SetBatch failed");
         return NormalizeErrCode(ret);
@@ -251,9 +255,10 @@ int32_t SetBatchEnhanced(SensorDescription sensorDesc, const SensorUser *user, i
     return ret;
 }
 
-int32_t SubscribeSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user)
+int32_t SubscribeSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user)
 {
-    int32_t ret = SENSOR_AGENT_IMPL->SubscribeSensor(sensorDesc, user);
+    int32_t ret = SENSOR_AGENT_IMPL->SubscribeSensor({sensorIdentifier.deviceId, sensorIdentifier.sensorType,
+        sensorIdentifier.sensorId, sensorIdentifier.location}, user);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("SubscribeSensor failed");
         return NormalizeErrCode(ret);
@@ -261,9 +266,10 @@ int32_t SubscribeSensorEnhanced(SensorDescription sensorDesc, const SensorUser *
     return ret;
 }
 
-int32_t UnsubscribeSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user)
+int32_t UnsubscribeSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user)
 {
-    int32_t ret = SENSOR_AGENT_IMPL->UnsubscribeSensor(sensorDesc, user);
+    int32_t ret = SENSOR_AGENT_IMPL->UnsubscribeSensor({sensorIdentifier.deviceId, sensorIdentifier.sensorType,
+        sensorIdentifier.sensorId, sensorIdentifier.location}, user);
     if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("UnsubscribeSensor failed");
         return NormalizeErrCode(ret);
@@ -271,9 +277,10 @@ int32_t UnsubscribeSensorEnhanced(SensorDescription sensorDesc, const SensorUser
     return ret;
 }
 
-int32_t SetModeEnhanced(SensorDescription sensorDesc, const SensorUser *user, int32_t mode)
+int32_t SetModeEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user, int32_t mode)
 {
-    return SENSOR_AGENT_IMPL->SetMode(sensorDesc, user, mode);
+    return SENSOR_AGENT_IMPL->SetMode({sensorIdentifier.deviceId, sensorIdentifier.sensorType,
+        sensorIdentifier.sensorId, sensorIdentifier.location}, user, mode);
 }
 
 int32_t SubscribeSensorPlug(const SensorUser *user)

@@ -39,7 +39,7 @@ namespace {
 constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
 constexpr int32_t DEVICE_STATUS { 0 };
-static int32_t localDeviceId = -1;
+static int32_t LOCAL_DEVICEID = -1;
 
 PermissionStateFull g_infoManagerTestState = {
     .grantFlags = {1},
@@ -413,7 +413,7 @@ HWTEST_F(SensorAgentTest, SensorListTest_001, TestSize.Level1)
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     for (int32_t i = 0; i < count; ++i) {
         if (sensorInfo[i].location == 1) {
-            localDeviceId = sensorInfo[i].deviceId;
+            LOCAL_DEVICEID = sensorInfo[i].deviceId;
         }
         SEN_HILOGD("sensorName:%{public}s, sensorId:%{public}d, minSamplePeriod:%{public}" PRId64
             " ns, maxSamplePeriod:%{public}" PRId64 " ns", sensorInfo[i].sensorName, sensorInfo[i].sensorId,
@@ -504,7 +504,7 @@ HWTEST_F(SensorAgentTest, GetDeviceSensorsTest_001, TestSize.Level1)
     SEN_HILOGI("GetDeviceSensorsTest_001 in");
     SensorInfo *sensorInfos { nullptr };
     int32_t count { 0 };
-    int32_t deviceId = localDeviceId;
+    int32_t deviceId = LOCAL_DEVICEID;
     int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
     ASSERT_EQ(ret, OHOS::ERR_OK);
     ASSERT_EQ(count, 0);
@@ -514,7 +514,7 @@ HWTEST_F(SensorAgentTest, GetDeviceSensorsTest_002, TestSize.Level1)
 {
     SEN_HILOGI("GetDeviceSensorsTest_002 in");
     SensorInfo *sensorInfos { nullptr };
-    int32_t deviceId = localDeviceId;
+    int32_t deviceId = LOCAL_DEVICEID;
     int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, nullptr);
     ASSERT_NE(ret, OHOS::ERR_OK);
 }
@@ -531,7 +531,7 @@ HWTEST_F(SensorAgentTest, SubscribeSensorEnhancedTest_002, TestSize.Level1)
 {
     SEN_HILOGI("SubscribeSensorEnhancedTest_002 in");
     SensorDescription sensorDesc {
-        .deviceId = localDeviceId,
+        .deviceId = LOCAL_DEVICEID,
         .sensorType = 1,
         .sensorId = 0,
         .location = 1,
@@ -546,7 +546,7 @@ HWTEST_F(SensorAgentTest, UnsubscribeSensorEnhancedTest_001, TestSize.Level1)
 {
     SEN_HILOGI("UnsubscribeSensorEnhancedTest_001 in");
     SensorDescription sensorDesc {
-        .deviceId = localDeviceId,
+        .deviceId = LOCAL_DEVICEID,
         .sensorType = 1,
         .sensorId = 0,
         .location = 1,
@@ -563,7 +563,6 @@ HWTEST_F(SensorAgentTest, UnsubscribeSensorEnhancedTest_001, TestSize.Level1)
     ASSERT_EQ(ret, OHOS::ERR_OK);
     ret = UnsubscribeSensorEnhanced(sensorDesc, &user);
     ASSERT_EQ(ret, OHOS::ERR_OK);
-
 }
 
 HWTEST_F(SensorAgentTest, UnsubscribeSensorEnhancedTest_002, TestSize.Level1)
@@ -611,7 +610,7 @@ HWTEST_F(SensorAgentTest, SetModeEnhancedTest_002, TestSize.Level1)
 {
     SEN_HILOGI("SetModeEnhancedTest_002 in");
     SensorDescription sensorDesc {
-        .deviceId = localDeviceId,
+        .deviceId = LOCAL_DEVICEID,
         .sensorType = 1,
         .sensorId = 0,
         .location = 1,

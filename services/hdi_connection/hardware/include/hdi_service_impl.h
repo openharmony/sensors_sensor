@@ -19,6 +19,7 @@
 #include <thread>
 
 #include "sensor_agent_type.h"
+#include "sensor.h"
 #include "singleton.h"
 
 namespace OHOS {
@@ -29,10 +30,10 @@ public:
     virtual ~HdiServiceImpl() {}
     int32_t GetSensorList(std::vector<SensorInfo> &sensorList);
     int32_t GetSensorListByDevice(int32_t deviceId, std::vector<SensorInfo> &singleDevSensors);
-    int32_t EnableSensor(SensorDescription sensorDesc);
-    int32_t DisableSensor(SensorDescription sensorDesc);
-    int32_t SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval);
-    int32_t SetMode(SensorDescription sensorDesc, int32_t mode);
+    int32_t EnableSensor(const SensorDescription &sensorDesc);
+    int32_t DisableSensor(const SensorDescription &sensorDesc);
+    int32_t SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval);
+    int32_t SetMode(const SensorDescription &sensorDesc, int32_t mode);
     int32_t Register(RecordSensorCallback cb);
     int32_t Unregister();
 

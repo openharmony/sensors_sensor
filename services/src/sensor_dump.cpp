@@ -263,13 +263,11 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
     auto dataMap = clientInfo.GetDumpQueue();
     int32_t j = 0;
     for (auto &sensorData : dataMap) {
-        int32_t deviceId, sensorTypeId, sensorId, location;
-        clientInfo.ParseIndex(sensorData.first, deviceId, sensorTypeId, sensorId, location);
-        if (sensorMap_.find(sensorTypeId) == sensorMap_.end()) {
+        if (sensorMap_.find(sensorData.first.sensorType) == sensorMap_.end()) {
             continue;
         }
-        dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u :\n", deviceId, sensorMap_[sensorTypeId].c_str(),
-            sensorId);
+        dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u :\n", sensorData.first.deviceId,
+            sensorMap_[sensorData.first.sensorType].c_str(), sensorData.first.sensorId);
         for (uint32_t i = 0; i < MAX_DUMP_DATA_SIZE && (!sensorData.second.empty()); i++) {
             auto data = sensorData.second.front();
             sensorData.second.pop();
@@ -279,7 +277,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
             CHKPF(timeinfo);
             dprintf(fd, "      %2d (ts=%.9f, time=%02d:%02d:%02d.%03d) | data:%s", ++j, data.timestamp / 1e9,
                     timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, int32_t { (time.tv_nsec / MS_NS) },
-                    GetDataBySensorId(sensorTypeId, data).c_str());
+                    GetDataBySensorId(sensorData.first.sensorType, data).c_str());
         }
     }
     return true;
@@ -296,9 +294,9 @@ void SensorDump::DumpCurrentTime(int32_t fd)
             int32_t { (curTime.tv_nsec / MS_NS) });
 }
 
-int32_t SensorDump::GetDataDimension(int32_t sensorId)
+int32_t SensorDump::GetDataDimension(int32_t sensorType)
 {
-    switch (sensorId) {
+    switch (sensorType) {
         case SENSOR_TYPE_ID_BAROMETER:
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_HALL_EXT:
@@ -326,16 +324,16 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_POSTURE:
             return SEVEN_DIMENSION;
         default:
-            SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, COMMON_DIMENSION);
+            SEN_HILOGW("Unknown sensorType:%{public}d, size:%{public}d", sensorType, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }
 
-std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorData)
+std::string SensorDump::GetDataBySensorId(int32_t sensorType, SensorData &sensorData)
 {
-    SEN_HILOGD("sensorId:%{public}u", sensorId);
+    SEN_HILOGD("sensorType:%{public}u", sensorType);
     std::string str;
-    int32_t dataLen = GetDataDimension(sensorId);
+    int32_t dataLen = GetDataDimension(sensorType);
     if (sensorData.dataLen < sizeof(float)) {
         SEN_HILOGE("SensorData dataLen less than float size");
         return str;

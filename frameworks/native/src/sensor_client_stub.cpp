@@ -68,12 +68,16 @@ int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
         SEN_HILOGE("Read reserved failed.");
         return PARAMETER_ERROR;
     }
+    if (!data.ReadInt64(info.timestamp)) {
+        SEN_HILOGE("Read timestamp failed.");
+        return PARAMETER_ERROR;
+    }
     int32_t result = ProcessPlugEvent(info);
     reply.WriteInt32(result);
     return NO_ERROR;
 }
 
-int32_t SensorClientStub::ProcessPlugEvent(SensorPlugData info)
+int32_t SensorClientStub::ProcessPlugEvent(const SensorPlugData &info)
 {
     CALL_LOG_ENTER;
     if (!(SENSOR_AGENT_IMPL->HandlePlugSensorData(info))) {

@@ -37,7 +37,6 @@ constexpr int32_t MIN_MAP_SIZE = 0;
 constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
-constexpr int32_t DEFAULT_BASE = 10;
 } // namespace
 
 std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
@@ -45,20 +44,18 @@ std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_
     { READ_HEALTH_DATA_PERMISSION, { SENSOR_TYPE_ID_HEART_RATE } }
 };
 
-bool ClientInfo::GetSensorState(SensorDescription sensorDesc)
+bool ClientInfo::GetSensorState(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorType is invalid");
         return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Can't find sensorId:%{public}d", sensorDesc.sensorType);
+        SEN_HILOGE("Can't find sensorType:%{public}d", sensorDesc.sensorType);
         return false;
     }
     for (const auto &pidIt : it->second) {
@@ -71,7 +68,7 @@ bool ClientInfo::GetSensorState(SensorDescription sensorDesc)
     return false;
 }
 
-SensorBasicInfo ClientInfo::GetBestSensorInfo(SensorDescription sensorDesc)
+SensorBasicInfo ClientInfo::GetBestSensorInfo(const SensorDescription &sensorDesc)
 {
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
@@ -79,14 +76,12 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(SensorDescription sensorDesc)
     sensorInfo.SetSamplingPeriodNs(minSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(minReportDelayNs);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorType is invalid");
         return sensorInfo;
     }
 
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
         SEN_HILOGE("Can't find deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, location:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
@@ -103,17 +98,15 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(SensorDescription sensorDesc)
     return sensorInfo;
 }
 
-bool ClientInfo::OnlyCurPidSensorEnabled(SensorDescription sensorDesc, int32_t pid)
+bool ClientInfo::OnlyCurPidSensorEnabled(const SensorDescription &sensorDesc, int32_t pid)
 {
-    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
-        SEN_HILOGE("sensorId or pid is invalid");
+        SEN_HILOGE("sensorType or pid is invalid");
         return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
         SEN_HILOGE("Can't find deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -130,7 +123,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(SensorDescription sensorDesc, int32_t p
         }
         ret = true;
     }
-    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGI("Done, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     return ret;
 }
 
@@ -215,16 +208,14 @@ sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
     return channelIt->second;
 }
 
-std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(SensorDescription sensorDesc)
+std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(const SensorDescription &sensorDesc)
 {
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorType is invalid");
         return {};
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto clientIt = clientMap_.find(sensorDescName);
+    auto clientIt = clientMap_.find(sensorDesc);
     if (clientIt == clientMap_.end()) {
         SEN_HILOGD("There is no channel belong to sensor,"
             "deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
@@ -246,21 +237,19 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(SensorDes
     return sensorChannel;
 }
 
-bool ClientInfo::UpdateSensorInfo(SensorDescription sensorDesc, int32_t pid, const SensorBasicInfo &sensorInfo)
+bool ClientInfo::UpdateSensorInfo(const SensorDescription &sensorDesc, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
-    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
         SEN_HILOGE("Params are invalid");
         return false;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
         std::unordered_map<int32_t, SensorBasicInfo> pidMap;
         auto pidRet = pidMap.insert(std::make_pair(pid, sensorInfo));
-        auto clientRet = clientMap_.insert(std::make_pair(sensorDescName, pidMap));
+        auto clientRet = clientMap_.insert(std::make_pair(sensorDesc, pidMap));
         return pidRet.second && clientRet.second;
     }
     auto pidIt = it->second.find(pid);
@@ -269,26 +258,24 @@ bool ClientInfo::UpdateSensorInfo(SensorDescription sensorDesc, int32_t pid, con
         return ret.second;
     }
     it->second[pid] = sensorInfo;
-    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGI("Done, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     return true;
 }
 
-void ClientInfo::RemoveSubscriber(SensorDescription sensorDesc, uint32_t pid)
+void ClientInfo::RemoveSubscriber(const SensorDescription &sensorDesc, uint32_t pid)
 {
     SEN_HILOGI("In, sensorTypeId:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGW("sensorId not exist");
+        SEN_HILOGW("sensorDesc not exist");
         return;
     }
     auto pidIt = it->second.find(pid);
     if (pidIt != it->second.end()) {
         it->second.erase(pidIt);
     }
-    SEN_HILOGI("Done, sensorTypeId:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
+    SEN_HILOGI("Done, sensorType:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
 }
 
 bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel)
@@ -315,39 +302,35 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
     return true;
 }
 
-void ClientInfo::ClearSensorInfo(SensorDescription sensorDesc)
+void ClientInfo::ClearSensorInfo(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorType is invalid");
         return;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGD("sensorId not exist, no need to clear it");
+        SEN_HILOGD("sensorDesc not exist, no need to clear it");
         return;
     }
     clientMap_.erase(it);
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
 }
 
-void ClientInfo::ClearCurPidSensorInfo(SensorDescription sensorDesc, int32_t pid)
+void ClientInfo::ClearCurPidSensorInfo(const SensorDescription &sensorDesc, int32_t pid)
 {
-    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
-        SEN_HILOGE("sensorId or pid is invalid");
+        SEN_HILOGE("sensorType or pid is invalid");
         return;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGD("sensorId not exist, no need to clear it");
+        SEN_HILOGD("sensorDesc not exist, no need to clear it");
         return;
     }
     auto pidIt = it->second.find(pid);
@@ -359,7 +342,7 @@ void ClientInfo::ClearCurPidSensorInfo(SensorDescription sensorDesc, int32_t pid
     if (it->second.size() == MIN_MAP_SIZE) {
         it = clientMap_.erase(it);
     }
-    SEN_HILOGI("Done, sensorId:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGI("Done, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
 }
 
 bool ClientInfo::DestroySensorChannel(int32_t pid)
@@ -394,7 +377,7 @@ bool ClientInfo::DestroySensorChannel(int32_t pid)
     return true;
 }
 
-SensorBasicInfo ClientInfo::GetCurPidSensorInfo(SensorDescription sensorDesc, int32_t pid)
+SensorBasicInfo ClientInfo::GetCurPidSensorInfo(const SensorDescription &sensorDesc, int32_t pid)
 {
     int64_t minSamplingPeriodNs = LLONG_MAX;
     int64_t minReportDelayNs = LLONG_MAX;
@@ -402,13 +385,11 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(SensorDescription sensorDesc, in
     sensorInfo.SetSamplingPeriodNs(minSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(minReportDelayNs);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
-        SEN_HILOGE("sensorId or channel is invalid");
+        SEN_HILOGE("sensorType or channel is invalid");
         return sensorInfo;
     }
     std::lock_guard<std::mutex> clientLock(clientMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = clientMap_.find(sensorDescName);
+    auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
         SEN_HILOGE("Can't find deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -424,10 +405,10 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(SensorDescription sensorDesc, in
     return sensorInfo;
 }
 
-uint64_t ClientInfo::ComputeBestPeriodCount(SensorDescription sensorDesc, sptr<SensorBasicDataChannel> &channel)
+uint64_t ClientInfo::ComputeBestPeriodCount(const SensorDescription &sensorDesc, sptr<SensorBasicDataChannel> &channel)
 {
     if (sensorDesc.sensorType == INVALID_SENSOR_ID || channel == nullptr) {
-        SEN_HILOGE("sensorId is invalid or channel cannot be null");
+        SEN_HILOGE("sensorType is invalid or channel cannot be null");
         return 0UL;
     }
     int32_t pid = INVALID_PID;
@@ -449,10 +430,10 @@ uint64_t ClientInfo::ComputeBestPeriodCount(SensorDescription sensorDesc, sptr<S
     return (ret <= 0L) ? 0UL : ret;
 }
 
-uint64_t ClientInfo::ComputeBestFifoCount(SensorDescription sensorDesc, sptr<SensorBasicDataChannel> &channel)
+uint64_t ClientInfo::ComputeBestFifoCount(const SensorDescription &sensorDesc, sptr<SensorBasicDataChannel> &channel)
 {
     if (channel == nullptr || sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid or channel cannot be null");
+        SEN_HILOGE("sensorType is invalid or channel cannot be null");
         return 0UL;
     }
     int32_t pid = INVALID_PID;
@@ -474,12 +455,10 @@ uint64_t ClientInfo::ComputeBestFifoCount(SensorDescription sensorDesc, sptr<Sen
     return (ret <= 0L) ? 0UL : ret;
 }
 
-int32_t ClientInfo::GetStoreEvent(SensorDescription sensorDesc, SensorData &data)
+int32_t ClientInfo::GetStoreEvent(const SensorDescription &sensorDesc, SensorData &data)
 {
     std::lock_guard<std::mutex> lock(eventMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto storedEvent = storedEvent_.find(sensorDescName);
+    auto storedEvent = storedEvent_.find(sensorDesc);
     if (storedEvent != storedEvent_.end()) {
         errno_t ret = memcpy_s(&data, sizeof(data), &storedEvent->second, sizeof(storedEvent->second));
         if (ret != EOK) {
@@ -527,10 +506,8 @@ void ClientInfo::StoreEvent(const SensorData &data)
 
     if (foundSensor) {
         std::lock_guard<std::mutex> lock(eventMutex_);
-        std::string sensorDescName;
-        GetSensorDescName({storedEvent.deviceId, storedEvent.sensorTypeId, storedEvent.sensorId,
-            storedEvent.location}, sensorDescName);
-        storedEvent_[sensorDescName] = storedEvent;
+        storedEvent_[{storedEvent.deviceId, storedEvent.sensorTypeId, storedEvent.sensorId,
+            storedEvent.location}] = storedEvent;
     }
 }
 
@@ -580,18 +557,18 @@ void ClientInfo::ClearEvent()
     storedEvent_.clear();
 }
 
-std::vector<std::string> ClientInfo::GetSensorIdByPid(int32_t pid)
+std::vector<SensorDescription> ClientInfo::GetSensorIdByPid(int32_t pid)
 {
     CALL_LOG_ENTER;
-    std::vector<std::string> sensorIndexVec;
+    std::vector<SensorDescription> sensorDescVec;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto &itClientMap : clientMap_) {
         auto it = itClientMap.second.find(pid);
         if (it != itClientMap.second.end()) {
-            sensorIndexVec.push_back(itClientMap.first);
+            sensorDescVec.push_back(itClientMap.first);
         }
     }
-    return sensorIndexVec;
+    return sensorDescVec;
 }
 
 AppThreadInfo ClientInfo::GetAppInfoByChannel(const sptr<SensorBasicDataChannel> &channel)
@@ -634,13 +611,10 @@ void ClientInfo::GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInf
                 continue;
             }
             SensorChannelInfo channel;
-            SensorDescription sensorDesc;
-            ParseIndex(sensorIt.first, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-                sensorDesc.location);
             channel.SetUid(uid);
-            channel.SetDeviceId(sensorDesc.deviceId);
-            channel.SetSensorType(sensorDesc.sensorType);
-            channel.SetSensorId(sensorDesc.sensorType);
+            channel.SetDeviceId(sensorIt.first.deviceId);
+            channel.SetSensorType(sensorIt.first.sensorType);
+            channel.SetSensorId(sensorIt.first.sensorId);
             std::string packageName;
             SensorManager::GetInstance().GetPackageName(GetTokenIdByPid(pid), packageName);
             channel.SetPackageName(packageName);
@@ -649,7 +623,7 @@ void ClientInfo::GetSensorChannelInfo(std::vector<SensorChannelInfo> &channelInf
             channel.SetSamplingPeriodNs(samplingPeriodNs);
             uint32_t fifoCount = (samplingPeriodNs == 0) ? 0 : (uint32_t)(maxReportDelayNs / samplingPeriodNs);
             channel.SetFifoCount(fifoCount);
-            channel.SetCmdType(GetCmdList(sensorDesc.sensorType, uid));
+            channel.SetCmdType(GetCmdList(sensorIt.first.sensorType, uid));
             channelInfo.push_back(channel);
         }
     }
@@ -675,16 +649,16 @@ AccessTokenID ClientInfo::GetTokenIdByPid(int32_t pid)
     return appThreadInfoIt->second.callerToken;
 }
 
-void ClientInfo::UpdateCmd(int32_t sensorId, int32_t uid, int32_t cmdType)
+void ClientInfo::UpdateCmd(int32_t sensorType, int32_t uid, int32_t cmdType)
 {
     std::lock_guard<std::mutex> cmdLock(cmdMutex_);
-    auto cmdIt = cmdMap_.find(sensorId);
+    auto cmdIt = cmdMap_.find(sensorType);
     if (cmdIt == cmdMap_.end()) {
         std::unordered_map<int32_t, std::vector<int32_t>> cmds;
         std::vector<int32_t> tmp;
         tmp.push_back(cmdType);
         cmds.insert(std::make_pair(uid, tmp));
-        cmdMap_.insert(std::make_pair(sensorId, cmds));
+        cmdMap_.insert(std::make_pair(sensorType, cmds));
         return;
     }
     auto tmpIt = cmdIt->second.find(uid);
@@ -705,10 +679,10 @@ void ClientInfo::DestroyCmd(int32_t uid)
     cmdMap_.erase(uid);
 }
 
-std::vector<int32_t> ClientInfo::GetCmdList(int32_t sensorId, int32_t uid)
+std::vector<int32_t> ClientInfo::GetCmdList(int32_t sensorType, int32_t uid)
 {
     std::lock_guard<std::mutex> cmdLock(cmdMutex_);
-    auto cmdIt = cmdMap_.find(sensorId);
+    auto cmdIt = cmdMap_.find(sensorType);
     if (cmdIt == cmdMap_.end()) {
         return {};
     }
@@ -719,19 +693,18 @@ std::vector<int32_t> ClientInfo::GetCmdList(int32_t sensorId, int32_t uid)
     return uidIt->second;
 }
 
-void ClientInfo::UpdateDataQueue(int32_t sensorId, SensorData &data)
+void ClientInfo::UpdateDataQueue(int32_t sensorType, SensorData &data)
 {
-    if (sensorId == SENSOR_TYPE_ID_HEART_RATE) {
+    if (sensorType == SENSOR_TYPE_ID_HEART_RATE) {
         return;
     }
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
-    std::string sensorDescName;
-    GetSensorDescName({data.deviceId, data.sensorTypeId, data.sensorId, data.location}, sensorDescName);
-    auto it = dumpQueue_.find(sensorDescName);
+    auto it = dumpQueue_.find({data.deviceId, data.sensorTypeId, data.sensorId, data.location});
     if (it == dumpQueue_.end()) {
         std::queue<SensorData> q;
         q.push(data);
-        dumpQueue_.insert(std::make_pair(sensorDescName, q));
+        dumpQueue_.insert(std::pair<SensorDescription, std::queue<SensorData>>(
+            {data.deviceId, data.sensorTypeId, data.sensorId, data.location}, q));
         return;
     }
     it->second.push(data);
@@ -740,17 +713,15 @@ void ClientInfo::UpdateDataQueue(int32_t sensorId, SensorData &data)
     }
 }
 
-std::unordered_map<std::string, std::queue<SensorData>> ClientInfo::GetDumpQueue()
+std::unordered_map<SensorDescription, std::queue<SensorData>> ClientInfo::GetDumpQueue()
 {
     return dumpQueue_;
 }
 
-void ClientInfo::ClearDataQueue(SensorDescription sensorDesc)
+void ClientInfo::ClearDataQueue(const SensorDescription &sensorDesc)
 {
     std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = dumpQueue_.find(sensorDescName);
+    auto it = dumpQueue_.find(sensorDesc);
     if (it != dumpQueue_.end()) {
         dumpQueue_.erase(it);
     }
@@ -820,14 +791,11 @@ int32_t ClientInfo::GetPidByTokenId(AccessTokenID tokenId)
     return pid;
 }
 
-void ClientInfo::UpdatePermState(int32_t pid, int32_t sensorId, bool state)
+void ClientInfo::UpdatePermState(int32_t pid, int32_t sensorType, bool state)
 {
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (auto it = clientMap_.begin(); it != clientMap_.end();) {
-        SensorDescription sensorDesc;
-        ParseIndex(it->first, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-            sensorDesc.location);
-        if (sensorDesc.sensorType != sensorId) {
+        if (it->first.sensorType != sensorType) {
             it++;
             continue;
         }
@@ -851,8 +819,8 @@ void ClientInfo::ChangeSensorPerm(AccessTokenID tokenId, const std::string &perm
         SEN_HILOGE("Invalid permission name:%{public}s", permName.c_str());
         return;
     }
-    for (int32_t sensorId : it->second) {
-        UpdatePermState(pid, sensorId, state);
+    for (int32_t sensorType : it->second) {
+        UpdatePermState(pid, sensorType, state);
     }
 }
 
@@ -864,29 +832,6 @@ void ClientInfo::SetDeviceStatus(uint32_t deviceStatus)
 uint32_t ClientInfo::GetDeviceStatus()
 {
     return deviceStatus_;
-}
-
-void ClientInfo::GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName)
-{
-    sensorDescName = std::to_string(sensorDesc.deviceId) + "#" + std::to_string(sensorDesc.sensorType) +
-        "#" + std::to_string(sensorDesc.sensorId)+ "#" + std::to_string(sensorDesc.location);
-    return;
-}
-
-void ClientInfo::ParseIndex(const std::string &sensorDescName, int32_t &deviceId, int32_t &sensorType,
-    int32_t &sensorId, int32_t &location)
-{
-    size_t first_hash = sensorDescName.find('#');
-    size_t second_hash = sensorDescName.find('#', first_hash + 1);
-    size_t third_hash = sensorDescName.find('#', second_hash + 1);
-
-    deviceId = static_cast<int32_t>(strtol(sensorDescName.substr(0, first_hash).c_str(), nullptr, DEFAULT_BASE));
-    sensorType = static_cast<int32_t>(strtol(sensorDescName.substr(first_hash + 1,
-        second_hash - first_hash - 1).c_str(), nullptr, DEFAULT_BASE));
-    sensorId = static_cast<int32_t>(strtol(sensorDescName.substr(second_hash + 1,
-        third_hash - second_hash - 1).c_str(), nullptr, DEFAULT_BASE));
-    location = static_cast<int32_t>(strtol(sensorDescName.substr(third_hash + 1).c_str(), nullptr, DEFAULT_BASE));
-    return;
 }
 
 void ClientInfo::SaveSensorClient(const sptr<IRemoteObject> &sensorClient)

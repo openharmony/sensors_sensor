@@ -32,7 +32,7 @@ constexpr float PROXIMITY_FAR = 5.0;
 } // namespace
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
-void SensorManager::InitSensorMap(const std::unordered_map<std::string, Sensor> &sensorMap,
+void SensorManager::InitSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap,
                                   sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
@@ -42,12 +42,12 @@ void SensorManager::InitSensorMap(const std::unordered_map<std::string, Sensor> 
     SEN_HILOGD("Begin sensorMap_.size:%{public}zu", sensorMap_.size());
 }
 
-bool SensorManager::SetBestSensorParams(SensorDescription sensorDesc, int64_t samplingPeriodNs,
+bool SensorManager::SetBestSensorParams(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     SEN_HILOGI("In, sensorType:%{public}d", sensorDesc.sensorType);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorType is invalid");
         return false;
     }
     SensorBasicInfo sensorInfo = clientInfo_.GetBestSensorInfo(sensorDesc);
@@ -65,16 +65,16 @@ bool SensorManager::SetBestSensorParams(SensorDescription sensorDesc, int64_t sa
         SEN_HILOGE("SetBatch is failed");
         return false;
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
     return true;
 }
 
-bool SensorManager::ResetBestSensorParams(SensorDescription sensorDesc)
+bool SensorManager::ResetBestSensorParams(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorType is invalid");
         return false;
     }
     SensorBasicInfo sensorInfo = clientInfo_.GetBestSensorInfo(sensorDesc);
@@ -84,7 +84,7 @@ bool SensorManager::ResetBestSensorParams(SensorDescription sensorDesc)
         SEN_HILOGE("SetBatch is failed");
         return false;
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorDesc.sensorId);
+    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
     return true;
 }
 
@@ -98,7 +98,7 @@ void SensorManager::StartDataReportThread()
     }
 }
 #else
-void SensorManager::InitSensorMap(const std::unordered_map<std::string, Sensor> &sensorMap)
+void SensorManager::InitSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMapMutex_);
     sensorMap_ = sensorMap;
@@ -106,10 +106,10 @@ void SensorManager::InitSensorMap(const std::unordered_map<std::string, Sensor> 
 }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
 
-bool SensorManager::SaveSubscriber(SensorDescription sensorDesc, uint32_t pid, int64_t samplingPeriodNs,
+bool SensorManager::SaveSubscriber(const SensorDescription &sensorDesc, uint32_t pid, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, sensorId:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
+    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
     SensorBasicInfo sensorInfo = GetSensorInfo(sensorDesc, samplingPeriodNs, maxReportDelayNs);
     if (!clientInfo_.UpdateSensorInfo(sensorDesc, pid, sensorInfo)) {
         SEN_HILOGE("UpdateSensorInfo is failed");
@@ -119,20 +119,18 @@ bool SensorManager::SaveSubscriber(SensorDescription sensorDesc, uint32_t pid, i
     return true;
 }
 
-SensorBasicInfo SensorManager::GetSensorInfo(SensorDescription sensorDesc, int64_t samplingPeriodNs,
+SensorBasicInfo SensorManager::GetSensorInfo(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGI("In, sensorType:%{public}d", sensorDesc.sensorType);
     SensorBasicInfo sensorInfo;
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
-    std::string sensorDescName;
-    clientInfo_.GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = sensorMap_.find(sensorDescName);
+    auto it = sensorMap_.find(sensorDesc);
     if (it == sensorMap_.end()) {
         sensorInfo.SetSamplingPeriodNs(samplingPeriodNs);
         sensorInfo.SetMaxReportDelayNs(maxReportDelayNs);
         sensorInfo.SetSensorState(true);
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorDesc is invalid");
         return sensorInfo;
     }
     int64_t curSamplingPeriodNs =
@@ -147,11 +145,11 @@ SensorBasicInfo SensorManager::GetSensorInfo(SensorDescription sensorDesc, int64
     sensorInfo.SetSamplingPeriodNs(curSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(curReportDelayNs);
     sensorInfo.SetSensorState(true);
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
     return sensorInfo;
 }
 
-bool SensorManager::IsOtherClientUsingSensor(SensorDescription sensorDesc, int32_t clientPid)
+bool SensorManager::IsOtherClientUsingSensor(const SensorDescription &sensorDesc, int32_t clientPid)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, clientPid:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, clientPid);
@@ -166,13 +164,13 @@ bool SensorManager::IsOtherClientUsingSensor(SensorDescription sensorDesc, int32
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     SEN_HILOGD("Other client is using this sensor");
-    SEN_HILOGI("Done, sensorId:%{public}d, clientPid:%{public}d", sensorDesc.sensorType, clientPid);
+    SEN_HILOGI("Done, sensorType:%{public}d, clientPid:%{public}d", sensorDesc.sensorType, clientPid);
     return true;
 }
 
-ErrCode SensorManager::AfterDisableSensor(SensorDescription sensorDesc)
+ErrCode SensorManager::AfterDisableSensor(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGI("In, sensorType:%{public}d", sensorDesc.sensorType);
     clientInfo_.ClearSensorInfo(sensorDesc);
     if (sensorDesc.sensorType == PROXIMITY_SENSOR_ID) {
         SensorData sensorData;
@@ -183,7 +181,7 @@ ErrCode SensorManager::AfterDisableSensor(SensorDescription sensorDesc)
             clientInfo_.StoreEvent(sensorData);
         }
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
     return ERR_OK;
 }
 

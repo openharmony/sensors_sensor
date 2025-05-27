@@ -33,10 +33,10 @@ public:
     virtual int32_t ConnectHdi() = 0;
     virtual int32_t GetSensorList(std::vector<Sensor> &sensorList) = 0;
     virtual int32_t GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors) = 0;
-    virtual int32_t EnableSensor(SensorDescription sensorDesc) = 0;
-    virtual int32_t DisableSensor(SensorDescription sensorDesc)  = 0;
-    virtual int32_t SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval) = 0;
-    virtual int32_t SetMode(SensorDescription sensorDesc, int32_t mode) = 0;
+    virtual int32_t EnableSensor(const SensorDescription &sensorDesc) = 0;
+    virtual int32_t DisableSensor(const SensorDescription &sensorDesc)  = 0;
+    virtual int32_t SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval) = 0;
+    virtual int32_t SetMode(const SensorDescription &sensorDesc, int32_t mode) = 0;
     virtual int32_t RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) = 0;
     virtual int32_t DestroyHdiConnection() = 0;
     virtual int32_t RegSensorPlugCallback(DevicePlugCallback cb) = 0;

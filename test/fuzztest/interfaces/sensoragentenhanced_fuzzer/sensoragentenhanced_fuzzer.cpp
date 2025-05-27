@@ -35,7 +35,8 @@ using OHOS::Security::AccessToken::AccessTokenID;
 namespace {
 constexpr int64_t g_samplingInterval = 200000000;
 constexpr int64_t g_reportInterval = 200000000;
-constexpr size_t DATA_MIN_SIZE = sizeof(int32_t) + sizeof(SensorDescription) + sizeof(SensorUser);
+constexpr size_t g_dataMinSize = sizeof(int32_t) + sizeof(SensorDescription) + sizeof(SensorUser);
+constexpr int32_t g_sleepTime = 1000;
 } // namespace
 
 template<class T>
@@ -105,7 +106,7 @@ void SensorAgentEnhancedFuzzTest(const uint8_t *data, size_t size)
     SetBatchEnhanced(sensorDesc, &user, g_samplingInterval, g_reportInterval);
     ActivateSensorEnhanced(sensorDesc, &user);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(g_sleepTime));
 
     DeactivateSensorEnhanced(sensorDesc, &user);
     UnsubscribeSensorEnhanced(sensorDesc, &user);

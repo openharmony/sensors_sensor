@@ -200,92 +200,92 @@ void SetDeviceStatus(uint32_t deviceStatus);
  * @param deviceId Indicates the ID of the device from which to obtain sensor information.
  * @return Returns <b>0</b> if the information is obtained; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
 int32_t GetDeviceSensors(int32_t deviceId, SensorInfo **sensorInfo, int32_t *count);
 
 /**
  * @brief Subscribes to sensor data. The system will report the obtained sensor data to the subscriber.
  *
- * @param sensorDesc including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
- * see {@link SensorDescription}.
+ * @param sensorIdentifier including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
+ * see {@link SensorIdentifier}.
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data. For details,
  * see {@link SensorUser}. A subscriber can obtain data from only one sensor.
  * @return Returns <b>0</b> if the subscription is successful; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
-int32_t SubscribeSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user);
+int32_t SubscribeSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user);
 
 /**
  * @brief Unsubscribes from sensor data.
  *
- * @param sensorDesc including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
- * see {@link SensorDescription}.
+ * @param sensorIdentifier including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
+ * see {@link SensorIdentifier}.
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data.
  * For details, see {@link SensorUser}. A subscriber can obtain data from only one sensor.
  * @return Returns <b>0</b> if the unsubscription is successful; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
-int32_t UnsubscribeSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user);
+int32_t UnsubscribeSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user);
 
 /**
  * @brief Sets the data sampling interval and data reporting interval for the specified sensor.
  *
- * @param sensorDesc including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
- * see {@link SensorDescription}.
+ * @param sensorIdentifier including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
+ * see {@link SensorIdentifier}.
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data.
  * For details, see {@link SensorUser}. A subscriber can obtain data from only one sensor.
  * @param samplingInterval Indicates the sensor data sampling interval to set, in nanoseconds.
  * @param reportInterval Indicates the sensor data reporting interval, in nanoseconds.
  * @return Returns <b>0</b> if the setting is successful; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
-int32_t SetBatchEnhanced(SensorDescription sensorDesc, const SensorUser *user, int64_t samplingInterval,
+int32_t SetBatchEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user, int64_t samplingInterval,
     int64_t reportInterval);
 
 /**
  * @brief Enables the sensor that has been subscribed to. The subscriber can obtain the sensor data
  * only after the sensor is enabled.
  *
- * @param sensorDesc including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
- * see {@link SensorDescription}.
+ * @param sensorIdentifier including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
+ * see {@link SensorIdentifier}.
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data.
  * For details, see {@link SensorUser}. A subscriber can obtain data from only one sensor.
  * @return Returns <b>0</b> if the sensor is successfully enabled; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
-int32_t ActivateSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user);
+int32_t ActivateSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user);
 
 /**
  * @brief Disables an enabled sensor.
  *
- * @param sensorDesc including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
- * see {@link SensorDescription}.
+ * @param sensorIdentifier including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
+ * see {@link SensorIdentifier}.
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data.
  * For details, see {@link SensorUser}. A subscriber can obtain data from only one sensor.
  * @return Returns <b>0</b> if the sensor is successfully disabled; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
-int32_t DeactivateSensorEnhanced(SensorDescription sensorDesc, const SensorUser *user);
+int32_t DeactivateSensorEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user);
 
 /**
  * @brief Sets the data reporting mode for the specified sensor.
  *
- * @param sensorDesc including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
- * see {@link SensorDescription}.
+ * @param sensorIdentifier including the sensorid, deviceid, and sensortype required for dynamic multi-sensors,
+ * see {@link SensorIdentifier}.
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data.
  * For details, see {@link SensorUser}. A subscriber can obtain data from only one sensor.
  * @param mode Indicates the data reporting mode to set. For details, see {@link SensorMode}.
  * @return Returns <b>0</b> if the sensor data reporting mode is successfully set; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
-int32_t SetModeEnhanced(SensorDescription sensorDesc, const SensorUser *user, int32_t mode);
+int32_t SetModeEnhanced(const SensorIdentifier &sensorIdentifier, const SensorUser *user, int32_t mode);
 
 /**
  * @brief Subscribes to sensor status updates. The system will report the obtained sensor status data
@@ -294,7 +294,7 @@ int32_t SetModeEnhanced(SensorDescription sensorDesc, const SensorUser *user, in
  * @param user Indicates the pointer to the sensor subscriber that requests sensor data. For details,
  * @return Returns <b>0</b> if the subscription is successful; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
 int32_t SubscribeSensorPlug(const SensorUser *user);
 
@@ -305,7 +305,7 @@ int32_t SubscribeSensorPlug(const SensorUser *user);
  * For details, see {@link SensorUser}.
  * @return Returns <b>0</b> if the unsubscription is successful; returns a non-zero value otherwise.
  *
- * @since 18
+ * @since 19
  */
 int32_t UnsubscribeSensorPlug(const SensorUser *user);
 

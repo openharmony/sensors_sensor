@@ -548,12 +548,12 @@ typedef struct FusionPressureData {
     float fusionPressure = 0.0f;
 } FusionPressureData;
 
-typedef struct SensorDescription {
+typedef struct SensorIdentifier {
     int32_t deviceId = -1; /**< device ID */
     int32_t sensorType = -1; /**< sensor type ID */
     int32_t sensorId = -1; /**< sensor ID, defined by the sensor driver developer */
     int32_t location = -1; /**< Is the device a local device or an external device */
-} SensorDescription;
+} SensorIdentifier;
 
 typedef void (*SensorActiveInfoCB)(SensorActiveInfo &sensorActiveInfo);
 

@@ -32,7 +32,6 @@ group("fuzztest") {
     "sensoronremoterequest_fuzzer:fuzztest",
     "service/createsocketchannel_fuzzer:fuzztest",
     "service/getactiveinfolist_fuzzer:fuzztest",
-    "service/getsensordescname_fuzzer:fuzztest",
     "service/getsensorlistbydevice_fuzzer:fuzztest",
     "service/registerclientdeathrecipient_fuzzer:fuzztest",
     "service/registerpermcallback_fuzzer:fuzztest",

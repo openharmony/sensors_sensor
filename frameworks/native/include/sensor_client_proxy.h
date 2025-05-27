@@ -28,7 +28,7 @@ public:
     explicit SensorClientProxy(const sptr<IRemoteObject> &impl) : IRemoteProxy<ISensorClient>(impl)
     {}
     virtual ~SensorClientProxy() = default;
-    int32_t ProcessPlugEvent(SensorPlugData info) override
+    int32_t ProcessPlugEvent(const SensorPlugData &info) override
     {
         MessageOption option;
         MessageParcel dataParcel;
@@ -63,6 +63,10 @@ public:
         }
         if (!dataParcel.WriteInt32(info.reserved)) {
             SEN_HILOGD("Failed to write reserved to parcelable");
+            return PARAMETER_ERROR;
+        }
+        if (!dataParcel.WriteInt64(info.timestamp)) {
+            SEN_HILOGD("Failed to write timestamp to parcelable");
             return PARAMETER_ERROR;
         }
         int error = Remote()->SendRequest(PROCESS_PLUG_EVENT, dataParcel, replyParcel, option);

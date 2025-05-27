@@ -121,19 +121,19 @@ bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &
 {
     int32_t count = 0;
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
-    for (const auto &sensorId : sensors) {
-        if (sensorSet_.find(sensorId) == sensorSet_.end()) {
-            mockSet_.insert(sensorId);
+    for (const auto &sensorType : sensors) {
+        if (sensorSet_.find(sensorType) == sensorSet_.end()) {
+            mockSet_.insert(sensorType);
             count++;
         }
     }
     return count == 0 ? true : false;
 }
 
-bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
+bool SensorHdiConnection::FindOneInMockSet(int32_t sensorType)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
-    return mockSet_.find(sensorId) != mockSet_.end();
+    return mockSet_.find(sensorType) != mockSet_.end();
 }
 
 Sensor SensorHdiConnection::GenerateColorSensor()
@@ -232,8 +232,8 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
             localDeviceId_ = sensor.GetDeviceId();
         }
     }
-    for (const auto &sensorId : mockSet_) {
-        switch (sensorId) {
+    for (const auto &sensorType : mockSet_) {
+        switch (sensorType) {
             case SENSOR_TYPE_ID_COLOR:
                 sensorList.push_back(GenerateColorSensor());
                 break;
@@ -254,7 +254,7 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     return ERR_OK;
 }
 
-int32_t SensorHdiConnection::EnableSensor(SensorDescription sensorDesc)
+int32_t SensorHdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
@@ -289,7 +289,7 @@ int32_t SensorHdiConnection::EnableSensor(SensorDescription sensorDesc)
     return ret;
 };
 
-int32_t SensorHdiConnection::DisableSensor(SensorDescription sensorDesc)
+int32_t SensorHdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
@@ -327,7 +327,8 @@ int32_t SensorHdiConnection::DisableSensor(SensorDescription sensorDesc)
     return ERR_OK;
 }
 
-int32_t SensorHdiConnection::SetBatch(SensorDescription sensorDesc, int64_t samplingInterval, int64_t reportInterval)
+int32_t SensorHdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval,
+    int64_t reportInterval)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
@@ -362,7 +363,7 @@ int32_t SensorHdiConnection::SetBatch(SensorDescription sensorDesc, int64_t samp
     return ret;
 }
 
-int32_t SensorHdiConnection::SetMode(SensorDescription sensorDesc, int32_t mode)
+int32_t SensorHdiConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SetMode");
@@ -466,13 +467,13 @@ int32_t SensorHdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector
         }
     }
 #ifdef BUILD_VARIANT_ENG
-    if (sensorList_[0].GetLocation() == IS_LOCAL_DEVICE) {
+    if (singleDevSensors[0].GetLocation() == IS_LOCAL_DEVICE) {
         if (!hdiConnectionStatus_) {
             return ERR_OK;
         }
-        localDeviceId_ = sensorList_[0].GetDeviceId();
-        for (const auto &sensorId : mockSet_) {
-            switch (sensorId) {
+        localDeviceId_ = singleDevSensors[0].GetDeviceId();
+        for (const auto &sensorType : mockSet_) {
+            switch (sensorType) {
                 case SENSOR_TYPE_ID_COLOR:
                     singleDevSensors.push_back(GenerateColorSensor());
                     break;

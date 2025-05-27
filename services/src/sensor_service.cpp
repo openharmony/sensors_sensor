@@ -17,6 +17,7 @@
 
 #include <cinttypes>
 #include <string_ex.h>
+#include <sys/time.h>
 #include <tokenid_kit.h>
 
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -201,10 +202,8 @@ bool SensorService::InitSensorList()
     {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         for (const auto &it : sensors_) {
-            std::string sensorDescName;
-            GetSensorDescName({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()},
-                sensorDescName);
-            if (!(sensorMap_.insert(std::make_pair(sensorDescName, it)).second)) {
+            if (!(sensorMap_.insert(std::pair<SensorDescription, Sensor>(
+                {it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it)).second)) {
                 SEN_HILOGW("sensorMap_ insert failed");
             }
         }
@@ -239,7 +238,7 @@ void SensorService::OnStop()
 #endif // MEMMGR_ENABLE
 }
 
-void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t pid, int64_t samplingPeriodNs,
+void SensorService::ReportSensorSysEvent(int32_t sensorType, bool enable, int32_t pid, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     std::string packageName("");
@@ -252,29 +251,27 @@ void SensorService::ReportSensorSysEvent(int32_t sensorId, bool enable, int32_t 
     if (enable) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "ENABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "PKG_NAME", packageName, "TYPE", sensorId, "UID", uid, "PID", pid);
+            "LEVEL", logLevel, "PKG_NAME", packageName, "TYPE", sensorType, "UID", uid, "PID", pid);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGI("PackageName:%{public}s open the sensor, sensorId:%{public}d, pid:%{public}d, "
+        SEN_HILOGI("PackageName:%{public}s open the sensor, sensorType:%{public}d, pid:%{public}d, "
             "samplingPeriodNs:%{public}" PRId64 ", samplingPeriodNs:%{public}" PRId64, packageName.c_str(),
-            sensorId, pid, samplingPeriodNs, maxReportDelayNs);
+            sensorType, pid, samplingPeriodNs, maxReportDelayNs);
     } else {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DISABLE_SENSOR", HiSysEvent::EventType::STATISTIC,
-            "LEVEL", logLevel, "TYPE", sensorId, "PKG_NAME", packageName, "UID", uid, "PID", pid);
+            "LEVEL", logLevel, "TYPE", sensorType, "PKG_NAME", packageName, "UID", uid, "PID", pid);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGI("PackageName:%{public}s close the sensor, sensorId:%{public}d, pid:%{public}d",
-            packageName.c_str(), sensorId, pid);
+        SEN_HILOGI("PackageName:%{public}s close the sensor, sensorType:%{public}d, pid:%{public}d",
+            packageName.c_str(), sensorType, pid);
     }
 }
 
-void SensorService::ReportOnChangeData(SensorDescription sensorDesc)
+void SensorService::ReportOnChangeData(const SensorDescription &sensorDesc)
 {
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = sensorMap_.find(sensorDescName);
+    auto it = sensorMap_.find(sensorDesc);
     if (it == sensorMap_.end()) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorDesc is invalid");
         return;
     }
     if ((SENSOR_ON_CHANGE & it->second.GetFlags()) != SENSOR_ON_CHANGE) {
@@ -296,7 +293,8 @@ void SensorService::ReportOnChangeData(SensorDescription sensorDesc)
     }
 }
 
-ErrCode SensorService::SaveSubscriber(SensorDescription sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs)
+ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
+    int64_t maxReportDelayNs)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -319,12 +317,10 @@ ErrCode SensorService::SaveSubscriber(SensorDescription sensorDesc, int64_t samp
     return ERR_OK;
 }
 
-bool SensorService::CheckSensorId(SensorDescription sensorDesc)
+bool SensorService::CheckSensorId(const SensorDescription &sensorDesc)
 {
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
-    std::string sensorDescName;
-    GetSensorDescName(sensorDesc, sensorDescName);
-    auto it = sensorMap_.find(sensorDescName);
+    auto it = sensorMap_.find(sensorDesc);
     if (it == sensorMap_.end()) {
         SEN_HILOGE("Invalid sensorDesc,"
             "deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, location:%{public}d",
@@ -354,7 +350,7 @@ bool SensorService::IsSystemCalling()
     return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID());
 }
 
-ErrCode SensorService::CheckAuthAndParameter(SensorDescription sensorDesc, int64_t samplingPeriodNs,
+ErrCode SensorService::CheckAuthAndParameter(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     if (((sensorDesc.sensorType == SENSOR_TYPE_ID_COLOR) || (sensorDesc.sensorType == SENSOR_TYPE_ID_SAR) ||
@@ -369,12 +365,12 @@ ErrCode SensorService::CheckAuthAndParameter(SensorDescription sensorDesc, int64
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL", HiSysEvent::EventType::SECURITY,
             "PKG_NAME", "SensorEnableInner", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("sensorId:%{public}d grant failed, ret:%{public}d", sensorDesc.sensorType, ret);
+        SEN_HILOGE("sensorType:%{public}d grant failed, ret:%{public}d", sensorDesc.sensorType, ret);
         return PERMISSION_DENIED;
     }
     if ((!CheckSensorId(sensorDesc)) || (maxReportDelayNs != 0L && samplingPeriodNs != 0L &&
         ((maxReportDelayNs / samplingPeriodNs) > MAX_EVENT_COUNT))) {
-        SEN_HILOGE("sensorId is invalid or maxReportDelayNs exceeded the maximum value");
+        SEN_HILOGE("sensorDesc is invalid or maxReportDelayNs exceeded the maximum value");
         return ERR_NO_INIT;
     }
     return ERR_OK;
@@ -397,7 +393,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (clientInfo_.GetSensorState(sensorDesc)) {
-        return EnableSensorSplit(sensorDesc, samplingPeriodNs, maxReportDelayNs, pid);
+        return SensorReportEvent(sensorDesc, samplingPeriodNs, maxReportDelayNs, pid);
     }
     auto ret = SaveSubscriber(sensorDesc, samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
@@ -424,7 +420,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     return ret;
 }
 
-ErrCode SensorService::EnableSensorSplit(SensorDescription sensorDesc, int64_t samplingPeriodNs,
+ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs, int32_t pid)
 {
     SEN_HILOGW("Sensor has been enabled already");
@@ -446,11 +442,11 @@ ErrCode SensorService::EnableSensorSplit(SensorDescription sensorDesc, int64_t s
     return ERR_OK;
 }
 
-ErrCode SensorService::DisableSensor(SensorDescription sensorDesc, int32_t pid)
+ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_t pid)
 {
     CALL_LOG_ENTER;
     if (!CheckSensorId(sensorDesc)) {
-        SEN_HILOGE("sensorId is invalid");
+        SEN_HILOGE("sensorDesc is invalid");
         return ERR_NO_INIT;
     }
     if (pid < 0) {
@@ -497,7 +493,7 @@ ErrCode SensorService::DisableSensor(const SensorDescriptionIPC &SensorDescripti
         HiSysEventWrite(HiSysEvent::Domain::SENSOR, "VERIFY_ACCESS_TOKEN_FAIL", HiSysEvent::EventType::SECURITY,
             "PKG_NAME", "SensorDisableInner", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("sensorId:%{public}d grant failed, ret:%{public}d", sensorDesc.sensorType, ret);
+        SEN_HILOGE("sensorType:%{public}d grant failed, ret:%{public}d", sensorDesc.sensorType, ret);
         return PERMISSION_DENIED;
     }
     return DisableSensor(sensorDesc, GetCallingPid());
@@ -568,14 +564,13 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
 
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
     for (const auto &it : sensors_) {
-        std::string sensorDescName;
-        GetSensorDescName({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()},
-            sensorDescName);
-        auto iter = sensorMap_.find(sensorDescName);
+        auto iter = sensorMap_.find({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()});
         if (iter != sensorMap_.end()) {
             iter->second = it;
         } else {
-            sensorMap_.insert(std::make_pair(sensorDescName, it));
+            sensorMap_.insert(std::pair<SensorDescription, Sensor>(
+                {it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
+            sensorDataProcesser_->UpdataSensorMap(sensorMap_);
         }
     }
     return singleDevSensors;
@@ -593,10 +588,8 @@ std::vector<Sensor> SensorService::GetSensorList()
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     for (const auto &it : sensors_) {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
-        std::string sensorDescName;
-        GetSensorDescName({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()},
-            sensorDescName);
-        sensorMap_.insert(std::make_pair(sensorDescName, it));
+        sensorMap_.insert(std::pair<SensorDescription, Sensor>
+            ({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
     }
     return sensors_;
 }
@@ -664,12 +657,9 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     }
     POWER_POLICY.DeleteDeathPidSensorInfo(pid);
     SEN_HILOGI("pid is %{public}d", pid);
-    std::vector<std::string> activeSensors = clientInfo_.GetSensorIdByPid(pid);
+    std::vector<SensorDescription> activeSensors = clientInfo_.GetSensorIdByPid(pid);
     for (size_t i = 0; i < activeSensors.size(); ++i) {
-        SensorDescription sensorDesc;
-        clientInfo_.ParseIndex(activeSensors[i], sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
-            sensorDesc.location);
-        int32_t ret = DisableSensor(sensorDesc, pid);
+        int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {
             SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
         }
@@ -871,7 +861,7 @@ ErrCode SensorService::ResetSensors()
     return POWER_POLICY.ResetSensors();
 }
 
-void SensorService::ReportActiveInfo(SensorDescription sensorDesc, int32_t pid)
+void SensorService::ReportActiveInfo(const SensorDescription &sensorDesc, int32_t pid)
 {
     CALL_LOG_ENTER;
     std::vector<SessionPtr> sessionList;
@@ -888,11 +878,11 @@ void SensorService::ReportActiveInfo(SensorDescription sensorDesc, int32_t pid)
     POWER_POLICY.ReportActiveInfo(activeInfo, sessionList);
 }
 
-bool SensorService::RegisterPermCallback(int32_t sensorId)
+bool SensorService::RegisterPermCallback(int32_t sensorType)
 {
     CALL_LOG_ENTER;
-    if ((sensorId != SENSOR_TYPE_ID_PEDOMETER) && (sensorId != SENSOR_TYPE_ID_PEDOMETER_DETECTION) &&
-        (sensorId != SENSOR_TYPE_ID_HEART_RATE)) {
+    if ((sensorType != SENSOR_TYPE_ID_PEDOMETER) && (sensorType != SENSOR_TYPE_ID_PEDOMETER_DETECTION) &&
+        (sensorType != SENSOR_TYPE_ID_HEART_RATE)) {
         SEN_HILOGD("No need listen for the sensor permission changes");
         return false;
     }
@@ -935,13 +925,6 @@ ErrCode SensorService::SetDeviceStatus(uint32_t deviceStatus)
     return ERR_OK;
 }
 
-void SensorService::GetSensorDescName(SensorDescription sensorDesc, std::string &sensorDescName)
-{
-    sensorDescName = std::to_string(sensorDesc.deviceId) + "#" + std::to_string(sensorDesc.sensorType) +
-        "#" + std::to_string(sensorDesc.sensorId)+ "#" + std::to_string(sensorDesc.location);
-    return;
-}
-
 ErrCode SensorService::TransferClientRemoteObject(const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
@@ -960,10 +943,8 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo info)
 {
     CALL_LOG_ENTER;
     if (info.status == SENSOR_ONLINE) {
-        std::string sensorDescName;
-        GetSensorDescName({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
-            info.deviceSensorInfo.sensorId, info.deviceSensorInfo.location}, sensorDescName);
-        auto it = sensorMap_.find(sensorDescName);
+        auto it = sensorMap_.find({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
+            info.deviceSensorInfo.sensorId, info.deviceSensorInfo.location});
         if (it == sensorMap_.end()) {
             GetSensorListByDevice(info.deviceSensorInfo.deviceId);
         }
@@ -980,14 +961,16 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo info)
         if (it != sensors_.end()) {
             sensors_.erase(it);
         }
-        std::string sensorDescName;
-        GetSensorDescName({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
-            info.deviceSensorInfo.sensorId,info.deviceSensorInfo.location}, sensorDescName);
-        auto iter = sensorMap_.find(sensorDescName);
+        auto iter = sensorMap_.find({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
+            info.deviceSensorInfo.sensorId, info.deviceSensorInfo.location});
         if (iter != sensorMap_.end()) {
             sensorMap_.erase(iter);
         }
     }
+    struct timeval curTime;
+    curTime.tv_sec = 0;
+    curTime.tv_usec = 0;
+    gettimeofday(&curTime, NULL);
     const SensorPlugData sensorPlugData = {
         .deviceId = info.deviceSensorInfo.deviceId,
         .sensorTypeId = info.deviceSensorInfo.sensorType,
@@ -996,8 +979,7 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo info)
         .deviceName = info.deviceName,
         .status = info.status,
         .reserved = info.reserved,
-        .timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::system_clock::now().time_since_epoch()).count()
+        .timestamp = static_cast<int64_t>(curTime.tv_sec * 1000 + curTime.tv_usec / 1000) //1000:milliSecond
     };
     clientInfo_.SendMsgToClient(sensorPlugData);
 }

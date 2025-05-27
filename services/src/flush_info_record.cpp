@@ -32,29 +32,30 @@ std::unordered_map<int32_t, std::vector<FlushInfo>> FlushInfoRecord::GetFlushInf
     return flushInfo_;
 }
 
-void FlushInfoRecord::ClearFlushInfoItem(int32_t sensorId)
+void FlushInfoRecord::ClearFlushInfoItem(int32_t sensorType)
 {
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
-    auto it = flushInfo_.find(sensorId);
+    auto it = flushInfo_.find(sensorType);
     if (it != flushInfo_.end()) {
         it->second.erase(it->second.begin());
     }
 }
 
-ErrCode FlushInfoRecord::SetFlushInfo(int32_t sensorId, const sptr<SensorBasicDataChannel> &channel, bool isFirstFlush)
+ErrCode FlushInfoRecord::SetFlushInfo(int32_t sensorType, const sptr<SensorBasicDataChannel> &channel,
+    bool isFirstFlush)
 {
-    SEN_HILOGD("sensorId:%{public}u", sensorId);
+    SEN_HILOGD("sensorType:%{public}u", sensorType);
     CHKPR(channel, INVALID_POINTER);
     FlushInfo flush(channel, isFirstFlush);
     std::lock_guard<std::mutex> flushLock(flushInfoMutex_);
     /* If the sensorId can be found, it indicates that other processes have flushed on this sensor,
     so need to insert this flush command to the end of the vector */
-    auto it = flushInfo_.find(sensorId);
+    auto it = flushInfo_.find(sensorType);
     if (it != flushInfo_.end()) {
         it->second.push_back(flush);
     } else {
         std::vector<FlushInfo> vec { flush };
-        flushInfo_.insert(std::make_pair(sensorId, vec));
+        flushInfo_.insert(std::make_pair(sensorType, vec));
     }
     return ERR_OK;
 }
@@ -82,12 +83,12 @@ int32_t FlushInfoRecord::GetFlushChannelIndex(const std::vector<FlushInfo> &flus
     return CHANNEL_NO_FLUSH;
 }
 
-ErrCode FlushInfoRecord::FlushProcess(const int32_t sensorId, const uint32_t flag, const int32_t pid,
+ErrCode FlushInfoRecord::FlushProcess(const int32_t sensorType, const uint32_t flag, const int32_t pid,
                                       const bool isEnableFlush)
 {
     sptr<SensorBasicDataChannel> channel = clientInfo_.GetSensorChannelByPid(pid);
     CHKPR(channel, ERROR);
-    int32_t ret = SetFlushInfo(sensorId, channel, false);
+    int32_t ret = SetFlushInfo(sensorType, channel, false);
     if (ret != ERR_OK) {
         SEN_HILOGE("Set flush info failed");
         return ret;
