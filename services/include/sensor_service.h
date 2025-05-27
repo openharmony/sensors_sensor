@@ -89,6 +89,7 @@ private:
     bool CheckSensorId(int32_t sensorId);
     bool IsSystemServiceCalling();
     bool IsSystemCalling();
+    bool IsNeedLoadMotionLib();
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

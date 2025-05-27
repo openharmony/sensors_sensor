@@ -46,6 +46,9 @@ const bool G_REGISTER_RESULT = SystemAbility::MakeAndRegisterAbility(g_sensorSer
 constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 std::atomic_bool g_isRegister = false;
+constexpr int32_t SINGLE_DISPLAY_SMALL_FOLD = 4;
+constexpr int32_t SINGLE_DISPLAY_THREE_FOLD = 6;
+const std::string DEFAULTS_FOLD_TYPE = "0,0,0,0";
 } // namespace
 
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
@@ -56,7 +59,10 @@ SensorService::SensorService()
     SEN_HILOGD("Add SystemAbility");
 }
 
-SensorService::~SensorService() {}
+SensorService::~SensorService()
+{
+    UnloadMotionSensor();
+}
 
 void SensorService::OnDump()
 {
@@ -66,6 +72,25 @@ void SensorService::OnDump()
 std::string GetDmsDeviceStatus()
 {
     return OHOS::system::GetParameter("persist.dms.device.status", "0");
+}
+
+bool SensorService::IsNeedLoadMotionLib()
+{
+    std::string supportDevice = OHOS::system::GetParameter("const.window.foldscreen.type", DEFAULTS_FOLD_TYPE);
+    size_t index = supportDevice.find(',');
+    if (index != std::string::npos) {
+        std::string firstValue = supportDevice.substr(0, index);
+        SEN_HILOGI("firstValue:%{public}s", firstValue.c_str());
+        if (std::isdigit(firstValue[0]) == 0) {
+            SEN_HILOGI("firstValue is not number");
+            return false;
+        }
+        if (std::stoi(firstValue) == SINGLE_DISPLAY_SMALL_FOLD || std::stoi(firstValue) == SINGLE_DISPLAY_THREE_FOLD) {
+            return true;
+        }
+    }
+    SEN_HILOGI("Not support in this device");
+    return false;
 }
 
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
@@ -84,7 +109,9 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
 #endif // ACCESS_TOKEN_ENABLE
 #ifdef MSDP_MOTION_ENABLE
     if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
-        if (!LoadMotionSensor()) {
+        if (!IsNeedLoadMotionLib()) {
+            SEN_HILOGI("No need to load motion lib");
+        } else if (!LoadMotionSensor()) {
             SEN_HILOGI("LoadMotionSensor fail");
         }
     }
