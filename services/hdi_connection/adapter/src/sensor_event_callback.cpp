@@ -57,7 +57,7 @@ int32_t SensorEventCallback::OnDataEventAsync(const std::vector<HdfSensorEvents>
             return ERR_INVALID_VALUE;
         }
         SensorData sensorData = {
-            .sensorTypeId = event.sensorId,
+            .sensorTypeId = event.deviceSensorInfo.sensorType,
             .version = event.version,
             .timestamp = event.timestamp,
             .option = event.option,
