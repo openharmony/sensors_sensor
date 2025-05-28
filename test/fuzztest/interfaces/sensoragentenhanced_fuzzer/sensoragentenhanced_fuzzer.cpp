@@ -33,10 +33,10 @@ using namespace OHOS::HiviewDFX;
 using namespace OHOS::Security::AccessToken;
 using OHOS::Security::AccessToken::AccessTokenID;
 namespace {
-constexpr int64_t g_samplingInterval = 200000000;
-constexpr int64_t g_reportInterval = 200000000;
-constexpr size_t g_dataMinSize = sizeof(int32_t) + sizeof(SensorDescription) + sizeof(SensorUser);
-constexpr int32_t g_sleepTime = 1000;
+constexpr int64_t SAMPLING_INTERVAL = 200000000;
+constexpr int64_t REPORT_INTERVAL = 200000000;
+constexpr size_t DATA_MIN_SIZE = sizeof(int32_t) + sizeof(SensorIdentifier) + sizeof(SensorUser);
+constexpr int32_t SLEEP_TIME = 1000;
 } // namespace
 
 template<class T>
@@ -92,8 +92,8 @@ void SensorAgentEnhancedFuzzTest(const uint8_t *data, size_t size)
     int32_t deviceId = 0;
     GetObject<int32_t>(deviceId, data + startPos, size - startPos);
 
-    SensorDescription sensorDesc;
-    GetObject<SensorDescription>(sensorDesc, data + startPos, size - startPos);
+    SensorIdentifier sensorIdentifier;
+    GetObject<SensorIdentifier>(sensorIdentifier, data + startPos, size - startPos);
 
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
@@ -102,14 +102,14 @@ void SensorAgentEnhancedFuzzTest(const uint8_t *data, size_t size)
     int32_t count = 0;
     GetDeviceSensors(deviceId, &sensorInfo, &count);
 
-    SubscribeSensorEnhanced(sensorDesc, &user);
-    SetBatchEnhanced(sensorDesc, &user, g_samplingInterval, g_reportInterval);
-    ActivateSensorEnhanced(sensorDesc, &user);
+    SubscribeSensorEnhanced(sensorIdentifier, &user);
+    SetBatchEnhanced(sensorIdentifier, &user, SAMPLING_INTERVAL, REPORT_INTERVAL);
+    ActivateSensorEnhanced(sensorIdentifier, &user);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(g_sleepTime));
+    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
 
-    DeactivateSensorEnhanced(sensorDesc, &user);
-    UnsubscribeSensorEnhanced(sensorDesc, &user);
+    DeactivateSensorEnhanced(sensorIdentifier, &user);
+    UnsubscribeSensorEnhanced(sensorIdentifier, &user);
 
     SubscribeSensorPlug(&user);
     UnsubscribeSensorPlug(&user);

@@ -333,35 +333,35 @@ bool ConvertToSensorState(const napi_env &env, sptr<AsyncCallbackInfo> asyncCall
 {
     CALL_LOG_ENTER;
     CHKPF(asyncCallbackInfo);
-    CHKNRF(env, napi_create_object(env, &result[0]), "napi_create_object");
+    CHKNRF(env, napi_create_object(env, &result[1]), "napi_create_object");
     napi_value value = nullptr;
     CHKNRF(env, napi_create_int64(env, asyncCallbackInfo->sensorStatusEvent.timestamp, &value),
         "napi_create_int64");
-    CHKNRF(env, napi_set_named_property(env, result[0], "timestamp", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "timestamp", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->sensorStatusEvent.sensorType, &value),
         "napi_create_int32");
-    CHKNRF(env, napi_set_named_property(env, result[0], "sensorId", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "sensorId", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->sensorStatusEvent.sensorId, &value),
         "napi_create_int32");
-    CHKNRF(env, napi_set_named_property(env, result[0], "sensorIndex", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "sensorIndex", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_get_boolean(env, asyncCallbackInfo->sensorStatusEvent.isSensorOnline, &value),
         "napi_get_boolean");
-    CHKNRF(env, napi_set_named_property(env, result[0], "isSensorOnline", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "isSensorOnline", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->sensorStatusEvent.deviceId, &value),
         "napi_create_int32");
-    CHKNRF(env, napi_set_named_property(env, result[0], "deviceId", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "deviceId", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_string_utf8(env, asyncCallbackInfo->sensorStatusEvent.deviceName.c_str(),
         NAPI_AUTO_LENGTH, &value), "napi_create_string_utf8");
-    CHKNRF(env, napi_set_named_property(env, result[0], "deviceName", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "deviceName", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_get_boolean(env, asyncCallbackInfo->sensorStatusEvent.location, &value),
         "napi_get_boolean");
-    CHKNRF(env, napi_set_named_property(env, result[0], "isLocalSensor", value), "napi_set_named_property");
+    CHKNRF(env, napi_set_named_property(env, result[1], "isLocalSensor", value), "napi_set_named_property");
     return true;
 }
 

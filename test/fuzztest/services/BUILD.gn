@@ -19,7 +19,6 @@ group("fuzztest") {
   testonly = true
   deps = [
     "createdatachannelstub_fuzzer:fuzztest",
-    "destroyclientremoteobjectstub_fuzzer:fuzztest",
     "disableactiveinfocbstub_fuzzer:fuzztest",
     "enableactiveinfocbstub_fuzzer:fuzztest",
     "getactiveinfoliststub_fuzzer:fuzztest",

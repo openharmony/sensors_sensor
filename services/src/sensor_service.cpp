@@ -15,6 +15,7 @@
 
 #include "sensor_service.h"
 
+#include <charconv>
 #include <cinttypes>
 #include <string_ex.h>
 #include <sys/time.h>
@@ -92,7 +93,14 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     }
 #endif // MSDP_MOTION_ENABLE
     if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
-        uint32_t status = static_cast<uint32_t>(std::stoi(GetDmsDeviceStatus()));
+        std::string statusStr = GetDmsDeviceStatus();
+        int32_t statusNum;
+        auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
+        if (res.ec != std::errc()) {
+            SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
+            return;
+        }
+        uint32_t status = static_cast<uint32_t>(statusNum);
         clientInfo_.SetDeviceStatus(status);
         SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
     }
@@ -202,8 +210,8 @@ bool SensorService::InitSensorList()
     {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         for (const auto &it : sensors_) {
-            if (!(sensorMap_.insert(std::pair<SensorDescription, Sensor>(
-                {it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it)).second)) {
+            if (!(sensorMap_.insert(std::pair<SensorDescription, Sensor>({
+                it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it)).second)) {
                 SEN_HILOGW("sensorMap_ insert failed");
             }
         }
@@ -588,8 +596,8 @@ std::vector<Sensor> SensorService::GetSensorList()
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     for (const auto &it : sensors_) {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
-        sensorMap_.insert(std::pair<SensorDescription, Sensor>
-            ({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
+        sensorMap_.insert(std::pair<SensorDescription, Sensor>({
+            it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
     }
     return sensors_;
 }
@@ -921,6 +929,11 @@ void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessT
 ErrCode SensorService::SetDeviceStatus(uint32_t deviceStatus)
 {
     SEN_HILOGI("SetDeviceStatus in, deviceStatus:%{public}d", deviceStatus);
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+        SEN_HILOGE("TokenType is not TOKEN_NATIVE");
+        return PERMISSION_DENIED;
+    }
     clientInfo_.SetDeviceStatus(deviceStatus);
     return ERR_OK;
 }

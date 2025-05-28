@@ -83,16 +83,24 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_service == nullptr) {
         return false;
     }
-    g_service->EnableSensor(SENSOR_TYPE_ID_ACCELEROMETER, g_samplingPeriod, g_maxReportDelay);
-    g_service->ResetSensors();
     size_t startPos = 0;
+    int32_t deviceId = 0;
+    startPos += GetObject<int32_t>(deviceId, data + startPos, size - startPos);
     int32_t sensorId = 0;
     startPos += GetObject<int32_t>(sensorId, data + startPos, size - startPos);
+    int32_t location = 0;
+    startPos += GetObject<int32_t>(location, data + startPos, size - startPos);
+    g_service->EnableSensor({deviceId, SENSOR_TYPE_ID_ACCELEROMETER, sensorId, location},
+        g_samplingPeriod, g_maxReportDelay);
+    g_service->ResetSensors();
+
+    int32_t sensorType = 0;
+    startPos += GetObject<int32_t>(sensorType, data + startPos, size - startPos);
     int64_t samplingPeriod = 0;
     startPos += GetObject<int64_t>(samplingPeriod, data + startPos, size - startPos);
     int64_t maxReportDelay = 0;
     GetObject<int64_t>(maxReportDelay, data + startPos, size - startPos);
-    g_service->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
+    g_service->EnableSensor({deviceId, sensorType, sensorId, location}, samplingPeriod, maxReportDelay);
     return true;
 }
 }  // namespace Sensors

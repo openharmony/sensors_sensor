@@ -48,6 +48,7 @@ constexpr int32_t INPUT_ERROR = 202;
 constexpr float BODY_STATE_EXCEPT = 1.0f;
 constexpr float THRESHOLD = 0.000001f;
 constexpr uint32_t COMPATIBILITY_CHANGE_VERSION_API12 = 12;
+constexpr int32_t ARGC_NUM_TWO = 2;
 constexpr int32_t ARGC_NUM_THREE = 3;
 constexpr int32_t ARGS_NUM_TWO = 2;
 } // namespace
@@ -372,31 +373,6 @@ static bool GetLocationDeviceId(int32_t &deviceId)
     return false;
 }
 
-static bool GetSensorInfoParameter(napi_env env, size_t argc, napi_value args, SensorDescription &sensorDesc)
-{
-    int32_t localDeviceId = DEFAULT_DEVICE_ID;
-    if (!GetLocationDeviceId(localDeviceId)) {
-        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
-    }
-    sensorDesc.deviceId = localDeviceId;
-    sensorDesc.sensorId = DEFAULT_SENSOR_ID;
-    sensorDesc.location = IS_LOCAL_DEVICE;
-    if (argc >= ARGC_NUM_THREE && IsMatchType(env, args, napi_object)) {
-        if (!GetDeviceId(env, args, sensorDesc.deviceId)) {
-            SEN_HILOGW("No deviceId, This device is selected by default");
-            sensorDesc.deviceId = localDeviceId;
-        }
-        if (!GetSensorId(env, args, sensorDesc.sensorId)) {
-            sensorDesc.sensorId = DEFAULT_SENSOR_ID;
-            SEN_HILOGW("No sensorId, The first sensor of the type is selected by default");
-        }
-    }
-    if (sensorDesc.deviceId != localDeviceId) {
-        sensorDesc.location = NON_LOCAL_DEVICE;
-    }
-    return true;
-}
-
 static napi_value Once(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -548,8 +524,8 @@ static napi_value OnPlugSensor(napi_env env, const napi_value type, const napi_v
     CALL_LOG_ENTER;
     std::string plugType;
     CHKCP(GetStringValue(env, type, plugType), "get plugType fail");
-    if (plugType != "SensorStatusChange") {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong SensorStatusChange type");
+    if (plugType != "sensorStatusChange") {
+        ThrowErr(env, PARAMETER_ERROR, "Wrong sensorStatusChange type");
         return nullptr;
     }
     int32_t ret = SubscribeSensorPlug(PlugDataCallbackImpl);
@@ -708,8 +684,8 @@ static napi_value OffPlugSensor(napi_env env, size_t argc, const napi_value type
     CALL_LOG_ENTER;
     std::string plugType;
     CHKCP(GetStringValue(env, type, plugType), "get plugType fail");
-    if (plugType != "SensorStatusChange") {
-        ThrowErr(env, PARAMETER_ERROR, "Wrong SensorStatusChange type");
+    if (plugType != "sensorStatusChange") {
+        ThrowErr(env, PARAMETER_ERROR, "Wrong sensorStatusChange type");
         return nullptr;
     }
     int32_t subscribeSize = INVALID_SUBSCRIBE_SIZE;
@@ -789,6 +765,52 @@ static int32_t RemoveCallback(napi_env env, SensorDescription sensorDesc, napi_v
     return callbackInfos.size();
 }
 
+static bool GetSensorInfoParameter(napi_env env, size_t argc, napi_value args, SensorDescription &sensorDesc)
+{
+    int32_t localDeviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(localDeviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
+    }
+    sensorDesc.deviceId = localDeviceId;
+    sensorDesc.sensorId = DEFAULT_SENSOR_ID;
+    sensorDesc.location = IS_LOCAL_DEVICE;
+    if (argc >= ARGC_NUM_TWO && IsMatchType(env, args, napi_object)) {
+        if (!GetDeviceId(env, args, sensorDesc.deviceId)) {
+            SEN_HILOGW("No deviceId, This device is selected by default");
+            sensorDesc.deviceId = localDeviceId;
+        }
+        if (!GetSensorId(env, args, sensorDesc.sensorId)) {
+            sensorDesc.sensorId = DEFAULT_SENSOR_ID;
+            SEN_HILOGW("No sensorId, The first sensor of the type is selected by default");
+        }
+    } else if ((argc == 1) || IsMatchType(env, args, napi_undefined) ||
+        IsMatchType(env, args, napi_null)) {
+            SEN_HILOGW("no deviceId, sensorIndex, Select the default deviceId and sensorIndex.");
+    } else {
+        return false;
+    }
+    if (sensorDesc.deviceId != localDeviceId) {
+        sensorDesc.location = NON_LOCAL_DEVICE;
+    }
+    return true;
+}
+
+static bool GetSensorType(napi_env env, napi_value args, SensorDescription &sensorDesc)
+{
+    sensorDesc.sensorType = INVALID_SENSOR_TYPE;
+    if ((!IsMatchType(env, args, napi_number)) || (!GetNativeInt32(env, args, sensorDesc.sensorType))) {
+        return false;
+    }
+    int32_t localDeviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(localDeviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
+    }
+    sensorDesc.deviceId = localDeviceId;
+    sensorDesc.sensorId = DEFAULT_SENSOR_ID;
+    sensorDesc.location = IS_LOCAL_DEVICE;
+    return true;
+}
+
 static napi_value Off(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -804,23 +826,26 @@ static napi_value Off(napi_env env, napi_callback_info info)
         return OffPlugSensor(env, argc, args[0], args[1]);
     }
     SensorDescription sensorDesc;
-    sensorDesc.sensorType = INVALID_SENSOR_TYPE;
-    if ((!IsMatchType(env, args[0], napi_number)) || (!GetNativeInt32(env, args[0], sensorDesc.sensorType))) {
+    if (!GetSensorType(env, args[0], sensorDesc)) {
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type or get number fail");
         return nullptr;
     }
-    if (!GetSensorInfoParameter(env, argc, args[1], sensorDesc)) {
-        SEN_HILOGE("location deviceId fail");
-        return nullptr;
+    napi_value args_tmp = args[1];
+    if (!IsMatchType(env, args_tmp, napi_function)) {
+        args_tmp = args[ARGS_NUM_TWO];
+        if (!GetSensorInfoParameter(env, argc, args[1], sensorDesc)) {
+            ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, args[1] should is napi_object");
+            return nullptr;
+        }
     }
     int32_t subscribeSize = INVALID_SUBSCRIBE_SIZE;
     if (argc == 1) {
         subscribeSize = RemoveAllCallback(env, sensorDesc);
-    } else if (IsMatchType(env, args[ARGS_NUM_TWO], napi_undefined) ||
-        IsMatchType(env, args[ARGS_NUM_TWO], napi_null)) {
+    } else if (IsMatchType(env, args_tmp, napi_undefined) ||
+        IsMatchType(env, args_tmp, napi_null)) {
         subscribeSize = RemoveAllCallback(env, sensorDesc);
-    } else if (IsMatchType(env, args[ARGS_NUM_TWO], napi_function)) {
-        subscribeSize = RemoveCallback(env, sensorDesc, args[ARGS_NUM_TWO]);
+    } else if (IsMatchType(env, args_tmp, napi_function)) {
+        subscribeSize = RemoveCallback(env, sensorDesc, args_tmp);
     } else {
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, args[2] should is napi_function");
         return nullptr;
