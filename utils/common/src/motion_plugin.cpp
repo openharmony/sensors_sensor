@@ -59,10 +59,14 @@ __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::st
     uint32_t state, SensorData* sensorData)
 {
     if (g_handle == nullptr) {
-        SEN_HILOGE("g_handle is nullptr");
+        SEN_HILOGD("g_handle is nullptr");
         return;
     }
     MotionTransformIfRequiredPtr func = (MotionTransformIfRequiredPtr)(dlsym(g_handle, "TransformIfRequired"));
+    if (func == nullptr) {
+        SEN_HILOGE("func is nullptr");
+        return;
+    }
     const char* dlsymError = dlerror();
     if  (dlsymError) {
         SEN_HILOGE("dlsym error: %{public}s", dlsymError);
