@@ -1938,7 +1938,7 @@ static napi_value Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getSensorListSync", GetSensorListSync),
         DECLARE_NAPI_FUNCTION("getSingleSensor", GetSingleSensor),
         DECLARE_NAPI_FUNCTION("getSingleSensorSync", GetSingleSensorSync),
-        DECLARE_NAPI_FUNCTION("getSensorListbyDeviceSync", GetSensorListByDeviceSync),
+        DECLARE_NAPI_FUNCTION("getSensorListByDeviceSync", GetSensorListByDeviceSync),
         DECLARE_NAPI_FUNCTION("getSingleSensorByDeviceSync", GetSingleSensorByDeviceSync),
         DECLARE_NAPI_FUNCTION("subscribeAccelerometer", SubscribeAccelerometer),
         DECLARE_NAPI_FUNCTION("unsubscribeAccelerometer", UnsubscribeAccelerometer),
