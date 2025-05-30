@@ -25,6 +25,8 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
+constexpr int32_t IS_LOCAL_DEVICE = 1;
+constexpr int32_t SENSOR_ONLINE = 1;
 std::mutex sensorInfoMutex_;
 SensorInfoCheck sensorInfoCheck_;
 std::mutex sensorActiveInfoMutex_;
@@ -34,6 +36,7 @@ int32_t sensorInfoCount_ = 0;
 
 #define SEN_CLIENT SensorServiceClient::GetInstance()
 std::recursive_mutex SensorAgentProxy::subscribeMutex_;
+std::recursive_mutex SensorAgentProxy::subscribePlugMutex_;
 std::mutex SensorAgentProxy::chanelMutex_;
 std::mutex SensorAgentProxy::createChannelMutex_;
 
@@ -47,10 +50,10 @@ SensorAgentProxy::~SensorAgentProxy()
     ClearSensorInfos();
 }
 
-std::set<RecordSensorCallback> SensorAgentProxy::GetSubscribeUserCallback(int32_t sensorId)
+std::set<RecordSensorCallback> SensorAgentProxy::GetSubscribeUserCallback(const SensorDescription &sensorDesc)
 {
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    auto iter = subscribeMap_.find(sensorId);
+    auto iter = subscribeMap_.find(sensorDesc);
     if (iter == subscribeMap_.end()) {
         SEN_HILOGE("Sensor is not subscribed");
         return {};
@@ -76,7 +79,8 @@ void SensorAgentProxy::HandleSensorData(SensorEvent *events,
     SensorEvent eventStream;
     for (int32_t i = 0; i < num; ++i) {
         eventStream = events[i];
-        auto callbacks = GetSubscribeUserCallback(eventStream.sensorTypeId);
+        auto callbacks = GetSubscribeUserCallback({eventStream.deviceId, eventStream.sensorTypeId,
+            eventStream.sensorId, eventStream.location});
         for (const auto &callback : callbacks) {
             CHKPV(callback);
             if (eventStream.sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
@@ -157,25 +161,27 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
     return ERR_OK;
 }
 
-int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *user)
+int32_t SensorAgentProxy::ActivateSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (samplingInterval_ < 0 || reportInterval_ < 0) {
         SEN_HILOGE("SamplingPeriod or reportInterval_ is invalid");
         return ERROR;
     }
-    if (!SEN_CLIENT.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    if (subscribeMap_.find(sensorId) == subscribeMap_.end()) {
+    if (subscribeMap_.find(sensorDesc) == subscribeMap_.end()) {
         SEN_HILOGE("Subscribe sensorId first");
         return ERROR;
     }
-    auto& subscribeSet = subscribeMap_[sensorId];
+    auto& subscribeSet = subscribeMap_[sensorDesc];
     if (subscribeSet.find(user) == subscribeSet.end()) {
         SEN_HILOGE("Subscribe user first");
         return ERROR;
@@ -183,66 +189,71 @@ int32_t SensorAgentProxy::ActivateSensor(int32_t sensorId, const SensorUser *use
     int32_t ret = 0;
     {
         SensorXcollie SensorXcollie("SensorAgentProxy:EnableSensor", XCOLLIE_TIMEOUT_15S);
-        ret = SEN_CLIENT.EnableSensor(sensorId, samplingInterval_, reportInterval_);
+        ret = SEN_CLIENT.EnableSensor(sensorDesc, samplingInterval_, reportInterval_);
     }
     if (ret != 0) {
         SEN_HILOGE("Enable sensor failed, ret:%{public}d", ret);
         subscribeSet.erase(user);
         if (subscribeSet.empty()) {
-            subscribeMap_.erase(sensorId);
+            subscribeMap_.erase(sensorDesc);
         }
         return ret;
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return ret;
 }
 
-int32_t SensorAgentProxy::DeactivateSensor(int32_t sensorId, const SensorUser *user)
+int32_t SensorAgentProxy::DeactivateSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, location:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    if (subscribeMap_.find(sensorId) == subscribeMap_.end()) {
+    if (subscribeMap_.find(sensorDesc) == subscribeMap_.end()) {
         SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
-    auto& subscribeSet = subscribeMap_[sensorId];
+    auto& subscribeSet = subscribeMap_[sensorDesc];
     if (subscribeSet.find(user) == subscribeSet.end()) {
         SEN_HILOGE("Subscribe user first");
         return OHOS::Sensors::ERROR;
     }
-    auto status = unsubscribeMap_[sensorId].insert(user);
+    auto status = unsubscribeMap_[sensorDesc].insert(user);
     if (!status.second) {
         SEN_HILOGE("User has been unsubscribed");
     }
     subscribeSet.erase(user);
     if (subscribeSet.empty()) {
-        subscribeMap_.erase(sensorId);
+        subscribeMap_.erase(sensorDesc);
         int32_t ret = 0;
         {
             SensorXcollie SensorXcollie("SensorAgentProxy:DisableSensor", XCOLLIE_TIMEOUT_15S);
-            ret = SEN_CLIENT.DisableSensor(sensorId);
+            ret = SEN_CLIENT.DisableSensor(sensorDesc);
         }
         if (ret != 0) {
             SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
             return ret;
         }
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int64_t samplingInterval,
-                                   int64_t reportInterval)
+int32_t SensorAgentProxy::SetBatch(const SensorDescription &sensorDesc, const SensorUser *user,
+    int64_t samplingInterval, int64_t reportInterval)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
     if (samplingInterval < 0 || reportInterval < 0) {
@@ -250,11 +261,11 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    if (subscribeMap_.find(sensorId) == subscribeMap_.end()) {
+    if (subscribeMap_.find(sensorDesc) == subscribeMap_.end()) {
         SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
-    auto& subscribeSet = subscribeMap_[sensorId];
+    auto& subscribeSet = subscribeMap_[sensorDesc];
     if (subscribeSet.find(user) == subscribeSet.end()) {
         SEN_HILOGE("Subscribe user first");
         return OHOS::Sensors::ERROR;
@@ -264,13 +275,15 @@ int32_t SensorAgentProxy::SetBatch(int32_t sensorId, const SensorUser *user, int
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *user)
+int32_t SensorAgentProxy::SubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
     std::lock_guard<std::mutex> createChannelLock(createChannelMutex_);
@@ -280,15 +293,16 @@ int32_t SensorAgentProxy::SubscribeSensor(int32_t sensorId, const SensorUser *us
         return OHOS::Sensors::ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    auto status = subscribeMap_[sensorId].insert(user);
+    auto status = subscribeMap_[sensorDesc].insert(user);
     if (!status.second) {
         SEN_HILOGE("User has been subscribed");
     }
-    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorDesc.sensorType)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
         PrintSensorData::GetInstance().ResetClientTimes();
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return OHOS::Sensors::SUCCESS;
 }
 
@@ -298,29 +312,30 @@ bool SensorAgentProxy::IsSubscribeMapEmpty() const
     return subscribeMap_.empty();
 }
 
-int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
+int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+        SEN_HILOGE("sensorId is invalid, %{public}d", sensorDesc.sensorType);
         return PARAMETER_ERROR;
     }
     {
         std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-        if (unsubscribeMap_.find(sensorId) == unsubscribeMap_.end()) {
+        if (unsubscribeMap_.find(sensorDesc) == unsubscribeMap_.end()) {
             SEN_HILOGE("Deactivate sensorId first");
             return OHOS::Sensors::ERROR;
         }
-        auto& unsubscribeSet = unsubscribeMap_[sensorId];
+        auto& unsubscribeSet = unsubscribeMap_[sensorDesc];
         if (unsubscribeSet.find(user) == unsubscribeSet.end()) {
             SEN_HILOGE("Deactivate user first");
             return OHOS::Sensors::ERROR;
         }
         unsubscribeSet.erase(user);
         if (unsubscribeSet.empty()) {
-            unsubscribeMap_.erase(sensorId);
+            unsubscribeMap_.erase(sensorDesc);
         }
     }
     std::lock_guard<std::mutex> createChannelLock(createChannelMutex_);
@@ -331,28 +346,30 @@ int32_t SensorAgentProxy::UnsubscribeSensor(int32_t sensorId, const SensorUser *
             return ret;
         }
     }
-    if (PrintSensorData::GetInstance().IsContinuousType(sensorId)) {
+    if (PrintSensorData::GetInstance().IsContinuousType(sensorDesc.sensorType)) {
         PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
         PrintSensorData::GetInstance().ResetClientTimes();
     }
-    SEN_HILOGI("Done, sensorId:%{public}d", sensorId);
+    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return OHOS::Sensors::SUCCESS;
 }
 
-int32_t SensorAgentProxy::SetMode(int32_t sensorId, const SensorUser *user, int32_t mode)
+int32_t SensorAgentProxy::SetMode(const SensorDescription &sensorDesc, const SensorUser *user, int32_t mode)
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorId)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorId);
+    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+        SEN_HILOGE("sensorDesc is invalid,deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ERROR;
     }
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
-    if (subscribeMap_.find(sensorId) == subscribeMap_.end()) {
+    if (subscribeMap_.find(sensorDesc) == subscribeMap_.end()) {
         SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
     }
-    auto& subscribeSet = subscribeMap_[sensorId];
+    auto& subscribeSet = subscribeMap_[sensorDesc];
     if (subscribeSet.find(user) == subscribeSet.end()) {
         SEN_HILOGE("Subscribe user first");
         return OHOS::Sensors::ERROR;
@@ -418,18 +435,155 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         ret = strcpy_s(sensorInfo->firmwareVersion, VERSION_MAX_LEN,
             sensorList[i].GetFirmwareVersion().c_str());
         CHKCR(ret == EOK, ERROR);
+        sensorInfo->deviceId = sensorList[i].GetDeviceId();
         sensorInfo->sensorId = sensorList[i].GetSensorId();
         sensorInfo->sensorTypeId = sensorList[i].GetSensorTypeId();
+        sensorInfo->location = sensorList[i].GetLocation();
         sensorInfo->maxRange = sensorList[i].GetMaxRange();
         sensorInfo->precision = sensorList[i].GetResolution();
         sensorInfo->power = sensorList[i].GetPower();
         sensorInfo->minSamplePeriod = sensorList[i].GetMinSamplePeriodNs();
         sensorInfo->maxSamplePeriod = sensorList[i].GetMaxSamplePeriodNs();
-        SEN_HILOGI("Sensor %{public}zu: sensorId is %{public}d, sensorTypeId is %{public}d",
-            i, sensorInfo->sensorId, sensorInfo->sensorTypeId);
+        SEN_HILOGI("deviceId %{public}d: sensorTypeId %{public}d, sensorId %{public}d",
+            sensorInfo->deviceId, sensorInfo->sensorTypeId, sensorInfo->sensorId);
     }
     sensorInfoCount_ = static_cast<int32_t>(count);
     return SUCCESS;
+}
+
+int32_t SensorAgentProxy::GetDeviceSensors(int32_t deviceId, SensorInfo **singleDevSensorInfo, int32_t *count)
+{
+    CALL_LOG_ENTER;
+    CHKPR(singleDevSensorInfo, OHOS::Sensors::ERROR);
+    CHKPR(count, OHOS::Sensors::ERROR);
+    std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
+    if (sensorInfoCheck_.sensorInfos == nullptr) {
+        int32_t ret = ConvertSensorInfos();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Convert sensor lists failed");
+            ClearSensorInfos();
+            return ERROR;
+        }
+    }
+    std::vector<Sensor> singleDevSensors;
+    SensorXcollie SensorXcollie("SensorAgentProxy:ConvertSensorInfosByDevice", XCOLLIE_TIMEOUT_5S);
+    int32_t ret = SEN_CLIENT.GetSensorListByDevice(deviceId, singleDevSensors);
+    if (ret != ERR_OK || singleDevSensors.empty()) {
+        SEN_HILOGE("Get device sensor lists failed");
+        return ERROR;
+    }
+    ret = UpdateSensorInfosCache(singleDevSensors);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Update sensor infos cache failed");
+        return ERROR;
+    }
+    std::vector<SensorInfo> filteredSensorInfos;
+    for (int32_t i = 0; i < sensorInfoCount_; ++i) {
+        if (sensorInfoCheck_.sensorInfos[i].deviceId == deviceId) {
+            filteredSensorInfos.push_back(sensorInfoCheck_.sensorInfos[i]);
+        }
+    }
+    int32_t filteredCount = static_cast<int32_t>(filteredSensorInfos.size());
+    auto newSensorInfo = std::make_unique<SensorInfo[]>(filteredCount);
+    if (!newSensorInfo) {
+        SEN_HILOGE("Failed to allocate memory for filtered sensorInfos");
+        return ERROR;
+    }
+    for (int32_t i = 0; i < filteredCount; ++i) {
+        newSensorInfo[i] = filteredSensorInfos[i];
+    }
+    free(*singleDevSensorInfo);
+    *singleDevSensorInfo = newSensorInfo.release();
+    *count = filteredCount;
+    return SUCCESS;
+}
+
+int32_t SensorAgentProxy::UpdateSensorInfo(SensorInfo* sensorInfo, const Sensor& sensor)
+{
+    CALL_LOG_ENTER;
+    CHKPR(sensorInfo, OHOS::Sensors::ERROR);
+    errno_t ret = strcpy_s(sensorInfo->sensorName, NAME_MAX_LEN,
+        sensor.GetSensorName().c_str());
+    CHKCR(ret == EOK, ERROR);
+    ret = strcpy_s(sensorInfo->vendorName, NAME_MAX_LEN,
+        sensor.GetVendorName().c_str());
+    CHKCR(ret == EOK, ERROR);
+    ret = strcpy_s(sensorInfo->hardwareVersion, VERSION_MAX_LEN,
+        sensor.GetHardwareVersion().c_str());
+    CHKCR(ret == EOK, ERROR);
+    ret = strcpy_s(sensorInfo->firmwareVersion, VERSION_MAX_LEN,
+        sensor.GetFirmwareVersion().c_str());
+    CHKCR(ret == EOK, ERROR);
+    sensorInfo->deviceId = sensor.GetDeviceId();
+    sensorInfo->sensorId = sensor.GetSensorId();
+    sensorInfo->sensorTypeId = sensor.GetSensorTypeId();
+    sensorInfo->location = sensor.GetLocation();
+    sensorInfo->maxRange = sensor.GetMaxRange();
+    sensorInfo->precision = sensor.GetResolution();
+    sensorInfo->power = sensor.GetPower();
+    sensorInfo->minSamplePeriod = sensor.GetMinSamplePeriodNs();
+    sensorInfo->maxSamplePeriod = sensor.GetMaxSamplePeriodNs();
+    return SUCCESS;
+}
+
+bool SensorAgentProxy::FindSensorInfo(int32_t deviceId, int32_t sensorId, int32_t sensorTypeId)
+{
+    CALL_LOG_ENTER;
+    if (sensorInfoCheck_.sensorInfos == nullptr) {
+        return false;
+    }
+    for (int32_t i = 0; i < sensorInfoCount_; ++i) {
+        if (sensorInfoCheck_.sensorInfos[i].deviceId == deviceId &&
+            sensorInfoCheck_.sensorInfos[i].sensorId == sensorId &&
+            sensorInfoCheck_.sensorInfos[i].sensorTypeId == sensorTypeId) {
+            SEN_HILOGI("FindSensorInfo deviceId:%{public}d, sensorTypeId:%{public}d, sensorId:%{public}d",
+                deviceId, sensorTypeId, sensorId);
+            return true;
+        }
+    }
+    return false;
+}
+
+int32_t SensorAgentProxy::UpdateSensorInfosCache(const std::vector<Sensor>& singleDevSensors)
+{
+    CALL_LOG_ENTER;
+    size_t newSensorsCount = 0;
+    for (const auto& sensor : singleDevSensors) {
+        if (!FindSensorInfo(sensor.GetDeviceId(), sensor.GetSensorId(), sensor.GetSensorTypeId())) {
+            newSensorsCount++;
+        }
+    }
+    if (newSensorsCount == 0) {
+        return SUCCESS;
+    }
+    size_t newTotalCount = sensorInfoCount_ + newSensorsCount;
+    if (newTotalCount > MAX_SENSOR_LIST_SIZE) {
+        SEN_HILOGE("The number of sensors exceeds the maximum value");
+        return ERROR;
+    }
+    std::unique_ptr<SensorInfo[]> newSensorInfos = std::make_unique<SensorInfo[]>(newTotalCount);
+    if (newSensorInfos == nullptr) {
+        SEN_HILOGE("Failed to allocate memory for newSensorInfos");
+        return ERROR;
+    }
+    if (sensorInfoCheck_.sensorInfos) {
+        std::copy(sensorInfoCheck_.sensorInfos, sensorInfoCheck_.sensorInfos + sensorInfoCount_, newSensorInfos.get());
+    }
+    size_t currentIndex = sensorInfoCount_;
+    for (const auto& sensor : singleDevSensors) {
+        if (!FindSensorInfo(sensor.GetDeviceId(), sensor.GetSensorId(), sensor.GetSensorTypeId())) {
+            UpdateSensorInfo(&newSensorInfos[currentIndex++], sensor);
+        }
+    }
+    sensorInfoCheck_.sensorInfos = newSensorInfos.release();
+    sensorInfoCount_ = static_cast<int32_t>(newTotalCount);
+    return SUCCESS;
+}
+
+int32_t SensorAgentProxy::GetLocalDeviceId(int32_t& deviceId) const
+{
+    CALL_LOG_ENTER;
+    return SEN_CLIENT.GetLocalDeviceId(deviceId);
 }
 
 int32_t SensorAgentProxy::GetAllSensors(SensorInfo **sensorInfo, int32_t *count) const
@@ -588,6 +742,120 @@ void SensorAgentProxy::SetDeviceStatus(uint32_t deviceStatus) const
 {
     SEN_HILOGI("SetDeviceStatus in, deviceStatus:%{public}d", deviceStatus);
     SEN_CLIENT.SetDeviceStatus(deviceStatus);
+}
+
+int32_t SensorAgentProxy::SubscribeSensorPlug(const SensorUser *user)
+{
+    CALL_LOG_ENTER;
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->plugCallback, OHOS::Sensors::ERROR);
+
+    int32_t ret = 0;
+    {
+        SensorXcollie SensorXcollie("SensorAgentProxy:CreateClientRemoteObject()", XCOLLIE_TIMEOUT_5S);
+        ret = SEN_CLIENT.CreateClientRemoteObject();
+    }
+    if (ret != ERR_OK) {
+        SEN_HILOGE("CreateClientRemoteObject failed, ret:%{public}d", ret);
+        return ret;
+    }
+
+    std::lock_guard<std::recursive_mutex> subscribePlugLock(subscribePlugMutex_);
+    auto status = subscribeSet_.insert(user);
+    if (!status.second) {
+        SEN_HILOGD("User has been subscribed");
+    }
+    return OHOS::Sensors::SUCCESS;
+}
+
+int32_t SensorAgentProxy::UnsubscribeSensorPlug(const SensorUser *user)
+{
+    CALL_LOG_ENTER;
+    CHKPR(user, OHOS::Sensors::ERROR);
+    CHKPR(user->plugCallback, OHOS::Sensors::ERROR);
+
+    std::lock_guard<std::recursive_mutex> subscribePlugLock(subscribePlugMutex_);
+    if (subscribeSet_.find(user) == subscribeSet_.end()) {
+        SEN_HILOGD("Deactivate user first");
+        return OHOS::Sensors::ERROR;
+    }
+    subscribeSet_.erase(user);
+    return OHOS::Sensors::SUCCESS;
+}
+
+void SensorAgentProxy::UpdataSensorStatusEvent(SensorStatusEvent &event, SensorPlugData info)
+{
+    event.sensorType = info.sensorTypeId;
+    event.sensorId = info.sensorId;
+    if (info.status == SENSOR_ONLINE) {
+        event.isSensorOnline = true;
+    } else {
+        event.isSensorOnline = false;
+    }
+    event.deviceId = info.deviceId;
+    event.deviceName = info.deviceName;
+    if (info.location == IS_LOCAL_DEVICE) {
+        event.location = true;
+    }
+    event.location = false;
+    event.timestamp = info.timestamp;
+}
+
+bool SensorAgentProxy::UpdataSensorInfo(SensorPlugData info)
+{
+    CALL_LOG_ENTER;
+    if (info.status == SENSOR_ONLINE) {
+        SensorInfo *sensorInfos = nullptr;
+        int32_t count = 0;
+        int32_t ret = GetDeviceSensors(info.deviceId, &sensorInfos, &count);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("UpdataSensorInfo failed");
+            return false;
+        }
+        free(sensorInfos);
+        sensorInfos = nullptr;
+    } else {
+        if (!(SEN_CLIENT.EraseCacheSensorList(info))) {
+            SEN_HILOGE("EraseCacheSensorList failed");
+            return false;
+        }
+        EraseCacheSensorInfos(info);
+    }
+    return true;
+}
+
+void SensorAgentProxy::EraseCacheSensorInfos(SensorPlugData info)
+{
+    std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
+    for (int32_t i = 0; i < sensorInfoCount_; ++i) {
+        if ((sensorInfoCheck_.sensorInfos[i].deviceId == info.deviceId) &&
+            (sensorInfoCheck_.sensorInfos[i].sensorTypeId == info.sensorTypeId) &&
+            (sensorInfoCheck_.sensorInfos[i].sensorId == info.sensorId)) {
+            for (int j = i; j < sensorInfoCount_ - 1; ++j) {
+                sensorInfoCheck_.sensorInfos[j] = sensorInfoCheck_.sensorInfos[j+1];
+            }
+            sensorInfoCount_--;
+            break;
+        }
+    }
+}
+
+bool SensorAgentProxy::HandlePlugSensorData(const SensorPlugData &info) __attribute__((no_sanitize("cfi")))
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::recursive_mutex> subscribePlugLock(subscribePlugMutex_);
+    if (!UpdataSensorInfo(info)) {
+        return false;
+    }
+    SensorStatusEvent event;
+    UpdataSensorStatusEvent(event, info);
+    for (const auto &it : subscribeSet_) {
+        if (it->plugCallback != nullptr) {
+            SEN_HILOGD("plug callback is run");
+            it->plugCallback(&event);
+        }
+    }
+    return true;
 }
 } // namespace Sensors
 } // namespace OHOS

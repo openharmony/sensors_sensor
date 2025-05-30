@@ -82,7 +82,7 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
         if (sensorData.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintHdiData(sensorData);
             it->second.lastTime = sensorData.timestamp;
-            SEN_HILOGI("sensorId: %{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
+            SEN_HILOGI("sensorType: %{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
                 std::to_string(it->second.hdiTimes).c_str());
                 it->second.hdiTimes = 0;
         }
@@ -92,7 +92,10 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
 void PrintSensorData::PrintHdiData(const SensorData &sensorData)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(sensorData.sensorTypeId) + ", ";
+    str += "deviceId: " + std::to_string(sensorData.deviceId) + ", ";
+    str += "sensorType: " + std::to_string(sensorData.sensorTypeId) + ", ";
+    str += "sensorId: " + std::to_string(sensorData.sensorId) + ", ";
+    str += "location: " + std::to_string(sensorData.location) + ", ";
     str += "timestamp: " + std::to_string(sensorData.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
     auto data = reinterpret_cast<const float *>(sensorData.data);
@@ -128,9 +131,9 @@ void PrintSensorData::ProcessHdiDFX(const SensorData &sensorData)
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 }
 
-int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
+int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
 {
-    switch (sensorId) {
+    switch (sensorType) {
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_PROXIMITY:
         case SENSOR_TYPE_ID_WEAR_DETECTION:
@@ -149,7 +152,7 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_ROTATION_VECTOR:
             return FOUR_DIMENSION;
         default:
-            SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, DEFAULT_DIMENSION);
+            SEN_HILOGW("Unknown sensorType:%{public}d, size:%{public}d", sensorType, DEFAULT_DIMENSION);
             return DEFAULT_DIMENSION;
     }
 }
@@ -182,7 +185,7 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
         if (event.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintClientData(event);
             it->second.lastTime = event.timestamp;
-            SEN_HILOGI("sensorId: %{public}d, clientTimes:%{public}s", event.sensorTypeId,
+            SEN_HILOGI("sensorType: %{public}d, clientTimes:%{public}s", event.sensorTypeId,
                 std::to_string(clientTimes_).c_str());
                 clientTimes_ = 0;
         }
@@ -192,7 +195,10 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
 void PrintSensorData::PrintClientData(const SensorEvent &event)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(event.sensorTypeId) + ", ";
+    str += "deviceId: " + std::to_string(event.deviceId) + ", ";
+    str += "sensorType: " + std::to_string(event.sensorTypeId) + ", ";
+    str += "sensorId: " + std::to_string(event.sensorId) + ", ";
+    str += "location: " + std::to_string(event.location) + ", ";
     str += "timestamp: " + std::to_string(event.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(event.sensorTypeId);
     auto data = reinterpret_cast<const float *>(event.data);
@@ -228,10 +234,10 @@ void PrintSensorData::ProcessClientDFX(const SensorEvent &event)
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 }
 
-bool PrintSensorData::IsContinuousType(int32_t sensorId)
+bool PrintSensorData::IsContinuousType(int32_t sensorType)
 {
     return std::find(g_continuousSensorType.begin(), g_continuousSensorType.end(),
-        sensorId) != g_continuousSensorType.end();
+        sensorType) != g_continuousSensorType.end();
 }
 
 void PrintSensorData::SavePrintUserInfo(const RecordSensorCallback callback)
@@ -258,10 +264,10 @@ void PrintSensorData::RemovePrintUserInfo(const RecordSensorCallback callback)
     clientLoginfo_.erase(callback);
 }
 
-void PrintSensorData::ResetHdiCounter(int32_t sensorId)
+void PrintSensorData::ResetHdiCounter(int32_t sensorType)
 {
     std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
-    auto it = hdiLoginfo_.find(sensorId);
+    auto it = hdiLoginfo_.find(sensorType);
     if (it == hdiLoginfo_.end()) {
         return;
     }
@@ -273,7 +279,10 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorId)
 void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorData &data)
 {
     std::string str;
-    str += "sensorId: " + std::to_string(data.sensorTypeId) + ", ";
+    str += "deviceId: " + std::to_string(data.deviceId) + ", ";
+    str += "sensorType: " + std::to_string(data.sensorTypeId) + ", ";
+    str += "sensorId: " + std::to_string(data.sensorId) + ", ";
+    str += "location: " + std::to_string(data.location) + ", ";
     str += "timestamp: " + std::to_string(data.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(data.sensorTypeId);
     auto tempData = reinterpret_cast<const float *>(data.data);

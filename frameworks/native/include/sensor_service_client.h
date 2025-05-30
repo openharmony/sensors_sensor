@@ -33,12 +33,14 @@ class SensorServiceClient : public StreamSocket, public Singleton<SensorServiceC
 public:
     ~SensorServiceClient() override;
     std::vector<Sensor> GetSensorList();
-    int32_t EnableSensor(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
-    int32_t DisableSensor(int32_t sensorId);
+    std::vector<Sensor> GetSensorListByDevice(int32_t deviceId);
+    int32_t GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors);
+    int32_t EnableSensor(const SensorDescription &sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
+    int32_t DisableSensor(const SensorDescription &sensorDesc);
     int32_t TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel);
     int32_t DestroyDataChannel();
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
-    bool IsValid(int32_t sensorId);
+    bool IsValid(const SensorDescription &sensorDesc);
     int32_t SuspendSensors(int32_t pid);
     int32_t ResumeSensors(int32_t pid);
     int32_t GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &activeInfoList);
@@ -49,15 +51,21 @@ public:
     void Disconnect();
     void HandleNetPacke(NetPacket &pkt);
     void SetDeviceStatus(uint32_t deviceStatus);
+    int32_t CreateClientRemoteObject();
+    int32_t TransferClientRemoteObject();
+    int32_t DestroyClientRemoteObject();
+    bool EraseCacheSensorList(SensorPlugData info);
+    int32_t GetLocalDeviceId(int32_t &deviceId);
 
 private:
     int32_t InitServiceClient();
-    void UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay);
-    void DeleteSensorInfoItem(int32_t sensorId);
+    void UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
+    void DeleteSensorInfoItem(const SensorDescription &sensorDesc);
     int32_t CreateSocketClientFd(int32_t &clientFd);
     int32_t CreateSocketChannel();
     void ReenableSensor();
     void WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret);
+    void WriteHiSysIPCEventSplit(ISensorServiceIpcCode code, int32_t ret);
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
     sptr<ISensorService> sensorServer_ = nullptr;
@@ -66,7 +74,7 @@ private:
     sptr<SensorDataChannel> dataChannel_ = nullptr;
     sptr<SensorClientStub> sensorClientStub_ = nullptr;
     std::mutex mapMutex_;
-    std::map<int32_t, SensorBasicInfo> sensorInfoMap_;
+    std::map<SensorDescription, SensorBasicInfo> sensorInfoMap_;
     std::atomic_bool isConnected_ = false;
     CircleStreamBuffer circBuf_;
     std::mutex activeInfoCBMutex_;

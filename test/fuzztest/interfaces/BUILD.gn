@@ -22,6 +22,7 @@ group("fuzztest") {
     "register_fuzzer:fuzztest",
     "resumesensors_fuzzer:fuzztest",
     "sensoragent_fuzzer:fuzztest",
+    "sensoragentenhanced_fuzzer:fuzztest",
     "setdevicestatus_fuzzer:fuzztest",
     "suspendsensors_fuzzer:fuzztest",
     "unregister_fuzzer:fuzztest",

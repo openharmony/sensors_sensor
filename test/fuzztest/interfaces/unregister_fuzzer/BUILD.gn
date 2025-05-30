@@ -44,6 +44,7 @@ ohos_fuzztest("UnregisterFuzzTest") {
     "access_token:libnativetoken_shared",
     "access_token:libtokensetproc_shared",
     "c_utils:utils",
+    "drivers_interface_sensor:libsensor_proxy_3.0",
     "hilog:libhilog",
   ]
 }

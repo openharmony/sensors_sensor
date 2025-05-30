@@ -104,6 +104,7 @@ ohos_shared_library("libsensor_service") {
     sources += [
       "hdi_connection/adapter/src/hdi_connection.cpp",
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
+      "hdi_connection/adapter/src/sensor_plug_callback.cpp",
       "hdi_connection/interface/src/sensor_hdi_connection.cpp",
       "src/sensor_data_processer.cpp",
     ]
@@ -222,6 +223,7 @@ ohos_static_library("libsensor_service_static") {
     sources += [
       "hdi_connection/adapter/src/hdi_connection.cpp",
       "hdi_connection/adapter/src/sensor_event_callback.cpp",
+      "hdi_connection/adapter/src/sensor_plug_callback.cpp",
       "hdi_connection/interface/src/sensor_hdi_connection.cpp",
       "src/sensor_data_processer.cpp",
     ]

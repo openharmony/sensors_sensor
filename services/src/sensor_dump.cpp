@@ -198,16 +198,18 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
     DumpCurrentTime(fd);
     dprintf(fd, "Total sensor:%d, Sensor list:\n", int32_t { sensors.size() });
     for (const auto &sensor : sensors) {
+        auto deviceId = sensor.GetDeviceId();
+        auto sensorTypeId = sensor.GetSensorTypeId();
         auto sensorId = sensor.GetSensorId();
-        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+        if (sensorMap_.find(sensorTypeId) == sensorMap_.end()) {
             continue;
         }
         dprintf(fd,
-                "sensorId:%8u | sensorType:%s | sensorName:%s | vendorName:%s | maxRange:%f"
+                "deviceId:%d | sensorType:%s |sensorId:%8u  | sensorName:%s | vendorName:%s | maxRange:%f"
                 "| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 " | maxSamplePeriodNs:%" PRId64 "\n",
-                sensorId, sensorMap_[sensorId].c_str(), sensor.GetSensorName().c_str(), sensor.GetVendorName().c_str(),
-                sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(), sensor.GetMinSamplePeriodNs(),
-                sensor.GetMaxSamplePeriodNs());
+                deviceId, sensorMap_[sensorTypeId].c_str(), sensorId, sensor.GetSensorName().c_str(),
+                sensor.GetVendorName().c_str(), sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(),
+                sensor.GetMinSamplePeriodNs(), sensor.GetMaxSamplePeriodNs());
     }
     return true;
 }
@@ -219,14 +221,16 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
     std::vector<SensorChannelInfo> channelInfo;
     clientInfo.GetSensorChannelInfo(channelInfo);
     for (const auto &channel : channelInfo) {
+        auto deviceId = channel.GetDeviceId();
+        auto sensorType = channel.GetSensorType();
         auto sensorId = channel.GetSensorId();
         if (sensorMap_.find(sensorId) == sensorMap_.end()) {
             continue;
         }
         dprintf(fd,
-                "uid:%d | packageName:%s | sensorId:%8u | sensorType:%s | samplingPeriodNs:%" PRId64 ""
+                "uid:%d | packageName:%s | deviceId:%d | sensorType:%s |sensorId:%8u | samplingPeriodNs:%" PRId64 ""
                 "| fifoCount:%u\n",
-                channel.GetUid(), channel.GetPackageName().c_str(), sensorId, sensorMap_[sensorId].c_str(),
+                channel.GetUid(), channel.GetPackageName().c_str(), deviceId, sensorMap_[sensorType].c_str(), sensorId,
                 channel.GetSamplingPeriodNs(), channel.GetFifoCount());
     }
     return true;
@@ -237,13 +241,16 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
     DumpCurrentTime(fd);
     dprintf(fd, "Opening sensors:\n");
     for (const auto &sensor : sensors) {
-        int32_t sensorId = sensor.GetSensorId();
-        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+        auto deviceId = sensor.GetDeviceId();
+        auto sensorTypeId = sensor.GetSensorTypeId();
+        auto sensorId = sensor.GetSensorId();
+        if (sensorMap_.find(sensorTypeId) == sensorMap_.end()) {
             continue;
         }
-        if (clientInfo.GetSensorState(sensorId)) {
-            dprintf(fd, "sensorId: %8u | sensorType: %s | channelSize: %lu\n",
-                sensorId, sensorMap_[sensorId].c_str(), clientInfo.GetSensorChannel(sensorId).size());
+        if (clientInfo.GetSensorState({sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId()})) {
+            dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u | channelSize: %lu\n",
+                deviceId, sensorMap_[sensorTypeId].c_str(), sensorId, clientInfo.GetSensorChannel({
+                    sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId(), sensor.GetLocation()}).size());
         }
     }
     return true;
@@ -256,11 +263,11 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
     auto dataMap = clientInfo.GetDumpQueue();
     int32_t j = 0;
     for (auto &sensorData : dataMap) {
-        int32_t sensorId = sensorData.first;
-        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+        if (sensorMap_.find(sensorData.first.sensorType) == sensorMap_.end()) {
             continue;
         }
-        dprintf(fd, "sensorId: %8u | sensorType: %s:\n", sensorId, sensorMap_[sensorId].c_str());
+        dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u :\n", sensorData.first.deviceId,
+            sensorMap_[sensorData.first.sensorType].c_str(), sensorData.first.sensorId);
         for (uint32_t i = 0; i < MAX_DUMP_DATA_SIZE && (!sensorData.second.empty()); i++) {
             auto data = sensorData.second.front();
             sensorData.second.pop();
@@ -270,7 +277,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
             CHKPF(timeinfo);
             dprintf(fd, "      %2d (ts=%.9f, time=%02d:%02d:%02d.%03d) | data:%s", ++j, data.timestamp / 1e9,
                     timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, int32_t { (time.tv_nsec / MS_NS) },
-                    GetDataBySensorId(sensorId, data).c_str());
+                    GetDataBySensorId(sensorData.first.sensorType, data).c_str());
         }
     }
     return true;
@@ -287,9 +294,9 @@ void SensorDump::DumpCurrentTime(int32_t fd)
             int32_t { (curTime.tv_nsec / MS_NS) });
 }
 
-int32_t SensorDump::GetDataDimension(int32_t sensorId)
+int32_t SensorDump::GetDataDimension(int32_t sensorType)
 {
-    switch (sensorId) {
+    switch (sensorType) {
         case SENSOR_TYPE_ID_BAROMETER:
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_HALL_EXT:
@@ -317,16 +324,16 @@ int32_t SensorDump::GetDataDimension(int32_t sensorId)
         case SENSOR_TYPE_ID_POSTURE:
             return SEVEN_DIMENSION;
         default:
-            SEN_HILOGW("Unknown sensorId:%{public}d, size:%{public}d", sensorId, COMMON_DIMENSION);
+            SEN_HILOGW("Unknown sensorType:%{public}d, size:%{public}d", sensorType, COMMON_DIMENSION);
             return COMMON_DIMENSION;
     }
 }
 
-std::string SensorDump::GetDataBySensorId(int32_t sensorId, SensorData &sensorData)
+std::string SensorDump::GetDataBySensorId(int32_t sensorType, SensorData &sensorData)
 {
-    SEN_HILOGD("sensorId:%{public}u", sensorId);
+    SEN_HILOGD("sensorType:%{public}u", sensorType);
     std::string str;
-    int32_t dataLen = GetDataDimension(sensorId);
+    int32_t dataLen = GetDataDimension(sensorType);
     if (sensorData.dataLen < sizeof(float)) {
         SEN_HILOGE("SensorData dataLen less than float size");
         return str;

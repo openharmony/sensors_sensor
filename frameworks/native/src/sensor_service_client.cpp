@@ -55,6 +55,7 @@ SensorServiceClient::~SensorServiceClient()
             remoteObject->RemoveDeathRecipient(serviceDeathObserver_);
         }
     }
+    DestroyClientRemoteObject();
     Disconnect();
 }
 
@@ -90,6 +91,11 @@ int32_t SensorServiceClient::InitServiceClient()
         if (sensorList_.empty()) {
             SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
         }
+        ret = TransferClientRemoteObject();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("TransferClientRemoteObject failed, ret:%{public}d", ret);
+            return ret;
+        }
         return ERR_OK;
     }
     SEN_HILOGW("Get service failed");
@@ -101,7 +107,7 @@ int32_t SensorServiceClient::InitServiceClient()
     return SENSOR_NATIVE_GET_SERVICE_ERR;
 }
 
-bool SensorServiceClient::IsValid(int32_t sensorId)
+bool SensorServiceClient::IsValid(const SensorDescription &sensorDesc)
 {
     int32_t ret = InitServiceClient();
     if (ret != ERR_OK) {
@@ -113,14 +119,16 @@ bool SensorServiceClient::IsValid(int32_t sensorId)
         return false;
     }
     for (auto &sensor : sensorList_) {
-        if (sensor.GetSensorId() == sensorId) {
+        if ((sensor.GetDeviceId() == sensorDesc.deviceId) && (sensor.GetSensorTypeId() == sensorDesc.sensorType) &&
+            (sensor.GetSensorId() == sensorDesc.sensorId)) {
             return true;
         }
     }
     return false;
 }
 
-int32_t SensorServiceClient::EnableSensor(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
+int32_t SensorServiceClient::EnableSensor(const SensorDescription &sensorDesc, int64_t samplingPeriod,
+    int64_t maxReportDelay)
 {
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
@@ -133,18 +141,19 @@ int32_t SensorServiceClient::EnableSensor(int32_t sensorId, int64_t samplingPeri
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
 #endif // HIVIEWDFX_HITRACE_ENABLE
-    ret = sensorServer_->EnableSensor(sensorId, samplingPeriod, maxReportDelay);
+    ret = sensorServer_->EnableSensor({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, samplingPeriod, maxReportDelay);
     WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret == ERR_OK) {
-        UpdateSensorInfoMap(sensorId, samplingPeriod, maxReportDelay);
+        UpdateSensorInfoMap(sensorDesc, samplingPeriod, maxReportDelay);
     }
     return ret;
 }
 
-int32_t SensorServiceClient::DisableSensor(int32_t sensorId)
+int32_t SensorServiceClient::DisableSensor(const SensorDescription &sensorDesc)
 {
     CALL_LOG_ENTER;
     int32_t ret = InitServiceClient();
@@ -157,13 +166,14 @@ int32_t SensorServiceClient::DisableSensor(int32_t sensorId)
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
 #endif // HIVIEWDFX_HITRACE_ENABLE
-    ret = sensorServer_->DisableSensor(sensorId);
+    ret = sensorServer_->DisableSensor({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location});
     WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_DISABLE_SENSOR, ret);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret == ERR_OK) {
-        DeleteSensorInfoItem(sensorId);
+        DeleteSensorInfoItem(sensorDesc);
     }
     return ret;
 }
@@ -181,6 +191,79 @@ std::vector<Sensor> SensorServiceClient::GetSensorList()
         SEN_HILOGE("sensorList_ cannot be empty");
     }
     return sensorList_;
+}
+
+int32_t SensorServiceClient::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    for (const auto& sensor : sensorList_) {
+        if (sensor.GetDeviceId() == deviceId) {
+            SEN_HILOGD("sensor.GetDeviceId():%{public}d, deviceId:%{public}d", sensor.GetDeviceId(), deviceId);
+            singleDevSensors.push_back(sensor);
+        }
+    }
+    if (singleDevSensors.empty()) {
+        singleDevSensors = GetSensorListByDevice(deviceId);
+        if (singleDevSensors.empty()) {
+            SEN_HILOGE("GetSensorListByDevice failed, singleDevSensors cannot be empty");
+            return SERVICE_EXCEPTION;
+        }
+    }
+    return ERR_OK;
+}
+
+std::vector<Sensor> SensorServiceClient::GetSensorListByDevice(int32_t deviceId)
+{
+    CALL_LOG_ENTER;
+    std::vector<Sensor> singleDevSensors;
+    int32_t ret = sensorServer_->GetSensorListByDevice(deviceId, singleDevSensors);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("GetSensorListByDevice failed, ret:%{public}d", ret);
+        return {};
+    }
+    if (singleDevSensors.empty()) {
+        SEN_HILOGE("GetSensorListByDevice failed,singleDevSensors cannot be empty");
+        return {};
+    }
+    for (const auto& newSensor : singleDevSensors) {
+        bool found = false;
+        for (const auto& oldSensor : sensorList_) {
+            if (oldSensor.GetDeviceId() == newSensor.GetDeviceId() &&
+                oldSensor.GetSensorId() == newSensor.GetSensorId() &&
+                oldSensor.GetSensorTypeId() == newSensor.GetSensorTypeId()) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            SEN_HILOGD("Sensor not found in sensorList_");
+            sensorList_.push_back(newSensor);
+        }
+    }
+    return singleDevSensors;
+}
+
+int32_t SensorServiceClient::GetLocalDeviceId(int32_t& deviceId)
+{
+    CALL_LOG_ENTER;
+    if (sensorList_.empty()) {
+        std::vector<Sensor> allSensors = GetSensorList();
+    }
+    for (const auto& sensor : sensorList_) {
+        if (sensor.GetLocation() == 1) {
+            SEN_HILOGI("local deviceId is:%{public}d", sensor.GetDeviceId());
+            deviceId = sensor.GetDeviceId();
+            return ERR_OK;
+        }
+    }
+    SEN_HILOGE("Get local deviceId failed, sensor list size: %{public}zu", sensorList_.size());
+    return SERVICE_EXCEPTION;
 }
 
 int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel)
@@ -250,8 +333,8 @@ void SensorServiceClient::ReenableSensor()
         std::lock_guard<std::mutex> mapLock(mapMutex_);
         for (const auto &it : sensorInfoMap_) {
             if (sensorServer_ != nullptr) {
-                int32_t ret = sensorServer_->EnableSensor(it.first, it.second.GetSamplingPeriodNs(),
-                    it.second.GetMaxReportDelayNs());
+                int32_t ret = sensorServer_->EnableSensor({it.first.deviceId, it.first.sensorType, it.first.sensorId,
+                    it.first.location}, it.second.GetSamplingPeriodNs(), it.second.GetMaxReportDelayNs());
                 WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR, ret);
             }
         }
@@ -262,6 +345,60 @@ void SensorServiceClient::ReenableSensor()
     }
     Disconnect();
     CreateSocketChannel();
+}
+
+int32_t SensorServiceClient::CreateClientRemoteObject()
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+    }
+    return ret;
+}
+
+int32_t SensorServiceClient::TransferClientRemoteObject()
+{
+    CALL_LOG_ENTER;
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    StartTrace(HITRACE_TAG_SENSORS, "TransferClientRemoteObject");
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    CHKPR(sensorClientStub_, INVALID_POINTER);
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPR(remoteObject, INVALID_POINTER);
+    int32_t ret = sensorServer_->TransferClientRemoteObject(remoteObject);
+    SEN_HILOGI("TransferClientRemoteObject ret:%{public}d", ret);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_TRANSFER_CLIENT_REMOTE_OBJECT, ret);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    SEN_HILOGI("Done");
+    return ret;
+}
+
+int32_t SensorServiceClient::DestroyClientRemoteObject()
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+    }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    CHKPR(sensorServer_, ERROR);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    StartTrace(HITRACE_TAG_SENSORS, "TransferClientRemoteObject");
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    CHKPR(sensorClientStub_, INVALID_POINTER);
+    auto remoteObject = sensorClientStub_->AsObject();
+    CHKPR(remoteObject, INVALID_POINTER);
+    ret = sensorServer_->DestroyClientRemoteObject(remoteObject);
+    SEN_HILOGI("DestroyClientRemoteObject ret:%{public}d", ret);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_DESTROY_CLIENT_REMOTE_OBJECT, ret);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    SEN_HILOGI("Done");
+    return ret;
 }
 
 void SensorServiceClient::WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret)
@@ -305,9 +442,30 @@ void SensorServiceClient::WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t
                 HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
                     "PKG_NAME", "ResetSensors", "ERROR_CODE", ret);
                 break;
+            default:
+                break;
+        }
+    }
+    WriteHiSysIPCEventSplit(code, ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+}
+
+void SensorServiceClient::WriteHiSysIPCEventSplit(ISensorServiceIpcCode code, int32_t ret)
+{
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+    if (ret != NO_ERROR) {
+        switch (code) {
             case ISensorServiceIpcCode::COMMAND_SET_DEVICE_STATUS:
                 HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
                     "PKG_NAME", "SetDeviceStatus", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_TRANSFER_CLIENT_REMOTE_OBJECT:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "TransferClientRemoteObject", "ERROR_CODE", ret);
+                break;
+            case ISensorServiceIpcCode::COMMAND_DESTROY_CLIENT_REMOTE_OBJECT:
+                HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_IPC_EXCEPTION", HiSysEvent::EventType::FAULT,
+                    "PKG_NAME", "DestroyClientRemoteObject", "ERROR_CODE", ret);
                 break;
             default:
                 SEN_HILOGW("Code does not exist, code:%{public}d", static_cast<int32_t>(code));
@@ -362,7 +520,8 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
     ReenableSensor();
 }
 
-void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t samplingPeriod, int64_t maxReportDelay)
+void SensorServiceClient::UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod,
+    int64_t maxReportDelay)
 {
     SEN_HILOGI("In");
     SensorBasicInfo sensorInfo;
@@ -370,16 +529,16 @@ void SensorServiceClient::UpdateSensorInfoMap(int32_t sensorId, int64_t sampling
     sensorInfo.SetMaxReportDelayNs(maxReportDelay);
     sensorInfo.SetSensorState(true);
     std::lock_guard<std::mutex> mapLock(mapMutex_);
-    sensorInfoMap_[sensorId] = sensorInfo;
+    sensorInfoMap_[sensorDesc] = sensorInfo;
     SEN_HILOGI("Done");
     return;
 }
 
-void SensorServiceClient::DeleteSensorInfoItem(int32_t sensorId)
+void SensorServiceClient::DeleteSensorInfoItem(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In");
     std::lock_guard<std::mutex> mapLock(mapMutex_);
-    auto it = sensorInfoMap_.find(sensorId);
+    auto it = sensorInfoMap_.find(sensorDesc);
     if (it != sensorInfoMap_.end()) {
         sensorInfoMap_.erase(it);
     }
@@ -685,6 +844,27 @@ void SensorServiceClient::SetDeviceStatus(uint32_t deviceStatus)
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
+}
+
+bool SensorServiceClient::EraseCacheSensorList(SensorPlugData info)
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    if (sensorList_.empty()) {
+        SEN_HILOGE("sensorList_ cannot be empty");
+        return false;
+    }
+    auto it = std::find_if(sensorList_.begin(), sensorList_.end(), [&](const Sensor& sensor) {
+        return sensor.GetDeviceId() == info.deviceId &&
+            sensor.GetSensorTypeId() == info.sensorTypeId &&
+            sensor.GetSensorId() == info.sensorId;
+    });
+    if (it != sensorList_.end()) {
+        sensorList_.erase(it);
+        return true;
+    }
+    SEN_HILOGD("sensorList_ cannot find the sensor");
+    return true;
 }
 } // namespace Sensors
 } // namespace OHOS

@@ -17,6 +17,7 @@
 #define SENSOR_POWER_POLICY_H
 
 #include "active_info.h"
+#include "sensor_agent_type.h"
 #include "sensor_manager.h"
 #include "stream_session.h"
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
@@ -35,14 +36,15 @@ public:
     void DeleteDeathPidSensorInfo(int32_t pid);
 
 private:
-    bool CheckFreezingSensor(int32_t sensorId);
-    bool Suspend(int32_t pid, const std::vector<int32_t> &sensorIdList,
-        std::unordered_map<int32_t, SensorBasicInfo> &SensorInfoMap);
-    bool Resume(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
-    ErrCode RestoreSensorInfo(int32_t pid, int32_t sensorId, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    bool CheckFreezingSensor(int32_t sensorType);
+    bool Suspend(int32_t pid, const std::vector<SensorDescription> &sensorDescList,
+        std::unordered_map<SensorDescription, SensorBasicInfo> &SensorInfoMap);
+    bool Resume(int32_t pid, const SensorDescription &sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
+    ErrCode RestoreSensorInfo(int32_t pid, const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
+        int64_t maxReportDelayNs);
     std::vector<int32_t> GetSuspendPidList();
     std::mutex pidSensorInfoMutex_;
-    std::unordered_map<int32_t, std::unordered_map<int32_t, SensorBasicInfo>> pidSensorInfoMap_;
+    std::unordered_map<int32_t, std::unordered_map<SensorDescription, SensorBasicInfo>> pidSensorInfoMap_;
 };
 } // namespace Sensors
 } // namespace OHOS

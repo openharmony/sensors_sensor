@@ -81,10 +81,16 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_service == nullptr) {
         return false;
     }
-    g_service->DisableSensor(SENSOR_TYPE_ID_ACCELEROMETER);
+    int32_t deviceId = 0;
+    GetObject<int32_t>(deviceId, data, size);
     int32_t sensorId = 0;
     GetObject<int32_t>(sensorId, data, size);
-    g_service->DisableSensor(sensorId);
+    int32_t location = 0;
+    GetObject<int32_t>(location, data, size);
+    g_service->DisableSensor({deviceId, SENSOR_TYPE_ID_ACCELEROMETER, sensorId, location});
+    int32_t sensorType = 0;
+    GetObject<int32_t>(sensorType, data, size);
+    g_service->DisableSensor({deviceId, sensorType, sensorId, location});
     return true;
 }
 } // namespace Sensors

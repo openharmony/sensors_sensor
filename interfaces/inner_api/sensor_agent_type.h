@@ -38,6 +38,7 @@
 #define SENSOR_AGENT_TYPE_H
 
 #include <stdint.h>
+#include <string>
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -123,6 +124,8 @@ typedef struct SensorInfo {
     float power = 0.0;           /**< Sensor power */
     int64_t minSamplePeriod = -1; /**< Minimum sample period allowed, in ns */
     int64_t maxSamplePeriod = -1; /**< Maximum sample period allowed, in ns */
+    int32_t deviceId = -1;        /**< Device ID */
+    int32_t location = -1;        /**< Is the device a local device or an external device */
 } SensorInfo;
 
 /**
@@ -158,6 +161,9 @@ typedef struct SensorEvent {
     int32_t mode = -1;          /**< Sensor data reporting mode (described in {@link SensorMode}) */
     uint8_t *data = nullptr;         /**< Sensor data */
     uint32_t dataLen = 0;      /**< Sensor data length */
+    int32_t deviceId = -1;     /**< Device ID */
+    int32_t sensorId = -1;     /**< Sensor ID */
+    int32_t location = -1;     /**< Is the device a local device or an external device */
 } SensorEvent;
 
 /**
@@ -166,6 +172,23 @@ typedef struct SensorEvent {
  * @since 5
  */
 typedef void (*RecordSensorCallback)(SensorEvent *event);
+
+typedef struct SensorStatusEvent {
+    int64_t timestamp = -1;    /**< Time when sensor data was reported */
+    int32_t sensorType = -1;   /**< Sensor type ID */
+    int32_t sensorId = -1;     /**< Sensor ID */
+    bool isSensorOnline = false;       /**< Whether the sensor is online */
+    int32_t deviceId = -1;     /**< Device ID */
+    std::string deviceName = "";    /**< Device name */
+    int32_t location = -1;          /**< Is the device a local device or an external device */
+} SensorStatusEvent;
+
+/**
+ * @brief Defines the callback for data reporting by the sensor plug in/out state.
+ *
+ * @since 18
+ */
+typedef void (*SensorPlugCallback)(SensorStatusEvent *statusEvent);
 
 /**
  * @brief Defines a reserved field for the sensor data subscriber.
@@ -184,6 +207,7 @@ typedef struct UserData {
 typedef struct SensorUser {
     char name[NAME_MAX_LEN];  /**< Name of the sensor data subscriber */
     RecordSensorCallback callback;   /**< Callback for reporting sensor data */
+    SensorPlugCallback plugCallback;  /**< Callback for reporting sensor plug data */
     UserData *userData = nullptr;              /**< Reserved field for the sensor data subscriber */
 } SensorUser;
 
@@ -523,6 +547,13 @@ typedef struct SensorActiveInfo {
 typedef struct FusionPressureData {
     float fusionPressure = 0.0f;
 } FusionPressureData;
+
+typedef struct SensorIdentifier {
+    int32_t deviceId = -1; /**< device ID */
+    int32_t sensorType = -1; /**< sensor type ID */
+    int32_t sensorId = -1; /**< sensor ID, defined by the sensor driver developer */
+    int32_t location = -1; /**< Is the device a local device or an external device */
+} SensorIdentifier;
 
 typedef void (*SensorActiveInfoCB)(SensorActiveInfo &sensorActiveInfo);
 

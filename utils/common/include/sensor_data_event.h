@@ -15,7 +15,7 @@
 
 #ifndef SENSOR_DATA_EVENT_H
 #define SENSOR_DATA_EVENT_H
-
+#include <string>
 namespace OHOS {
 namespace Sensors {
 constexpr int32_t RESERVED_DATA_LEN = 3;
@@ -38,6 +38,9 @@ struct SensorData {
     int32_t mode;          /**< Sensor data reporting mode (described in {@link SensorMode}) */
     uint8_t data[SENSOR_MAX_LENGTH];         /**< Sensor data */
     uint32_t dataLen;      /**< Sensor data length */
+    int32_t deviceId;      /**< Device ID */
+    int32_t sensorId;      /**< Sensor ID */
+    int32_t location;      /**< Is the device a local device or an external device */
 };
 
 struct ExtraInfo {
@@ -53,6 +56,17 @@ struct ExtraInfo {
 
 struct ExtraSensorInfo {
     ExtraInfo additional_info;
+};
+
+struct SensorPlugData {
+    int32_t deviceId;          /**< Device ID */
+    int32_t sensorTypeId;      /**< Sensor type ID */
+    int32_t sensorId;          /**< Sensor ID */
+    int32_t location;          /**< Is the device a local device or an external device */
+    std::string deviceName;    /**< Device name */
+    int32_t status;            /**< Device on or out status */
+    int32_t reserved;          /**< Reserved */
+    int64_t timestamp;         /**< Time when sensor plug data was reported */
 };
 } // namespace Sensors
 } // namespace OHOS

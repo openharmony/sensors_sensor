@@ -47,6 +47,10 @@ std::unordered_set<int32_t> g_supportMockSensors = {
     SENSOR_TYPE_ID_HEADPOSTURE,
     SENSOR_TYPE_ID_PROXIMITY1
 };
+constexpr int32_t IS_LOCAL_DEVICE = 1;
+constexpr int32_t DEFAULT_SENSORID = 0;
+constexpr int32_t DEFAULT_LOCATION = 1;
+static int32_t localDeviceId_ = -1;
 #endif // BUILD_VARIANT_ENG
 constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 } // namespace
@@ -117,26 +121,28 @@ bool SensorHdiConnection::FindAllInSensorSet(const std::unordered_set<int32_t> &
 {
     int32_t count = 0;
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
-    for (const auto &sensorId : sensors) {
-        if (sensorSet_.find(sensorId) == sensorSet_.end()) {
-            mockSet_.insert(sensorId);
+    for (const auto &sensorType : sensors) {
+        if (sensorSet_.find(sensorType) == sensorSet_.end()) {
+            mockSet_.insert(sensorType);
             count++;
         }
     }
     return count == 0 ? true : false;
 }
 
-bool SensorHdiConnection::FindOneInMockSet(int32_t sensorId)
+bool SensorHdiConnection::FindOneInMockSet(int32_t sensorType)
 {
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);
-    return mockSet_.find(sensorId) != mockSet_.end();
+    return mockSet_.find(sensorType) != mockSet_.end();
 }
 
 Sensor SensorHdiConnection::GenerateColorSensor()
 {
     Sensor sensorColor;
-    sensorColor.SetSensorId(SENSOR_TYPE_ID_COLOR);
+    sensorColor.SetSensorId(DEFAULT_SENSORID);
     sensorColor.SetSensorTypeId(SENSOR_TYPE_ID_COLOR);
+    sensorColor.SetDeviceId(localDeviceId_);
+    sensorColor.SetLocation(DEFAULT_LOCATION);
     sensorColor.SetFirmwareVersion(VERSION_NAME);
     sensorColor.SetHardwareVersion(VERSION_NAME);
     sensorColor.SetMaxRange(MAX_RANGE);
@@ -152,8 +158,10 @@ Sensor SensorHdiConnection::GenerateColorSensor()
 Sensor SensorHdiConnection::GenerateSarSensor()
 {
     Sensor sensorSar;
-    sensorSar.SetSensorId(SENSOR_TYPE_ID_SAR);
+    sensorSar.SetSensorId(DEFAULT_SENSORID);
     sensorSar.SetSensorTypeId(SENSOR_TYPE_ID_SAR);
+    sensorSar.SetDeviceId(localDeviceId_);
+    sensorSar.SetLocation(DEFAULT_LOCATION);
     sensorSar.SetFirmwareVersion(VERSION_NAME);
     sensorSar.SetHardwareVersion(VERSION_NAME);
     sensorSar.SetMaxRange(MAX_RANGE);
@@ -169,8 +177,10 @@ Sensor SensorHdiConnection::GenerateSarSensor()
 Sensor SensorHdiConnection::GenerateHeadPostureSensor()
 {
     Sensor sensorHeadPosture;
-    sensorHeadPosture.SetSensorId(SENSOR_TYPE_ID_HEADPOSTURE);
+    sensorHeadPosture.SetSensorId(DEFAULT_SENSORID);
     sensorHeadPosture.SetSensorTypeId(SENSOR_TYPE_ID_HEADPOSTURE);
+    sensorHeadPosture.SetDeviceId(localDeviceId_);
+    sensorHeadPosture.SetLocation(DEFAULT_LOCATION);
     sensorHeadPosture.SetFirmwareVersion(VERSION_NAME);
     sensorHeadPosture.SetHardwareVersion(VERSION_NAME);
     sensorHeadPosture.SetMaxRange(MAX_RANGE);
@@ -186,8 +196,10 @@ Sensor SensorHdiConnection::GenerateHeadPostureSensor()
 Sensor SensorHdiConnection::GenerateProximitySensor()
 {
     Sensor sensorProximity;
-    sensorProximity.SetSensorId(SENSOR_TYPE_ID_PROXIMITY1);
+    sensorProximity.SetSensorId(DEFAULT_SENSORID);
     sensorProximity.SetSensorTypeId(SENSOR_TYPE_ID_PROXIMITY1);
+    sensorProximity.SetDeviceId(localDeviceId_);
+    sensorProximity.SetLocation(DEFAULT_LOCATION);
     sensorProximity.SetFirmwareVersion(VERSION_NAME);
     sensorProximity.SetHardwareVersion(VERSION_NAME);
     sensorProximity.SetMaxRange(MAX_RANGE);
@@ -215,8 +227,13 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     if (!hdiConnectionStatus_) {
         return ERR_OK;
     }
-    for (const auto &sensorId : mockSet_) {
-        switch (sensorId) {
+    for (const auto& sensor : sensorList) {
+        if (sensor.GetLocation() == IS_LOCAL_DEVICE) {
+            localDeviceId_ = sensor.GetDeviceId();
+        }
+    }
+    for (const auto &sensorType : mockSet_) {
+        switch (sensorType) {
             case SENSOR_TYPE_ID_COLOR:
                 sensorList.push_back(GenerateColorSensor());
                 break;
@@ -237,65 +254,71 @@ int32_t SensorHdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     return ERR_OK;
 }
 
-int32_t SensorHdiConnection::EnableSensor(int32_t sensorId)
+int32_t SensorHdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "EnableSensor");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = ENABLE_SENSOR_ERR;
 #ifdef BUILD_VARIANT_ENG
-    if (FindOneInMockSet(sensorId)) {
+    if (FindOneInMockSet(sensorDesc.sensorType)) {
         CHKPR(iSensorCompatibleHdiConnection_, ENABLE_SENSOR_ERR);
-        ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorId);
+        ret = iSensorCompatibleHdiConnection_->EnableSensor(sensorDesc);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
-            SEN_HILOGE("Enable sensor failed in compatible, sensorId:%{public}d", sensorId);
+            SEN_HILOGE(
+                "Enable failed in compatible, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+                sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return ENABLE_SENSOR_ERR;
         }
         return ret;
     }
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, ENABLE_SENSOR_ERR);
-    ret = iSensorHdiConnection_->EnableSensor(sensorId);
+    ret = iSensorHdiConnection_->EnableSensor(sensorDesc);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
-        SEN_HILOGI("Enable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Enable failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ENABLE_SENSOR_ERR;
     }
     return ret;
 };
 
-int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
+int32_t SensorHdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "DisableSensor");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = DISABLE_SENSOR_ERR;
 #ifdef BUILD_VARIANT_ENG
-    if (FindOneInMockSet(sensorId)) {
+    if (FindOneInMockSet(sensorDesc.sensorType)) {
         CHKPR(iSensorCompatibleHdiConnection_, DISABLE_SENSOR_ERR);
-        ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorId);
+        ret = iSensorCompatibleHdiConnection_->DisableSensor(sensorDesc);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
-            SEN_HILOGE("Disable sensor failed in compatible, sensorId:%{public}d", sensorId);
+            SEN_HILOGE(
+                "Disable failed in compatible, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+                sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return DISABLE_SENSOR_ERR;
         }
         return ret;
     }
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, DISABLE_SENSOR_ERR);
-    ret = iSensorHdiConnection_->DisableSensor(sensorId);
+    ret = iSensorHdiConnection_->DisableSensor(sensorDesc);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if ((ret != ERR_OK) && (ret != HDI_DISABLE_SENSOR_TIMEOUT)) {
-        SEN_HILOGI("Disable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Disable sensor failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return DISABLE_SENSOR_ERR;
     }
     if (ret == HDI_DISABLE_SENSOR_TIMEOUT) {
@@ -304,65 +327,71 @@ int32_t SensorHdiConnection::DisableSensor(int32_t sensorId)
     return ERR_OK;
 }
 
-int32_t SensorHdiConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
+int32_t SensorHdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval,
+    int64_t reportInterval)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SetBatch");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = SET_SENSOR_CONFIG_ERR;
 #ifdef BUILD_VARIANT_ENG
-    if (FindOneInMockSet(sensorId)) {
+    if (FindOneInMockSet(sensorDesc.sensorType)) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_CONFIG_ERR);
-        ret = iSensorCompatibleHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
+        ret = iSensorCompatibleHdiConnection_->SetBatch(sensorDesc, samplingInterval, reportInterval);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
-            SEN_HILOGI("Set batch failed in compatible, sensorId:%{public}d", sensorId);
+            SEN_HILOGI(
+                "Set batch failed in compatible, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d",
+                sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return SET_SENSOR_CONFIG_ERR;
         }
         return ret;
     }
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, SET_SENSOR_CONFIG_ERR);
-    ret = iSensorHdiConnection_->SetBatch(sensorId, samplingInterval, reportInterval);
+    ret = iSensorHdiConnection_->SetBatch(sensorDesc, samplingInterval, reportInterval);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
-        SEN_HILOGI("Set batch failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Set batch failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return SET_SENSOR_CONFIG_ERR;
     }
     return ret;
 }
 
-int32_t SensorHdiConnection::SetMode(int32_t sensorId, int32_t mode)
+int32_t SensorHdiConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     StartTrace(HITRACE_TAG_SENSORS, "SetMode");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     int32_t ret = SET_SENSOR_MODE_ERR;
 #ifdef BUILD_VARIANT_ENG
-    if (FindOneInMockSet(sensorId)) {
+    if (FindOneInMockSet(sensorDesc.sensorType)) {
         CHKPR(iSensorCompatibleHdiConnection_, SET_SENSOR_MODE_ERR);
-        ret = iSensorCompatibleHdiConnection_->SetMode(sensorId, mode);
+        ret = iSensorCompatibleHdiConnection_->SetMode(sensorDesc, mode);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
         FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
-            SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
+            SEN_HILOGI("Set mode failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+                sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return SET_SENSOR_MODE_ERR;
         }
         return ret;
     }
 #endif // BUILD_VARIANT_ENG
     CHKPR(iSensorHdiConnection_, SET_SENSOR_MODE_ERR);
-    ret = iSensorHdiConnection_->SetMode(sensorId, mode);
+    ret = iSensorHdiConnection_->SetMode(sensorDesc, mode);
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
-        SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Set mode failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return SET_SENSOR_MODE_ERR;
     }
     return ret;
@@ -412,6 +441,110 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
     }
 #endif // BUILD_VARIANT_ENG
     return ret;
+}
+
+int32_t SensorHdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
+{
+    CALL_LOG_ENTER;
+    CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    if (iSensorHdiConnection_->GetSensorListByDevice(deviceId, singleDevSensors) != ERR_OK) {
+        SEN_HILOGW("Get sensor list by device failed");
+    }
+    for (const auto& newSensor : singleDevSensors) {
+        bool found = false;
+        for (const auto& oldSensor : sensorList_) {
+            if (oldSensor.GetDeviceId() == newSensor.GetDeviceId() &&
+                oldSensor.GetSensorId() == newSensor.GetSensorId() &&
+                oldSensor.GetSensorTypeId() == newSensor.GetSensorTypeId()) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            SEN_HILOGD("Sensor not found in sensorList_");
+            sensorList_.push_back(newSensor);
+        }
+    }
+#ifdef BUILD_VARIANT_ENG
+    if (singleDevSensors[0].GetLocation() == IS_LOCAL_DEVICE) {
+        if (!hdiConnectionStatus_) {
+            return ERR_OK;
+        }
+        localDeviceId_ = singleDevSensors[0].GetDeviceId();
+        for (const auto &sensorType : mockSet_) {
+            switch (sensorType) {
+                case SENSOR_TYPE_ID_COLOR:
+                    singleDevSensors.push_back(GenerateColorSensor());
+                    break;
+                case SENSOR_TYPE_ID_SAR:
+                    singleDevSensors.push_back(GenerateSarSensor());
+                    break;
+                case SENSOR_TYPE_ID_HEADPOSTURE:
+                    singleDevSensors.push_back(GenerateHeadPostureSensor());
+                    break;
+                case SENSOR_TYPE_ID_PROXIMITY1:
+                    singleDevSensors.push_back(GenerateProximitySensor());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+#endif // BUILD_VARIANT_ENG
+    return ERR_OK;
+}
+
+int32_t SensorHdiConnection::RegSensorPlugCallback(DevicePlugCallback cb)
+{
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    StartTrace(HITRACE_TAG_SENSORS, "RegSensorPlugCallback");
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    CHKPR(iSensorHdiConnection_, REGIST_CALLBACK_ERR);
+    int32_t ret = iSensorHdiConnection_->RegSensorPlugCallback(cb);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Registe sensor plug callback failed");
+        return REGIST_CALLBACK_ERR;
+    }
+#ifdef BUILD_VARIANT_ENG
+    if (iSensorCompatibleHdiConnection_ != nullptr) {
+        ret = iSensorCompatibleHdiConnection_->RegSensorPlugCallback(cb);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Registe sensor plug callback failed in compatible");
+            return REGIST_CALLBACK_ERR;
+        }
+    }
+#endif // BUILD_VARIANT_ENG
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    FinishTrace(HITRACE_TAG_SENSORS);
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    return ret;
+}
+
+DevicePlugCallback SensorHdiConnection::GetSensorPlugCb()
+{
+    return NULL;
+}
+
+bool SensorHdiConnection::PlugEraseSensorData(SensorPlugInfo info)
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    if (sensorList_.empty()) {
+        SEN_HILOGE("sensorList_ cannot be empty");
+        return false;
+    }
+    auto it = std::find_if(sensorList_.begin(), sensorList_.end(), [&](const Sensor& sensor) {
+        return sensor.GetDeviceId() == info.deviceSensorInfo.deviceId &&
+            sensor.GetSensorTypeId() == info.deviceSensorInfo.sensorType &&
+            sensor.GetSensorId() == info.deviceSensorInfo.sensorId;
+    });
+    if (it != sensorList_.end()) {
+        sensorList_.erase(it);
+        return true;
+    }
+    SEN_HILOGD("sensorList_ cannot find the sensor");
+    return true;
 }
 } // namespace Sensors
 } // namespace OHOS

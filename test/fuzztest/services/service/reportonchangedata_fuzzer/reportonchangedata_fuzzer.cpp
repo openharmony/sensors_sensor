@@ -78,9 +78,15 @@ bool ReportOnChangeDataFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
     g_service->OnStart();
+    int32_t deviceId = 0;
+    GetObject<int32_t>(deviceId, data, size);
+    int32_t sensorType = 0;
+    GetObject<int32_t>(sensorType, data, size);
     int32_t sensorId = 0;
     GetObject<int32_t>(sensorId, data, size);
-    g_service->ReportOnChangeData(sensorId);
+    int32_t location = 0;
+    GetObject<int32_t>(location, data, size);
+    g_service->ReportOnChangeData({deviceId, sensorType, sensorId, location});
     return true;
 }
 }  // namespace Sensors

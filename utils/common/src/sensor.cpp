@@ -37,7 +37,9 @@ Sensor::Sensor()
       flags_(0),
       fifoMaxEventCount_(0),
       minSamplePeriodNs_(0),
-      maxSamplePeriodNs_(0)
+      maxSamplePeriodNs_(0),
+      deviceId_(0),
+      location_(0)
 {}
 
 int32_t Sensor::GetSensorId() const
@@ -170,6 +172,26 @@ void Sensor::SetMaxSamplePeriodNs(int64_t maxSamplePeriodNs)
     maxSamplePeriodNs_ = maxSamplePeriodNs;
 }
 
+int32_t Sensor::GetDeviceId() const
+{
+    return deviceId_;
+}
+
+void Sensor::SetDeviceId(int32_t deviceId)
+{
+    deviceId_ = deviceId;
+}
+
+int32_t Sensor::GetLocation() const
+{
+    return location_;
+}
+
+void Sensor::SetLocation(int32_t location)
+{
+    location_ = location;
+}
+
 bool Sensor::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteInt32(sensorId_)) {
@@ -224,6 +246,14 @@ bool Sensor::Marshalling(Parcel &parcel) const
         SEN_HILOGE("Failed, write maxSamplePeriodNs failed");
         return false;
     }
+    if (!parcel.WriteInt32(deviceId_)) {
+        SEN_HILOGE("Failed, write deviceId failed");
+        return false;
+    }
+    if (!parcel.WriteInt32(location_)) {
+        SEN_HILOGE("Failed, write location_ failed");
+        return false;
+    }
     return true;
 }
 
@@ -252,10 +282,70 @@ bool Sensor::ReadFromParcel(Parcel &parcel)
         (!parcel.ReadUint32(flags_)) ||
         (!parcel.ReadInt32(fifoMaxEventCount_)) ||
         (!parcel.ReadInt64(minSamplePeriodNs_)) ||
-        (!parcel.ReadInt64(maxSamplePeriodNs_))) {
+        (!parcel.ReadInt64(maxSamplePeriodNs_)) ||
+        (!parcel.ReadInt32(deviceId_)) ||
+        (!parcel.ReadInt32(location_))) {
         return false;
     }
     return true;
+}
+
+SensorDescriptionIPC::SensorDescriptionIPC()
+{}
+
+SensorDescriptionIPC::SensorDescriptionIPC(int32_t deviceId, int32_t sensorTypeId, int32_t sensorId, int32_t location)
+    :deviceId(deviceId), sensorType(sensorTypeId), sensorId(sensorId), location(location)
+{}
+
+bool SensorDescriptionIPC::Marshalling(Parcel &parcel) const
+{
+    if (!parcel.WriteInt32(deviceId)) {
+        SEN_HILOGE("Failed, write deviceId failed");
+        return false;
+    }
+    if (!parcel.WriteInt32(sensorType)) {
+        SEN_HILOGE("Failed, write sensorTypeId failed");
+        return false;
+    }
+    if (!parcel.WriteInt32(sensorId)) {
+        SEN_HILOGE("Failed, write sensorId failed");
+        return false;
+    }
+    if (!parcel.WriteInt32(location)) {
+        SEN_HILOGE("Failed, write location_ failed");
+        return false;
+    }
+    return true;
+}
+
+SensorDescriptionIPC* SensorDescriptionIPC::Unmarshalling(Parcel &data)
+{
+    auto sensorDesc = new (std::nothrow) SensorDescriptionIPC();
+    if (sensorDesc == nullptr) {
+        SEN_HILOGE("Read init capacity failed");
+        return nullptr;
+    }
+    if (!(data.ReadInt32(sensorDesc->deviceId))) {
+        SEN_HILOGE("Read deviceId failed");
+        sensorDesc = nullptr;
+        return sensorDesc;
+    }
+    if (!(data.ReadInt32(sensorDesc->sensorType))) {
+        SEN_HILOGE("Read sensorTypeId failed");
+        sensorDesc = nullptr;
+        return sensorDesc;
+    }
+    if (!(data.ReadInt32(sensorDesc->sensorId))) {
+        SEN_HILOGE("Read sensorId failed");
+        sensorDesc = nullptr;
+        return sensorDesc;
+    }
+    if (!(data.ReadInt32(sensorDesc->location))) {
+        SEN_HILOGE("Read location_ failed");
+        sensorDesc = nullptr;
+        return sensorDesc;
+    }
+    return sensorDesc;
 }
 } // namespace Sensors
 } // namespace OHOS

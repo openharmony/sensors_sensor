@@ -51,10 +51,15 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor> &sensorList)
         const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
         const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
         const int32_t sensorId = sensorInfos[i].sensorId;
+        const int32_t sensorTypeId = sensorInfos[i].sensorTypeId;
+        const int32_t deviceId = sensorInfos[i].deviceId;
+        const int32_t location = sensorInfos[i].location;
         const float maxRange = sensorInfos[i].maxRange;
         Sensor sensor;
+        sensor.SetDeviceId(deviceId);
         sensor.SetSensorId(sensorId);
-        sensor.SetSensorTypeId(sensorId);
+        sensor.SetSensorTypeId(sensorTypeId);
+        sensor.SetLocation(location);
         sensor.SetFirmwareVersion(firmwareVersion);
         sensor.SetHardwareVersion(hardwareVersion);
         sensor.SetMaxRange(maxRange);
@@ -69,41 +74,46 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor> &sensorList)
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::EnableSensor(int32_t sensorId)
+int32_t CompatibleConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
-    int32_t ret = hdiServiceImpl_.EnableSensor(sensorId);
+    int32_t ret = hdiServiceImpl_.EnableSensor(sensorDesc);
     if (ret != 0) {
-        SEN_HILOGE("Enable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Enable sensor failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
     return ERR_OK;
 };
 
-int32_t CompatibleConnection::DisableSensor(int32_t sensorId)
+int32_t CompatibleConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
-    int32_t ret = hdiServiceImpl_.DisableSensor(sensorId);
+    int32_t ret = hdiServiceImpl_.DisableSensor(sensorDesc);
     if (ret != 0) {
-        SEN_HILOGE("Disable sensor failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Disable sensor failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval)
+int32_t CompatibleConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval,
+    int64_t reportInterval)
 {
-    int32_t ret = hdiServiceImpl_.SetBatch(sensorId, samplingInterval, reportInterval);
+    int32_t ret = hdiServiceImpl_.SetBatch(sensorDesc, samplingInterval, reportInterval);
     if (ret != 0) {
-        SEN_HILOGE("Set batch failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGE("Set batch failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
     return ERR_OK;
 }
 
-int32_t CompatibleConnection::SetMode(int32_t sensorId, int32_t mode)
+int32_t CompatibleConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
-    int32_t ret = hdiServiceImpl_.SetMode(sensorId, mode);
+    int32_t ret = hdiServiceImpl_.SetMode(sensorDesc, mode);
     if (ret != 0) {
-        SEN_HILOGI("Set mode failed, sensorId:%{public}d", sensorId);
+        SEN_HILOGI("Set mode failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
     return ERR_OK;
@@ -123,7 +133,10 @@ void CompatibleConnection::ReportSensorDataCallback(SensorEvent *event)
         .timestamp = event->timestamp,
         .option = event->option,
         .mode = event->mode,
-        .dataLen = event->dataLen
+        .dataLen = event->dataLen,
+        .deviceId = event->deviceId,
+        .sensorId = event->sensorId,
+        .location = event->location
     };
     CHKPV(sensorData.data);
     errno_t ret = memcpy_s(sensorData.data, sizeof(sensorData.data), event->data, event->dataLen);
@@ -160,6 +173,58 @@ int32_t CompatibleConnection::DestroyHdiConnection()
         return ret;
     }
     return ERR_OK;
+}
+
+int32_t CompatibleConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
+{
+    std::vector<SensorInfo> sensorInfos;
+    int32_t ret = hdiServiceImpl_.GetSensorListByDevice(deviceId, sensorInfos);
+    if (ret != 0) {
+        SEN_HILOGE("Get sensor list by device failed");
+        return ret;
+    }
+    size_t count = sensorInfos.size();
+    if (count > MAX_SENSOR_COUNT) {
+        SEN_HILOGD("SensorInfos size:%{public}zu", count);
+        count = MAX_SENSOR_COUNT;
+    }
+    for (size_t i = 0; i < count; i++) {
+        const std::string sensorName(sensorInfos[i].sensorName);
+        const std::string vendorName(sensorInfos[i].vendorName);
+        const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
+        const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
+        const int32_t sensorId = sensorInfos[i].sensorId;
+        const int32_t sensorTypeId = sensorInfos[i].sensorTypeId;
+        const int32_t deviceId = sensorInfos[i].deviceId;
+        const int32_t location = sensorInfos[i].location;
+        const float maxRange = sensorInfos[i].maxRange;
+        Sensor sensor;
+        sensor.SetDeviceId(deviceId);
+        sensor.SetSensorId(sensorId);
+        sensor.SetSensorTypeId(sensorTypeId);
+        sensor.SetLocation(location);
+        sensor.SetFirmwareVersion(firmwareVersion);
+        sensor.SetHardwareVersion(hardwareVersion);
+        sensor.SetMaxRange(maxRange);
+        sensor.SetSensorName(sensorName);
+        sensor.SetVendorName(vendorName);
+        sensor.SetResolution(sensorInfos[i].precision);
+        sensor.SetPower(sensorInfos[i].power);
+        sensor.SetMinSamplePeriodNs(sensorInfos[i].minSamplePeriod);
+        sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxSamplePeriod);
+        singleDevSensors.push_back(sensor);
+    }
+    return ERR_OK;
+}
+
+int32_t CompatibleConnection::RegSensorPlugCallback(DevicePlugCallback cb)
+{
+    return ERR_OK;
+}
+
+DevicePlugCallback CompatibleConnection::GetSensorPlugCb()
+{
+    return NULL;
 }
 } // namespace Sensors
 } // namespace OHOS

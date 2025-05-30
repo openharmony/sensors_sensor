@@ -29,12 +29,16 @@ public:
     virtual ~SensorHdiConnection() {}
     int32_t ConnectHdi() override;
     int32_t GetSensorList(std::vector<Sensor> &sensorList) override;
-    int32_t EnableSensor(int32_t sensorId) override;
-    int32_t DisableSensor(int32_t sensorId)  override;
-    int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
-    int32_t SetMode(int32_t sensorId, int32_t mode) override;
+    int32_t GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors) override;
+    int32_t EnableSensor(const SensorDescription &sensorDesc) override;
+    int32_t DisableSensor(const SensorDescription &sensorDesc)  override;
+    int32_t SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval) override;
+    int32_t SetMode(const SensorDescription &sensorDesc, int32_t mode) override;
     int32_t RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
+    int32_t RegSensorPlugCallback(DevicePlugCallback cb) override;
+    DevicePlugCallback GetSensorPlugCb() override;
+    bool PlugEraseSensorData(SensorPlugInfo info);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorHdiConnection);
@@ -47,7 +51,7 @@ private:
     int32_t ConnectHdiService();
     int32_t ConnectCompatibleHdi();
     bool FindAllInSensorSet(const std::unordered_set<int32_t> &sensors);
-    bool FindOneInMockSet(int32_t sensorId);
+    bool FindOneInMockSet(int32_t sensorType);
     Sensor GenerateColorSensor();
     Sensor GenerateSarSensor();
     Sensor GenerateHeadPostureSensor();

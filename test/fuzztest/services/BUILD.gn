@@ -23,6 +23,7 @@ group("fuzztest") {
     "enableactiveinfocbstub_fuzzer:fuzztest",
     "getactiveinfoliststub_fuzzer:fuzztest",
     "getallsensorsstub_fuzzer:fuzztest",
+    "getsensorlistbydevicestub_fuzzer:fuzztest",
     "resetsensorsstub_fuzzer:fuzztest",
     "resumesensorsstub_fuzzer:fuzztest",
     "sensordisablestub_fuzzer:fuzztest",
@@ -30,6 +31,7 @@ group("fuzztest") {
     "sensoronremoterequest_fuzzer:fuzztest",
     "service/createsocketchannel_fuzzer:fuzztest",
     "service/getactiveinfolist_fuzzer:fuzztest",
+    "service/getsensorlistbydevice_fuzzer:fuzztest",
     "service/registerclientdeathrecipient_fuzzer:fuzztest",
     "service/registerpermcallback_fuzzer:fuzztest",
     "service/reportactiveinfo_fuzzer:fuzztest",
@@ -37,5 +39,6 @@ group("fuzztest") {
     "service/reportsensorsysevent_fuzzer:fuzztest",
     "service/setdevicestatusservice_fuzzer:fuzztest",
     "suspendsensorsstub_fuzzer:fuzztest",
+    "transferclientremoteobjectstub_fuzzer:fuzztest",
   ]
 }

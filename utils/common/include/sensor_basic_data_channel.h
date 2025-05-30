@@ -19,7 +19,7 @@
 #include <mutex>
 
 #include "message_parcel.h"
-
+#include "sensor.h"
 #include "sensor_data_event.h"
 
 namespace OHOS {
@@ -41,7 +41,7 @@ public:
     int32_t ReceiveData(ClientExcuteCB callBack, void *vaddr, size_t size);
     bool GetSensorStatus() const;
     void SetSensorStatus(bool isActive);
-    const std::unordered_map<int32_t, SensorData> &GetDataCacheBuf() const;
+    const std::unordered_map<SensorDescription, SensorData> &GetDataCacheBuf() const;
     std::string GetPackageName();
     void SetPackageName(std::string packageName);
 
@@ -51,7 +51,7 @@ private:
     int32_t receiveFd_;
     bool isActive_;
     std::mutex statusLock_;
-    std::unordered_map<int32_t, SensorData> dataCacheBuf_;
+    std::unordered_map<SensorDescription, SensorData> dataCacheBuf_;
     std::string packageName_;
     std::mutex pkNameLock_;
 };

@@ -39,6 +39,19 @@ const std::set<int32_t> g_sensorTypeTrigger = {
 };
 } // namespace
 
+void CreatSensorData(SensorData &sensorData, const HdfSensorEvents &event)
+{
+    sensorData.sensorTypeId = event.deviceSensorInfo.sensorType;
+    sensorData.version = event.version;
+    sensorData.timestamp = event.timestamp;
+    sensorData.option = event.option;
+    sensorData.mode = event.mode;
+    sensorData.dataLen = event.dataLen;
+    sensorData.deviceId = event.deviceSensorInfo.deviceId;
+    sensorData.sensorId = event.deviceSensorInfo.sensorId;
+    sensorData.location = event.deviceSensorInfo.location;
+}
+
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 {
     return ERR_OK;
@@ -56,14 +69,8 @@ int32_t SensorEventCallback::OnDataEventAsync(const std::vector<HdfSensorEvents>
             SEN_HILOGI("Data is empty");
             return ERR_INVALID_VALUE;
         }
-        SensorData sensorData = {
-            .sensorTypeId = event.deviceSensorInfo.sensorType,
-            .version = event.version,
-            .timestamp = event.timestamp,
-            .option = event.option,
-            .mode = event.mode,
-            .dataLen = event.dataLen
-        };
+        SensorData sensorData;
+        CreatSensorData(sensorData, event);
         if (g_sensorTypeTrigger.find(sensorData.sensorTypeId) != g_sensorTypeTrigger.end()) {
             sensorData.mode = SENSOR_ON_CHANGE;
         }

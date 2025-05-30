@@ -27,18 +27,22 @@ public:
     virtual ~CompatibleConnection() {}
     int32_t ConnectHdi() override;
     int32_t GetSensorList(std::vector<Sensor> &sensorList) override;
-    int32_t EnableSensor(int32_t sensorId) override;
-    int32_t DisableSensor(int32_t sensorId)  override;
-    int32_t SetBatch(int32_t sensorId, int64_t samplingInterval, int64_t reportInterval) override;
-    int32_t SetMode(int32_t sensorId, int32_t mode) override;
+    int32_t GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors) override;
+    int32_t EnableSensor(const SensorDescription &sensorDesc) override;
+    int32_t DisableSensor(const SensorDescription &sensorDesc)  override;
+    int32_t SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval) override;
+    int32_t SetMode(const SensorDescription &sensorDesc, int32_t mode) override;
     int32_t RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallback> reportDataCallback) override;
     int32_t DestroyHdiConnection() override;
+    int32_t RegSensorPlugCallback(DevicePlugCallback cb) override;
+    DevicePlugCallback GetSensorPlugCb() override;
 
 private:
     DISALLOW_COPY_AND_MOVE(CompatibleConnection);
     static void ReportSensorDataCallback(SensorEvent *event);
     static ReportDataCb reportDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
+    static DevicePlugCallback reportPlugDataCb_;
     HdiServiceImpl &hdiServiceImpl_ = HdiServiceImpl::GetInstance();
 };
 } // namespace Sensors
