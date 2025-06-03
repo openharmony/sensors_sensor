@@ -65,7 +65,7 @@ private:
     bool IsSubscribeMapEmpty() const;
     int32_t UpdateSensorInfo(SensorInfo* sensorInfo, const Sensor& sensor);
     int32_t UpdateSensorInfosCache(const std::vector<Sensor>& deviceSensorList);
-    bool FindSensorInfo(int32_t deviceId, int32_t sensorId, int32_t sensorTypeId);
+    bool FindSensorInfo(int32_t deviceId, int32_t sensorIndex, int32_t sensorTypeId);
     void UpdataSensorStatusEvent(SensorStatusEvent &event, SensorPlugData info);
     bool UpdataSensorInfo(SensorPlugData info);
     void EraseCacheSensorInfos(SensorPlugData info);

@@ -436,8 +436,9 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
             sensorList[i].GetFirmwareVersion().c_str());
         CHKCR(ret == EOK, ERROR);
         sensorInfo->deviceId = sensorList[i].GetDeviceId();
-        sensorInfo->sensorId = sensorList[i].GetSensorId();
+        sensorInfo->sensorId = sensorList[i].GetSensorTypeId();
         sensorInfo->sensorTypeId = sensorList[i].GetSensorTypeId();
+        sensorInfo->sensorIndex = sensorList[i].GetSensorId();
         sensorInfo->location = sensorList[i].GetLocation();
         sensorInfo->maxRange = sensorList[i].GetMaxRange();
         sensorInfo->precision = sensorList[i].GetResolution();
@@ -515,8 +516,9 @@ int32_t SensorAgentProxy::UpdateSensorInfo(SensorInfo* sensorInfo, const Sensor&
         sensor.GetFirmwareVersion().c_str());
     CHKCR(ret == EOK, ERROR);
     sensorInfo->deviceId = sensor.GetDeviceId();
-    sensorInfo->sensorId = sensor.GetSensorId();
+    sensorInfo->sensorId = sensor.GetSensorTypeId();
     sensorInfo->sensorTypeId = sensor.GetSensorTypeId();
+    sensorInfo->sensorIndex = sensor.GetSensorId();
     sensorInfo->location = sensor.GetLocation();
     sensorInfo->maxRange = sensor.GetMaxRange();
     sensorInfo->precision = sensor.GetResolution();
@@ -526,7 +528,7 @@ int32_t SensorAgentProxy::UpdateSensorInfo(SensorInfo* sensorInfo, const Sensor&
     return SUCCESS;
 }
 
-bool SensorAgentProxy::FindSensorInfo(int32_t deviceId, int32_t sensorId, int32_t sensorTypeId)
+bool SensorAgentProxy::FindSensorInfo(int32_t deviceId, int32_t sensorIndex, int32_t sensorTypeId)
 {
     CALL_LOG_ENTER;
     if (sensorInfoCheck_.sensorInfos == nullptr) {
@@ -534,10 +536,10 @@ bool SensorAgentProxy::FindSensorInfo(int32_t deviceId, int32_t sensorId, int32_
     }
     for (int32_t i = 0; i < sensorInfoCount_; ++i) {
         if (sensorInfoCheck_.sensorInfos[i].deviceId == deviceId &&
-            sensorInfoCheck_.sensorInfos[i].sensorId == sensorId &&
+            sensorInfoCheck_.sensorInfos[i].sensorIndex == sensorIndex &&
             sensorInfoCheck_.sensorInfos[i].sensorTypeId == sensorTypeId) {
             SEN_HILOGI("FindSensorInfo deviceId:%{public}d, sensorTypeId:%{public}d, sensorId:%{public}d",
-                deviceId, sensorTypeId, sensorId);
+                deviceId, sensorTypeId, sensorIndex);
             return true;
         }
     }
@@ -830,7 +832,7 @@ void SensorAgentProxy::EraseCacheSensorInfos(SensorPlugData info)
     for (int32_t i = 0; i < sensorInfoCount_; ++i) {
         if ((sensorInfoCheck_.sensorInfos[i].deviceId == info.deviceId) &&
             (sensorInfoCheck_.sensorInfos[i].sensorTypeId == info.sensorTypeId) &&
-            (sensorInfoCheck_.sensorInfos[i].sensorId == info.sensorId)) {
+            (sensorInfoCheck_.sensorInfos[i].sensorIndex == info.sensorId)) {
             for (int j = i; j < sensorInfoCount_ - 1; ++j) {
                 sensorInfoCheck_.sensorInfos[j] = sensorInfoCheck_.sensorInfos[j+1];
             }

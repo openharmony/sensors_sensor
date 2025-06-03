@@ -126,6 +126,7 @@ typedef struct SensorInfo {
     int64_t maxSamplePeriod = -1; /**< Maximum sample period allowed, in ns */
     int32_t deviceId = -1;        /**< Device ID */
     int32_t location = -1;        /**< Is the device a local device or an external device */
+    int32_t sensorIndex = -1;     /**< Sensor Index */
 } SensorInfo;
 
 /**

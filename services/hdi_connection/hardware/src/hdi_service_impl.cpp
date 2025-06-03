@@ -35,7 +35,7 @@ constexpr int32_t DEFAULT_SENSOR_ID = 0;
 constexpr int32_t IS_LOCAL_DEVICE = 1;
 const std::string SENSOR_PRODUCE_THREAD_NAME = "OS_SenMock";
 std::vector<SensorInfo> g_sensorInfos = {
-    {"sensor_test", "default", "1.0.0", "1.0.0", 1, 0, 9999.0, 0.000001, 23.0, 100000000, 1000000000, -1, 1},
+    {"sensor_test", "default", "1.0.0", "1.0.0", 1, 1, 9999.0, 0.000001, 23.0, 100000000, 1000000000, -1, 1, 0},
 };
 std::vector<int32_t> g_supportSensors = {
     SENSOR_TYPE_ID_ACCELEROMETER,
