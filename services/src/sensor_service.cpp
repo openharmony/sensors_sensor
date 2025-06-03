@@ -88,7 +88,13 @@ bool SensorService::IsNeedLoadMotionLib()
             SEN_HILOGI("firstValue is not number");
             return false;
         }
-        if (std::stoi(firstValue) == SINGLE_DISPLAY_SMALL_FOLD || std::stoi(firstValue) == SINGLE_DISPLAY_THREE_FOLD) {
+        int32_t firstValueNum = 0;
+        auto res = std::from_chars(firstValue.data(), firstValue.data() + firstValue.size(), firstValueNum);
+        if (res.ec != std::errc()) {
+            SEN_HILOGE("Failed to convert string %{public}s to number", firstValue.c_str());
+            return false;
+        }
+        if (firstValueNum == SINGLE_DISPLAY_SMALL_FOLD || firstValueNum == SINGLE_DISPLAY_THREE_FOLD) {
             return true;
         }
     }
