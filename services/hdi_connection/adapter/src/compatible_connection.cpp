@@ -50,7 +50,7 @@ int32_t CompatibleConnection::GetSensorList(std::vector<Sensor> &sensorList)
         const std::string vendorName(sensorInfos[i].vendorName);
         const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
         const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
-        const int32_t sensorId = sensorInfos[i].sensorId;
+        const int32_t sensorId = sensorInfos[i].sensorIndex;
         const int32_t sensorTypeId = sensorInfos[i].sensorTypeId;
         const int32_t deviceId = sensorInfos[i].deviceId;
         const int32_t location = sensorInfos[i].location;
@@ -193,7 +193,7 @@ int32_t CompatibleConnection::GetSensorListByDevice(int32_t deviceId, std::vecto
         const std::string vendorName(sensorInfos[i].vendorName);
         const std::string firmwareVersion(sensorInfos[i].firmwareVersion);
         const std::string hardwareVersion(sensorInfos[i].hardwareVersion);
-        const int32_t sensorId = sensorInfos[i].sensorId;
+        const int32_t sensorId = sensorInfos[i].sensorIndex;
         const int32_t sensorTypeId = sensorInfos[i].sensorTypeId;
         const int32_t deviceId = sensorInfos[i].deviceId;
         const int32_t location = sensorInfos[i].location;

@@ -265,7 +265,7 @@ bool ConvertToSensorInfo(const napi_env &env, const SensorInfo &sensorInfo, napi
         "napi_create_string_latin1");
     CHKNRF(env, napi_set_named_property(env, result, "hardwareVersion", value), "napi_set_named_property");
     value = nullptr;
-    CHKNRF(env, napi_create_double(env, sensorInfo.sensorId, &value), "napi_create_double");
+    CHKNRF(env, napi_create_double(env, sensorInfo.sensorIndex, &value), "napi_create_double");
     CHKNRF(env, napi_set_named_property(env, result, "sensorIndex", value), "napi_set_named_property");
     value = nullptr;
     CHKNRF(env, napi_create_double(env, sensorInfo.sensorTypeId, &value), "napi_create_double");
