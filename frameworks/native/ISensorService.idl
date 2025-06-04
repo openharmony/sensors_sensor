@@ -28,7 +28,7 @@ interface OHOS.Sensors.ISensorService {
     void SuspendSensors([in] int pid);
     void ResumeSensors([in] int pid);
     void GetActiveInfoList([in] int pid, [out] ActiveInfo[] activeInfoList);
-    void CreateSocketChannel([in] IRemoteObject sensorClient, [out] FileDescriptor clientFd);
+    void CreateSocketChannel([in] IRemoteObject sensorClient, [out] FileDescriptorSan clientFd);
     void DestroySocketChannel([in] IRemoteObject sensorClient);
     void EnableActiveInfoCB();
     void DisableActiveInfoCB();
