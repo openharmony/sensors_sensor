@@ -580,8 +580,8 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     std::vector<Sensor> singleDevSensors;
     int32_t ret = sensorHdiConnection_.GetSensorListByDevice(deviceId, singleDevSensors);
-    if (ret != 0) {
-        SEN_HILOGE("GetSensorListByDevice is failed");
+    if (ret != 0 || singleDevSensors.empty()) {
+        SEN_HILOGW("GetSensorListByDevice is failed or empty");
         return sensors_;
     }
     for (const auto& newSensor : singleDevSensors) {
@@ -611,7 +611,9 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
         } else {
             sensorMap_.insert(std::pair<SensorDescription, Sensor>(
                 {it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
-            sensorDataProcesser_->UpdataSensorMap(sensorMap_);
+            if (sensorDataProcesser_ != nullptr) {
+                sensorDataProcesser_->UpdataSensorMap(sensorMap_);
+            }
         }
     }
     return singleDevSensors;
