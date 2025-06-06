@@ -211,8 +211,7 @@ int32_t SensorServiceClient::GetSensorListByDevice(int32_t deviceId, std::vector
     if (singleDevSensors.empty()) {
         singleDevSensors = GetSensorListByDevice(deviceId);
         if (singleDevSensors.empty()) {
-            SEN_HILOGE("GetSensorListByDevice failed, singleDevSensors cannot be empty");
-            return SERVICE_EXCEPTION;
+            SEN_HILOGW("singleDevSensors is empty");
         }
     }
     return ERR_OK;

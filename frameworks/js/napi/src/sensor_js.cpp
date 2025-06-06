@@ -1439,6 +1439,10 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
         return nullptr;
     }
+    int32_t deviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(deviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default deviceId :%{public}d", deviceId);
+    }
     sptr<AsyncCallbackInfo> asyncCallbackInfo = new (std::nothrow) AsyncCallbackInfo(env, GET_SINGLE_SENSOR);
     CHKPP(asyncCallbackInfo);
     SensorInfo *sensorInfos = nullptr;
@@ -1456,7 +1460,7 @@ static napi_value GetSingleSensor(napi_env env, napi_callback_info info)
                 SEN_HILOGD("This sensor is secondary ambient light");
                 continue;
             }
-            if (sensorInfos[i].sensorTypeId == sensorTypeId) {
+            if (sensorInfos[i].deviceId == deviceId && sensorInfos[i].sensorTypeId == sensorTypeId) {
                 asyncCallbackInfo->sensorInfos.push_back(*(sensorInfos + i));
                 break;
             }
@@ -1495,6 +1499,10 @@ static napi_value GetSingleSensorSync(napi_env env, napi_callback_info info)
         ThrowErr(env, PARAMETER_ERROR, "Wrong argument type, get number fail");
         return result;
     }
+    int32_t deviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(deviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default deviceId :%{public}d", deviceId);
+    }
     SensorInfo *sensorInfos = nullptr;
     int32_t count = 0;
     int32_t ret = GetAllSensors(&sensorInfos, &count);
@@ -1510,7 +1518,7 @@ static napi_value GetSingleSensorSync(napi_env env, napi_callback_info info)
             SEN_HILOGD("This sensor is secondary ambient light");
             continue;
         }
-        if (sensorInfos[i].sensorTypeId == sensorTypeId) {
+        if (sensorInfos[i].deviceId == deviceId && sensorInfos[i].sensorTypeId == sensorTypeId) {
             sensorInfoVec.push_back(*(sensorInfos + i));
             break;
         }
@@ -1546,6 +1554,10 @@ static napi_value GetSensorListByDeviceSync(napi_env env, napi_callback_info inf
     napi_value args[1] = { 0 };
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
+    if (napi_create_array(env, &result) != napi_ok) {
+        SEN_HILOGE("napi_create_array fail");
+        return result;
+    }
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
     if (status != napi_ok) {
@@ -1568,10 +1580,6 @@ static napi_value GetSensorListByDeviceSync(napi_env env, napi_callback_info inf
     }
     vector<SensorInfo> sensorInfoVec;
     FilteringSensorList(sensorInfos, sensorInfoVec, count);
-    if (napi_create_array(env, &result) != napi_ok) {
-        SEN_HILOGE("napi_create_array fail");
-        return result;
-    }
     for (uint32_t i = 0; i < sensorInfoVec.size(); ++i) {
         napi_value value = nullptr;
         if (!ConvertToSensorInfo(env, sensorInfoVec[i], value)) {
@@ -1609,6 +1617,10 @@ static napi_value GetSingleSensorByDeviceSync(napi_env env, napi_callback_info i
     napi_value args[2] = { 0 };
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
+    if (napi_create_array(env, &result) != napi_ok) {
+        SEN_HILOGE("napi_create_array fail");
+        return result;
+    }
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
     if (status != napi_ok || argc < 1) {
@@ -1636,10 +1648,6 @@ static napi_value GetSingleSensorByDeviceSync(napi_env env, napi_callback_info i
     }
     vector<SensorInfo> sensorInfoVec;
     FilteringSingleSensorList(sensorInfos, sensorInfoVec, count, sensorTypeId);
-    if (napi_create_array(env, &result) != napi_ok) {
-        SEN_HILOGE("napi_create_array fail");
-        return result;
-    }
     for (uint32_t i = 0; i < sensorInfoVec.size(); ++i) {
         napi_value value = nullptr;
         if (!ConvertToSensorInfo(env, sensorInfoVec[i], value)) {

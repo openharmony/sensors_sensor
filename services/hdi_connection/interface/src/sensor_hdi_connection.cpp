@@ -443,14 +443,9 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
     return ret;
 }
 
-int32_t SensorHdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
+void SensorHdiConnection::UpdataSensorList(std::vector<Sensor> &singleDevSensors)
 {
     CALL_LOG_ENTER;
-    CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
-    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
-    if (iSensorHdiConnection_->GetSensorListByDevice(deviceId, singleDevSensors) != ERR_OK) {
-        SEN_HILOGW("Get sensor list by device failed");
-    }
     for (const auto& newSensor : singleDevSensors) {
         bool found = false;
         for (const auto& oldSensor : sensorList_) {
@@ -466,6 +461,22 @@ int32_t SensorHdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector
             sensorList_.push_back(newSensor);
         }
     }
+    return;
+}
+
+int32_t SensorHdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
+{
+    CALL_LOG_ENTER;
+    CHKPR(iSensorHdiConnection_, GET_SENSOR_LIST_ERR);
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
+    if (iSensorHdiConnection_->GetSensorListByDevice(deviceId, singleDevSensors) != ERR_OK) {
+        SEN_HILOGW("Get sensor list by device failed");
+    }
+    if (singleDevSensors.empty()) {
+        SEN_HILOGW("Get sensor list is empty");
+        return ERR_OK;
+    }
+    UpdataSensorList(singleDevSensors);
 #ifdef BUILD_VARIANT_ENG
     if (singleDevSensors[0].GetLocation() == IS_LOCAL_DEVICE) {
         if (!hdiConnectionStatus_) {

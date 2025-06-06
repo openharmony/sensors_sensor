@@ -56,6 +56,7 @@ private:
     Sensor GenerateSarSensor();
     Sensor GenerateHeadPostureSensor();
     Sensor GenerateProximitySensor();
+    void UpdataSensorList(std::vector<Sensor> &singleDevSensors);
     std::atomic_bool hdiConnectionStatus_ = false;
 };
 } // namespace Sensors

@@ -205,9 +205,10 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
             continue;
         }
         dprintf(fd,
-                "deviceId:%d | sensorType:%s |sensorId:%8u  | sensorName:%s | vendorName:%s | maxRange:%f"
-                "| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 " | maxSamplePeriodNs:%" PRId64 "\n",
-                deviceId, sensorMap_[sensorTypeId].c_str(), sensorId, sensor.GetSensorName().c_str(),
+                "deviceId:%d | sensorType:%s |sensorId:%8u  |sensorIndex:%d  | sensorName:%s | vendorName:%s"
+                "| maxRange:%f| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 ""
+                "| maxSamplePeriodNs:%" PRId64 "\n",
+                deviceId, sensorMap_[sensorTypeId].c_str(), sensorTypeId, sensorId, sensor.GetSensorName().c_str(),
                 sensor.GetVendorName().c_str(), sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(),
                 sensor.GetMinSamplePeriodNs(), sensor.GetMaxSamplePeriodNs());
     }
@@ -228,10 +229,10 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
             continue;
         }
         dprintf(fd,
-                "uid:%d | packageName:%s | deviceId:%d | sensorType:%s |sensorId:%8u | samplingPeriodNs:%" PRId64 ""
-                "| fifoCount:%u\n",
-                channel.GetUid(), channel.GetPackageName().c_str(), deviceId, sensorMap_[sensorType].c_str(), sensorId,
-                channel.GetSamplingPeriodNs(), channel.GetFifoCount());
+                "uid:%d | packageName:%s | deviceId:%d | sensorType:%s |sensorId:%8u |sensorIndex:%d "
+                "| samplingPeriodNs:%" PRId64 "| fifoCount:%u\n",
+                channel.GetUid(), channel.GetPackageName().c_str(), deviceId, sensorMap_[sensorType].c_str(),
+                sensorType, sensorId, channel.GetSamplingPeriodNs(), channel.GetFifoCount());
     }
     return true;
 }
@@ -247,9 +248,10 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
         if (sensorMap_.find(sensorTypeId) == sensorMap_.end()) {
             continue;
         }
-        if (clientInfo.GetSensorState({sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId()})) {
-            dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u | channelSize: %lu\n",
-                deviceId, sensorMap_[sensorTypeId].c_str(), sensorId, clientInfo.GetSensorChannel({
+        if (clientInfo.GetSensorState({sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId(),
+            sensor.GetLocation()})) {
+            dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u |sensorIndex:%d | channelSize: %lu\n",
+                deviceId, sensorMap_[sensorTypeId].c_str(), sensorTypeId, sensorId, clientInfo.GetSensorChannel({
                     sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId(), sensor.GetLocation()}).size());
         }
     }
