@@ -564,6 +564,167 @@ describe("SensorJsTest", function () {
         }, 500);
     })
 
+    /*
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_025
+     * @tc.desc: verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
+     */
+    it("SensorJsTest_025", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_025----------------------------------");
+        try {
+            const callback = (data) => {
+                console.info('sensorStatusChange callback triggered: ' + JSON.stringify(data));
+            };
+            sensor.on('sensorStatusChange', callback);
+            console.info('Successfully registered sensorStatusChange listener');
+            setTimeout(() => {
+                sensor.off('sensorStatusChange', callback);
+                console.info('Successfully unregistered sensorStatusChange listener');
+                expect(true).assertTrue();
+                done();
+            }, 5000);
+        } catch (err) {
+            console.error('Failed to register sensorStatusChange listener: ' + JSON.stringify(err));
+            expect(err.code).assertEqual(CommonConstants.SERVICE_EXCEPTION_CODE);
+            done();
+        }
+    });
+
+    /*
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_026
+     * @tc.desc: verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
+     */
+    it("SensorJsTest_026", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_026----------------------------------");
+        try {
+            const callback = (data) => {
+                console.info('sensorStatusChange callback triggered: ' + JSON.stringify(data));
+            };
+            sensor.on('sensorStatusChange', callback);
+            console.info('First registration successful');
+            sensor.on('sensorStatusChange', callback);
+            console.info('Second registration successful');
+            sensor.off('sensorStatusChange', callback);
+            expect(true).assertTrue();
+            console.info('Successfully unregistered listener');
+            done();
+        } catch (err) {
+            console.error('Error during duplicate registration: ' + JSON.stringify(err));
+            expect(err.code).assertEqual(CommonConstants.SERVICE_EXCEPTION_CODE);
+            done();
+        }
+    });
+
+    /*
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_027
+     * @tc.desc: verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
+     */
+    it("SensorJsTest_027", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_027----------------------------------");
+        try {
+            const callback = (data) => {
+                console.info('SensorStatusListenerTest_003 Invalid event callback triggered');
+            };
+            sensor.on('invalidEventType', callback);
+            done();
+        } catch (err) {
+            console.info('Caught expected error for invalid event type: ' + JSON.stringify(err));
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            done();
+        }
+    });
+
+    /*
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_028
+     * @tc.desc: verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
+     */
+    it("SensorJsTest_028", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_028----------------------------------");
+        try {
+            sensor.on('sensorStatusChange');
+            done();
+        } catch (err) {
+            console.info('Caught expected error for missing callback: ' + JSON.stringify(err));
+            expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+            done();
+        }
+    });
+
+    /*
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_029
+     * @tc.desc: verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
+     */
+    it("SensorJsTest_029", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_029----------------------------------");
+        try {
+            const callback = (data) => {
+                console.info('Unregistered callback triggered');
+            };
+            sensor.off('sensorStatusChange', callback);
+            console.info('Unregistering unregistered callback succeeded (or ignored)');
+            done();
+        } catch (err) {
+            console.error('Error when unregistering unregistered callback: ' + JSON.stringify(err));
+            expect(err.code).assertEqual(CommonConstants.SERVICE_EXCEPTION_CODE);
+            done();
+        }
+    });
+
+    /*
+     * @tc.name: SensorJsTest
+     * @tc.number: SensorJsTest_030
+     * @tc.desc: verify app info is not null
+     * @tc.type: FUNC
+     * @tc.require: Issue Number
+     * @tc.size: MediumTest
+     * @tc.level: Level 1
+     */
+    it("SensorJsTest_030", 0, async function (done) {
+        console.info("---------------------------SensorJsTest_030----------------------------------");
+        try {
+            let callbackTriggered = false;
+            const callback = (data) => {
+                console.info('sensorStatusChange callback triggered after off');
+                callbackTriggered = true;
+            };
+            sensor.on('sensorStatusChange', callback);
+            sensor.off('sensorStatusChange', callback);
+            setTimeout(() => {
+                expect(callbackTriggered).assertFalse();
+                console.info('Callback did not trigger after unregistering');
+                done();
+            }, 3000);
+        } catch (err) {
+            console.error('Error during off verification: ' + JSON.stringify(err));
+            expect(false).assertTrue();
+            done();
+        }
+    });
+
     let GEOMAGNETIC_COMPONENT_YEAR_RESULT = [
         [6570.3935546875, -146.3289337158203, 54606.0078125, -1.2758207321166992, 83.13726043701172, 6572.02294921875, 55000.0703125],
         [6554.17041015625, -87.19947052001953, 54649.078125, -0.7622424364089966, 83.16046905517578, 6554.75048828125, 55040.7734375],
