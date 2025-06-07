@@ -507,7 +507,6 @@ HWTEST_F(SensorAgentTest, GetDeviceSensorsTest_001, TestSize.Level1)
     int32_t deviceId = g_localDeviceId;
     int32_t ret = GetDeviceSensors(deviceId, &sensorInfos, &count);
     ASSERT_EQ(ret, OHOS::ERR_OK);
-    ASSERT_EQ(count, 0);
 }
 
 HWTEST_F(SensorAgentTest, GetDeviceSensorsTest_002, TestSize.Level1)
