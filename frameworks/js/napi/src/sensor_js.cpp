@@ -212,7 +212,7 @@ const SensorUser user = {
     .plugCallback = PlugDataCallbackImpl
 };
 
-int32_t UnsubscribeSensor(SensorDescription sensorDesc)
+int32_t UnsubscribeSensor(const SensorDescription &sensorDesc)
 {
     CALL_LOG_ENTER;
     int32_t ret = DeactivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
@@ -225,7 +225,7 @@ int32_t UnsubscribeSensor(SensorDescription sensorDesc)
         sensorDesc.location}, &user);
 }
 
-int32_t SubscribeSensor(SensorDescription sensorDesc, int64_t interval, RecordSensorCallback callback)
+int32_t SubscribeSensor(const SensorDescription &sensorDesc, int64_t interval, RecordSensorCallback callback)
 {
     CALL_LOG_ENTER;
     int32_t ret = SubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
@@ -334,7 +334,7 @@ static bool GetDeviceId(napi_env env, napi_value value, int32_t &deviceId)
         return false;
     }
     if (!GetNativeInt32(env, napi_deviceId, deviceId)) {
-        SEN_HILOGE("GetNativeInt64 failed");
+        SEN_HILOGE("GetNativeInt32 failed");
         return false;
     }
     return true;
@@ -348,7 +348,7 @@ static bool GetSensorId(napi_env env, napi_value value, int32_t &sensorId)
         return false;
     }
     if (!GetNativeInt32(env, napi_sensorId, sensorId)) {
-        SEN_HILOGE("GetNativeInt64 failed");
+        SEN_HILOGE("GetNativeInt32 failed");
         return false;
     }
     return true;

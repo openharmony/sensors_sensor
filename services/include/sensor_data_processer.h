@@ -30,7 +30,7 @@ public:
     int32_t SendEvents(sptr<SensorBasicDataChannel> &channel, SensorData &data);
     static int DataThread(sptr<SensorDataProcesser> dataProcesser, sptr<ReportDataCallback> dataCallback);
     int32_t CacheSensorEvent(const SensorData &data, sptr<SensorBasicDataChannel> &channel);
-    void UpdataSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap);
+    void UpdateSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorDataProcesser);

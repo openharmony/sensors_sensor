@@ -38,7 +38,7 @@ public:
     int32_t DestroyHdiConnection() override;
     int32_t RegSensorPlugCallback(DevicePlugCallback cb) override;
     DevicePlugCallback GetSensorPlugCb() override;
-    bool PlugEraseSensorData(SensorPlugInfo info);
+    bool PlugEraseSensorData(const SensorPlugInfo &info);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorHdiConnection);
@@ -56,7 +56,7 @@ private:
     Sensor GenerateSarSensor();
     Sensor GenerateHeadPostureSensor();
     Sensor GenerateProximitySensor();
-    void UpdataSensorList(std::vector<Sensor> &singleDevSensors);
+    void UpdateSensorList(std::vector<Sensor> &singleDevSensors);
     std::atomic_bool hdiConnectionStatus_ = false;
 };
 } // namespace Sensors
