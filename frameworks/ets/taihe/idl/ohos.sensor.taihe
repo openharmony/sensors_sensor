@@ -15,6 +15,10 @@
 
 @!namespace("@ohos.sensor", "sensor")
 
+@!sts_inject("""
+    static { loadLibrary("sensor_taihe_native.z") }
+""")
+
 /**
  * Enum for obtain the type of sensor.
  * @enum { i32 }
