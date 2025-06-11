@@ -84,23 +84,12 @@ generate_static_abc("sensor_abc") {
   dependencies = [ ":run_taihe" ]
 }
 
-generate_static_abc("sensor_test") {
-  base_url = "user"
-  files = [ "user/main.ets" ]
-  is_boot_abc = "True"
-  device_dst_file = "/system/framework/sensor_test.abc"
-  dependencies = [ ":run_taihe" ]
-}
-
 ohos_prebuilt_etc("sensor_etc") {
   source = "$target_out_dir/sensor_abc.abc"
   module_install_dir = "framework"
   part_name = "$part_name"
   subsystem_name = "$subsystem_name"
-  deps = [
-    ":sensor_abc",
-    # ":sensor_test"
-  ]
+  deps = [ ":sensor_abc" ]
 }
 
 group("sensor_taihe") {

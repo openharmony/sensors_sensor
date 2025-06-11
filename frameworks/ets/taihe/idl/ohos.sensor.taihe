@@ -1391,85 +1391,85 @@ function getRotationMatrixSync(rotationVector: Array<f32>): Array<f32>;
 function getSensorListSync(): Array<Sensor>;
 
 @!sts_inject("""
-    function on(type: SensorId, callback: (arg0 : Object) => void, options?: Options) {
+    function on(type: string, callback: (arg0 : Object) => void, options?: Options) {
         switch(type) {
-            case SensorId.WEAR_DETECTION: return onWearDetection(callback as (info: WearDetectionResponse) => void, callback, options);
-            case SensorId.SIGNIFICANT_MOTION: return onSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback, options);
-            case SensorId.ROTATION_VECTOR: return onRotationVector(callback as (info: RotationVectorResponse) => void, callback, options);
-            case SensorId.PROXIMITY: return onProximity(callback as (info: ProximityResponse) => void, callback, options);
-            case SensorId.PEDOMETER_DETECTION: return onPedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback, options);
-            case SensorId.PEDOMETER: return onPedometer(callback as (info: PedometerResponse) => void, callback, options);
-            case SensorId.ORIENTATION: return onOrientation(callback as (info: OrientationResponse) => void, callback, options);
-            case SensorId.MAGNETIC_FIELD_UNCALIBRATED: return onMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback, options);
-            case SensorId.MAGNETIC_FIELD: return onMagneticField(callback as (info: MagneticFieldResponse) => void, callback, options);
-            case SensorId.LINEAR_ACCELEROMETER: return onLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback, options);
-            case SensorId.HUMIDITY: return onHumidity(callback as (info: HumidityResponse) => void, callback, options);
-            case SensorId.HEART_RATE: return onHeartRate(callback as (info: HeartRateResponse) => void, callback, options);
-            case SensorId.HALL: return onHall(callback as (info: HallResponse) => void, callback, options);
-            case SensorId.GYROSCOPE_UNCALIBRATED: return onGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback, options);
-            case SensorId.GYROSCOPE: return onGyroscope(callback as (info: GyroscopeResponse) => void, callback, options);
-            case SensorId.GRAVITY: return onGravity(callback as (info: GravityResponse) => void, callback, options);
-            case SensorId.BAROMETER: return onBarometer(callback as (info: BarometerResponse) => void, callback, options);
-            case SensorId.AMBIENT_TEMPERATURE: return onAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback, options);
-            case SensorId.AMBIENT_LIGHT: return onAmbientLight(callback as (info: LightResponse) => void, callback, options);
-            case SensorId.ACCELEROMETER_UNCALIBRATED: return onAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback, options);
-            case SensorId.ACCELEROMETER: return onAccelerometer(callback as (info: AccelerometerResponse) => void, callback, options);
-            case SensorId.SAR: return onSar(callback as (info: SarResponse) => void, callback, options);
-            case SensorId.COLOR: return onColor(callback as (info: ColorResponse) => void, callback, options);
+            case "wearDetectionChange": return onWearDetection(callback as (info: WearDetectionResponse) => void, callback, options);
+            case "significantMotionChange": return onSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback, options);
+            case "rotationVectorChange": return onRotationVector(callback as (info: RotationVectorResponse) => void, callback, options);
+            case "proximityChange": return onProximity(callback as (info: ProximityResponse) => void, callback, options);
+            case "pedometerDetectionChange": return onPedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback, options);
+            case "pedometerChange": return onPedometer(callback as (info: PedometerResponse) => void, callback, options);
+            case "orientationChange": return onOrientation(callback as (info: OrientationResponse) => void, callback, options);
+            case "magneticFieldUncalibratedChange": return onMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback, options);
+            case "magneticFieldChange": return onMagneticField(callback as (info: MagneticFieldResponse) => void, callback, options);
+            case "linearAccelerometerChange": return onLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback, options);
+            case "humidityChange": return onHumidity(callback as (info: HumidityResponse) => void, callback, options);
+            case "heartRateChange": return onHeartRate(callback as (info: HeartRateResponse) => void, callback, options);
+            case "hallChange": return onHall(callback as (info: HallResponse) => void, callback, options);
+            case "gyroscopeUncalibratedChange": return onGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback, options);
+            case "gyroscopeChange": return onGyroscope(callback as (info: GyroscopeResponse) => void, callback, options);
+            case "gravityChange": return onGravity(callback as (info: GravityResponse) => void, callback, options);
+            case "barometerChange": return onBarometer(callback as (info: BarometerResponse) => void, callback, options);
+            case "ambientTemperatureChange": return onAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback, options);
+            case "ambientLightChange": return onAmbientLight(callback as (info: LightResponse) => void, callback, options);
+            case "accelerometerUncalibratedChange": return onAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback, options);
+            case "accelerometerChange": return onAccelerometer(callback as (info: AccelerometerResponse) => void, callback, options);
+            case "sarChange": return onSar(callback as (info: SarResponse) => void, callback, options);
+            case "colorChange": return onColor(callback as (info: ColorResponse) => void, callback, options);
             default: throw new Error(`Unknown type: ${type}`);
         }
     }
-    function once(type: SensorId, callback: (arg0 : Object) => void) {
+    function once(type: string, callback: (arg0 : Object) => void) {
         switch(type) {
-            case SensorId.WEAR_DETECTION: return onceWearDetection(callback as (info: WearDetectionResponse) => void, callback);
-            case SensorId.SIGNIFICANT_MOTION: return onceSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback);
-            case SensorId.ROTATION_VECTOR: return onceRotationVector(callback as (info: RotationVectorResponse) => void, callback);
-            case SensorId.PROXIMITY: return onceProximity(callback as (info: ProximityResponse) => void, callback);
-            case SensorId.PEDOMETER_DETECTION: return oncePedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback);
-            case SensorId.PEDOMETER: return oncePedometer(callback as (info: PedometerResponse) => void, callback);
-            case SensorId.ORIENTATION: return onceOrientation(callback as (info: OrientationResponse) => void, callback);
-            case SensorId.MAGNETIC_FIELD_UNCALIBRATED: return onceMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback);
-            case SensorId.MAGNETIC_FIELD: return onceMagneticField(callback as (info: MagneticFieldResponse) => void, callback);
-            case SensorId.LINEAR_ACCELEROMETER: return onceLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback);
-            case SensorId.HUMIDITY: return onceHumidity(callback as (info: HumidityResponse) => void, callback);
-            case SensorId.HEART_RATE: return onceHeartRate(callback as (info: HeartRateResponse) => void, callback);
-            case SensorId.HALL: return onceHall(callback as (info: HallResponse) => void, callback);
-            case SensorId.GYROSCOPE_UNCALIBRATED: return onceGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback);
-            case SensorId.GYROSCOPE: return onceGyroscope(callback as (info: GyroscopeResponse) => void, callback);
-            case SensorId.GRAVITY: return onceGravity(callback as (info: GravityResponse) => void, callback);
-            case SensorId.BAROMETER: return onceBarometer(callback as (info: BarometerResponse) => void, callback);
-            case SensorId.AMBIENT_TEMPERATURE: return onceAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback);
-            case SensorId.AMBIENT_LIGHT: return onceAmbientLight(callback as (info: LightResponse) => void, callback);
-            case SensorId.ACCELEROMETER_UNCALIBRATED: return onceAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback);
-            case SensorId.ACCELEROMETER: return onceAccelerometer(callback as (info: AccelerometerResponse) => void, callback);
+            case "wearDetectionChange": return onceWearDetection(callback as (info: WearDetectionResponse) => void, callback);
+            case "significantMotionChange": return onceSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback);
+            case "rotationVectorChange": return onceRotationVector(callback as (info: RotationVectorResponse) => void, callback);
+            case "proximityChange": return onceProximity(callback as (info: ProximityResponse) => void, callback);
+            case "pedometerDetectionChange": return oncePedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback);
+            case "pedometerChange": return oncePedometer(callback as (info: PedometerResponse) => void, callback);
+            case "orientationChange": return onceOrientation(callback as (info: OrientationResponse) => void, callback);
+            case "magneticFieldUncalibratedChange": return onceMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback);
+            case "magneticFieldChange": return onceMagneticField(callback as (info: MagneticFieldResponse) => void, callback);
+            case "linearAccelerometerChange": return onceLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback);
+            case "humidityChange": return onceHumidity(callback as (info: HumidityResponse) => void, callback);
+            case "heartRateChange": return onceHeartRate(callback as (info: HeartRateResponse) => void, callback);
+            case "hallChange": return onceHall(callback as (info: HallResponse) => void, callback);
+            case "gyroscopeUncalibratedChange": return onceGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback);
+            case "gyroscopeChange": return onceGyroscope(callback as (info: GyroscopeResponse) => void, callback);
+            case "gravityChange": return onceGravity(callback as (info: GravityResponse) => void, callback);
+            case "barometerChange": return onceBarometer(callback as (info: BarometerResponse) => void, callback);
+            case "ambientTemperatureChange": return onceAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback);
+            case "ambientLightChange": return onceAmbientLight(callback as (info: LightResponse) => void, callback);
+            case "accelerometerUncalibratedChange": return onceAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback);
+            case "accelerometerChange": return onceAccelerometer(callback as (info: AccelerometerResponse) => void, callback);
             default: throw new Error(`Unknown type: ${type}`);
         }
     }
-    function off(type: SensorId, callback?: (arg0 : Object) => void) {
+    function off(type: string, callback?: (arg0 : Object) => void) {
         switch(type) {
-            case SensorId.WEAR_DETECTION: return offWearDetection(callback);
-            case SensorId.SIGNIFICANT_MOTION: return offSignificantMotion(callback);
-            case SensorId.ROTATION_VECTOR: return offRotationVector(callback);
-            case SensorId.PROXIMITY: return offProximity(callback);
-            case SensorId.PEDOMETER_DETECTION: return offPedometerDetection(callback);
-            case SensorId.PEDOMETER: return offPedometer(callback);
-            case SensorId.ORIENTATION: return offOrientation(callback);
-            case SensorId.MAGNETIC_FIELD_UNCALIBRATED: return offMagneticFieldUncalibrated(callback);
-            case SensorId.MAGNETIC_FIELD: return offMagneticField(callback);
-            case SensorId.LINEAR_ACCELEROMETER: return offLinearAccelerometer(callback);
-            case SensorId.HUMIDITY: return offHumidity(callback);
-            case SensorId.HEART_RATE: return offHeartRate(callback);
-            case SensorId.HALL: return offHall(callback);
-            case SensorId.GYROSCOPE_UNCALIBRATED: return offGyroscopeUncalibrated(callback);
-            case SensorId.GYROSCOPE: return offGyroscope(callback);
-            case SensorId.GRAVITY: return offGravity(callback);
-            case SensorId.BAROMETER: return offBarometer(callback);
-            case SensorId.AMBIENT_TEMPERATURE: return offAmbientTemperature(callback);
-            case SensorId.AMBIENT_LIGHT: return offAmbientLight(callback);
-            case SensorId.ACCELEROMETER_UNCALIBRATED: return offAccelerometerUncalibrated(callback);
-            case SensorId.ACCELEROMETER: return offAccelerometer(callback);
-            case SensorId.SAR: return offSar(callback);
-            case SensorId.COLOR: return offColor(callback);
+            case "wearDetectionChange": return offWearDetection(callback);
+            case "significantMotionChange": return offSignificantMotion(callback);
+            case "rotationVectorChange": return offRotationVector(callback);
+            case "proximityChange": return offProximity(callback);
+            case "pedometerDetectionChange": return offPedometerDetection(callback);
+            case "pedometerChange": return offPedometer(callback);
+            case "orientationChange": return offOrientation(callback);
+            case "magneticFieldUncalibratedChange": return offMagneticFieldUncalibrated(callback);
+            case "magneticFieldChange": return offMagneticField(callback);
+            case "linearAccelerometerChange": return offLinearAccelerometer(callback);
+            case "humidityChange": return offHumidity(callback);
+            case "heartRateChange": return offHeartRate(callback);
+            case "hallChange": return offHall(callback);
+            case "gyroscopeUncalibratedChange": return offGyroscopeUncalibrated(callback);
+            case "gyroscopeChange": return offGyroscope(callback);
+            case "gravityChange": return offGravity(callback);
+            case "barometerChange": return offBarometer(callback);
+            case "ambientTemperatureChange": return offAmbientTemperature(callback);
+            case "ambientLightChange": return offAmbientLight(callback);
+            case "accelerometerUncalibratedChange": return offAccelerometerUncalibrated(callback);
+            case "accelerometerChange": return offAccelerometer(callback);
+            case "sarChange": return offSar(callback);
+            case "colorChange": return offColor(callback);
             default: throw new Error(`Unknown type: ${type}`);
         }
     }
