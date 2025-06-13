@@ -863,5 +863,10 @@ void ClientInfo::SendMsgToClient(SensorPlugData info)
         }
     }
 }
+
+bool ClientInfo::IsClientSubscribe()
+{
+    return !clientMap_.empty();
+}
 } // namespace Sensors
 } // namespace OHOS

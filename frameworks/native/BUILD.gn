@@ -54,6 +54,7 @@ ohos_shared_library("libsensor_client") {
     "src/sensor_event_handler.cpp",
     "src/sensor_file_descriptor_listener.cpp",
     "src/sensor_service_client.cpp",
+    "src/sensor_service_load.cpp",
   ]
   sources += filter_include(output_values, [ "*_proxy.cpp" ])
 

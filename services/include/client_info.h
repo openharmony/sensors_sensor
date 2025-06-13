@@ -83,6 +83,7 @@ public:
     void SaveSensorClient(const sptr<IRemoteObject> &sensorClient);
     void DestroySensorClient(const sptr<IRemoteObject> &sensorClient);
     void SendMsgToClient(SensorPlugData info);
+    bool IsClientSubscribe();
 
 private:
     DISALLOW_COPY_AND_MOVE(ClientInfo);

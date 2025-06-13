@@ -32,7 +32,8 @@ using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-constexpr int32_t INVALID_FD = 2;
+constexpr int32_t INVALID_FD = -2;
+constexpr int32_t VALID_FD = 1;
 } // namespace
 
 class SensorBasicDataChannelTest : public testing::Test {
@@ -76,8 +77,6 @@ HWTEST_F(SensorBasicDataChannelTest, SensorBasicDataChannelTest_001, TestSize.Le
             this->ReceiveData(length);
         }, static_cast<void *>(&sensorData), sizeof(sensorData));
     ASSERT_NE(ret, ERROR);
-
-    sensorChannel.DestroySensorBasicChannel();
 }
 
 HWTEST_F(SensorBasicDataChannelTest, CreateSensorBasicChannel_001, TestSize.Level1)
@@ -88,8 +87,8 @@ HWTEST_F(SensorBasicDataChannelTest, CreateSensorBasicChannel_001, TestSize.Leve
     MessageParcel data;
     data.WriteFileDescriptor(INVALID_FD);
     int32_t ret = sensorChannel.CreateSensorBasicChannel(data);
-    ASSERT_EQ(ret, ERR_OK);
-
+    ASSERT_EQ(ret, SENSOR_CHANNEL_READ_DESCRIPTOR_ERR);
+    data.WriteFileDescriptor(VALID_FD);
     ret = sensorChannel.CreateSensorBasicChannel(data);
     ASSERT_EQ(ret, ERR_OK);
 }
@@ -128,10 +127,10 @@ HWTEST_F(SensorBasicDataChannelTest, SendData_002, TestSize.Level1)
     MessageParcel data;
     data.WriteFileDescriptor(INVALID_FD);
     int32_t ret = sensorChannel.CreateSensorBasicChannel(data);
-    ASSERT_EQ(ret, ERR_OK);
+    ASSERT_EQ(ret, SENSOR_CHANNEL_READ_DESCRIPTOR_ERR);
     char buff[128] = {};
     ret = sensorChannel.SendData(static_cast<void *>(buff), sizeof(buff));
-    ASSERT_EQ(ret, SENSOR_CHANNEL_SEND_DATA_ERR);
+    ASSERT_EQ(ret, SENSOR_CHANNEL_SEND_ADDR_ERR);
 }
 
 HWTEST_F(SensorBasicDataChannelTest, ReceiveData_001, TestSize.Level1)
@@ -150,8 +149,6 @@ HWTEST_F(SensorBasicDataChannelTest, ReceiveData_001, TestSize.Level1)
             this->ReceiveData(length);
         }, static_cast<void *>(buff1), sizeof(buff1));
     ASSERT_EQ(ret, ERROR);
-
-    sensorChannel.DestroySensorBasicChannel();
 }
 
 } // namespace Sensors
