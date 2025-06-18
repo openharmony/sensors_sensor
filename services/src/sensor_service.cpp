@@ -486,7 +486,7 @@ ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, in
 ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_t pid)
 {
     CALL_LOG_ENTER;
-    if (!CheckSensorId(sensorDesc)) {
+    if (!(CheckSensorId(sensorDesc) || ((!CheckSensorId(sensorDesc)) && clientInfo_.GetSensorState(sensorDesc)))) {
         SEN_HILOGE("sensorDesc is invalid");
         return ERR_NO_INIT;
     }
@@ -502,8 +502,12 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     if (sensorHdiConnection_.DisableSensor(sensorDesc) != ERR_OK) {
-        SEN_HILOGE("DisableSensor is failed");
-        return DISABLE_SENSOR_ERR;
+        if (CheckSensorId(sensorDesc)) {
+            SEN_HILOGE("DisableSensor is failed");
+            return DISABLE_SENSOR_ERR;
+        }
+        SEN_HILOGW("DisableSensor is failed, deviceId:%{public}d, sensorType:%{public}d, sensorId:%{public}d",
+            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
     int32_t uid = clientInfo_.GetUidByPid(pid);

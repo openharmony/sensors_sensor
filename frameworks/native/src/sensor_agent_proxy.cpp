@@ -210,12 +210,13 @@ int32_t SensorAgentProxy::DeactivateSensor(const SensorDescription &sensorDesc, 
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorDesc)) {
+    std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
+    if (!(SEN_CLIENT.IsValid(sensorDesc) ||
+        ((!SEN_CLIENT.IsValid(sensorDesc)) && subscribeMap_.find(sensorDesc) != subscribeMap_.end()))) {
         SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
-    std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if (subscribeMap_.find(sensorDesc) == subscribeMap_.end()) {
         SEN_HILOGE("Subscribe sensorId first");
         return OHOS::Sensors::ERROR;
@@ -234,6 +235,10 @@ int32_t SensorAgentProxy::DeactivateSensor(const SensorDescription &sensorDesc, 
         subscribeMap_.erase(sensorDesc);
         int32_t ret = 0;
         {
+            if (!SEN_CLIENT.IsValid(sensorDesc)) {
+                SEN_HILOGW("No need to call DisableSensor");
+                return OHOS::Sensors::SUCCESS;
+            }
             SensorXcollie SensorXcollie("SensorAgentProxy:DisableSensor", XCOLLIE_TIMEOUT_15S);
             ret = SEN_CLIENT.DisableSensor(sensorDesc);
         }
@@ -318,12 +323,14 @@ int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc,
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
-    if (!SEN_CLIENT.IsValid(sensorDesc)) {
-        SEN_HILOGE("sensorId is invalid, %{public}d", sensorDesc.sensorType);
-        return PARAMETER_ERROR;
-    }
     {
         std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
+        if (!(SEN_CLIENT.IsValid(sensorDesc) ||
+            ((!SEN_CLIENT.IsValid(sensorDesc)) && unsubscribeMap_.find(sensorDesc) != unsubscribeMap_.end()))) {
+            SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+                sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+            return PARAMETER_ERROR;
+        }
         if (unsubscribeMap_.find(sensorDesc) == unsubscribeMap_.end()) {
             SEN_HILOGE("Deactivate sensorId first");
             return OHOS::Sensors::ERROR;
@@ -817,6 +824,18 @@ bool SensorAgentProxy::UpdataSensorInfo(SensorPlugData info)
         free(sensorInfos);
         sensorInfos = nullptr;
     } else {
+        {
+            std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
+            int32_t ret = 0;
+            if (subscribeMap_.find({info.deviceId, info.sensorTypeId, info.sensorId, info.location}) !=
+                subscribeMap_.end()) {
+                SensorXcollie SensorXcollie("SensorAgentProxy:DisableSensor", XCOLLIE_TIMEOUT_15S);
+                ret = SEN_CLIENT.DisableSensor({info.deviceId, info.sensorTypeId, info.sensorId, info.location});
+            }
+            if (ret != 0) {
+                SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
+            }
+        }
         if (!(SEN_CLIENT.EraseCacheSensorList(info))) {
             SEN_HILOGE("EraseCacheSensorList failed");
             return false;
@@ -845,10 +864,10 @@ void SensorAgentProxy::EraseCacheSensorInfos(SensorPlugData info)
 bool SensorAgentProxy::HandlePlugSensorData(const SensorPlugData &info) __attribute__((no_sanitize("cfi")))
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::recursive_mutex> subscribePlugLock(subscribePlugMutex_);
     if (!UpdataSensorInfo(info)) {
         return false;
     }
+    std::lock_guard<std::recursive_mutex> subscribePlugLock(subscribePlugMutex_);
     SensorStatusEvent event;
     UpdataSensorStatusEvent(event, info);
     for (const auto &it : subscribeSet_) {
