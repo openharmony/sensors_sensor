@@ -34,9 +34,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
-int64_t g_samplingPeriod = 100000000;
-int64_t g_maxReportDelay = 100000000;
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
 } // namespace
 
 template<class T>
@@ -83,24 +81,22 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_service == nullptr) {
         return false;
     }
+    MessageParcel datas;
+    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
     size_t startPos = 0;
-    int32_t deviceId = 0;
-    startPos += GetObject<int32_t>(deviceId, data + startPos, size - startPos);
-    int32_t sensorId = 0;
-    startPos += GetObject<int32_t>(sensorId, data + startPos, size - startPos);
-    int32_t location = 0;
-    startPos += GetObject<int32_t>(location, data + startPos, size - startPos);
-    g_service->EnableSensor({deviceId, SENSOR_TYPE_ID_ACCELEROMETER, sensorId, location},
-        g_samplingPeriod, g_maxReportDelay);
-    g_service->ResetSensors();
-
-    int32_t sensorType = 0;
-    startPos += GetObject<int32_t>(sensorType, data + startPos, size - startPos);
+    SensorDescriptionIPC sensorDesc {-1, 1, 0, 1};
+    datas.WriteParcelable(&sensorDesc);
     int64_t samplingPeriod = 0;
     startPos += GetObject<int64_t>(samplingPeriod, data + startPos, size - startPos);
+    datas.WriteInt64(samplingPeriod);
     int64_t maxReportDelay = 0;
     GetObject<int64_t>(maxReportDelay, data + startPos, size - startPos);
-    g_service->EnableSensor({deviceId, sensorType, sensorId, location}, samplingPeriod, maxReportDelay);
+    datas.WriteInt64(maxReportDelay);
+    datas.RewindRead(0);
+    MessageParcel reply;
+    MessageOption option;
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_ENABLE_SENSOR),
+        datas, reply, option);
     return true;
 }
 }  // namespace Sensors

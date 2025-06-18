@@ -34,7 +34,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";;
 } // namespace
 
 void SetUpTestCase()
@@ -66,7 +66,6 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     SetUpTestCase();
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    datas.WriteBuffer(data, size);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;

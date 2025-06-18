@@ -34,7 +34,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
 static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
 } // namespace
 
@@ -82,12 +82,26 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_remote == nullptr || g_service == nullptr) {
         return false;
     }
-    int32_t clientFd = 0;
-    GetObject<int32_t>(clientFd, data, size);
-    g_service->CreateSocketChannel(g_remote, clientFd);
-    g_service->DestroySocketChannel(g_remote);
-    g_service->TransferDataChannel(clientFd, g_remote);
-    g_service->DestroySensorChannel(g_remote);
+    MessageParcel datas;
+    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
+    int32_t fd = 0;
+    GetObject<int32_t>(fd, data, size);
+    datas.WriteFileDescriptor(fd);
+    datas.WriteRemoteObject(g_remote);
+    datas.RewindRead(0);
+    MessageParcel reply;
+    MessageOption option;
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_TRANSFER_DATA_CHANNEL),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_SENSOR_CHANNEL),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_SOCKET_CHANNEL),
+        datas, reply, option);
     return true;
 }
 } // namespace Sensors

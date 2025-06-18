@@ -35,7 +35,7 @@ namespace {
 constexpr size_t U32_AT_SIZE = 4;
 constexpr uint32_t IPC_CODE_COUNT = 13;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
 } // namespace
 
 void SetUpTestCase()
