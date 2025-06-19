@@ -443,7 +443,7 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
     return ret;
 }
 
-void SensorHdiConnection::UpdataSensorList(std::vector<Sensor> &singleDevSensors)
+void SensorHdiConnection::UpdateSensorList(std::vector<Sensor> &singleDevSensors)
 {
     CALL_LOG_ENTER;
     for (const auto& newSensor : singleDevSensors) {
@@ -476,7 +476,7 @@ int32_t SensorHdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector
         SEN_HILOGW("Get sensor list is empty");
         return ERR_OK;
     }
-    UpdataSensorList(singleDevSensors);
+    UpdateSensorList(singleDevSensors);
 #ifdef BUILD_VARIANT_ENG
     if (singleDevSensors[0].GetLocation() == IS_LOCAL_DEVICE) {
         if (!hdiConnectionStatus_) {
@@ -537,7 +537,7 @@ DevicePlugCallback SensorHdiConnection::GetSensorPlugCb()
     return NULL;
 }
 
-bool SensorHdiConnection::PlugEraseSensorData(SensorPlugInfo info)
+bool SensorHdiConnection::PlugEraseSensorData(const SensorPlugInfo &info)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> sensorLock(sensorMutex_);

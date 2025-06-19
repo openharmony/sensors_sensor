@@ -48,7 +48,7 @@ SensorDataProcesser::~SensorDataProcesser()
     sensorMap_.clear();
 }
 
-void SensorDataProcesser::UpdataSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
+void SensorDataProcesser::UpdateSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
 {
     sensorMap_.clear();
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
