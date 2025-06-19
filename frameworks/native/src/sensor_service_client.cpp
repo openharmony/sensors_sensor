@@ -23,6 +23,7 @@
 #include "hitrace_meter.h"
 #endif // HIVIEWDFX_HITRACE_ENABLE
 #include "sensor_agent_proxy.h"
+#include "sensor_service_load.h"
 #include "system_ability_definition.h"
 
 #undef LOG_TAG
@@ -46,6 +47,8 @@ extern "C" {
 }
 #endif // OHOS_BUILD_ENABLE_RUST
 } // namespace
+
+#define SEN_SERVICE_LOAD SensorServiceLoad::GetInstance()
 
 SensorServiceClient::~SensorServiceClient()
 {
@@ -97,6 +100,9 @@ int32_t SensorServiceClient::InitServiceClient()
             return ret;
         }
         return ERR_OK;
+    }
+    if (SEN_SERVICE_LOAD.LoadSensorService() != ERR_OK) {
+        SEN_HILOGE("LoadSensorService failed");
     }
     SEN_HILOGW("Get service failed");
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE

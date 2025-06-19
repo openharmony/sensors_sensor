@@ -55,6 +55,7 @@ const std::string DEFAULTS_FOLD_TYPE = "0,0,0,0";
 } // namespace
 
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
+std::atomic_bool SensorService::isCritical_ = false;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -109,6 +110,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
         Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
             PROCESS_TYPE_SA, PROCESS_STATUS_STARTED, SENSOR_SERVICE_ABILITY_ID);
+        SetCritical();
     }
 #endif // MEMMGR_ENABLE
 #ifdef ACCESS_TOKEN_ENABLE
@@ -450,6 +452,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
         return ENABLE_SENSOR_ERR;
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
+    SetCritical();
     if ((!g_isRegister) && (RegisterPermCallback(sensorDesc.sensorType))) {
         g_isRegister = true;
     }
@@ -509,7 +512,17 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     int32_t uid = clientInfo_.GetUidByPid(pid);
     clientInfo_.DestroyCmd(uid);
     clientInfo_.ClearDataQueue(sensorDesc);
-    return sensorManager_.AfterDisableSensor(sensorDesc);
+    int32_t ret = sensorManager_.AfterDisableSensor(sensorDesc);
+#ifdef MEMMGR_ENABLE
+    if (!clientInfo_.IsClientSubscribe() && isCritical_) {
+        if (Memory::MemMgrClient::GetInstance().SetCritical(getpid(), false, SENSOR_SERVICE_ABILITY_ID) != ERR_OK) {
+            SEN_HILOGE("setCritical failed");
+            return ret;
+        }
+        isCritical_ = false;
+    }
+#endif // MEMMGR_ENABLE
+    return ret;
 }
 
 ErrCode SensorService::DisableSensor(const SensorDescriptionIPC &SensorDescriptionIPC)
@@ -1030,6 +1043,19 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo info)
         .timestamp = static_cast<int64_t>(curTime.tv_sec * 1000 + curTime.tv_usec / 1000) //1000:milliSecond
     };
     clientInfo_.SendMsgToClient(sensorPlugData);
+}
+
+void SensorService::SetCritical()
+{
+#ifdef MEMMGR_ENABLE
+    if (!isCritical_) {
+        if (Memory::MemMgrClient::GetInstance().SetCritical(getpid(), true, SENSOR_SERVICE_ABILITY_ID) != ERR_OK) {
+            SEN_HILOGE("setCritical failed");
+        } else {
+            isCritical_ = true;
+        }
+    }
+#endif // MEMMGR_ENABLE
 }
 } // namespace Sensors
 } // namespace OHOS

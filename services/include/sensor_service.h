@@ -99,6 +99,7 @@ private:
     bool IsSystemServiceCalling();
     bool IsSystemCalling();
     bool IsNeedLoadMotionLib();
+    void SetCritical();
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
@@ -124,6 +125,7 @@ private:
     ErrCode SaveSubscriber(const SensorDescription &sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     std::atomic_bool isReportActiveInfo_ = false;
     static std::atomic_bool isAccessTokenServiceActive_;
+    static std::atomic_bool isCritical_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()

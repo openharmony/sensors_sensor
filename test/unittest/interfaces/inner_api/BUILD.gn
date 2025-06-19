@@ -211,6 +211,33 @@ ohos_unittest("DropDetectionTest") {
   ]
 }
 
+ohos_unittest("LoadSensorServiceTest") {
+  module_out_path = "sensor/sensor/interfaces/inner_api"
+
+  sources = ["$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/load_sensor_service_test.cpp"]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+    "$SUBSYSTEM_DIR/test/unittest/common/include",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_target",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "samgr:samgr_proxy",
+  ]
+}
+
 ohos_unittest("RPCSensorTest") {
   module_out_path = "sensor/sensor/interfaces/inner_api"
 
@@ -271,6 +298,7 @@ group("unittest") {
     ":Ambientlight1Test",
     ":DropDetectionTest",
     ":HeadPostureTest",
+    ":LoadSensorServiceTest",
     ":PostureTest",
     ":Proximity1Test",
     ":RPCSensorTest",
