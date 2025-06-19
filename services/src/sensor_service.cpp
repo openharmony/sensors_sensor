@@ -616,7 +616,7 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
             sensorMap_.insert(std::pair<SensorDescription, Sensor>(
                 {it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
             if (sensorDataProcesser_ != nullptr) {
-                sensorDataProcesser_->UpdataSensorMap(sensorMap_);
+                sensorDataProcesser_->UpdateSensorMap(sensorMap_);
             }
         }
     }
@@ -1001,7 +1001,7 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo info)
             GetSensorListByDevice(info.deviceSensorInfo.deviceId);
         }
     } else {
-        if (sensorHdiConnection_.PlugEraseSensorData(info)) {
+        if (!sensorHdiConnection_.PlugEraseSensorData(info)) {
             SEN_HILOGW("sensorHdiConnection Cache update failure");
         }
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);

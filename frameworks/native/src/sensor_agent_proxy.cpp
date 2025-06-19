@@ -792,25 +792,24 @@ int32_t SensorAgentProxy::UnsubscribeSensorPlug(const SensorUser *user)
     return OHOS::Sensors::SUCCESS;
 }
 
-void SensorAgentProxy::UpdataSensorStatusEvent(SensorStatusEvent &event, SensorPlugData info)
+void SensorAgentProxy::UpdateSensorStatusEvent(SensorStatusEvent &event, SensorPlugData info)
 {
     event.sensorType = info.sensorTypeId;
     event.sensorId = info.sensorId;
+    event.isSensorOnline = false;
     if (info.status == SENSOR_ONLINE) {
         event.isSensorOnline = true;
-    } else {
-        event.isSensorOnline = false;
     }
     event.deviceId = info.deviceId;
     event.deviceName = info.deviceName;
+    event.location = false;
     if (info.location == IS_LOCAL_DEVICE) {
         event.location = true;
     }
-    event.location = false;
     event.timestamp = info.timestamp;
 }
 
-bool SensorAgentProxy::UpdataSensorInfo(SensorPlugData info)
+bool SensorAgentProxy::UpdateSensorInfo(SensorPlugData info)
 {
     CALL_LOG_ENTER;
     if (info.status == SENSOR_ONLINE) {
@@ -818,7 +817,7 @@ bool SensorAgentProxy::UpdataSensorInfo(SensorPlugData info)
         int32_t count = 0;
         int32_t ret = GetDeviceSensors(info.deviceId, &sensorInfos, &count);
         if (ret != ERR_OK) {
-            SEN_HILOGE("UpdataSensorInfo failed");
+            SEN_HILOGE("UpdateSensorInfo failed");
             return false;
         }
         free(sensorInfos);
@@ -864,12 +863,12 @@ void SensorAgentProxy::EraseCacheSensorInfos(SensorPlugData info)
 bool SensorAgentProxy::HandlePlugSensorData(const SensorPlugData &info) __attribute__((no_sanitize("cfi")))
 {
     CALL_LOG_ENTER;
-    if (!UpdataSensorInfo(info)) {
+    if (!UpdateSensorInfo(info)) {
         return false;
     }
     std::lock_guard<std::recursive_mutex> subscribePlugLock(subscribePlugMutex_);
     SensorStatusEvent event;
-    UpdataSensorStatusEvent(event, info);
+    UpdateSensorStatusEvent(event, info);
     for (const auto &it : subscribeSet_) {
         if (it->plugCallback != nullptr) {
             SEN_HILOGD("plug callback is run");

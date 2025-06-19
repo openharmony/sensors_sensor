@@ -26,9 +26,9 @@
 
 namespace OHOS {
 namespace Sensors {
-int32_t UnsubscribeSensor(SensorDescription sensorDesc);
+int32_t UnsubscribeSensor(const SensorDescription &sensorDesc);
 void DataCallbackImpl(SensorEvent *event);
-int32_t SubscribeSensor(SensorDescription sensorDesc, int64_t interval, RecordSensorCallback callback);
+int32_t SubscribeSensor(const SensorDescription &sensorDesc, int64_t interval, RecordSensorCallback callback);
 napi_value Subscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId, CallbackDataType type);
 napi_value Unsubscribe(napi_env env, napi_callback_info info, int32_t sensorTypeId);
 napi_value GetBodyState(napi_env env, napi_callback_info info);
