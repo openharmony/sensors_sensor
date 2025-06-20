@@ -623,6 +623,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
     CHKPR(sensorServer_, ERROR);
     int32_t clientFd = -1;
     ret = CreateSocketClientFd(clientFd);
+    fdsan_exchange_owner_tag(clientFd, 0, TAG);
     if (ret != ERR_OK || clientFd < 0) {
         Close();
         SEN_HILOGE("Create socket channel failed, ret:%{public}d", ret);
