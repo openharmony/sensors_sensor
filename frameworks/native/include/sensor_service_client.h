@@ -54,7 +54,7 @@ public:
     int32_t CreateClientRemoteObject();
     int32_t TransferClientRemoteObject();
     int32_t DestroyClientRemoteObject();
-    bool EraseCacheSensorList(SensorPlugData info);
+    bool EraseCacheSensorList(const SensorPlugData &info);
     int32_t GetLocalDeviceId(int32_t &deviceId);
 
 private:

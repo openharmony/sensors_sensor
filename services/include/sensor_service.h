@@ -71,7 +71,7 @@ private:
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     ErrCode CheckAuthAndParameter(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
         int64_t maxReportDelayNs);
-    void ReportPlugEventCallback(const SensorPlugInfo sensorPlugInfo);
+    void ReportPlugEventCallback(const SensorPlugInfo &sensorPlugInfo);
     ErrCode SensorReportEvent(const SensorDescription &sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs,
         int32_t pid);
 

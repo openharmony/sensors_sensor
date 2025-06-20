@@ -1004,7 +1004,7 @@ ErrCode SensorService::DestroyClientRemoteObject(const sptr<IRemoteObject> &sens
     return ERR_OK;
 }
 
-void SensorService::ReportPlugEventCallback(const SensorPlugInfo info)
+void SensorService::ReportPlugEventCallback(const SensorPlugInfo &info)
 {
     CALL_LOG_ENTER;
     if (info.status == SENSOR_ONLINE) {

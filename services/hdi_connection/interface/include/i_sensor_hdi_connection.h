@@ -25,7 +25,7 @@
 namespace OHOS {
 namespace Sensors {
 using OHOS::HDI::Sensor::V3_0::SensorPlugInfo;
-using DevicePlugCallback = std::function<void(const SensorPlugInfo sensorPlugInfo)>;
+using DevicePlugCallback = std::function<void(const SensorPlugInfo &sensorPlugInfo)>;
 class ISensorHdiConnection {
 public:
     ISensorHdiConnection() = default;
