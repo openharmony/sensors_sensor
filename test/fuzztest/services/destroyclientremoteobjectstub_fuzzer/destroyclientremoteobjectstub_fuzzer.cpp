@@ -34,7 +34,8 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
+static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
 } // namespace
 
 void SetUpTestCase()
@@ -52,7 +53,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "DestroyClientRemoteObjectStubFuzzTest",
+        .processName = "CreateDataChannelStubFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -78,14 +79,16 @@ size_t GetObject(T &object, const uint8_t *data, size_t size)
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
+    if (g_remote == nullptr || g_service == nullptr) {
+        return false;
+    }
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    sptr<IRemoteObject> sensorClient = nullptr;
-    datas.WriteRemoteObject(sensorClient);
+    datas.WriteRemoteObject(g_remote);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_TRANSFER_CLIENT_REMOTE_OBJECT),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DESTROY_CLIENT_REMOTE_OBJECT),
         datas, reply, option);
     return true;
 }
