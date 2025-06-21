@@ -19,6 +19,7 @@ group("fuzztest") {
   testonly = true
   deps = [
     "createdatachannelstub_fuzzer:fuzztest",
+    "destroyclientremoteobjectstub_fuzzer:fuzztest",
     "disableactiveinfocbstub_fuzzer:fuzztest",
     "enableactiveinfocbstub_fuzzer:fuzztest",
     "getactiveinfoliststub_fuzzer:fuzztest",
@@ -38,6 +39,7 @@ group("fuzztest") {
     "service/reportonchangedata_fuzzer:fuzztest",
     "service/reportsensorsysevent_fuzzer:fuzztest",
     "service/setdevicestatusservice_fuzzer:fuzztest",
+    "setdevicestatusstub_fuzzer:fuzztest",
     "suspendsensorsstub_fuzzer:fuzztest",
     "transferclientremoteobjectstub_fuzzer:fuzztest",
   ]
