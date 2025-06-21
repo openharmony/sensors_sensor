@@ -34,8 +34,22 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
 } // namespace
+
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
 
 void SetUpTestCase()
 {
@@ -52,7 +66,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "SetDeviceStatusStubFuzzTest",
+        .processName = "SetDeviceStatusServiceFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -61,31 +75,21 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-template<class T>
-size_t GetObject(T &object, const uint8_t *data, size_t size)
-{
-    size_t objectSize = sizeof(object);
-    if (objectSize > size) {
-        return 0;
-    }
-    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
-    if (ret != EOK) {
-        return 0;
-    }
-    return objectSize;
-}
-
-bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
+bool SetDeviceStatusFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
+    if (g_service == nullptr) {
+        return false;
+    }
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    sptr<IRemoteObject> sensorClient = nullptr;
-    datas.WriteRemoteObject(sensorClient);
+    int32_t deviceStatus = 0;
+    GetObject<int32_t>(deviceStatus, data, size);
+    datas.WriteInt32(deviceStatus);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
-    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_TRANSFER_CLIENT_REMOTE_OBJECT),
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_SET_DEVICE_STATUS),
         datas, reply, option);
     return true;
 }
@@ -104,6 +108,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    OHOS::Sensors::OnRemoteRequestFuzzTest(data, size);
+    OHOS::Sensors::SetDeviceStatusFuzzTest(data, size);
     return 0;
 }
