@@ -34,7 +34,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";;
 } // namespace
 
 template<class T>
@@ -81,9 +81,16 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_service == nullptr) {
         return false;
     }
-    std::vector<Sensor> sensorList;
-    GetObject<Sensor>(sensorList[0], data, size);
-    g_service->GetSensorList(sensorList);
+    MessageParcel datas;
+    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
+    int32_t pid = 0;
+    GetObject<int32_t>(pid, data, size);
+    datas.WriteInt32(pid);
+    datas.RewindRead(0);
+    MessageParcel reply;
+    MessageOption option;
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST),
+        datas, reply, option);
     return true;
 }
 } // namespace Sensors

@@ -34,8 +34,8 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
-} // namespace
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
+}
 
 template<class T>
 size_t GetObject(T &object, const uint8_t *data, size_t size)
@@ -81,16 +81,16 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_service == nullptr) {
         return false;
     }
-    int32_t deviceId = 0;
-    GetObject<int32_t>(deviceId, data, size);
-    int32_t sensorId = 0;
-    GetObject<int32_t>(sensorId, data, size);
-    int32_t location = 0;
-    GetObject<int32_t>(location, data, size);
-    g_service->DisableSensor({deviceId, SENSOR_TYPE_ID_ACCELEROMETER, sensorId, location});
-    int32_t sensorType = 0;
-    GetObject<int32_t>(sensorType, data, size);
-    g_service->DisableSensor({deviceId, sensorType, sensorId, location});
+    MessageParcel datas;
+    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
+    SensorDescriptionIPC sensorDesc;
+    GetObject<int32_t>(sensorDesc.deviceId, data, size);
+    datas.WriteParcelable(&sensorDesc);
+    datas.RewindRead(0);
+    MessageParcel reply;
+    MessageOption option;
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DISABLE_SENSOR),
+        datas, reply, option);
     return true;
 }
 } // namespace Sensors

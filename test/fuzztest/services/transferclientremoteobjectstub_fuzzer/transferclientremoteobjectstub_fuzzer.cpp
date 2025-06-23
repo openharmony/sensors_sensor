@@ -34,8 +34,23 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";
+static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
 } // namespace
+
+template<class T>
+size_t GetObject(T &object, const uint8_t *data, size_t size)
+{
+    size_t objectSize = sizeof(object);
+    if (objectSize > size) {
+        return 0;
+    }
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return 0;
+    }
+    return objectSize;
+}
 
 void SetUpTestCase()
 {
@@ -64,10 +79,15 @@ void SetUpTestCase()
 bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
+    if (g_remote == nullptr || g_service == nullptr) {
+        return false;
+    }
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
-    sptr<IRemoteObject> sensorClient = nullptr;
-    datas.WriteRemoteObject(sensorClient);
+    datas.WriteRemoteObject(g_remote);
+    int32_t pid = 0;
+    GetObject<int32_t>(pid, data, size);
+    datas.WriteInt32(pid);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;

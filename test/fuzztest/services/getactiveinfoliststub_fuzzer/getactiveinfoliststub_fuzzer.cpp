@@ -34,7 +34,7 @@ using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
-const std::u16string SENSOR_INTERFACE_TOKEN = u"ISensorService";
+const std::u16string SENSOR_INTERFACE_TOKEN = u"OHOS.Sensors.ISensorService";;
 } // namespace
 
 template<class T>
@@ -81,12 +81,22 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     if (g_service == nullptr) {
         return false;
     }
-    std::vector<ActiveInfo> activeInfoList;
+    MessageParcel datas;
+    datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
     int32_t pid = 0;
     GetObject<int32_t>(pid, data, size);
-    g_service->GetActiveInfoList(pid, activeInfoList);
-    g_service->EnableActiveInfoCB();
-    g_service->DisableActiveInfoCB();
+    datas.WriteInt32(pid);
+    datas.RewindRead(0);
+    MessageParcel reply;
+    MessageOption option;
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_GET_ACTIVE_INFO_LIST),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_ENABLE_ACTIVE_INFO_C_B),
+        datas, reply, option);
+    datas.RewindRead(0);
+    g_service->OnRemoteRequest(static_cast<uint32_t>(ISensorServiceIpcCode::COMMAND_DISABLE_ACTIVE_INFO_C_B),
+        datas, reply, option);
     return true;
 }
 } // namespace Sensors
