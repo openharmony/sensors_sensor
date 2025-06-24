@@ -852,7 +852,7 @@ void SensorServiceClient::SetDeviceStatus(uint32_t deviceStatus)
 #endif // HIVIEWDFX_HITRACE_ENABLE
 }
 
-bool SensorServiceClient::EraseCacheSensorList(SensorPlugData info)
+bool SensorServiceClient::EraseCacheSensorList(const SensorPlugData &info)
 {
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> clientLock(clientMutex_);

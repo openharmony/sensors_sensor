@@ -565,7 +565,12 @@ int32_t SensorAgentProxy::UpdateSensorInfosCache(const std::vector<Sensor>& sing
     if (newSensorsCount == 0) {
         return SUCCESS;
     }
-    size_t newTotalCount = sensorInfoCount_ + newSensorsCount;
+    if (sensorInfoCount_ < 0 || sensorInfoCount_ > MAX_SENSOR_LIST_SIZE) {
+        SEN_HILOGE("sensorInfoCount_ invalid, sensorInfoCount_:%{public}d", sensorInfoCount_);
+        return ERROR;
+    }
+    size_t currentInfoCount = static_cast<size_t>(sensorInfoCount_);
+    size_t newTotalCount = currentInfoCount + newSensorsCount;
     if (newTotalCount > MAX_SENSOR_LIST_SIZE) {
         SEN_HILOGE("The number of sensors exceeds the maximum value");
         return ERROR;
@@ -578,10 +583,9 @@ int32_t SensorAgentProxy::UpdateSensorInfosCache(const std::vector<Sensor>& sing
     if (sensorInfoCheck_.sensorInfos) {
         std::copy(sensorInfoCheck_.sensorInfos, sensorInfoCheck_.sensorInfos + sensorInfoCount_, newSensorInfos.get());
     }
-    size_t currentIndex = sensorInfoCount_;
     for (const auto& sensor : singleDevSensors) {
         if (!FindSensorInfo(sensor.GetDeviceId(), sensor.GetSensorId(), sensor.GetSensorTypeId())) {
-            UpdateSensorInfo(&newSensorInfos[currentIndex++], sensor);
+            UpdateSensorInfo(&newSensorInfos[currentInfoCount++], sensor);
         }
     }
     sensorInfoCheck_.sensorInfos = newSensorInfos.release();
@@ -792,7 +796,7 @@ int32_t SensorAgentProxy::UnsubscribeSensorPlug(const SensorUser *user)
     return OHOS::Sensors::SUCCESS;
 }
 
-void SensorAgentProxy::UpdateSensorStatusEvent(SensorStatusEvent &event, SensorPlugData info)
+void SensorAgentProxy::UpdateSensorStatusEvent(SensorStatusEvent &event, const SensorPlugData &info)
 {
     event.sensorType = info.sensorTypeId;
     event.sensorId = info.sensorId;
@@ -809,7 +813,7 @@ void SensorAgentProxy::UpdateSensorStatusEvent(SensorStatusEvent &event, SensorP
     event.timestamp = info.timestamp;
 }
 
-bool SensorAgentProxy::UpdateSensorInfo(SensorPlugData info)
+bool SensorAgentProxy::UpdateSensorInfo(const SensorPlugData &info)
 {
     CALL_LOG_ENTER;
     if (info.status == SENSOR_ONLINE) {
@@ -844,7 +848,7 @@ bool SensorAgentProxy::UpdateSensorInfo(SensorPlugData info)
     return true;
 }
 
-void SensorAgentProxy::EraseCacheSensorInfos(SensorPlugData info)
+void SensorAgentProxy::EraseCacheSensorInfos(const SensorPlugData &info)
 {
     std::lock_guard<std::mutex> listLock(sensorInfoMutex_);
     for (int32_t i = 0; i < sensorInfoCount_; ++i) {

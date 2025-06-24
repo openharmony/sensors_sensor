@@ -34,48 +34,51 @@ public:
         MessageParcel dataParcel;
         MessageParcel replyParcel;
         if (!dataParcel.WriteInterfaceToken(GetDescriptor())) {
-            SEN_HILOGD("Failed to write descriptor to parcelable");
+            SEN_HILOGE("Failed to write descriptor to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt32(info.deviceId)) {
-            SEN_HILOGD("Failed to write deviceId to parcelable");
+            SEN_HILOGE("Failed to write deviceId to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt32(info.sensorTypeId)) {
-            SEN_HILOGD("Failed to write sensorTypeId to parcelable");
+            SEN_HILOGE("Failed to write sensorTypeId to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt32(info.sensorId)) {
-            SEN_HILOGD("Failed to write sensorId to parcelable");
+            SEN_HILOGE("Failed to write sensorId to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt32(info.location)) {
-            SEN_HILOGD("Failed to write location to parcelable");
+            SEN_HILOGE("Failed to write location to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteString(info.deviceName)) {
-            SEN_HILOGD("Failed to write deviceName to parcelable");
+            SEN_HILOGE("Failed to write deviceName to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt32(info.status)) {
-            SEN_HILOGD("Failed to write status to parcelable");
+            SEN_HILOGE("Failed to write status to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt32(info.reserved)) {
-            SEN_HILOGD("Failed to write reserved to parcelable");
+            SEN_HILOGE("Failed to write reserved to parcelable");
             return PARAMETER_ERROR;
         }
         if (!dataParcel.WriteInt64(info.timestamp)) {
-            SEN_HILOGD("Failed to write timestamp to parcelable");
+            SEN_HILOGE("Failed to write timestamp to parcelable");
             return PARAMETER_ERROR;
+        }
+        if (Remote() == nullptr) {
+            SEN_HILOGE("Remote() is nullptr");
+            return ERROR;
         }
         int error = Remote()->SendRequest(PROCESS_PLUG_EVENT, dataParcel, replyParcel, option);
         if (error != ERR_NONE) {
-            SEN_HILOGD("failed, error code is: %{public}d", error);
+            SEN_HILOGE("failed, error code is: %{public}d", error);
             return PARAMETER_ERROR;
         }
-        int result = (error == ERR_NONE) ? replyParcel.ReadInt32() : -1;
-        return result;
+        return SUCCESS;
     }
 
 private:

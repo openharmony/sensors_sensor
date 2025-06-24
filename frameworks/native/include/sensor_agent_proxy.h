@@ -66,9 +66,9 @@ private:
     int32_t UpdateSensorInfo(SensorInfo* sensorInfo, const Sensor& sensor);
     int32_t UpdateSensorInfosCache(const std::vector<Sensor>& deviceSensorList);
     bool FindSensorInfo(int32_t deviceId, int32_t sensorIndex, int32_t sensorTypeId);
-    void UpdateSensorStatusEvent(SensorStatusEvent &event, SensorPlugData info);
-    bool UpdateSensorInfo(SensorPlugData info);
-    void EraseCacheSensorInfos(SensorPlugData info);
+    void UpdateSensorStatusEvent(SensorStatusEvent &event, const SensorPlugData &info);
+    bool UpdateSensorInfo(const SensorPlugData &info);
+    void EraseCacheSensorInfos(const SensorPlugData &info);
     static std::recursive_mutex subscribeMutex_;
     static std::recursive_mutex subscribePlugMutex_;
     static std::mutex chanelMutex_;

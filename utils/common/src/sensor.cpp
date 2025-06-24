@@ -291,6 +291,7 @@ bool Sensor::ReadFromParcel(Parcel &parcel)
 }
 
 SensorDescriptionIPC::SensorDescriptionIPC()
+    :deviceId(0), sensorType(0), sensorId(0), location(0)
 {}
 
 SensorDescriptionIPC::SensorDescriptionIPC(int32_t deviceId, int32_t sensorTypeId, int32_t sensorId, int32_t location)
@@ -327,21 +328,25 @@ SensorDescriptionIPC* SensorDescriptionIPC::Unmarshalling(Parcel &data)
     }
     if (!(data.ReadInt32(sensorDesc->deviceId))) {
         SEN_HILOGE("Read deviceId failed");
+        delete sensorDesc;
         sensorDesc = nullptr;
         return sensorDesc;
     }
     if (!(data.ReadInt32(sensorDesc->sensorType))) {
         SEN_HILOGE("Read sensorTypeId failed");
+        delete sensorDesc;
         sensorDesc = nullptr;
         return sensorDesc;
     }
     if (!(data.ReadInt32(sensorDesc->sensorId))) {
         SEN_HILOGE("Read sensorId failed");
+        delete sensorDesc;
         sensorDesc = nullptr;
         return sensorDesc;
     }
     if (!(data.ReadInt32(sensorDesc->location))) {
         SEN_HILOGE("Read location_ failed");
+        delete sensorDesc;
         sensorDesc = nullptr;
         return sensorDesc;
     }

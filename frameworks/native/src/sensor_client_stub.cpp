@@ -73,7 +73,9 @@ int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
         return PARAMETER_ERROR;
     }
     int32_t result = ProcessPlugEvent(info);
-    reply.WriteInt32(result);
+    if (result != NO_ERROR) {
+        SEN_HILOGE("Process plug event failed");
+    }
     return NO_ERROR;
 }
 
