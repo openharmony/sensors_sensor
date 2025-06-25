@@ -343,7 +343,7 @@ HWTEST_F(SensorAgentTest, OH_Sensor_GetInfos_008, TestSize.Level1)
     ASSERT_EQ(ret, SENSOR_PARAMETER_ERROR);
 }
 
-HWTEST_F(SensorAgentTest, OH_Sensor_Subscribe_001, TestSize.Level1)
+HWTEST_F(SensorAgentTest, OH_Sensor_Subscribe_001, TestSize.Level0)
 {
     SEN_HILOGI("OH_Sensor_Subscribe_001 in");
     if (g_existAmbientLight) {
