@@ -25,6 +25,7 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr uint32_t MAX_SENSOR_LIST_SIZE = 0Xffff;
+constexpr int32_t MAX_SENSOR_INFO_COUNT = 0Xffff;
 constexpr int32_t IS_LOCAL_DEVICE = 1;
 constexpr int32_t SENSOR_ONLINE = 1;
 std::mutex sensorInfoMutex_;
@@ -565,7 +566,7 @@ int32_t SensorAgentProxy::UpdateSensorInfosCache(const std::vector<Sensor>& sing
     if (newSensorsCount == 0) {
         return SUCCESS;
     }
-    if (sensorInfoCount_ < 0 || sensorInfoCount_ > MAX_SENSOR_LIST_SIZE) {
+    if (sensorInfoCount_ < 0 || sensorInfoCount_ > MAX_SENSOR_INFO_COUNT) {
         SEN_HILOGE("sensorInfoCount_ invalid, sensorInfoCount_:%{public}d", sensorInfoCount_);
         return ERROR;
     }

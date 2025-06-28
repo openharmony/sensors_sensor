@@ -40,38 +40,14 @@ int32_t SensorClientStub::OnRemoteRequest(uint32_t code, MessageParcel &data, Me
         return PARAMETER_ERROR;
     }
     SensorPlugData info;
-    if (!data.ReadInt32(info.deviceId)) {
-        SEN_HILOGE("Read deviceId failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadInt32(info.sensorTypeId)) {
-        SEN_HILOGE("Read sensorTypeId failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadInt32(info.sensorId)) {
-        SEN_HILOGE("Read sensorId failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadInt32(info.location)) {
-        SEN_HILOGE("Read location failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadString(info.deviceName)) {
-        SEN_HILOGE("Read deviceName failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadInt32(info.status)) {
-        SEN_HILOGE("Read status failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadInt32(info.reserved)) {
-        SEN_HILOGE("Read reserved failed.");
-        return PARAMETER_ERROR;
-    }
-    if (!data.ReadInt64(info.timestamp)) {
-        SEN_HILOGE("Read timestamp failed.");
-        return PARAMETER_ERROR;
-    }
+    CHKCR(data.ReadInt32(info.deviceId), PARAMETER_ERROR);
+    CHKCR(data.ReadInt32(info.sensorTypeId), PARAMETER_ERROR);
+    CHKCR(data.ReadInt32(info.sensorId), PARAMETER_ERROR);
+    CHKCR(data.ReadInt32(info.location), PARAMETER_ERROR);
+    CHKCR(data.ReadString(info.deviceName), PARAMETER_ERROR);
+    CHKCR(data.ReadInt32(info.status), PARAMETER_ERROR);
+    CHKCR(data.ReadInt32(info.reserved), PARAMETER_ERROR);
+    CHKCR(data.ReadInt64(info.timestamp), PARAMETER_ERROR);
     int32_t result = ProcessPlugEvent(info);
     if (result != NO_ERROR) {
         SEN_HILOGE("Process plug event failed");
