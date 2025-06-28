@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2025 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "getactivesensorinfos_fuzzer.h"
+#include "getsensorlistbydeviceproxy_fuzzer.h"
 
 #include "accesstoken_kit.h"
 #include "nativetoken_kit.h"
@@ -23,11 +23,12 @@
 #include "sensor_agent.h"
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
+
 #include "sensor.h"
 #include "sensor_service_client.h"
 
 #undef LOG_TAG
-#define LOG_TAG "GetActiveSensorInfosFuzzTest"
+#define LOG_TAG "GetSensorListByDeviceProxyFuzzTest"
 #define SEN_CLIENT SensorServiceClient::GetInstance()
 
 namespace OHOS {
@@ -46,7 +47,10 @@ void GetObject(const uint8_t *data, size_t size, T &object)
     if (objectSize > size) {
         return;
     }
-    memcpy_s(&object, objectSize, data, objectSize);
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        return;
+    }
 }
 
 void SetUpTestCase()
@@ -62,7 +66,7 @@ void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "GetActiveSensorInfosFuzzTest",
+        .processName = "GetSensorListByDeviceProxyFuzzTest",
         .aplStr = "system_core",
     };
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
@@ -71,25 +75,23 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-void GetActiveSensorInfosFuzzTest(const uint8_t *data, size_t size)
+void GetSensorListByDeviceProxyFuzzTest(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size < DATA_MIN_SIZE) {
         return;
     }
     SetUpTestCase();
-    int32_t pid { 0 };
-    GetObject<int32_t>(data, size, pid);
-    SensorActiveInfo *sensorActiveInfos { nullptr };
-    int32_t count { 0 };
-    GetActiveSensorInfos(pid, &sensorActiveInfos, &count);
-    std::vector<ActiveInfo> sensorActiveInfoList;
-    SEN_CLIENT.GetActiveInfoList(pid, sensorActiveInfoList);
+    int32_t deviceId { 0 };
+    GetObject<int32_t>(data, size, deviceId);
+    std::vector<Sensor> singleDevSensors;
+    SEN_CLIENT.GetSensorListByDevice(deviceId, singleDevSensors);
+    return;
 }
 } // namespace Sensors
 } // namespace OHOS
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-    OHOS::Sensors::GetActiveSensorInfosFuzzTest(data, size);
+    OHOS::Sensors::GetSensorListByDeviceProxyFuzzTest(data, size);
     return 0;
 }

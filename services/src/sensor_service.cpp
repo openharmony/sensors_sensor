@@ -52,6 +52,9 @@ std::atomic_bool g_isRegister = false;
 constexpr int32_t SINGLE_DISPLAY_SMALL_FOLD = 4;
 constexpr int32_t SINGLE_DISPLAY_THREE_FOLD = 6;
 const std::string DEFAULTS_FOLD_TYPE = "0,0,0,0";
+const std::set<int32_t> g_systemApiSensorCall = {
+    SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_HEADPOSTURE
+};
 } // namespace
 
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
@@ -396,7 +399,7 @@ bool SensorService::IsSystemCalling()
 ErrCode SensorService::CheckAuthAndParameter(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    if (((sensorDesc.sensorType == SENSOR_TYPE_ID_COLOR) || (sensorDesc.sensorType == SENSOR_TYPE_ID_SAR) ||
+    if (((g_systemApiSensorCall.find(sensorDesc.sensorType) != g_systemApiSensorCall.end()) ||
         (sensorDesc.sensorType > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) && !IsSystemCalling()) {
         SEN_HILOGE("Permission check failed. A non-system application uses the system API");
         return NON_SYSTEM_API;
