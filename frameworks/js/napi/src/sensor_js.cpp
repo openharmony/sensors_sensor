@@ -75,33 +75,26 @@ static bool CheckSubscribe(SensorDescription sensorDesc)
     return iter != g_onCallbackInfos.end();
 }
 
-static bool copySensorData(sptr<AsyncCallbackInfo> callbackInfo, SensorEvent *event)
+static bool CopySensorData(SensorEvent *event, std::shared_ptr<CallbackSensorData> cb)
 {
-    CHKPF(callbackInfo);
     CHKPF(event);
+    CHKPF(cb);
     int32_t sensorTypeId = event->sensorTypeId;
-    callbackInfo->data.sensorData.sensorTypeId = sensorTypeId;
-    callbackInfo->data.sensorData.dataLength = event->dataLen;
-    callbackInfo->data.sensorData.timestamp = event->timestamp;
-    callbackInfo->data.sensorData.sensorAccuracy = event->option;
+    cb->sensorTypeId = sensorTypeId;
+    cb->dataLength = event->dataLen;
+    cb->timestamp = event->timestamp;
+    cb->sensorAccuracy = event->option;
     CHKPF(event->data);
     if (event->dataLen < sizeof(float)) {
         SEN_HILOGE("Event dataLen less than float size");
         return false;
     }
-    auto data = reinterpret_cast<float *>(event->data);
-    if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && callbackInfo->type == SUBSCRIBE_CALLBACK) {
-        std::lock_guard<std::mutex> onBodyLock(g_bodyMutex);
-        g_bodyState = *data;
-        callbackInfo->data.sensorData.data[0] =
-            (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
-        return true;
-    }
-    if (sizeof(callbackInfo->data.sensorData.data) < event->dataLen) {
-        SEN_HILOGE("callbackInfo space is insufficient");
+    if (sizeof(cb->data) < event->dataLen) {
+        SEN_HILOGE("cb space is insufficient");
         return false;
     }
-    if (memcpy_s(callbackInfo->data.sensorData.data, sizeof(callbackInfo->data.sensorData.data),
+    auto data = reinterpret_cast<float *>(event->data);
+    if (memcpy_s(cb->data, sizeof(cb->data),
         data, event->dataLen) != EOK) {
         SEN_HILOGE("Copy data failed");
         return false;
@@ -123,13 +116,20 @@ static void EmitSubscribeCallback(SensorEvent *event)
         return;
     }
     std::lock_guard<std::mutex> subscribeLock(g_mutex);
+    std::shared_ptr<CallbackSensorData> cb = std::make_shared<CallbackSensorData>();
+    if (!CopySensorData(event, cb)) {
+        SEN_HILOGE("Copy sensor data failed");
+        return;
+    }
+    auto data = reinterpret_cast<float *>(event->data);
     auto callbacks = g_subscribeCallbacks[{event->deviceId, event->sensorTypeId, event->sensorId, event->location}];
     for (auto &callback : callbacks) {
-        if (!copySensorData(callback, event)) {
-            SEN_HILOGE("Copy sensor data failed");
-            continue;
+        if (event->sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && callback->type == SUBSCRIBE_CALLBACK) {
+            std::lock_guard<std::mutex> onBodyLock(g_bodyMutex);
+            g_bodyState = *data;
+            cb->data[0] = (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
         }
-        EmitUvEventLoop(callback);
+        EmitUvEventLoop(callback, cb);
     }
 }
 
@@ -140,13 +140,14 @@ static void EmitOnCallback(SensorEvent *event)
         return;
     }
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
+    std::shared_ptr<CallbackSensorData> cb = std::make_shared<CallbackSensorData>();
+    if (!CopySensorData(event, cb)) {
+        SEN_HILOGE("Copy sensor data failed");
+        return;
+    }
     auto onCallbackInfos = g_onCallbackInfos[{event->deviceId, event->sensorTypeId, event->sensorId, event->location}];
     for (auto &onCallbackInfo : onCallbackInfos) {
-        if (!copySensorData(onCallbackInfo, event)) {
-            SEN_HILOGE("Copy sensor data failed");
-            continue;
-        }
-        EmitUvEventLoop(onCallbackInfo);
+        EmitUvEventLoop(onCallbackInfo, cb);
     }
 }
 
@@ -158,16 +159,17 @@ static void EmitOnceCallback(SensorEvent *event)
     if (iter == g_onceCallbackInfos.end()) {
         return;
     }
+    std::shared_ptr<CallbackSensorData> cb = std::make_shared<CallbackSensorData>();
+    if (!CopySensorData(event, cb)) {
+        SEN_HILOGE("Copy sensor data failed");
+        return;
+    }
     auto &onceCallbackInfos = iter->second;
     while (!onceCallbackInfos.empty()) {
         auto onceCallbackInfo = onceCallbackInfos.front();
         auto beginIter = onceCallbackInfos.begin();
         onceCallbackInfos.erase(beginIter);
-        if (!copySensorData(onceCallbackInfo, event)) {
-            SEN_HILOGE("Copy sensor data failed");
-            continue;
-        }
-        EmitUvEventLoop(std::move(onceCallbackInfo));
+        EmitUvEventLoop(std::move(onceCallbackInfo), cb);
     }
     g_onceCallbackInfos.erase({event->deviceId, event->sensorTypeId, event->sensorId, event->location});
 
@@ -201,9 +203,10 @@ void PlugDataCallbackImpl(SensorStatusEvent *plugEvent)
     CALL_LOG_ENTER;
     CHKPV(plugEvent);
     std::lock_guard<std::mutex> plugCallbackLock(g_plugMutex);
+    std::shared_ptr<CallbackSensorData> cb = std::make_shared<CallbackSensorData>();
     for (auto& callback : g_plugCallbackInfo) {
         UpdatePlugInfo(plugEvent, callback);
-        EmitUvEventLoop(callback);
+        EmitUvEventLoop(callback, cb);
     }
 }
 
@@ -1810,7 +1813,8 @@ napi_value GetBodyState(napi_env env, napi_callback_info info)
     std::lock_guard<std::mutex> onBodyLock(g_bodyMutex);
     asyncCallbackInfo->data.sensorData.data[0] =
         (fabs(g_bodyState - BODY_STATE_EXCEPT) < THRESHOLD) ? true : false;
-    EmitUvEventLoop(asyncCallbackInfo);
+    std::shared_ptr<CallbackSensorData> cb = std::make_shared<CallbackSensorData>();
+    EmitUvEventLoop(asyncCallbackInfo, cb);
     return nullptr;
 }
 

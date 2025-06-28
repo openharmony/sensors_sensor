@@ -193,8 +193,6 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
 
 std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
     {FAIL, ConvertToFailData},
-    {ON_CALLBACK, ConvertToSensorData},
-    {ONCE_CALLBACK, ConvertToSensorData},
     {GET_GEOMAGNETIC_FIELD, ConvertToGeomagneticData},
     {GET_ALTITUDE, ConvertToNumber},
     {GET_GEOMAGNETIC_DIP, ConvertToNumber},
@@ -207,7 +205,6 @@ std::map<int32_t, ConvertDataFunc> g_convertfuncList = {
     {GET_SENSOR_LIST, ConvertToSensorInfos},
     {GET_SINGLE_SENSOR, ConvertToSingleSensor},
     {GET_BODY_STATE, ConvertToBodyData},
-    {SUBSCRIBE_CALLBACK, ConvertToSensorData},
     {SUBSCRIBE_COMPASS, ConvertToCompass},
     {SENSOR_STATE_CHANGE, ConvertToSensorState},
 };
@@ -365,34 +362,41 @@ bool ConvertToSensorState(const napi_env &env, sptr<AsyncCallbackInfo> asyncCall
     return true;
 }
 
-bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2])
+bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2],
+    std::shared_ptr<CallbackSensorData> data)
 {
     CHKPF(asyncCallbackInfo);
-    int32_t sensorTypeId = asyncCallbackInfo->data.sensorData.sensorTypeId;
+    CHKPF(data);
+    int32_t sensorTypeId = data->sensorTypeId;
     std::lock_guard<std::mutex> sensorAttrListLock(g_sensorAttrListMutex);
     CHKNCF(env, (g_sensorAttributeList.find(sensorTypeId) != g_sensorAttributeList.end()), "Invalid sensor type");
     if (sensorTypeId == SENSOR_TYPE_ID_WEAR_DETECTION && asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
-        return ConvertToBodyData(env, asyncCallbackInfo, result);
+        CHKNRF(env, napi_create_object(env, &result[1]), "napi_create_object");
+        napi_value status = nullptr;
+        CHKNRF(env, napi_get_boolean(env, data->data[0], &status),
+            "napi_get_boolean");
+        CHKNRF(env, napi_set_named_property(env, result[1], "value", status), "napi_set_named_property");
+        return true;
     }
     size_t size = g_sensorAttributeList[sensorTypeId].size();
-    uint32_t dataLength = asyncCallbackInfo->data.sensorData.dataLength / sizeof(float);
+    uint32_t dataLength = data->dataLength / sizeof(float);
     CHKNCF(env, (size <= dataLength), "Data length mismatch");
 
     CHKNRF(env, napi_create_object(env, &result[1]), "napi_create_object");
     napi_value message = nullptr;
     auto sensorAttributes = g_sensorAttributeList[sensorTypeId];
     for (uint32_t i = 0; i < size; ++i) {
-        CHKNRF(env, napi_create_double(env, asyncCallbackInfo->data.sensorData.data[i], &message),
+        CHKNRF(env, napi_create_double(env, data->data[i], &message),
             "napi_create_double");
         CHKNRF(env, napi_set_named_property(env, result[1], sensorAttributes[i].c_str(), message),
             "napi_set_named_property");
         message = nullptr;
     }
-    CHKNRF(env, napi_create_int64(env, asyncCallbackInfo->data.sensorData.timestamp, &message),
+    CHKNRF(env, napi_create_int64(env, data->timestamp, &message),
         "napi_create_int64");
     CHKNRF(env, napi_set_named_property(env, result[1], "timestamp", message), "napi_set_named_property");
     message = nullptr;
-    CHKNRF(env, napi_create_int32(env, asyncCallbackInfo->data.sensorData.sensorAccuracy, &message),
+    CHKNRF(env, napi_create_int32(env, data->sensorAccuracy, &message),
         "napi_create_int32");
     CHKNRF(env, napi_set_named_property(env, result[1], "accuracy", message), "napi_set_named_property");
     return true;
@@ -553,20 +557,14 @@ void DeleteWork(uv_work_t *work)
     work = nullptr;
 }
 
-void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
+void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::shared_ptr<CallbackSensorData> cb)
 {
     CHKPV(asyncCallbackInfo);
-    uv_loop_s *loop(nullptr);
-    CHKCV((napi_get_uv_event_loop(asyncCallbackInfo->env, &loop) == napi_ok), "napi_get_uv_event_loop fail");
-    CHKPV(loop);
-    uv_work_t *work = new(std::nothrow) uv_work_t;
-    CHKPV(work);
+    CHKPV(cb);
     asyncCallbackInfo->IncStrongRef(nullptr);
-    work->data = asyncCallbackInfo.GetRefPtr();
-    int32_t ret = uv_queue_work_with_qos(loop, work, [] (uv_work_t *work) { }, [] (uv_work_t *work, int status) {
-        CHKPV(work);
-        sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(work->data));
-        DeleteWork(work);
+    auto event = asyncCallbackInfo.GetRefPtr();
+    auto task = [event, cb]() {
+        sptr<AsyncCallbackInfo> asyncCallbackInfo(static_cast<AsyncCallbackInfo *>(event));
         /**
          * After the asynchronous task is created, the asyncCallbackInfo reference count is reduced
          * to 0 destruction, so you need to add 1 to the asyncCallbackInfo reference count when the
@@ -593,14 +591,25 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         }
         napi_value callResult = nullptr;
         napi_value result[2] = {0};
-        if (!(g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end())) {
-            SEN_HILOGE("asyncCallbackInfo type is invalid");
-            napi_throw_error(env, nullptr, "asyncCallbackInfo type is invalid");
-            ReleaseCallback(asyncCallbackInfo);
-            napi_close_handle_scope(asyncCallbackInfo->env, scope);
-            return;
+        if (asyncCallbackInfo->type == ON_CALLBACK || asyncCallbackInfo->type == ONCE_CALLBACK ||
+            asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
+            if (!ConvertToSensorData(env, asyncCallbackInfo, result, cb)) {
+                SEN_HILOGE("ConvertToSensorData fail");
+                napi_throw_error(env, nullptr, "ConvertToSensorData fail");
+                ReleaseCallback(asyncCallbackInfo);
+                napi_close_handle_scope(asyncCallbackInfo->env, scope);
+                return;
+            }
+        } else {
+            if (!(g_convertfuncList.find(asyncCallbackInfo->type) != g_convertfuncList.end())) {
+                SEN_HILOGE("asyncCallbackInfo type is invalid");
+                napi_throw_error(env, nullptr, "asyncCallbackInfo type is invalid");
+                ReleaseCallback(asyncCallbackInfo);
+                napi_close_handle_scope(asyncCallbackInfo->env, scope);
+                return;
+            }
+            g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
         }
-        g_convertfuncList[asyncCallbackInfo->type](env, asyncCallbackInfo, result);
         if (napi_call_function(env, nullptr, callback, 1, &result[1], &callResult) != napi_ok) {
             SEN_HILOGE("napi_call_function callback fail");
             napi_throw_error(env, nullptr, "napi_call_function callback fail");
@@ -610,11 +619,12 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         }
         ReleaseCallback(asyncCallbackInfo);
         napi_close_handle_scope(asyncCallbackInfo->env, scope);
-    }, uv_qos_default);
-    if (ret != 0) {
-        SEN_HILOGE("uv_queue_work_with_qos fail");
+    };
+    auto ret = napi_send_event(asyncCallbackInfo->env, task, napi_eprio_immediate);
+    if (ret != napi_ok) {
+        SEN_HILOGE("Failed to SendEvent, ret:%{public}d", ret);
         asyncCallbackInfo->DecStrongRef(nullptr);
-        DeleteWork(work);
+        ReleaseCallback(asyncCallbackInfo);
     }
 }
 
