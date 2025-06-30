@@ -33,46 +33,16 @@ public:
         MessageOption option;
         MessageParcel dataParcel;
         MessageParcel replyParcel;
-        if (!dataParcel.WriteInterfaceToken(GetDescriptor())) {
-            SEN_HILOGE("Failed to write descriptor to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt32(info.deviceId)) {
-            SEN_HILOGE("Failed to write deviceId to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt32(info.sensorTypeId)) {
-            SEN_HILOGE("Failed to write sensorTypeId to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt32(info.sensorId)) {
-            SEN_HILOGE("Failed to write sensorId to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt32(info.location)) {
-            SEN_HILOGE("Failed to write location to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteString(info.deviceName)) {
-            SEN_HILOGE("Failed to write deviceName to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt32(info.status)) {
-            SEN_HILOGE("Failed to write status to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt32(info.reserved)) {
-            SEN_HILOGE("Failed to write reserved to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (!dataParcel.WriteInt64(info.timestamp)) {
-            SEN_HILOGE("Failed to write timestamp to parcelable");
-            return PARAMETER_ERROR;
-        }
-        if (Remote() == nullptr) {
-            SEN_HILOGE("Remote() is nullptr");
-            return ERROR;
-        }
+        CHKCR(dataParcel.WriteInterfaceToken(GetDescriptor()), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt32(info.deviceId), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt32(info.sensorTypeId), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt32(info.sensorId), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt32(info.location), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteString(info.deviceName), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt32(info.status), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt32(info.reserved), PARAMETER_ERROR);
+        CHKCR(dataParcel.WriteInt64(info.timestamp), PARAMETER_ERROR);
+        CHKPR(Remote(), ERROR);
         int error = Remote()->SendRequest(PROCESS_PLUG_EVENT, dataParcel, replyParcel, option);
         if (error != ERR_NONE) {
             SEN_HILOGE("failed, error code is: %{public}d", error);
