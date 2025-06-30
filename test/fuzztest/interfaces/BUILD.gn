@@ -26,5 +26,7 @@ group("fuzztest") {
     "setdevicestatus_fuzzer:fuzztest",
     "suspendsensors_fuzzer:fuzztest",
     "unregister_fuzzer:fuzztest",
+    "getsensorlistbydeviceproxy_fuzzer:fuzztest",
+    "resetsensors_fuzzer:fuzztest",
   ]
 }
