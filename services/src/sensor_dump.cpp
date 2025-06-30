@@ -225,7 +225,7 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
         auto deviceId = channel.GetDeviceId();
         auto sensorType = channel.GetSensorType();
         auto sensorId = channel.GetSensorId();
-        if (sensorMap_.find(sensorId) == sensorMap_.end()) {
+        if (sensorMap_.find(sensorType) == sensorMap_.end()) {
             continue;
         }
         dprintf(fd,

@@ -98,7 +98,7 @@ int32_t SensorHdiConnection::ConnectHdiService()
         return GET_SENSOR_LIST_ERR;
     }
     for (const auto &sensor : sensorList_) {
-        sensorSet_.insert(sensor.GetSensorId());
+        sensorSet_.insert(sensor.GetSensorTypeId());
     }
     return ERR_OK;
 }

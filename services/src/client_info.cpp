@@ -497,8 +497,8 @@ void ClientInfo::StoreEvent(const SensorData &data)
         return;
     }
     for (size_t i = 0; i < sensors.size(); i++) {
-        if (sensors[i].GetSensorId() == storedEvent.sensorTypeId && sensors[i].GetDeviceId() == storedEvent.deviceId
-            && sensors[i].GetSensorId() == storedEvent.sensorId) {
+        if (sensors[i].GetSensorTypeId() == storedEvent.sensorTypeId &&
+            sensors[i].GetDeviceId() == storedEvent.deviceId && sensors[i].GetSensorId() == storedEvent.sensorId) {
             foundSensor = true;
             break;
         }
