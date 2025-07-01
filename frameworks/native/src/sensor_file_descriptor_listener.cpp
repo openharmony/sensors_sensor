@@ -64,6 +64,10 @@ void SensorFileDescriptorListener::ExcuteCallback(int32_t length)
 {
     int32_t eventSize = static_cast<int32_t>(sizeof(SensorData));
     int32_t num = length / eventSize;
+    if (num <= 0 || num > RECEIVE_DATA_SIZE) {
+        SEN_HILOGE("num:%{public}d is invalid", num);
+        return;
+    }
     for (int i = 0; i < num; i++) {
         SensorEvent event = {
             .sensorTypeId = receiveDataBuff_[i].sensorTypeId,
