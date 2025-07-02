@@ -577,12 +577,16 @@ ErrCode SensorService::GetSensorList(std::vector<Sensor> &sensorList)
 ErrCode SensorService::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
 {
     CALL_LOG_ENTER;
-    for (const auto& sensor : sensors_) {
-        if (sensor.GetDeviceId() == deviceId) {
-            SEN_HILOGD("Sensor found: GetDeviceId: %{public}d, deviceId: %{public}d", sensor.GetDeviceId(), deviceId);
-            singleDevSensors.push_back(sensor);
+    {
+        std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
+        for (const auto& sensor : sensors_) {
+            if (sensor.GetDeviceId() == deviceId) {
+                SEN_HILOGD("Sensor found: id is %{public}d", deviceId);
+                singleDevSensors.push_back(sensor);
+            }
         }
     }
+
     if (singleDevSensors.empty()) {
         std::vector<Sensor> sensors = GetSensorListByDevice(deviceId);
         int32_t sensorCount = static_cast<int32_t>(sensors.size());
@@ -784,6 +788,7 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
         [](const std::u16string &arg) {
         return Str16ToStr8(arg);
     });
+    std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     sensorDump.ParseCommand(fd, argList, sensors_, clientInfo_);
     return ERR_OK;
 }
