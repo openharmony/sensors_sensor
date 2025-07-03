@@ -101,7 +101,9 @@ void SensorAgentFuzzTest(const uint8_t *data, size_t size)
     SetUpTestCase();
     size_t startPos = 0;
     int32_t sensorTypeId = 0;
+    int32_t mode = 0;
     GetObject<int32_t>(sensorTypeId, data + startPos, size - startPos);
+    GetObject<int32_t>(mode, data, size);
     bool validSensorId = CheckSensorTypeId(sensorTypeId);
     if (!validSensorId) {
         sensorTypeId = SENSOR_TYPE_ID_ACCELEROMETER;
@@ -111,6 +113,7 @@ void SensorAgentFuzzTest(const uint8_t *data, size_t size)
     SubscribeSensor(sensorTypeId, &user);
     SetBatch(sensorTypeId, &user, g_samplingInterval, g_reportInterval);
     ActivateSensor(sensorTypeId, &user);
+    SetMode(sensorTypeId, &user, mode);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     DeactivateSensor(sensorTypeId, &user);
     UnsubscribeSensor(sensorTypeId, &user);

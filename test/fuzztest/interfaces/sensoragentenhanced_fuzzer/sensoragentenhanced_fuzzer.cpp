@@ -90,7 +90,9 @@ void SensorAgentEnhancedFuzzTest(const uint8_t *data, size_t size)
     SetUpTestCase();
     size_t startPos = 0;
     int32_t deviceId = 0;
+    int32_t mode = 0;
     GetObject<int32_t>(deviceId, data + startPos, size - startPos);
+    GetObject<int32_t>(mode, data, size);
 
     SensorIdentifier sensorIdentifier;
     GetObject<SensorIdentifier>(sensorIdentifier, data + startPos, size - startPos);
@@ -105,6 +107,7 @@ void SensorAgentEnhancedFuzzTest(const uint8_t *data, size_t size)
     SubscribeSensorEnhanced(sensorIdentifier, &user);
     SetBatchEnhanced(sensorIdentifier, &user, SAMPLING_INTERVAL, REPORT_INTERVAL);
     ActivateSensorEnhanced(sensorIdentifier, &user);
+    SetModeEnhanced(sensorIdentifier, &user, mode);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
 

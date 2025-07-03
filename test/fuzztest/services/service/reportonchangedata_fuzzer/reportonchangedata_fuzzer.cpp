@@ -33,6 +33,8 @@ using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
 constexpr size_t U32_AT_SIZE = 4;
+constexpr int64_t SAMPLING_INTERVAL = 200000000;
+constexpr int64_t REPORT_INTERVAL = 200000000;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 } // namespace
 
@@ -87,6 +89,10 @@ bool ReportOnChangeDataFuzzTest(const uint8_t *data, size_t size)
     int32_t location = 0;
     GetObject<int32_t>(location, data, size);
     g_service->ReportOnChangeData({deviceId, sensorType, sensorId, location});
+    int32_t pid = 0;
+    GetObject<int32_t>(pid, data, size);
+    g_service -> SensorReportEvent({deviceId, sensorType, sensorId, location},
+        SAMPLING_INTERVAL, REPORT_INTERVAL, pid);
     return true;
 }
 }  // namespace Sensors
