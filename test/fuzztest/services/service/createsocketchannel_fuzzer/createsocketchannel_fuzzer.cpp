@@ -85,6 +85,15 @@ bool CreateSocketChannelFuzzTest(const uint8_t *data, size_t size)
     GetObject<int32_t>(clientFd, data, size);
     g_service->CreateSocketChannel(g_remote, clientFd);
     g_service->OnStart();
+    SensorPlugInfo info;
+    GetObject<int32_t>(info.deviceSensorInfo.deviceId, data, size);
+    GetObject<int32_t>(info.deviceSensorInfo.sensorType, data, size);
+    GetObject<int32_t>(info.deviceSensorInfo.sensorId, data, size);
+    GetObject<int32_t>(info.deviceSensorInfo.location, data, size);
+    GetObject<std::string>(info.deviceName, data, size);
+    GetObject<int32_t>(info.status, data, size);
+    GetObject<int32_t>(info.reserved, data, size);
+    g_service->ReportPlugEventCallback(info);
     g_service->OnStop();
     g_service->ProcessDeathObserver(g_remote);
     return true;
