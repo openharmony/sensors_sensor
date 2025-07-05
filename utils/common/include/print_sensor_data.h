@@ -39,7 +39,7 @@ public:
     void RemovePrintUserInfo(const RecordSensorCallback callback);
     void PrintSensorDataLog(const std::string &name, const SensorData &data);
     void PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount);
-    void ResetClientTimes();
+    void ResetHdiTimes(int32_t sensorType);
 
 private:
     void PrintClientData(const SensorEvent &event);
@@ -50,7 +50,10 @@ private:
     struct LogPrintInfo {
         int32_t count { 0 };
         int64_t lastTime { 0 };
-        uint64_t hdiTimes { 0 };
+        int64_t hdiTimesFlag { 0 };
+        int64_t hdiTimes { 0 };
+        int64_t clientTimesFlag { 0 };
+        int64_t clientTimes { 0 };
     };
     std::mutex hdiLoginfoMutex_;
     std::mutex clientLoginfoMutex_;
@@ -64,7 +67,6 @@ private:
         {SENSOR_TYPE_ID_MAGNETIC_FIELD, info_},
     };
     std::map<RecordSensorCallback, LogPrintInfo> clientLoginfo_;
-    uint64_t clientTimes_ = 0;
 };
 } // namespace Sensors
 } // namespace OHOS

@@ -516,6 +516,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
+    PrintSensorData::GetInstance().ResetHdiTimes(sensorDesc.sensorType);
     int32_t uid = clientInfo_.GetUidByPid(pid);
     clientInfo_.DestroyCmd(uid);
     clientInfo_.ClearDataQueue(sensorDesc);
