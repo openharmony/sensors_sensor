@@ -1,0 +1,1565 @@
+/*
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@!namespace("@ohos.sensor", "sensor")
+
+@!sts_inject("""
+    static { loadLibrary("sensor_taihe_native.z") }
+""")
+
+/**
+ * Enum for obtain the type of sensor.
+ * @enum { i32 }
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+/**
+ * Enum for obtain the type of sensor.
+ * @enum { i32 }
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+enum SensorId: i32 {
+    /**
+     * Acceleration sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    /**
+     * Acceleration sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    ACCELEROMETER = 1,
+
+    /**
+     * Gyroscope sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    /**
+     * Gyroscope sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    GYROSCOPE = 2,
+
+    /**
+     * Ambient light sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    AMBIENT_LIGHT = 5,
+
+    /**
+     * Magnetic field sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    MAGNETIC_FIELD = 6,
+
+    /**
+     * Barometric pressure sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    BAROMETER = 8,
+
+    /**
+     * Hall effect sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    HALL = 10,
+
+    /**
+     * Proximity sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    PROXIMITY = 12,
+
+    /**
+     * Humidity sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    HUMIDITY = 13,
+
+    /**
+     * Color sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @systemapi
+     * @since 10
+     */
+    COLOR = 14,
+
+    /**
+     * Sar sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @systemapi
+     * @since 10
+     */
+    SAR = 15,
+
+    /**
+     * Orientation sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    /**
+     * Orientation sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    ORIENTATION = 256,
+
+    /**
+     * Gravity sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    GRAVITY = 257,
+
+    /**
+     * Linear acceleration sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    LINEAR_ACCELEROMETER = 258,
+
+    /**
+     * Rotation vector sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    ROTATION_VECTOR = 259,
+
+    /**
+     * Ambient temperature sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    AMBIENT_TEMPERATURE = 260,
+
+    /**
+     * Uncalibrated magnetic field sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    MAGNETIC_FIELD_UNCALIBRATED = 261,
+
+    /**
+     * Uncalibrated gyroscope sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    GYROSCOPE_UNCALIBRATED = 263,
+
+    /**
+     * Significant motion sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    SIGNIFICANT_MOTION = 264,
+
+    /**
+     * Pedometer detection sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    PEDOMETER_DETECTION = 265,
+
+    /**
+     * Pedometer sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    PEDOMETER = 266,
+
+    /**
+     * Heart rate sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    HEART_RATE = 278,
+
+    /**
+     * Wear detection sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    WEAR_DETECTION = 280,
+
+    /**
+     * Uncalibrated acceleration sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    ACCELEROMETER_UNCALIBRATED = 281
+}
+
+/**
+ * Enumerates the accuracy levels of data reported by a sensor.
+ * @enum { i32 }
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+enum SensorAccuracy: i32 {
+    /**
+     * The sensor data is unreliable. It is possible that the sensor does not contact with the device to measure.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    ACCURACY_UNRELIABLE = 0,
+
+    /**
+     * The sensor data is at a low accuracy level. The data must be calibrated based on the environment before being used.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    ACCURACY_LOW = 1,
+
+    /**
+     * The sensor data is at a medium accuracy level. You are advised to calibrate the data based on the environment before using it.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    ACCURACY_MEDIUM = 2,
+
+    /**
+     * The sensor data is at a high accuracy level. The data can be used directly.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    ACCURACY_HIGH = 3
+}
+
+/**
+ * The basic data structure of the sensor event.
+ * @typedef Response
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+/**
+ * The basic data structure of the sensor event.
+ * @typedef Response
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+struct Response {
+    /**
+     * The timestamp of the reported sensor data.
+     * @type { i64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * The timestamp of the reported sensor data.
+     * @type { i64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    timestamp: i64;
+
+    /**
+     * The accuracy levels of data reported by a sensor.
+     * @type { SensorAccuracy }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    accuracy: SensorAccuracy;
+}
+
+/**
+ * Acceleration sensor event data.
+ * @typedef AccelerometerResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+/**
+ * Acceleration sensor event data.
+ * @typedef AccelerometerResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+struct AccelerometerResponse {
+
+    @extends base: Response;
+
+    /**
+     * Acceleration x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Acceleration x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    x: f32;
+
+    /**
+     * Acceleration y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Acceleration y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    y: f32;
+
+    /**
+     * Acceleration z-axis component
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Acceleration z-axis component
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    z: f32;
+}
+
+/**
+ * Linear acceleration sensor event data.
+ * @typedef LinearAccelerometerResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct LinearAccelerometerResponse {
+
+    @extends base: Response;
+
+    /**
+     * Linear acceleration x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Linear acceleration y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Linear acceleration z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+}
+
+/**
+ * Acceleration uncalibrated sensor event data.
+ * @typedef AccelerometerUncalibratedResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct AccelerometerUncalibratedResponse {
+
+    @extends base: Response;
+
+    /**
+     * Acceleration uncalibrated x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Acceleration uncalibrated y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Acceleration uncalibrated z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+
+    /**
+     * Acceleration uncalibrated x-axis offset.
+     * 
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasX: f32;
+
+    /**
+     * Acceleration uncalibrated y-axis offset.
+     * 
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasY: f32;
+
+    /**
+     * Acceleration uncalibrated z-axis offset.
+     * 
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasZ: f32;
+}
+
+/**
+ * Gravity sensor event data.
+ * @typedef GravityResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct GravityResponse {
+
+    @extends base: Response;
+
+    /**
+     * Gravity x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Gravity y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Gravity z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+}
+
+/**
+ * Orientation sensor event data.
+ * @typedef OrientationResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+/**
+ * Orientation sensor event data.
+ * @typedef OrientationResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+struct OrientationResponse {
+
+    @extends base: Response;
+
+    /**
+     * The device rotates at an angle around the Z axis.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * The device rotates at an angle around the Z axis.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    alpha: f32;
+
+    /**
+     * The device rotates at an angle around the X axis.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * The device rotates at an angle around the X axis.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    beta: f32;
+
+    /**
+     * The device rotates at an angle around the Y axis.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * The device rotates at an angle around the Y axis.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    gamma: f32;
+}
+
+/**
+ * Rotation vector sensor event data.
+ * @typedef RotationVectorResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct RotationVectorResponse {
+
+    @extends base: Response;
+
+    /**
+     * Rotation vector x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Rotation vector y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Rotation vector z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+
+    /**
+     * Scalar quantity.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    w: f32;
+}
+
+/**
+ * Gyroscope sensor event data.
+ * @typedef GyroscopeResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+/**
+ * Gyroscope sensor event data.
+ * @typedef GyroscopeResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+struct GyroscopeResponse {
+
+    @extends base: Response;
+
+    /**
+     * Gyroscope x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Gyroscope x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    x: f32;
+
+    /**
+     * Gyroscope y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Gyroscope y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    y: f32;
+
+    /**
+     * Gyroscope z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Gyroscope z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    z: f32;
+}
+
+/**
+ * Gyroscope uncalibrated sensor event data.
+ * @typedef GyroscopeUncalibratedResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct GyroscopeUncalibratedResponse {
+
+    @extends base: Response;
+
+    /**
+     * Gyroscope uncalibrated x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Gyroscope uncalibrated y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Gyroscope uncalibrated z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+
+    /**
+     * Gyroscope uncalibrated x-axis offset.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasX: f32;
+
+    /**
+     * Gyroscope uncalibrated y-axis offset.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasY: f32;
+
+    /**
+     * Gyroscope uncalibrated z-axis offset.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasZ: f32;
+}
+
+/**
+ * Significant motion sensor event data.
+ * @typedef SignificantMotionResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct SignificantMotionResponse {
+
+    @extends base: Response;
+
+    /**
+     * The degree of significant motion.
+     * Whether the device has a significant motion.
+     * The value 1 means that the device has a significant motion, and 0 means the opposite.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    scalar: f32;
+}
+
+/**
+ * Proximity sensor event data.
+ * @typedef ProximityResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct ProximityResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the degree of proximity, event 0 indicates proximity, and greater than 0 indicates distance.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    distance: f32;
+}
+
+/**
+ * Light sensor event data.
+ * @typedef LightResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct LightResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates light intensity, in lux.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    intensity: f32;
+
+    /**
+     * Indicates color temperature, in kelvin.
+     * @type { ?f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 12
+     */
+    colorTemperature: Optional<f32>;
+
+    /**
+     * Indicates infrared luminance, in cd/m2.
+     * @type { ?f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 12
+     */
+    infraredLuminance: Optional<f32>;
+}
+
+/**
+ * Hall sensor event data.
+ * @typedef HallResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct HallResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates hall status, 0 indicates open, and greater than 0 indicates suction.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    status: f32;
+}
+
+/**
+ * Magnetic field sensor event data.
+ * @typedef MagneticFieldResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct MagneticFieldResponse {
+
+    @extends base: Response;
+
+    /**
+     * Magnetic field x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Magnetic field y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Magnetic field z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+}
+
+/**
+ * Magnetic field uncalibrated sensor event data.
+ * @typedef MagneticFieldUncalibratedResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct MagneticFieldUncalibratedResponse {
+
+    @extends base: Response;
+
+    /**
+     * Magnetic field uncalibrated x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Magnetic field uncalibrated y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Magnetic field uncalibrated z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+
+    /**
+     * Magnetic field uncalibrated x-axis offset.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasX: f32;
+
+    /**
+     * Magnetic field uncalibrated y-axis offset.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasY: f32;
+
+    /**
+     * Magnetic field uncalibrated z-axis offset.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    biasZ: f32;
+}
+
+/**
+ * Pedometer sensor event data.
+ * @typedef PedometerResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct PedometerResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the number of steps.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    steps: f32;
+}
+
+/**
+ * Pedometer detection sensor event data.
+ * @typedef PedometerDetectionResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct PedometerDetectionResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the pedometer detection status, 1 indicates that a walking action has occurred,
+     * and 0 indicates that no movement has occurred.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    scalar: f32;
+}
+
+/**
+ * Heart rate sensor event data.
+ * @typedef HeartRateResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct HeartRateResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the number of heart rate.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    heartRate: f32;
+}
+
+/**
+ * Barometer sensor event data.
+ * @typedef BarometerResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct BarometerResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the number of barometer, in hpa.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    pressure: f32;
+}
+
+/**
+ * Wear detection sensor event data.
+ * @typedef WearDetectionResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct WearDetectionResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the status of wear detection, 1 for wearing, 0 for wearing not.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    value: f32;
+}
+
+/**
+ * Humidity sensor event data.
+ * @typedef HumidityResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct HumidityResponse {
+
+    @extends base: Response;
+    
+    /**
+     * Indicates the number of humidity.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    humidity: f32;
+}
+
+/**
+ * Ambient temperature sensor event data.
+ * @typedef  AmbientTemperatureResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct AmbientTemperatureResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates ambient temperature, in celsius.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    temperature: f32;
+}
+
+/**
+ * Sar sensor event data.
+ * @typedef SarResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @systemapi
+ * @since 10
+ */
+struct SarResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the specific absorption rate, in W/kg.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @systemapi
+     * @since 10
+     */
+    absorptionRatio: f32;
+}
+
+/**
+ * Color sensor event data.
+ * @typedef ColorResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @systemapi
+ * @since 10
+ */
+struct ColorResponse {
+
+    @extends base: Response;
+
+    /**
+     * Indicates the intensity of light, in lux.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor      
+     * @systemapi
+     * @since 10
+     */
+    lightIntensity: f32;
+    /**
+     * Indicates the color temperature, in kelvin.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @systemapi
+     * @since 10
+     */
+    colorTemperature: f32;
+}
+
+/**
+ * Indicates the response of rotation matrix.
+ * @typedef RotationMatrixResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct RotationMatrixResponse {
+    /**
+     * rotation matrix. 
+     * @type { Array<f32> }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    rotation: Array<f32>;
+
+    /**
+     * inclination matrix. 
+     * @type { Array<f32> }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    inclination: Array<f32>;
+}
+
+/**
+ * Indicates the axis of the new coordinate system that coincides with the XY axis of the original coordinate system.
+ * @typedef CoordinatesOptions
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct CoordinatesOptions {
+    /** Indicates the axis of the new coordinate system that coincides with the X axis of the original coordinate system. 
+     * @type { i32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: i32;
+
+    /** Indicates the axis of the new coordinate system that coincides with the Y axis of the original coordinate system. 
+     * @type { i32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: i32;
+}
+
+/**
+ * Indicates geomagnetic field data.
+ * @typedef GeomagneticResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct GeomagneticResponse {
+    /**
+     * Geomagnetic x-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    x: f32;
+
+    /**
+     * Geomagnetic y-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    y: f32;
+
+    /**
+     * Geomagnetic z-axis component.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    z: f32;
+
+    /**
+     * The Angle between the earth's magnetic field lines and the horizontal plane.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    geomagneticDip: f32;
+
+    /**
+     * The Angle of magnetic north and true north on a horizontal plane.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    deflectionAngle: f32;
+
+    /**
+     * The horizontal strength of the geomagnetic field.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    levelIntensity: f32;
+
+    /**
+     * The total strength of the geomagnetic field.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    totalIntensity: f32;
+}
+
+/**
+ * Indicates sensor information.
+ * @typedef Sensor
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+struct Sensor {
+    /**
+     * Sensor name.
+     * @type { String }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    sensorName: String;
+
+    /**
+     * Sensor vendor.
+     * @type { String }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    vendorName: String;
+
+    /**
+     * Sensor firmware version.
+     * @type { String }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    firmwareVersion: String;
+
+    /**
+     * Sensor hardware version.
+     * @type { String }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    hardwareVersion: String;
+
+    /**
+     * Sensor type ID, {@code SensorType}.
+     * @type { i32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    sensorId: i32;
+
+    /**
+     * Maximum measurement range of the sensor.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    maxRange: f32;
+
+    /**
+     * Minimum sample period allowed, in ns.
+     * @type { i64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    minSamplePeriod: i64;
+
+    /**
+     * Maximum sample period allowed, in ns.
+     * @type { i64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    maxSamplePeriod: i64;
+
+    /**
+     * Sensor accuracy.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    precision: f32;
+
+    /**
+     * Sensor power.
+     * @type { f32 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 9
+     */
+    power: f32;
+}
+
+/**
+ * The sensor reporting frequency is divided into three modes.
+ * @typedef {'game' | 'ui' | 'normal'}
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+@!sts_inject("""
+    type SensorFrequency = 'game' | 'ui' | 'normal';
+""")
+
+union MapOption {
+    interval_i64: i64;
+    interval_string: String;
+}
+
+/**
+ * Subscribe to the sensor's optional parameters.
+ * @typedef Options
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+/**
+ * Subscribe to the sensor's optional parameters.
+ * @typedef Options
+ * @syscap SystemCapability.Sensors.Sensor
+ * @atomicservice
+ * @since 11
+ */
+struct Options {
+    /**
+     * Sensor event reporting event interval.
+     * @type { i64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    /**
+     * Sensor event reporting event interval.
+     * @type { MapOption }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 11
+     */
+    interval: MapOption;
+}
+
+/**
+ * Calculate rotation matrix based on gravity vector and geomagnetic vector.
+ * @param { Array<f32> } gravity - gravity Indicates the gravity vector.
+ * @param { Array<f32> } geomagnetic - geomagnetic Indicates the geomagnetic vector.
+ * @param { AsyncCallback<RotationMatrixResponse> } callback - callback rotation matrix and inclination matrix.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getRotationMatrix")
+@gen_promise("getRotationMatrix")
+function getRotationMatrixSyncGrav(gravity: Array<f32>, geomagnetic: Array<f32>): RotationMatrixResponse;
+
+/**
+ * Computes the device's orientation based on the rotation matrix.
+ * @param { Array<f32> } rotationMatrix - rotationMatrix Indicates the rotation matrix.
+ * @param { AsyncCallback<Array<f32>> } callback - callback the angle of rotation around the z, x, y axis.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getOrientation")
+@gen_promise("getOrientation")
+function getOrientationSync(rotationMatrix: Array<f32>): Array<f32>;
+
+/**
+ * Convert rotation vector to rotation matrix.
+ * @param { Array<f32> } rotationVector - rotationVector Indicates the rotation vector.
+ * @param { AsyncCallback<Array<f32>> } callback - callback rotation matrix.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getRotationMatrix")
+@gen_promise("getRotationMatrix")
+function getRotationMatrixSync(rotationVector: Array<f32>): Array<f32>;
+
+/**
+ * Obtains all sensor information on the device.
+ * @param { AsyncCallback<Array<Sensor>> } callback - callback sensor list.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getSensorList")
+@gen_promise("getSensorList")
+function getSensorListSync(): Array<Sensor>;
+
+@!sts_inject("""
+    function on(type: string, callback: (arg0 : Object) => void, options?: Options) {
+        switch(type) {
+            case "wearDetectionChange": return onWearDetection(callback as (info: WearDetectionResponse) => void, callback, options);
+            case "significantMotionChange": return onSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback, options);
+            case "rotationVectorChange": return onRotationVector(callback as (info: RotationVectorResponse) => void, callback, options);
+            case "proximityChange": return onProximity(callback as (info: ProximityResponse) => void, callback, options);
+            case "pedometerDetectionChange": return onPedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback, options);
+            case "pedometerChange": return onPedometer(callback as (info: PedometerResponse) => void, callback, options);
+            case "orientationChange": return onOrientation(callback as (info: OrientationResponse) => void, callback, options);
+            case "magneticFieldUncalibratedChange": return onMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback, options);
+            case "magneticFieldChange": return onMagneticField(callback as (info: MagneticFieldResponse) => void, callback, options);
+            case "linearAccelerometerChange": return onLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback, options);
+            case "humidityChange": return onHumidity(callback as (info: HumidityResponse) => void, callback, options);
+            case "heartRateChange": return onHeartRate(callback as (info: HeartRateResponse) => void, callback, options);
+            case "hallChange": return onHall(callback as (info: HallResponse) => void, callback, options);
+            case "gyroscopeUncalibratedChange": return onGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback, options);
+            case "gyroscopeChange": return onGyroscope(callback as (info: GyroscopeResponse) => void, callback, options);
+            case "gravityChange": return onGravity(callback as (info: GravityResponse) => void, callback, options);
+            case "barometerChange": return onBarometer(callback as (info: BarometerResponse) => void, callback, options);
+            case "ambientTemperatureChange": return onAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback, options);
+            case "ambientLightChange": return onAmbientLight(callback as (info: LightResponse) => void, callback, options);
+            case "accelerometerUncalibratedChange": return onAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback, options);
+            case "accelerometerChange": return onAccelerometer(callback as (info: AccelerometerResponse) => void, callback, options);
+            case "sarChange": return onSar(callback as (info: SarResponse) => void, callback, options);
+            case "colorChange": return onColor(callback as (info: ColorResponse) => void, callback, options);
+            default: throw new Error(`Unknown type: ${type}`);
+        }
+    }
+    function once(type: string, callback: (arg0 : Object) => void) {
+        switch(type) {
+            case "wearDetectionChange": return onceWearDetection(callback as (info: WearDetectionResponse) => void, callback);
+            case "significantMotionChange": return onceSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback);
+            case "rotationVectorChange": return onceRotationVector(callback as (info: RotationVectorResponse) => void, callback);
+            case "proximityChange": return onceProximity(callback as (info: ProximityResponse) => void, callback);
+            case "pedometerDetectionChange": return oncePedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback);
+            case "pedometerChange": return oncePedometer(callback as (info: PedometerResponse) => void, callback);
+            case "orientationChange": return onceOrientation(callback as (info: OrientationResponse) => void, callback);
+            case "magneticFieldUncalibratedChange": return onceMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback);
+            case "magneticFieldChange": return onceMagneticField(callback as (info: MagneticFieldResponse) => void, callback);
+            case "linearAccelerometerChange": return onceLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback);
+            case "humidityChange": return onceHumidity(callback as (info: HumidityResponse) => void, callback);
+            case "heartRateChange": return onceHeartRate(callback as (info: HeartRateResponse) => void, callback);
+            case "hallChange": return onceHall(callback as (info: HallResponse) => void, callback);
+            case "gyroscopeUncalibratedChange": return onceGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback);
+            case "gyroscopeChange": return onceGyroscope(callback as (info: GyroscopeResponse) => void, callback);
+            case "gravityChange": return onceGravity(callback as (info: GravityResponse) => void, callback);
+            case "barometerChange": return onceBarometer(callback as (info: BarometerResponse) => void, callback);
+            case "ambientTemperatureChange": return onceAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback);
+            case "ambientLightChange": return onceAmbientLight(callback as (info: LightResponse) => void, callback);
+            case "accelerometerUncalibratedChange": return onceAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback);
+            case "accelerometerChange": return onceAccelerometer(callback as (info: AccelerometerResponse) => void, callback);
+            default: throw new Error(`Unknown type: ${type}`);
+        }
+    }
+    function off(type: string, callback?: (arg0 : Object) => void) {
+        switch(type) {
+            case "wearDetectionChange": return offWearDetection(callback);
+            case "significantMotionChange": return offSignificantMotion(callback);
+            case "rotationVectorChange": return offRotationVector(callback);
+            case "proximityChange": return offProximity(callback);
+            case "pedometerDetectionChange": return offPedometerDetection(callback);
+            case "pedometerChange": return offPedometer(callback);
+            case "orientationChange": return offOrientation(callback);
+            case "magneticFieldUncalibratedChange": return offMagneticFieldUncalibrated(callback);
+            case "magneticFieldChange": return offMagneticField(callback);
+            case "linearAccelerometerChange": return offLinearAccelerometer(callback);
+            case "humidityChange": return offHumidity(callback);
+            case "heartRateChange": return offHeartRate(callback);
+            case "hallChange": return offHall(callback);
+            case "gyroscopeUncalibratedChange": return offGyroscopeUncalibrated(callback);
+            case "gyroscopeChange": return offGyroscope(callback);
+            case "gravityChange": return offGravity(callback);
+            case "barometerChange": return offBarometer(callback);
+            case "ambientTemperatureChange": return offAmbientTemperature(callback);
+            case "ambientLightChange": return offAmbientLight(callback);
+            case "accelerometerUncalibratedChange": return offAccelerometerUncalibrated(callback);
+            case "accelerometerChange": return offAccelerometer(callback);
+            case "sarChange": return offSar(callback);
+            case "colorChange": return offColor(callback);
+            default: throw new Error(`Unknown type: ${type}`);
+        }
+    }
+""")
+function OnWearDetection(f: (info: WearDetectionResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceWearDetection(f: (info: WearDetectionResponse) => void, opq: Opaque);
+function OffWearDetection(opq: Optional<Opaque>);
+
+function OnSignificantMotion(f: (info: SignificantMotionResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceSignificantMotion(f: (info: SignificantMotionResponse) => void, opq: Opaque);
+function OffSignificantMotion(opq: Optional<Opaque>);
+
+function OnRotationVector(f: (info: RotationVectorResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceRotationVector(f: (info: RotationVectorResponse) => void, opq: Opaque);
+function OffRotationVector(opq: Optional<Opaque>);
+
+function OnProximity(f: (info: ProximityResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceProximity(f: (info: ProximityResponse) => void, opq: Opaque);
+function OffProximity(opq: Optional<Opaque>);
+
+function OnPedometerDetection(f: (info: PedometerDetectionResponse) => void, opq: Opaque, options: Optional<Options>);
+function OncePedometerDetection(f: (info: PedometerDetectionResponse) => void, opq: Opaque);
+function OffPedometerDetection(opq: Optional<Opaque>);
+
+function OnPedometer(f: (info: PedometerResponse) => void, opq: Opaque, options: Optional<Options>);
+function OncePedometer(f: (info: PedometerResponse) => void, opq: Opaque);
+function OffPedometer(opq: Optional<Opaque>);
+
+function OnOrientation(f: (info: OrientationResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceOrientation(f: (info: OrientationResponse) => void, opq: Opaque);
+function OffOrientation(opq: Optional<Opaque>);
+
+function OnMagneticFieldUncalibrated(f: (info: MagneticFieldUncalibratedResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceMagneticFieldUncalibrated(f: (info: MagneticFieldUncalibratedResponse) => void, opq: Opaque);
+function OffMagneticFieldUncalibrated(opq: Optional<Opaque>);
+
+function OnMagneticField(f: (info: MagneticFieldResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceMagneticField(f: (info: MagneticFieldResponse) => void, opq: Opaque);
+function OffMagneticField(opq: Optional<Opaque>);
+
+function OnLinearAccelerometer(f: (info: LinearAccelerometerResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceLinearAccelerometer(f: (info: LinearAccelerometerResponse) => void, opq: Opaque);
+function OffLinearAccelerometer(opq: Optional<Opaque>);
+
+function OnHumidity(f: (info: HumidityResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceHumidity(f: (info: HumidityResponse) => void, opq: Opaque);
+function OffHumidity(opq: Optional<Opaque>);
+
+function OnHeartRate(f: (info: HeartRateResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceHeartRate(f: (info: HeartRateResponse) => void, opq: Opaque);
+function OffHeartRate(opq: Optional<Opaque>);
+
+function OnHall(f: (info: HallResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceHall(f: (info: HallResponse) => void, opq: Opaque);
+function OffHall(opq: Optional<Opaque>);
+
+function OnGyroscopeUncalibrated(f: (info: GyroscopeUncalibratedResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceGyroscopeUncalibrated(f: (info: GyroscopeUncalibratedResponse) => void, opq: Opaque);
+function OffGyroscopeUncalibrated(opq: Optional<Opaque>);
+
+function OnGyroscope(f: (info: GyroscopeResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceGyroscope(f: (info: GyroscopeResponse) => void, opq: Opaque);
+function OffGyroscope(opq: Optional<Opaque>);
+
+function OnGravity(f: (info: GravityResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceGravity(f: (info: GravityResponse) => void, opq: Opaque);
+function OffGravity(opq: Optional<Opaque>);
+
+function OnBarometer(f: (info: BarometerResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceBarometer(f: (info: BarometerResponse) => void, opq: Opaque);
+function OffBarometer(opq: Optional<Opaque>);
+
+function OnAmbientTemperature(f: (info: AmbientTemperatureResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceAmbientTemperature(f: (info: AmbientTemperatureResponse) => void, opq: Opaque);
+function OffAmbientTemperature(opq: Optional<Opaque>);
+
+function OnAmbientLight(f: (info: LightResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceAmbientLight(f: (info: LightResponse) => void, opq: Opaque);
+function OffAmbientLight(opq: Optional<Opaque>);
+
+function OnAccelerometerUncalibrated(f: (info: AccelerometerUncalibratedResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceAccelerometerUncalibrated(f: (info: AccelerometerUncalibratedResponse) => void, opq: Opaque);
+function OffAccelerometerUncalibrated(opq: Optional<Opaque>);
+
+function OnAccelerometer(f: (info: AccelerometerResponse) => void, opq: Opaque, options: Optional<Options>);
+function OnceAccelerometer(f: (info: AccelerometerResponse) => void, opq: Opaque);
+function OffAccelerometer(opq: Optional<Opaque>);
+
+function OnSar(f: (info: SarResponse) => void, opq: Opaque, options: Optional<Options>);
+function OffSar(opq: Optional<Opaque>);
+
+function OnColor(f: (info: ColorResponse) => void, opq: Opaque, options: Optional<Options>);
+function OffColor(opq: Optional<Opaque>);
