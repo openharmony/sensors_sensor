@@ -305,7 +305,6 @@ int32_t SensorAgentProxy::SubscribeSensor(const SensorDescription &sensorDesc, c
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorDesc.sensorType)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
-        PrintSensorData::GetInstance().ResetClientTimes();
     }
     SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
@@ -356,7 +355,6 @@ int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc,
     }
     if (PrintSensorData::GetInstance().IsContinuousType(sensorDesc.sensorType)) {
         PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
-        PrintSensorData::GetInstance().ResetClientTimes();
     }
     SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);

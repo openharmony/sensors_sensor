@@ -34,6 +34,8 @@ enum {
     THREE_DIMENSION = 3,
     FOUR_DIMENSION = 4,
     SEVEN_DIMENSION = 7,
+    EIGHT_DIMENSION = 8,
+    THIRTEEN_DIMENSION = 13,
     DEFAULT_DIMENSION = 16
 };
 constexpr int64_t LOG_INTERVAL = 60000000000L;
@@ -71,6 +73,7 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
     if (it == hdiLoginfo_.end()) {
         return;
     }
+    it->second.hdiTimes++;
     if (it->second.count < FIRST_PRINT_TIMES) {
         PrintHdiData(sensorData);
         if (it->second.count == FIRST_PRINT_TIMES - 1) {
@@ -78,25 +81,30 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
         }
         it->second.count++;
     } else {
-        it->second.hdiTimes++;
         if (sensorData.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintHdiData(sensorData);
             it->second.lastTime = sensorData.timestamp;
-            SEN_HILOGI("sensorType: %{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
-                std::to_string(it->second.hdiTimes).c_str());
-                it->second.hdiTimes = 0;
         }
+    }
+    if (it->second.hdiTimesFlag == 0) {
+        it->second.hdiTimesFlag = sensorData.timestamp;
+    }
+    if (sensorData.timestamp - it->second.hdiTimesFlag >= LOG_INTERVAL) {
+        SEN_HILOGI("sensorType: %{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
+            std::to_string(it->second.hdiTimes).c_str());
+        it->second.hdiTimesFlag = sensorData.timestamp;
+        it->second.hdiTimes = 0;
     }
 }
 
 void PrintSensorData::PrintHdiData(const SensorData &sensorData)
 {
     std::string str;
-    str += "deviceId: " + std::to_string(sensorData.deviceId) + ", ";
-    str += "sensorType: " + std::to_string(sensorData.sensorTypeId) + ", ";
-    str += "sensorId: " + std::to_string(sensorData.sensorId) + ", ";
-    str += "location: " + std::to_string(sensorData.location) + ", ";
-    str += "timestamp: " + std::to_string(sensorData.timestamp / LOG_FORMAT_DIVIDER) + ", ";
+    str += "deviceId:" + std::to_string(sensorData.deviceId) + ", ";
+    str += "sensorType:" + std::to_string(sensorData.sensorTypeId) + ", ";
+    str += "sensorId:" + std::to_string(sensorData.sensorId) + ", ";
+    str += "location:" + std::to_string(sensorData.location) + ", ";
+    str += "timestamp:" + std::to_string(sensorData.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
     auto data = reinterpret_cast<const float *>(sensorData.data);
     for (int32_t i = 0; i < dataDim; ++i) {
@@ -108,7 +116,7 @@ void PrintSensorData::PrintHdiData(const SensorData &sensorData)
         ++data;
     }
     str.append("\n");
-    SEN_HILOGI("SensorData: %{public}s", str.c_str());
+    SEN_HILOGI("SensorData:%{public}s", str.c_str());
 }
 
 void PrintSensorData::ProcessHdiDFX(const SensorData &sensorData)
@@ -138,10 +146,6 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
         case SENSOR_TYPE_ID_PROXIMITY:
         case SENSOR_TYPE_ID_WEAR_DETECTION:
             return ONE_DIMENSION;
-        case SENSOR_TYPE_ID_HALL_EXT:
-            return TWO_DIMENSION;
-        case SENSOR_TYPE_ID_POSTURE:
-            return SEVEN_DIMENSION;
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
         case SENSOR_TYPE_ID_AMBIENT_LIGHT1:
         case SENSOR_TYPE_ID_ACCELEROMETER:
@@ -151,6 +155,10 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
             return THREE_DIMENSION;
         case SENSOR_TYPE_ID_ROTATION_VECTOR:
             return FOUR_DIMENSION;
+        case SENSOR_TYPE_ID_HALL_EXT:
+            return EIGHT_DIMENSION;
+        case SENSOR_TYPE_ID_POSTURE:
+            return THIRTEEN_DIMENSION;
         default:
             SEN_HILOGW("Unknown sensorType:%{public}d, size:%{public}d", sensorType, DEFAULT_DIMENSION);
             return DEFAULT_DIMENSION;
@@ -174,6 +182,7 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
     if (it == clientLoginfo_.end()) {
         return;
     }
+    it->second.clientTimes++;
     if (it->second.count < FIRST_PRINT_TIMES) {
         PrintClientData(event);
         if (it->second.count == FIRST_PRINT_TIMES - 1) {
@@ -181,25 +190,30 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
         }
         it->second.count++;
     } else {
-        clientTimes_++;
         if (event.timestamp - it->second.lastTime >= LOG_INTERVAL) {
             PrintClientData(event);
             it->second.lastTime = event.timestamp;
-            SEN_HILOGI("sensorType: %{public}d, clientTimes:%{public}s", event.sensorTypeId,
-                std::to_string(clientTimes_).c_str());
-                clientTimes_ = 0;
         }
+    }
+    if (it->second.clientTimesFlag == 0) {
+        it->second.clientTimesFlag = event.timestamp;
+    }
+    if (event.timestamp - it->second.clientTimesFlag >= LOG_INTERVAL) {
+        SEN_HILOGI("sensorType:%{public}d, clientTimes:%{public}s", event.sensorTypeId,
+            std::to_string(it->second.clientTimes).c_str());
+        it->second.clientTimesFlag = event.timestamp;
+        it->second.clientTimes = 0;
     }
 }
 
 void PrintSensorData::PrintClientData(const SensorEvent &event)
 {
     std::string str;
-    str += "deviceId: " + std::to_string(event.deviceId) + ", ";
-    str += "sensorType: " + std::to_string(event.sensorTypeId) + ", ";
-    str += "sensorId: " + std::to_string(event.sensorId) + ", ";
-    str += "location: " + std::to_string(event.location) + ", ";
-    str += "timestamp: " + std::to_string(event.timestamp / LOG_FORMAT_DIVIDER) + ", ";
+    str += "deviceId:" + std::to_string(event.deviceId) + ", ";
+    str += "sensorType:" + std::to_string(event.sensorTypeId) + ", ";
+    str += "sensorId:" + std::to_string(event.sensorId) + ", ";
+    str += "location:" + std::to_string(event.location) + ", ";
+    str += "timestamp:" + std::to_string(event.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(event.sensorTypeId);
     auto data = reinterpret_cast<const float *>(event.data);
     for (int32_t i = 0; i < dataDim; ++i) {
@@ -211,7 +225,7 @@ void PrintSensorData::PrintClientData(const SensorEvent &event)
         ++data;
     }
     str.append("\n");
-    SEN_HILOGI("SensorData: %{public}s", str.c_str());
+    SEN_HILOGI("SensorData:%{public}s", str.c_str());
 }
 
 void PrintSensorData::ProcessClientDFX(const SensorEvent &event)
@@ -273,17 +287,27 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorType)
     }
     it->second.count = 0;
     it->second.lastTime = 0;
+}
+
+void PrintSensorData::ResetHdiTimes(int32_t sensorType)
+{
+    std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
+    auto it = hdiLoginfo_.find(sensorType);
+    if (it == hdiLoginfo_.end()) {
+        return;
+    }
     it->second.hdiTimes = 0;
+    it->second.hdiTimesFlag = 0;
 }
 
 void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorData &data)
 {
     std::string str;
-    str += "deviceId: " + std::to_string(data.deviceId) + ", ";
-    str += "sensorType: " + std::to_string(data.sensorTypeId) + ", ";
-    str += "sensorId: " + std::to_string(data.sensorId) + ", ";
-    str += "location: " + std::to_string(data.location) + ", ";
-    str += "timestamp: " + std::to_string(data.timestamp / LOG_FORMAT_DIVIDER) + ", ";
+    str += "deviceId:" + std::to_string(data.deviceId) + ", ";
+    str += "sensorType:" + std::to_string(data.sensorTypeId) + ", ";
+    str += "sensorId:" + std::to_string(data.sensorId) + ", ";
+    str += "location:" + std::to_string(data.location) + ", ";
+    str += "timestamp:" + std::to_string(data.timestamp / LOG_FORMAT_DIVIDER) + ", ";
     int32_t dataDim = GetDataDimension(data.sensorTypeId);
     auto tempData = reinterpret_cast<const float *>(data.data);
     for (int32_t i = 0; i < dataDim; ++i) {
@@ -295,7 +319,7 @@ void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorDa
         ++tempData;
     }
     str.append("\n");
-    SEN_HILOGI("%{public}s SensorData: %{public}s", name.c_str(), str.c_str());
+    SEN_HILOGI("%{public}s SensorData:%{public}s", name.c_str(), str.c_str());
 }
 
 void PrintSensorData::PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount)
@@ -306,11 +330,6 @@ void PrintSensorData::PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInf
     }
     SEN_HILOGI("PrintSensorInfo success, sensorIds:%{public}s, sensorInfoCount:%{public}d", combineSensorIds.c_str(),
         sensorInfoCount);
-}
-
-void PrintSensorData::ResetClientTimes()
-{
-    clientTimes_ = 0;
 }
 } // namespace Sensors
 } // namespace OHOS
