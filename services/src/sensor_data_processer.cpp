@@ -34,6 +34,10 @@ using namespace OHOS::HiviewDFX;
 
 namespace {
 const std::string SENSOR_REPORT_THREAD_NAME = "OS_SenProducer";
+const std::set<int32_t> g_noNeedMotionTransform = {
+    SENSOR_TYPE_ID_POSTURE, SENSOR_TYPE_ID_HALL, SENSOR_TYPE_ID_HALL_EXT,
+    SENSOR_TYPE_ID_PROXIMITY, SENSOR_TYPE_ID_PROXIMITY1, SENSOR_TYPE_ID_AMBIENT_LIGHT
+};
 } // namespace
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
@@ -293,7 +297,9 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
         }
         SensorData sensorData = eventsBuf.circularBuf[eventsBuf.readPos];
 #ifdef MSDP_MOTION_ENABLE
-        MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
+        if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
+            MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
+        }
 #endif // MSDP_MOTION_ENABLE
         SendEvents(channel, sensorData);
     }
