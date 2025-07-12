@@ -19,8 +19,8 @@ import { BusinessError } from '@ohos.base';
 export default namespace sensor {
     loadLibrary("sensor_ani");
 
-    export native function on(type: 'ORIENTATION', callback: Callback<OrientationResponse>, options?: Options): void;
-    export native function off(type: 'ORIENTATION', callback?: Callback<OrientationResponse>): void;
+    export native function on(type: 'orientationChange', callback: Callback<OrientationResponse>, options?: Options): void;
+    export native function off(type: 'orientationChange', callback?: Callback<OrientationResponse>): void;
     export type SensorFrequency = 'game' | 'ui' | 'normal';
     export interface Options {
         interval?: number | SensorFrequency;

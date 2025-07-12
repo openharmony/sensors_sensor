@@ -64,7 +64,7 @@ std::map<int32_t, vector<string>> g_sensorAttributeList = {
 };
 
 static std::unordered_map<std::string, int> stringToNumberMap = {
-    {"ORIENTATION", 256},
+    {"orientationChange", 256},
 };
 
 static std::map<std::string, int64_t> g_samplingPeriod = {
