@@ -866,6 +866,7 @@ void ClientInfo::SendMsgToClient(SensorPlugData info)
 
 bool ClientInfo::IsClientSubscribe()
 {
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     return !clientMap_.empty();
 }
 } // namespace Sensors
