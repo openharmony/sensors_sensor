@@ -76,7 +76,6 @@ taihe_shared_library("sensor_taihe_native") {
 generate_static_abc("sensor_abc") {
   base_url = "$taihe_generated_file_path"
   files = [
-    "$taihe_generated_file_path/@ohos.base.ets",
     "$taihe_generated_file_path/@ohos.sensor.ets",
   ]
   is_boot_abc = "True"
