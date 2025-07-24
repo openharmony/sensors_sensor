@@ -27,6 +27,7 @@
 #include "sensor_errors.h"
 #include "sensor_event_callback.h"
 #include "sensor_plug_callback.h"
+#include "sensor_xcollie.h"
 
 #undef LOG_TAG
 #define LOG_TAG "HdiConnection"
@@ -85,6 +86,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     std::vector<HdfSensorInformation> sensorInfos;
+    SensorXcollie sensorXcollie("HdiConnection:GetSensorList", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->GetAllSensorInfo(sensorInfos);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -127,6 +129,7 @@ int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    SensorXcollie sensorXcollie("HdiConnection:EnableSensor", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->Enable({sensorDesc.deviceId, sensorDesc.sensorType,
         sensorDesc.sensorId, sensorDesc.location});
     if (ret != 0) {
@@ -148,6 +151,7 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    SensorXcollie sensorXcollie("HdiConnection:DisableSensor", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->Disable({sensorDesc.deviceId, sensorDesc.sensorType,
         sensorDesc.sensorId, sensorDesc.location});
     if (ret != 0) {
@@ -167,6 +171,7 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 int32_t HdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval)
 {
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    SensorXcollie sensorXcollie("HdiConnection:SetBatch", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->SetBatch({sensorDesc.deviceId, sensorDesc.sensorType,
         sensorDesc.sensorId, sensorDesc.location}, samplingInterval, reportInterval);
     if (ret != 0) {
@@ -185,6 +190,7 @@ int32_t HdiConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode
 {
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    SensorXcollie sensorXcollie("HdiConnection:SetMode", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->SetMode({sensorDesc.deviceId, sensorDesc.sensorType,
         sensorDesc.sensorId, sensorDesc.location}, mode);
     if (ret != 0) {
@@ -203,6 +209,7 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
     CALL_LOG_ENTER;
     CHKPR(reportDataCallback, ERR_NO_INIT);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    SensorXcollie sensorXcollie("HdiConnection:RegisterDataReport", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -221,6 +228,7 @@ int32_t HdiConnection::DestroyHdiConnection()
 {
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    SensorXcollie unregisterAsyncXcollie("HdiConnection:UnregisterAsync", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->UnregisterAsync(0, g_eventCallback);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -230,6 +238,7 @@ int32_t HdiConnection::DestroyHdiConnection()
         SEN_HILOGE("UnregisterAsync is failed");
         return ret;
     }
+    SensorXcollie unRegSensorPlugCallBackXcollie("HdiConnection:UnRegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
     ret = g_sensorInterface->UnRegSensorPlugCallBack(g_plugCallback);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -251,6 +260,7 @@ int32_t HdiConnection::RegSensorPlugCallback(DevicePlugCallback cb)
     CHKPR(cb, ERR_NO_INIT);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     reportPlugDataCb_ = cb;
+    SensorXcollie sensorXcollie("HdiConnection:RegSensorPlugCallback", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
@@ -339,6 +349,7 @@ void HdiConnection::RegisterHdiDeathRecipient()
         hdiDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<HdiConnection *>(this));
         CHKPV(hdiDeathObserver_);
     }
+    SensorXcollie sensorXcollie("HdiConnection:RegisterHdiDeathRecipient", XCOLLIE_TIMEOUT_5S);
     OHOS::HDI::hdi_objcast<ISensorInterface>(g_sensorInterface)->AddDeathRecipient(hdiDeathObserver_);
 }
 
@@ -347,6 +358,7 @@ void HdiConnection::UnregisterHdiDeathRecipient()
     CALL_LOG_ENTER;
     CHKPV(g_sensorInterface);
     CHKPV(hdiDeathObserver_);
+    SensorXcollie sensorXcollie("HdiConnection:UnregisterHdiDeathRecipient", XCOLLIE_TIMEOUT_5S);
     OHOS::HDI::hdi_objcast<ISensorInterface>(g_sensorInterface)->RemoveDeathRecipient(hdiDeathObserver_);
 }
 
@@ -369,11 +381,13 @@ void HdiConnection::Reconnect()
         SEN_HILOGE("Failed to get an instance of hdi service");
         return;
     }
+    SensorXcollie registerXcollie("HdiConnection:Reconnect:Register", XCOLLIE_TIMEOUT_5S);
     ret = g_sensorInterface->Register(0, g_eventCallback);
     if (ret != 0) {
         SEN_HILOGE("Register callback fail");
         return;
     }
+    SensorXcollie regSensorPlugCallBackXcollie("HdiConnection:Reconnect:RegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
     ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
     if (ret != 0) {
         SEN_HILOGE("Register plug callback fail");
@@ -393,6 +407,7 @@ void HdiConnection::Reconnect()
                 sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId);
             continue;
         }
+        SensorXcollie setBatchXcollie("HdiConnection:Reconnect:SetBatch", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->SetBatch({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
             sensorInfo.first.sensorId, sensorInfo.first.location},
             info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
@@ -401,6 +416,7 @@ void HdiConnection::Reconnect()
                 sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
             continue;
         }
+        SensorXcollie enableXcollie("HdiConnection:Reconnect:Enable", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->Enable({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
             sensorInfo.first.sensorId, sensorInfo.first.location});
         if (ret != 0) {
@@ -415,6 +431,7 @@ int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
     CALL_LOG_ENTER;
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     std::vector<HdfSensorInformation> sensorInfos;
+    SensorXcollie sensorXcollie("HdiConnection:GetSensorListByDevice", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->GetDeviceSensorInfo(deviceId, sensorInfos);
     if (ret != 0) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
