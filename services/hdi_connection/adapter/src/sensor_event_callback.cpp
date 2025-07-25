@@ -54,6 +54,7 @@ void CreatSensorData(SensorData &sensorData, const HdfSensorEvents &event)
 
 int32_t SensorEventCallback::OnDataEvent(const HdfSensorEvents &event)
 {
+    SEN_HILOGE("Error of Sync function");
     return ERR_OK;
 }
 
