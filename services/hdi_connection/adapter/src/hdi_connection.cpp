@@ -381,16 +381,16 @@ void HdiConnection::Reconnect()
         SEN_HILOGE("Failed to get an instance of hdi service");
         return;
     }
-    SensorXcollie registerXcollie("HdiConnection:Reconnect:Register", XCOLLIE_TIMEOUT_5S);
-    ret = g_sensorInterface->Register(0, g_eventCallback);
+    SensorXcollie registerXcollie("HdiConnection:Reconnect:RegisterAsync", XCOLLIE_TIMEOUT_5S);
+    ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
     if (ret != 0) {
-        SEN_HILOGE("Register callback fail");
+        SEN_HILOGE("RegisterAsync callback fail");
         return;
     }
     SensorXcollie regSensorPlugCallBackXcollie("HdiConnection:Reconnect:RegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
     ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
     if (ret != 0) {
-        SEN_HILOGE("Register plug callback fail");
+        SEN_HILOGE("RegisterAsync plug callback fail");
         return;
     }
     std::vector<Sensor> sensorList;
