@@ -41,7 +41,7 @@ bool GetNativeFloat(const napi_env &env, const napi_value &value, float &number)
 napi_value GetNapiInt32(const napi_env &env, int32_t number);
 bool GetStringValue(const napi_env &env, const napi_value &value, string &result);
 void EmitAsyncCallbackWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
-void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo);
+void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::shared_ptr<CallbackSensorData> cb);
 void EmitPromiseWork(sptr<AsyncCallbackInfo> asyncCallbackInfo);
 bool ConvertToFailData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
 bool ConvertToGeomagneticData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2]);
