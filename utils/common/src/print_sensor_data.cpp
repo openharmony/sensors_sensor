@@ -43,20 +43,22 @@ constexpr int32_t FIRST_PRINT_TIMES = 20;
 constexpr float LOG_FORMAT_DIVIDER = 1e9f;
 
 const std::vector<int32_t> g_triggerSensorType = {
+    SENSOR_TYPE_ID_DROP_DETECTION,
+    SENSOR_TYPE_ID_HALL,
     SENSOR_TYPE_ID_HALL_EXT,
     SENSOR_TYPE_ID_PROXIMITY,
-    SENSOR_TYPE_ID_HALL,
-    SENSOR_TYPE_ID_WEAR_DETECTION,
     SENSOR_TYPE_ID_PROXIMITY1,
+    SENSOR_TYPE_ID_WEAR_DETECTION,
 };
 const std::vector<int32_t> g_continuousSensorType = {
     SENSOR_TYPE_ID_ACCELEROMETER,
-    SENSOR_TYPE_ID_POSTURE,
     SENSOR_TYPE_ID_AMBIENT_LIGHT,
     SENSOR_TYPE_ID_AMBIENT_LIGHT1,
+    SENSOR_TYPE_ID_GRAVITY,
     SENSOR_TYPE_ID_GYROSCOPE,
     SENSOR_TYPE_ID_MAGNETIC_FIELD,
     SENSOR_TYPE_ID_ORIENTATION,
+    SENSOR_TYPE_ID_POSTURE,
     SENSOR_TYPE_ID_ROTATION_VECTOR,
 };
 }
@@ -90,7 +92,7 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
         it->second.hdiTimesFlag = sensorData.timestamp;
     }
     if (sensorData.timestamp - it->second.hdiTimesFlag >= LOG_INTERVAL) {
-        SEN_HILOGI("sensorType: %{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
+        SEN_HILOGI("sensorType:%{public}d, hdiTimes:%{public}s", sensorData.sensorTypeId,
             std::to_string(it->second.hdiTimes).c_str());
         it->second.hdiTimesFlag = sensorData.timestamp;
         it->second.hdiTimes = 0;
@@ -142,6 +144,7 @@ void PrintSensorData::ProcessHdiDFX(const SensorData &sensorData)
 int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
 {
     switch (sensorType) {
+        case SENSOR_TYPE_ID_DROP_DETECTION:
         case SENSOR_TYPE_ID_HALL:
         case SENSOR_TYPE_ID_PROXIMITY:
         case SENSOR_TYPE_ID_WEAR_DETECTION:
@@ -149,6 +152,7 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
         case SENSOR_TYPE_ID_AMBIENT_LIGHT:
         case SENSOR_TYPE_ID_AMBIENT_LIGHT1:
         case SENSOR_TYPE_ID_ACCELEROMETER:
+        case SENSOR_TYPE_ID_GRAVITY:
         case SENSOR_TYPE_ID_GYROSCOPE:
         case SENSOR_TYPE_ID_MAGNETIC_FIELD:
         case SENSOR_TYPE_ID_ORIENTATION:

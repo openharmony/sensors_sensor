@@ -60,11 +60,14 @@ private:
     LogPrintInfo info_;
     std::map<int32_t, LogPrintInfo> hdiLoginfo_ = {
         {SENSOR_TYPE_ID_ACCELEROMETER, info_},
-        {SENSOR_TYPE_ID_GYROSCOPE, info_},
-        {SENSOR_TYPE_ID_POSTURE, info_},
         {SENSOR_TYPE_ID_AMBIENT_LIGHT, info_},
         {SENSOR_TYPE_ID_AMBIENT_LIGHT1, info_},
+        {SENSOR_TYPE_ID_GRAVITY, info_},
+        {SENSOR_TYPE_ID_GYROSCOPE, info_},
         {SENSOR_TYPE_ID_MAGNETIC_FIELD, info_},
+        {SENSOR_TYPE_ID_ORIENTATION, info_},
+        {SENSOR_TYPE_ID_POSTURE, info_},
+        {SENSOR_TYPE_ID_ROTATION_VECTOR, info_},
     };
     std::map<RecordSensorCallback, LogPrintInfo> clientLoginfo_;
 };
