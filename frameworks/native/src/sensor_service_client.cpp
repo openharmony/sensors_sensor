@@ -262,7 +262,7 @@ int32_t SensorServiceClient::GetLocalDeviceId(int32_t& deviceId)
     }
     for (const auto& sensor : sensorList_) {
         if (sensor.GetLocation() == 1) {
-            SEN_HILOGI("local deviceId is:%{public}d", sensor.GetDeviceId());
+            SEN_HILOGD("local deviceId is:%{public}d", sensor.GetDeviceId());
             deviceId = sensor.GetDeviceId();
             return ERR_OK;
         }
