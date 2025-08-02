@@ -45,6 +45,7 @@ sptr<ISensorCallback> g_eventCallback = nullptr;
 sptr<ISensorPlugCallback> g_plugCallback = nullptr;
 std::map<SensorDescription, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
+std::mutex g_sensorInterfaceMutex;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
 constexpr uint32_t WAIT_MS = 200;
 constexpr int32_t HEADPOSTURE_FIFO_COUNT = 5;
@@ -59,6 +60,7 @@ int32_t HdiConnection::ConnectHdi()
     CALL_LOG_ENTER;
     int32_t retry = 0;
     while (retry < GET_HDI_SERVICE_COUNT) {
+        std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
         g_sensorInterface = ISensorInterface::Get();
         if (g_sensorInterface != nullptr) {
             SEN_HILOGI("Connect v3_0 hdi success");
@@ -84,6 +86,7 @@ int32_t HdiConnection::ConnectHdi()
 int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     std::vector<HdfSensorInformation> sensorInfos;
     SensorXcollie sensorXcollie("HdiConnection:GetSensorList", XCOLLIE_TIMEOUT_5S);
@@ -128,6 +131,7 @@ int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:EnableSensor", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->Enable({sensorDesc.deviceId, sensorDesc.sensorType,
@@ -150,6 +154,7 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
     SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:DisableSensor", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->Disable({sensorDesc.deviceId, sensorDesc.sensorType,
@@ -170,6 +175,7 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 
 int32_t HdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval)
 {
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:SetBatch", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->SetBatch({sensorDesc.deviceId, sensorDesc.sensorType,
@@ -189,6 +195,7 @@ int32_t HdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t sam
 int32_t HdiConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:SetMode", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->SetMode({sensorDesc.deviceId, sensorDesc.sensorType,
@@ -208,6 +215,7 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
 {
     CALL_LOG_ENTER;
     CHKPR(reportDataCallback, ERR_NO_INIT);
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:RegisterDataReport", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
@@ -227,6 +235,7 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
 int32_t HdiConnection::DestroyHdiConnection()
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie unregisterAsyncXcollie("HdiConnection:UnregisterAsync", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->UnregisterAsync(0, g_eventCallback);
@@ -258,6 +267,7 @@ int32_t HdiConnection::RegSensorPlugCallback(DevicePlugCallback cb)
 {
     CALL_LOG_ENTER;
     CHKPR(cb, ERR_NO_INIT);
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     reportPlugDataCb_ = cb;
     SensorXcollie sensorXcollie("HdiConnection:RegSensorPlugCallback", XCOLLIE_TIMEOUT_5S);
@@ -356,6 +366,7 @@ void HdiConnection::RegisterHdiDeathRecipient()
 void HdiConnection::UnregisterHdiDeathRecipient()
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPV(g_sensorInterface);
     CHKPV(hdiDeathObserver_);
     SensorXcollie sensorXcollie("HdiConnection:UnregisterHdiDeathRecipient", XCOLLIE_TIMEOUT_5S);
@@ -368,9 +379,41 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     sptr<IRemoteObject> hdiService = object.promote();
     CHKPV(hdiService);
     CHKPV(hdiDeathObserver_);
-    hdiService->RemoveDeathRecipient(hdiDeathObserver_);
-    g_eventCallback = nullptr;
+    {
+        std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
+        hdiService->RemoveDeathRecipient(hdiDeathObserver_);
+        g_eventCallback = nullptr;
+    }
     Reconnect();
+}
+
+void HdiConnection::ReEnableSensor()
+{
+    std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
+    for (const auto &sensorInfo: g_sensorBasicInfoMap) {
+        SensorBasicInfo info = sensorInfo.second;
+        if (!info.GetSensorState()) {
+            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d don't need enable sensor",
+                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId);
+            continue;
+        }
+        SensorXcollie setBatchXcollie("HdiConnection:Reconnect:SetBatch", XCOLLIE_TIMEOUT_5S);
+        int32_t ret = g_sensorInterface->SetBatch({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
+            sensorInfo.first.sensorId, sensorInfo.first.location},
+            info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
+        if (ret != ERR_OK) {
+            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d set batch fail, err:%{public}d",
+                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
+            continue;
+        }
+        SensorXcollie enableXcollie("HdiConnection:Reconnect:ReEnable", XCOLLIE_TIMEOUT_5S);
+        ret = g_sensorInterface->Enable({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
+            sensorInfo.first.sensorId, sensorInfo.first.location});
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Enable fail, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d, err:%{public}d",
+                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
+        }
+    }
 }
 
 void HdiConnection::Reconnect()
@@ -382,6 +425,7 @@ void HdiConnection::Reconnect()
         return;
     }
     SensorXcollie registerXcollie("HdiConnection:Reconnect:RegisterAsync", XCOLLIE_TIMEOUT_5S);
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
     if (ret != 0) {
         SEN_HILOGE("RegisterAsync callback fail");
@@ -399,36 +443,13 @@ void HdiConnection::Reconnect()
         SEN_HILOGE("Get sensor list fail");
         return;
     }
-    std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
-    for (const auto &sensorInfo: g_sensorBasicInfoMap) {
-        SensorBasicInfo info = sensorInfo.second;
-        if (info.GetSensorState() != true) {
-            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d don't need enable sensor",
-                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId);
-            continue;
-        }
-        SensorXcollie setBatchXcollie("HdiConnection:Reconnect:SetBatch", XCOLLIE_TIMEOUT_5S);
-        ret = g_sensorInterface->SetBatch({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
-            sensorInfo.first.sensorId, sensorInfo.first.location},
-            info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
-        if (ret != 0) {
-            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d set batch fail, err:%{public}d",
-                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
-            continue;
-        }
-        SensorXcollie enableXcollie("HdiConnection:Reconnect:Enable", XCOLLIE_TIMEOUT_5S);
-        ret = g_sensorInterface->Enable({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
-            sensorInfo.first.sensorId, sensorInfo.first.location});
-        if (ret != 0) {
-            SEN_HILOGE("Enable fail, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d, err:%{public}d",
-                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
-        }
-    }
+    ReEnableSensor();
 }
 
 int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Sensor> &singleDevSensors)
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     std::vector<HdfSensorInformation> sensorInfos;
     SensorXcollie sensorXcollie("HdiConnection:GetSensorListByDevice", XCOLLIE_TIMEOUT_5S);
