@@ -23,7 +23,6 @@
 #include "hitrace_meter.h"
 #endif // HIVIEWDFX_HITRACE_ENABLE
 #include "sensor_agent_proxy.h"
-#include "sensor_service_load.h"
 #include "system_ability_definition.h"
 
 #undef LOG_TAG
@@ -46,9 +45,8 @@ extern "C" {
     }
 }
 #endif // OHOS_BUILD_ENABLE_RUST
+constexpr int32_t LOADSA_TIMEOUT_MS = 10000;
 } // namespace
-
-#define SEN_SERVICE_LOAD SensorServiceLoad::GetInstance()
 
 SensorServiceClient::~SensorServiceClient()
 {
@@ -60,6 +58,27 @@ SensorServiceClient::~SensorServiceClient()
     }
     DestroyClientRemoteObject();
     Disconnect();
+}
+
+int32_t SensorServiceClient::DealAfterServiceAlive()
+{
+    CALL_LOG_ENTER;
+    serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
+    CHKPR(serviceDeathObserver_, SENSOR_NATIVE_GET_SERVICE_ERR);
+    sptr<IRemoteObject> remoteObject = sensorServer_->AsObject();
+    CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
+    remoteObject->AddDeathRecipient(serviceDeathObserver_);
+    sensorList_.clear();
+    int32_t ret = sensorServer_->GetSensorList(sensorList_);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST, ret);
+    if (sensorList_.empty()) {
+        SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
+    }
+    ret = TransferClientRemoteObject();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("TransferClientRemoteObject failed, ret:%{public}d", ret);
+    }
+    return ret;
 }
 
 int32_t SensorServiceClient::InitServiceClient()
@@ -78,39 +97,55 @@ int32_t SensorServiceClient::InitServiceClient()
     if (sensorClientStub_ == nullptr) {
         sensorClientStub_ = new (std::nothrow) SensorClientStub();
     }
-    auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     CHKPR(systemAbilityManager, SENSOR_NATIVE_SAM_ERR);
-    sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID));
-    if (sensorServer_ != nullptr) {
-        SEN_HILOGD("Get service success");
-        serviceDeathObserver_ = new (std::nothrow) DeathRecipientTemplate(*const_cast<SensorServiceClient *>(this));
-        CHKPR(serviceDeathObserver_, SENSOR_NATIVE_GET_SERVICE_ERR);
-        auto remoteObject = sensorServer_->AsObject();
-        CHKPR(remoteObject, SENSOR_NATIVE_GET_SERVICE_ERR);
-        remoteObject->AddDeathRecipient(serviceDeathObserver_);
-        sensorList_.clear();
-        int32_t ret = sensorServer_->GetSensorList(sensorList_);
-        WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_GET_SENSOR_LIST, ret);
-        if (sensorList_.empty()) {
-            SEN_HILOGW("sensorList_ is empty when connecting to the service for the first time");
-        }
-        ret = TransferClientRemoteObject();
-        if (ret != ERR_OK) {
-            SEN_HILOGE("TransferClientRemoteObject failed, ret:%{public}d", ret);
-            return ret;
+    sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->CheckSystemAbility(SENSOR_SERVICE_ABILITY_ID));
+    if (sensorServer_ == nullptr) {
+        if (!LoadSensorService()) {
+            SEN_HILOGE("LoadSensorService failed");
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+            HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
+                HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE",
+                SENSOR_NATIVE_GET_SERVICE_ERR);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+            return SENSOR_NATIVE_GET_SERVICE_ERR;
         }
         return ERR_OK;
     }
-    if (SEN_SERVICE_LOAD.LoadSensorService() != ERR_OK) {
-        SEN_HILOGE("LoadSensorService failed");
+    SEN_HILOGD("Get service success");
+    int32_t ret = DealAfterServiceAlive();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("DealAfterServiceAlive failed, ret:%{public}d", ret);
     }
-    SEN_HILOGW("Get service failed");
-#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-    HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
-        HiSysEvent::EventType::FAULT, "PKG_NAME", "InitServiceClient", "ERROR_CODE", SENSOR_NATIVE_GET_SERVICE_ERR);
-#endif // HIVIEWDFX_HISYSEVENT_ENABLE
-    SEN_HILOGE("Get service failed");
-    return SENSOR_NATIVE_GET_SERVICE_ERR;
+    return ret;
+}
+
+bool SensorServiceClient::LoadSensorService()
+{
+    SEN_HILOGI("LoadSensorService in");
+    sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        SEN_HILOGE("samgr is nullptr");
+        return false;
+    }
+    auto sensorSa = samgr->LoadSystemAbility(SENSOR_SERVICE_ABILITY_ID, LOADSA_TIMEOUT_MS);
+    if (sensorSa == nullptr) {
+        SEN_HILOGE("Load sensor sa failed");
+        return false;
+    }
+    sensorServer_ = iface_cast<ISensorService>(sensorSa);
+    if (sensorServer_ == nullptr) {
+        SEN_HILOGI("LoadSensorService out");
+        return false;
+    }
+    SEN_HILOGW("LoadSensorService success");
+    int32_t ret = DealAfterServiceAlive();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("DealAfterServiceAlive failed, ret:%{public}d", ret);
+        return false;
+    }
+    return true;
 }
 
 bool SensorServiceClient::IsValid(const SensorDescription &sensorDesc)

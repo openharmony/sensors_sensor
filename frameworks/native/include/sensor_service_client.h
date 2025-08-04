@@ -20,6 +20,7 @@
 
 #include "iservice_registry.h"
 #include "singleton.h"
+#include "system_ability_load_callback_stub.h"
 
 #include "sensor_basic_info.h"
 #include "sensor_client_stub.h"
@@ -66,6 +67,8 @@ private:
     void ReenableSensor();
     void WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret);
     void WriteHiSysIPCEventSplit(ISensorServiceIpcCode code, int32_t ret);
+    int32_t DealAfterServiceAlive();
+    bool LoadSensorService();
     std::mutex clientMutex_;
     sptr<IRemoteObject::DeathRecipient> serviceDeathObserver_ = nullptr;
     sptr<ISensorService> sensorServer_ = nullptr;
