@@ -30,6 +30,7 @@ namespace OHOS {
 namespace Sensors {
 namespace {
 constexpr int32_t STRING_LENGTH_MAX = 64;
+constexpr int32_t RESULT_SIZE = 2;
 } // namespace
 static std::mutex g_sensorAttrListMutex;
 bool IsSameValue(const napi_env &env, const napi_value &lhs, const napi_value &rhs)
@@ -363,10 +364,11 @@ bool ConvertToSensorState(const napi_env &env, sptr<AsyncCallbackInfo> asyncCall
 }
 
 bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2],
-    std::shared_ptr<CallbackSensorData> data)
+    const int32_t resultSize, std::shared_ptr<CallbackSensorData> data)
 {
     CHKPF(asyncCallbackInfo);
     CHKPF(data);
+    CHKCF(!(resultSize < RESULT_SIZE), "result size Invalid");
     int32_t sensorTypeId = data->sensorTypeId;
     std::lock_guard<std::mutex> sensorAttrListLock(g_sensorAttrListMutex);
     CHKNCF(env, (g_sensorAttributeList.find(sensorTypeId) != g_sensorAttributeList.end()), "Invalid sensor type");
@@ -593,7 +595,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::shared_ptr<
         napi_value result[2] = {0};
         if (asyncCallbackInfo->type == ON_CALLBACK || asyncCallbackInfo->type == ONCE_CALLBACK ||
             asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
-            if (!ConvertToSensorData(env, asyncCallbackInfo, result, cb)) {
+            if (!ConvertToSensorData(env, asyncCallbackInfo, result, RESULT_SIZE, cb)) {
                 SEN_HILOGE("ConvertToSensorData fail");
                 napi_throw_error(env, nullptr, "ConvertToSensorData fail");
                 ReleaseCallback(asyncCallbackInfo);
