@@ -50,6 +50,7 @@ private:
     void RegisterHdiDeathRecipient();
     void UnregisterHdiDeathRecipient();
     void Reconnect();
+    void ReEnableSensor();
     void UpdateSensorBasicInfo(const SensorDescription &sensorDesc, int64_t samplingPeriodNs, int64_t maxReportDelayNs);
     void SetSensorBasicInfoState(const SensorDescription &sensorDesc, bool state);
     void DeleteSensorBasicInfoState(const SensorDescription &sensorDesc);
