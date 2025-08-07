@@ -58,6 +58,7 @@ const std::set<int32_t> g_systemApiSensorCall = {
 } // namespace
 
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
+std::atomic_bool SensorService::isMemoryMgrServiceActive_ = false;
 std::atomic_bool SensorService::isCritical_ = false;
 
 SensorService::SensorService()
@@ -113,6 +114,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
         Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
             PROCESS_TYPE_SA, PROCESS_STATUS_STARTED, SENSOR_SERVICE_ABILITY_ID);
+        isMemoryMgrServiceActive_ = true;
         SetCritical();
     }
 #endif // MEMMGR_ENABLE
@@ -152,6 +154,11 @@ void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::st
         isAccessTokenServiceActive_ = false;
     }
 #endif // ACCESS_TOKEN_ENABLE
+#ifdef MEMMGR_ENABLE
+    if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
+        isMemoryMgrServiceActive_ = false;
+    }
+#endif // MEMMGR_ENABLE
 }
 
 void SensorService::OnStart()
@@ -522,9 +529,9 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     clientInfo_.ClearDataQueue(sensorDesc);
     int32_t ret = sensorManager_.AfterDisableSensor(sensorDesc);
 #ifdef MEMMGR_ENABLE
-    if (!clientInfo_.IsClientSubscribe() && isCritical_) {
+    if (isMemoryMgrServiceActive_ && !clientInfo_.IsClientSubscribe() && isCritical_) {
         if (Memory::MemMgrClient::GetInstance().SetCritical(getpid(), false, SENSOR_SERVICE_ABILITY_ID) != ERR_OK) {
-            SEN_HILOGE("setCritical failed");
+            SEN_HILOGE("SetCritical failed");
             return ret;
         }
         isCritical_ = false;
@@ -1060,6 +1067,11 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo &info)
 
 void SensorService::SetCritical()
 {
+    CALL_LOG_ENTER;
+    if (!isMemoryMgrServiceActive_) {
+        SEN_HILOGE("Memory manager service is inactive");
+        return;
+    }
 #ifdef MEMMGR_ENABLE
     if (!isCritical_) {
         if (Memory::MemMgrClient::GetInstance().SetCritical(getpid(), true, SENSOR_SERVICE_ABILITY_ID) != ERR_OK) {
