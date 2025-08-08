@@ -245,7 +245,7 @@ int32_t SensorServiceClient::GetSensorListByDevice(int32_t deviceId, std::vector
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto& sensor : sensorList_) {
         if (sensor.GetDeviceId() == deviceId) {
-            SEN_HILOGD("sensor.GetDeviceId():%{public}d, deviceId:%{public}d", sensor.GetDeviceId(), deviceId);
+            SEN_HILOGD("sensor.GetDeviceId():%{public}d, deviceIndex:%{public}d", sensor.GetDeviceId(), deviceId);
             singleDevSensors.push_back(sensor);
         }
     }

@@ -292,7 +292,7 @@ static bool IsOnceSubscribed(napi_env env, SensorDescription sensorDesc, napi_va
     CALL_LOG_ENTER;
     auto iter = g_onceCallbackInfos.find(sensorDesc);
     if (iter == g_onceCallbackInfos.end()) {
-        SEN_HILOGW("Already subscribed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGW("Already subscribed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return false;
     }
@@ -414,7 +414,7 @@ static bool IsSubscribed(napi_env env, SensorDescription sensorDesc, napi_value 
     CALL_LOG_ENTER;
     auto iter = g_onCallbackInfos.find(sensorDesc);
     if (iter == g_onCallbackInfos.end()) {
-        SEN_HILOGW("No client subscribe, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGW("No client subscribe, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return false;
     }

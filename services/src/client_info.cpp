@@ -46,7 +46,7 @@ std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_
 
 bool ClientInfo::GetSensorState(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
@@ -63,7 +63,7 @@ bool ClientInfo::GetSensorState(const SensorDescription &sensorDesc)
             return true;
         }
     }
-    SEN_HILOGE("Can't find sensorInfo, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGE("Can't find sensorInfo, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return false;
 }
@@ -83,8 +83,9 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(const SensorDescription &sensorDes
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Can't find deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, location:%{public}d",
-            sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
+        SEN_HILOGE("Can't find deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d,"
+            "peripheralId:%{public}d", sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+            sensorDesc.location);
         return sensorInfo;
     }
     for (const auto &pidIt : it->second) {
@@ -108,7 +109,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(const SensorDescription &sensorDesc, in
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Can't find deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("Can't find deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return false;
     }
@@ -218,7 +219,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(const Sen
     auto clientIt = clientMap_.find(sensorDesc);
     if (clientIt == clientMap_.end()) {
         SEN_HILOGD("There is no channel belong to sensor,"
-            "deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            "deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return {};
     }
@@ -304,7 +305,7 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
 
 void ClientInfo::ClearSensorInfo(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
@@ -391,7 +392,7 @@ SensorBasicInfo ClientInfo::GetCurPidSensorInfo(const SensorDescription &sensorD
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
-        SEN_HILOGE("Can't find deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("Can't find deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return sensorInfo;
     }
@@ -462,14 +463,14 @@ int32_t ClientInfo::GetStoreEvent(const SensorDescription &sensorDesc, SensorDat
     if (storedEvent != storedEvent_.end()) {
         errno_t ret = memcpy_s(&data, sizeof(data), &storedEvent->second, sizeof(storedEvent->second));
         if (ret != EOK) {
-            SEN_HILOGE("memcpy_s failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            SEN_HILOGE("memcpy_s failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
                 sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return ret;
         }
         return ERR_OK;
     }
 
-    SEN_HILOGE("Can't get store event, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGE("Can't get store event, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return NO_STORE_EVENT;
 }

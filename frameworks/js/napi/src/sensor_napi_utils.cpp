@@ -364,7 +364,7 @@ bool ConvertToSensorState(const napi_env &env, sptr<AsyncCallbackInfo> asyncCall
 }
 
 bool ConvertToSensorData(const napi_env &env, sptr<AsyncCallbackInfo> asyncCallbackInfo, napi_value result[2],
-    const int32_t resultSize, std::shared_ptr<CallbackSensorData> data)
+    int32_t resultSize, std::shared_ptr<CallbackSensorData> data)
 {
     CHKPF(asyncCallbackInfo);
     CHKPF(data);
