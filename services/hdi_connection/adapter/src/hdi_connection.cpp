@@ -46,6 +46,7 @@ sptr<ISensorPlugCallback> g_plugCallback = nullptr;
 std::map<SensorDescription, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 std::mutex g_sensorInterfaceMutex;
+constexpr int32_t DEFAULT_GROUP_ID = 0;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
 constexpr uint32_t WAIT_MS = 200;
 constexpr int32_t HEADPOSTURE_FIFO_COUNT = 5;
@@ -239,8 +240,8 @@ int32_t HdiConnection::DestroyHdiConnection()
         std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
         CHKPR(g_sensorInterface, ERR_NO_INIT);
         SensorXcollie unregisterAsyncXcollie("HdiConnection:UnregisterAsync", XCOLLIE_TIMEOUT_5S);
-        int32_t ret = g_sensorInterface->UnregisterAsync(0, g_eventCallback);
-        if (ret != 0) {
+        int32_t ret = g_sensorInterface->UnregisterAsync(DEFAULT_GROUP_ID, g_eventCallback);
+        if (ret != ERR_OK) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
             HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
                 HiSysEvent::EventType::FAULT, "PKG_NAME", "DestroyHdiConnection", "ERROR_CODE", ret);
@@ -250,7 +251,7 @@ int32_t HdiConnection::DestroyHdiConnection()
         }
         SensorXcollie unRegSensorPlugCallBackXcollie("HdiConnection:UnRegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->UnRegSensorPlugCallBack(g_plugCallback);
-        if (ret != 0) {
+        if (ret != ERR_OK) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
             HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
                 HiSysEvent::EventType::FAULT, "PKG_NAME", "UnRegSensorPlugCallback", "ERROR_CODE", ret);
@@ -429,21 +430,21 @@ void HdiConnection::Reconnect()
     {
         std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
         SensorXcollie registerXcollie("HdiConnection:Reconnect:RegisterAsync", XCOLLIE_TIMEOUT_5S);
-        ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
-        if (ret != 0) {
+        ret = g_sensorInterface->RegisterAsync(DEFAULT_GROUP_ID, g_eventCallback);
+        if (ret != ERR_OK) {
             SEN_HILOGE("RegisterAsync callback fail");
             return;
         }
         SensorXcollie regSensorPlugCallBackXcollie("HdiConnection:Reconnect:RegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
-        if (ret != 0) {
+        if (ret != ERR_OK) {
             SEN_HILOGE("RegisterAsync plug callback fail");
             return;
         }
     }
     std::vector<Sensor> sensorList;
     ret = GetSensorList(sensorList);
-    if (ret != 0) {
+    if (ret != ERR_OK) {
         SEN_HILOGE("Get sensor list fail");
         return;
     }
