@@ -130,7 +130,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 
 int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
@@ -146,14 +146,14 @@ int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
         return ret;
     }
     SetSensorBasicInfoState(sensorDesc, true);
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return ERR_OK;
 }
 
 int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInterface(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
@@ -169,7 +169,7 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
         return ret;
     }
     DeleteSensorBasicInfoState(sensorDesc);
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return ERR_OK;
 }
@@ -328,7 +328,7 @@ void HdiConnection::UpdateSensorBasicInfo(const SensorDescription &sensorDesc, i
 
 void HdiConnection::SetSensorBasicInfoState(const SensorDescription &sensorDesc, bool state)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = g_sensorBasicInfoMap.find(sensorDesc);
@@ -337,20 +337,20 @@ void HdiConnection::SetSensorBasicInfoState(const SensorDescription &sensorDesc,
         return;
     }
     g_sensorBasicInfoMap[sensorDesc].SetSensorState(state);
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
 }
 
 void HdiConnection::DeleteSensorBasicInfoState(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = g_sensorBasicInfoMap.find(sensorDesc);
     if (it != g_sensorBasicInfoMap.end()) {
         g_sensorBasicInfoMap.erase(sensorDesc);
     }
-    SEN_HILOGI("Done,deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done,deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
 }
 
@@ -396,7 +396,7 @@ void HdiConnection::ReEnableSensor()
     for (const auto &sensorInfo: g_sensorBasicInfoMap) {
         SensorBasicInfo info = sensorInfo.second;
         if (!info.GetSensorState()) {
-            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d don't need enable sensor",
+            SEN_HILOGE("deviceIndex:%{public}d, sensortype:%{public}d, sensorId:%{public}d don't need enable sensor",
                 sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId);
             continue;
         }
@@ -405,16 +405,18 @@ void HdiConnection::ReEnableSensor()
             sensorInfo.first.sensorId, sensorInfo.first.location},
             info.GetSamplingPeriodNs(), info.GetMaxReportDelayNs());
         if (ret != ERR_OK) {
-            SEN_HILOGE("deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d set batch fail, err:%{public}d",
-                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
+            SEN_HILOGE("deviceIndex:%{public}d, sensortype:%{public}d, sensorId:%{public}d set batch fail,"
+                "err:%{public}d", sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId,
+                ret);
             continue;
         }
         SensorXcollie enableXcollie("HdiConnection:Reconnect:ReEnable", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->Enable({sensorInfo.first.deviceId, sensorInfo.first.sensorType,
             sensorInfo.first.sensorId, sensorInfo.first.location});
         if (ret != ERR_OK) {
-            SEN_HILOGE("Enable fail, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d, err:%{public}d",
-                sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId, ret);
+            SEN_HILOGE("Enable fail, deviceIndex:%{public}d, sensortype:%{public}d, sensorId:%{public}d,"
+                "err:%{public}d", sensorInfo.first.deviceId, sensorInfo.first.sensorType, sensorInfo.first.sensorId,
+                ret);
         }
     }
 }

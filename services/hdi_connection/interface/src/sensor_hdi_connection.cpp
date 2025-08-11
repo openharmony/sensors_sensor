@@ -269,7 +269,7 @@ int32_t SensorHdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGE(
-                "Enable failed in compatible, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+                "Enable failed in compatible, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
                 sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return ENABLE_SENSOR_ERR;
         }
@@ -282,7 +282,7 @@ int32_t SensorHdiConnection::EnableSensor(const SensorDescription &sensorDesc)
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
-        SEN_HILOGI("Enable failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGI("Enable failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ENABLE_SENSOR_ERR;
     }
@@ -304,7 +304,7 @@ int32_t SensorHdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGE(
-                "Disable failed in compatible, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+                "Disable failed in compatible, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
                 sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return DISABLE_SENSOR_ERR;
         }
@@ -317,7 +317,7 @@ int32_t SensorHdiConnection::DisableSensor(const SensorDescription &sensorDesc)
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if ((ret != ERR_OK) && (ret != HDI_DISABLE_SENSOR_TIMEOUT)) {
-        SEN_HILOGI("Disable sensor failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGI("Disable sensor failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return DISABLE_SENSOR_ERR;
     }
@@ -343,7 +343,7 @@ int32_t SensorHdiConnection::SetBatch(const SensorDescription &sensorDesc, int64
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
             SEN_HILOGI(
-                "Set batch failed in compatible, deviceId:%{public}d, sensortype:%{public}d, sensorId:%{public}d",
+                "Set batch failed in compatible, deviceIndex:%{public}d, sensortype:%{public}d, sensorId:%{public}d",
                 sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return SET_SENSOR_CONFIG_ERR;
         }
@@ -356,7 +356,7 @@ int32_t SensorHdiConnection::SetBatch(const SensorDescription &sensorDesc, int64
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
-        SEN_HILOGI("Set batch failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGI("Set batch failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return SET_SENSOR_CONFIG_ERR;
     }
@@ -377,7 +377,7 @@ int32_t SensorHdiConnection::SetMode(const SensorDescription &sensorDesc, int32_
         FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
         if (ret != ERR_OK) {
-            SEN_HILOGI("Set mode failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            SEN_HILOGI("Set mode failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
                 sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return SET_SENSOR_MODE_ERR;
         }
@@ -390,7 +390,7 @@ int32_t SensorHdiConnection::SetMode(const SensorDescription &sensorDesc, int32_
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
     if (ret != ERR_OK) {
-        SEN_HILOGI("Set mode failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGI("Set mode failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return SET_SENSOR_MODE_ERR;
     }

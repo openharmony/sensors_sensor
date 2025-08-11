@@ -71,7 +71,7 @@ bool SensorManager::SetBestSensorParams(const SensorDescription &sensorDesc, int
 
 bool SensorManager::ResetBestSensorParams(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
@@ -151,7 +151,7 @@ SensorBasicInfo SensorManager::GetSensorInfo(const SensorDescription &sensorDesc
 
 bool SensorManager::IsOtherClientUsingSensor(const SensorDescription &sensorDesc, int32_t clientPid)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, clientPid:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, clientPid:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, clientPid);
     if (clientInfo_.OnlyCurPidSensorEnabled(sensorDesc, clientPid)) {
         SEN_HILOGD("Only current client using this sensor");

@@ -78,7 +78,7 @@ int32_t CompatibleConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
     int32_t ret = hdiServiceImpl_.EnableSensor(sensorDesc);
     if (ret != 0) {
-        SEN_HILOGE("Enable sensor failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("Enable sensor failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
@@ -89,7 +89,7 @@ int32_t CompatibleConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
     int32_t ret = hdiServiceImpl_.DisableSensor(sensorDesc);
     if (ret != 0) {
-        SEN_HILOGE("Disable sensor failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("Disable sensor failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
@@ -101,7 +101,7 @@ int32_t CompatibleConnection::SetBatch(const SensorDescription &sensorDesc, int6
 {
     int32_t ret = hdiServiceImpl_.SetBatch(sensorDesc, samplingInterval, reportInterval);
     if (ret != 0) {
-        SEN_HILOGE("Set batch failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("Set batch failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }
@@ -112,7 +112,7 @@ int32_t CompatibleConnection::SetMode(const SensorDescription &sensorDesc, int32
 {
     int32_t ret = hdiServiceImpl_.SetMode(sensorDesc, mode);
     if (ret != 0) {
-        SEN_HILOGI("Set mode failed, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGI("Set mode failed, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ret;
     }

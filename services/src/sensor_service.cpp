@@ -349,7 +349,7 @@ void SensorService::ReportOnChangeData(const SensorDescription &sensorDesc)
 ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (!sensorManager_.SaveSubscriber(sensorDesc, GetCallingPid(), samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SaveSubscriber failed");
@@ -365,7 +365,7 @@ ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64
         return SET_SENSOR_CONFIG_ERR;
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return ERR_OK;
 }
@@ -376,7 +376,7 @@ bool SensorService::CheckSensorId(const SensorDescription &sensorDesc)
     auto it = sensorMap_.find(sensorDesc);
     if (it == sensorMap_.end()) {
         SEN_HILOGE("Invalid sensorDesc,"
-            "deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, location:%{public}d",
+            "deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, peripheralId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
         return false;
     }
@@ -519,7 +519,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
             SEN_HILOGE("DisableSensor is failed");
             return DISABLE_SENSOR_ERR;
         }
-        SEN_HILOGW("DisableSensor is failed, deviceId:%{public}d, sensorType:%{public}d, sensorId:%{public}d",
+        SEN_HILOGW("DisableSensor is failed, deviceIndex:%{public}d, sensorType:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR

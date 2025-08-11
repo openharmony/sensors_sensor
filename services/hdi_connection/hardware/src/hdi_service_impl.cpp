@@ -286,7 +286,7 @@ int32_t HdiServiceImpl::DisableSensor(const SensorDescription &sensorDesc)
 {
     CALL_LOG_ENTER;
     if (std::find(g_supportSensors.begin(), g_supportSensors.end(), sensorDesc.sensorType) == g_supportSensors.end()) {
-        SEN_HILOGE("Not support disable deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("Not support disable deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ERR_NO_INIT;
     }

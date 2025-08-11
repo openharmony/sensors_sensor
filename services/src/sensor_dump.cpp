@@ -205,7 +205,7 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
             continue;
         }
         dprintf(fd,
-                "deviceId:%d | sensorType:%s |sensorId:%8u  |sensorIndex:%d  | sensorName:%s | vendorName:%s"
+                "deviceIndex:%d | sensorType:%s |sensorId:%8u  |sensorIndex:%d  | sensorName:%s | vendorName:%s"
                 "| maxRange:%f| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 ""
                 "| maxSamplePeriodNs:%" PRId64 "\n",
                 deviceId, sensorMap_[sensorTypeId].c_str(), sensorTypeId, sensorId, sensor.GetSensorName().c_str(),
@@ -229,7 +229,7 @@ bool SensorDump::DumpSensorChannel(int32_t fd, ClientInfo &clientInfo)
             continue;
         }
         dprintf(fd,
-                "uid:%d | packageName:%s | deviceId:%d | sensorType:%s |sensorId:%8u |sensorIndex:%d "
+                "uid:%d | packageName:%s | deviceIndex:%d | sensorType:%s |sensorId:%8u |sensorIndex:%d "
                 "| samplingPeriodNs:%" PRId64 "| fifoCount:%u\n",
                 channel.GetUid(), channel.GetPackageName().c_str(), deviceId, sensorMap_[sensorType].c_str(),
                 sensorType, sensorId, channel.GetSamplingPeriodNs(), channel.GetFifoCount());
@@ -250,7 +250,7 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
         }
         if (clientInfo.GetSensorState({sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId(),
             sensor.GetLocation()})) {
-            dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u |sensorIndex:%d | channelSize: %lu\n",
+            dprintf(fd, "deviceIndex:%d | sensorType:%s |sensorId:%8u |sensorIndex:%d | channelSize: %lu\n",
                 deviceId, sensorMap_[sensorTypeId].c_str(), sensorTypeId, sensorId, clientInfo.GetSensorChannel({
                     sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId(), sensor.GetLocation()}).size());
         }
@@ -268,7 +268,7 @@ bool SensorDump::DumpSensorData(int32_t fd, ClientInfo &clientInfo)
         if (sensorMap_.find(sensorData.first.sensorType) == sensorMap_.end()) {
             continue;
         }
-        dprintf(fd, "deviceId:%d | sensorType:%s |sensorId:%8u :\n", sensorData.first.deviceId,
+        dprintf(fd, "deviceIndex:%d | sensorType:%s |sensorId:%8u :\n", sensorData.first.deviceId,
             sensorMap_[sensorData.first.sensorType].c_str(), sensorData.first.sensorId);
         for (uint32_t i = 0; i < MAX_DUMP_DATA_SIZE && (!sensorData.second.empty()); i++) {
             auto data = sensorData.second.front();

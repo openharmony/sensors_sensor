@@ -164,7 +164,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
 
 int32_t SensorAgentProxy::ActivateSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -173,7 +173,7 @@ int32_t SensorAgentProxy::ActivateSensor(const SensorDescription &sensorDesc, co
         return ERROR;
     }
     if (!SEN_CLIENT.IsValid(sensorDesc)) {
-        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("sensorDesc is invalid, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
@@ -200,21 +200,21 @@ int32_t SensorAgentProxy::ActivateSensor(const SensorDescription &sensorDesc, co
         }
         return ret;
     }
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return ret;
 }
 
 int32_t SensorAgentProxy::DeactivateSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, location:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, peripheralId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
     if (!(SEN_CLIENT.IsValid(sensorDesc) ||
         ((!SEN_CLIENT.IsValid(sensorDesc)) && subscribeMap_.find(sensorDesc) != subscribeMap_.end()))) {
-        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("sensorDesc is invalid, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
@@ -248,7 +248,7 @@ int32_t SensorAgentProxy::DeactivateSensor(const SensorDescription &sensorDesc, 
             return ret;
         }
     }
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return OHOS::Sensors::SUCCESS;
 }
@@ -258,7 +258,7 @@ int32_t SensorAgentProxy::SetBatch(const SensorDescription &sensorDesc, const Se
 {
     CHKPR(user, OHOS::Sensors::ERROR);
     if (!SEN_CLIENT.IsValid(sensorDesc)) {
-        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("sensorDesc is invalid, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
@@ -283,12 +283,12 @@ int32_t SensorAgentProxy::SetBatch(const SensorDescription &sensorDesc, const Se
 
 int32_t SensorAgentProxy::SubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (!SEN_CLIENT.IsValid(sensorDesc)) {
-        SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("sensorDesc is invalid, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return PARAMETER_ERROR;
     }
@@ -306,7 +306,7 @@ int32_t SensorAgentProxy::SubscribeSensor(const SensorDescription &sensorDesc, c
     if (PrintSensorData::GetInstance().IsContinuousType(sensorDesc.sensorType)) {
         PrintSensorData::GetInstance().SavePrintUserInfo(user->callback);
     }
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return OHOS::Sensors::SUCCESS;
 }
@@ -319,7 +319,7 @@ bool SensorAgentProxy::IsSubscribeMapEmpty() const
 
 int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -327,7 +327,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc,
         std::lock_guard<std::recursive_mutex> subscribeLock(subscribeMutex_);
         if (!(SEN_CLIENT.IsValid(sensorDesc) ||
             ((!SEN_CLIENT.IsValid(sensorDesc)) && unsubscribeMap_.find(sensorDesc) != unsubscribeMap_.end()))) {
-            SEN_HILOGE("sensorDesc is invalid, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+            SEN_HILOGE("sensorDesc is invalid, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
                 sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
             return PARAMETER_ERROR;
         }
@@ -356,7 +356,7 @@ int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc,
     if (PrintSensorData::GetInstance().IsContinuousType(sensorDesc.sensorType)) {
         PrintSensorData::GetInstance().RemovePrintUserInfo(user->callback);
     }
-    SEN_HILOGI("Done, deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return OHOS::Sensors::SUCCESS;
 }
@@ -366,7 +366,7 @@ int32_t SensorAgentProxy::SetMode(const SensorDescription &sensorDesc, const Sen
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
     if (!SEN_CLIENT.IsValid(sensorDesc)) {
-        SEN_HILOGE("sensorDesc is invalid,deviceId:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+        SEN_HILOGE("sensorDesc is invalid,deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
         return ERROR;
     }
@@ -544,7 +544,7 @@ bool SensorAgentProxy::FindSensorInfo(int32_t deviceId, int32_t sensorIndex, int
         if (sensorInfoCheck_.sensorInfos[i].deviceId == deviceId &&
             sensorInfoCheck_.sensorInfos[i].sensorIndex == sensorIndex &&
             sensorInfoCheck_.sensorInfos[i].sensorTypeId == sensorTypeId) {
-            SEN_HILOGI("FindSensorInfo deviceId:%{public}d, sensorTypeId:%{public}d, sensorId:%{public}d",
+            SEN_HILOGI("FindSensorInfo deviceIndex:%{public}d, sensorTypeId:%{public}d, sensorId:%{public}d",
                 deviceId, sensorTypeId, sensorIndex);
             return true;
         }
