@@ -66,6 +66,7 @@ bool OnRemoteRequestFuzzTest(const uint8_t *data, size_t size)
     SetUpTestCase();
     MessageParcel datas;
     datas.WriteInterfaceToken(SENSOR_INTERFACE_TOKEN);
+    datas.WriteBuffer(data, size);
     datas.RewindRead(0);
     MessageParcel reply;
     MessageOption option;
