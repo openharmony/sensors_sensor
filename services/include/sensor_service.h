@@ -100,6 +100,7 @@ private:
     bool IsSystemCalling();
     bool IsNeedLoadMotionLib();
     void SetCritical();
+    void LoadMotionTransform(int32_t systemAbilityId);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

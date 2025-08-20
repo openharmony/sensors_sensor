@@ -82,6 +82,18 @@ std::string GetDmsDeviceStatus()
     return OHOS::system::GetParameter("persist.dms.device.status", "0");
 }
 
+bool IsCameraCorrectionEnable()
+{
+    std::string isEnable = OHOS::system::GetParameter("const.system.sensor_correction_enable", "0");
+    int32_t correctionEnable = 0;
+    auto res = std::from_chars(isEnable.data(), isEnable.data() + isEnable.size(), correctionEnable);
+    if (res.ec != std::errc()) {
+        SEN_HILOGE("Failed to convert string %{public}s to number", isEnable.c_str());
+        return false;
+    }
+    return correctionEnable != 0;
+}
+
 bool SensorService::IsNeedLoadMotionLib()
 {
     std::string supportDevice = OHOS::system::GetParameter("const.window.foldscreen.type", DEFAULTS_FOLD_TYPE);
@@ -123,6 +135,15 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         isAccessTokenServiceActive_ = true;
     }
 #endif // ACCESS_TOKEN_ENABLE
+    /* When sensor_correction_enable is true, the motion whitelist logic is not executed */
+    if (!IsCameraCorrectionEnable()) {
+        LoadMotionTransform(systemAbilityId);
+    }
+}
+
+void SensorService::LoadMotionTransform(int32_t systemAbilityId)
+{
+    SEN_HILOGI("LoadMotionTransform systemAbilityId:%{public}d", systemAbilityId);
 #ifdef MSDP_MOTION_ENABLE
     if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
         if (!IsNeedLoadMotionLib()) {
