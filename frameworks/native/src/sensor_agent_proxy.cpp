@@ -451,7 +451,7 @@ int32_t SensorAgentProxy::ConvertSensorInfos() const
         sensorInfo->power = sensorList[i].GetPower();
         sensorInfo->minSamplePeriod = sensorList[i].GetMinSamplePeriodNs();
         sensorInfo->maxSamplePeriod = sensorList[i].GetMaxSamplePeriodNs();
-        SEN_HILOGI("deviceId %{public}d: sensorTypeId %{public}d, sensorIndex %{public}d",
+        SEN_HILOGD("deviceId %{public}d: sensorTypeId %{public}d, sensorIndex %{public}d",
             sensorInfo->deviceId, sensorInfo->sensorTypeId, sensorInfo->sensorIndex);
     }
     sensorInfoCount_ = static_cast<int32_t>(count);
