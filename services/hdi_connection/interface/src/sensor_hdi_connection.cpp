@@ -37,7 +37,7 @@ namespace {
 #ifdef BUILD_VARIANT_ENG
 constexpr float MAX_RANGE = 9999.0;
 constexpr float POWER = 20.0;
-constexpr float RESOLUTION = 0.000001;
+constexpr float RESOLITION = 0.000001;
 constexpr float MIN_SAMPLE_PERIOD_NS = 100000000;
 constexpr float MAX_SAMPLE_PERIOD_NS = 1000000000;
 const std::string VERSION_NAME = "1.0.1";
@@ -148,7 +148,7 @@ Sensor SensorHdiConnection::GenerateColorSensor()
     sensorColor.SetMaxRange(MAX_RANGE);
     sensorColor.SetSensorName("sensor_color");
     sensorColor.SetVendorName("default_color");
-    sensorColor.SetResolution(RESOLUTION);
+    sensorColor.SetResolution(RESOLITION);
     sensorColor.SetPower(POWER);
     sensorColor.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorColor.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
@@ -167,7 +167,7 @@ Sensor SensorHdiConnection::GenerateSarSensor()
     sensorSar.SetMaxRange(MAX_RANGE);
     sensorSar.SetSensorName("sensor_sar");
     sensorSar.SetVendorName("default_sar");
-    sensorSar.SetResolution(RESOLUTION);
+    sensorSar.SetResolution(RESOLITION);
     sensorSar.SetPower(POWER);
     sensorSar.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorSar.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
@@ -186,7 +186,7 @@ Sensor SensorHdiConnection::GenerateHeadPostureSensor()
     sensorHeadPosture.SetMaxRange(MAX_RANGE);
     sensorHeadPosture.SetSensorName("sensor_headPosture");
     sensorHeadPosture.SetVendorName("default_headPosture");
-    sensorHeadPosture.SetResolution(RESOLUTION);
+    sensorHeadPosture.SetResolution(RESOLITION);
     sensorHeadPosture.SetPower(POWER);
     sensorHeadPosture.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorHeadPosture.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);
@@ -205,7 +205,7 @@ Sensor SensorHdiConnection::GenerateProximitySensor()
     sensorProximity.SetMaxRange(MAX_RANGE);
     sensorProximity.SetSensorName("sensor_proximity1");
     sensorProximity.SetVendorName("default_proximity1");
-    sensorProximity.SetResolution(RESOLUTION);
+    sensorProximity.SetResolution(RESOLITION);
     sensorProximity.SetPower(POWER);
     sensorProximity.SetMinSamplePeriodNs(MIN_SAMPLE_PERIOD_NS);
     sensorProximity.SetMaxSamplePeriodNs(MAX_SAMPLE_PERIOD_NS);

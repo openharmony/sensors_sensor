@@ -12,10 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef SENSOR_CLIENT_PROXY_H
 #define SENSOR_CLIENT_PROXY_H
-
+#include <cinttypes>
 #include "iremote_proxy.h"
 
 #include "sensor_agent_type.h"

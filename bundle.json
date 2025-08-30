@@ -37,7 +37,7 @@
         "init",
         "selinux_adapter",
         "cJSON",
-	"runtime_core"
+        "runtime_core"
       ],
       "third_party": []
     },

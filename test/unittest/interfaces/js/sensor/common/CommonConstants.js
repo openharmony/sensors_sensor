@@ -43,14 +43,34 @@ export default class CommonConstants {
   static SERVICE_EXCEPTION_CODE = 14500101;
 
   /**
-   * Exception code of sensorId no support
+   * Exception code of sensor not supported
    */
-  static SENSOR_NO_SUPPORT_CODE = 14500102
+  static SENSOR_NO_SUPPORT_CODE = 14500102;
 
   /**
-   * eps
+   * Eps
    */
   static EPS = 0.01;
+
+  /**
+   * Delay time
+   */
+  static DELAY_TIME = 1000;
+
+  /**
+   * Sensor interval
+   */
+  static SENSOR_INTERVAL = 100000000;
+
+  /**
+   * Invalid sensor interval
+   */
+  static INVALID_SENSOR_INTERVAL = -1;
+
+  /**
+   * Invalid sensor id
+   */
+  static INVALID_SENSOR_ID = -1;
 
   /**
    * token id

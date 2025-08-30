@@ -59,7 +59,6 @@ __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::st
     uint32_t state, SensorData* sensorData)
 {
     if (g_handle == nullptr) {
-        SEN_HILOGD("g_handle is nullptr");
         return;
     }
     MotionTransformIfRequiredPtr func = (MotionTransformIfRequiredPtr)(dlsym(g_handle, "TransformIfRequired"));

@@ -101,9 +101,9 @@ int32_t ConversionMfcc::HandleDiscreteCosineTransform()
         SEN_HILOGE("numCoeffs_ should not be 0");
         return Sensors::ERROR;
     }
-    for (uint32_t i = 0; i < numCoeffs_; i++) {
+    for (uint32_t i = 0; i < numCoeffs_; ++i) {
         coeffs_[i] = 0;
-        for (uint32_t j = 0; j < numFilters_; j++) {
+        for (uint32_t j = 0; j < numFilters_; ++j) {
             uint32_t idx = i + (j * numCoeffs_);
             coeffs_[i] += (dctMatrix_[idx] * melBands_[j]);
         }
@@ -181,7 +181,7 @@ std::vector<double> ConversionMfcc::GetMelFilterBank() const
 {
     std::vector<double> melFilters;
     uint32_t num = numFilters_ * numBins_;
-    for (uint32_t i = 0; i < num; i++) {
+    for (uint32_t i = 0; i < num; ++i) {
         melFilters.emplace_back(melFilters_[i]);
     }
     return melFilters;
@@ -197,8 +197,8 @@ int32_t ConversionMfcc::CreateDCTCoeffs()
     double w1 = 1.0 / (sqrt(numFilters_));
     double w2 = sqrt(2.0 / numFilters_);
     // generate dct matrix
-    for (uint32_t i = 0; i < numCoeffs_; i++) {
-        for (uint32_t j = 0; j < numFilters_; j++) {
+    for (uint32_t i = 0; i < numCoeffs_; ++i) {
+        for (uint32_t j = 0; j < numFilters_; ++j) {
             uint32_t idx = i + (j * numCoeffs_);
             if (i == 0) {
                 dctMatrix_[idx] = w1 * cos(k * (i + 1) * (j + F_HALF));
@@ -223,27 +223,26 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
         fMax = sr / 2.0;
     }
     size_t nMels = static_cast<size_t>(para.nMels);
-    double fMin = para.minFreq;
     frmCount = nFft / 2;
     std::vector<double> basis(nMels * frmCount, 0.0);
     // generate mel frequencies.
+    double fMin = para.minFreq;
     double minMel = OHOS::Sensors::ConvertHtkMel(fMin);
     double maxMel = OHOS::Sensors::ConvertHtkMel(fMax);
     std::vector<double> filterHzPos(nMels + 2);
     double stepMel = (maxMel - minMel) / (nMels + 1);
     double stepHz = static_cast<double>(sr) / nFft;
-
     double nextMel = minMel;
-    for (size_t i = 0; i < (nMels + 2); i++) {
+    for (size_t i = 0; i < (nMels + 2); ++i) {
         filterHzPos[i] = OHOS::Sensors::ConvertHtkHz(nextMel);
         nextMel += stepMel;
     }
     std::vector<double> binFs(frmCount);
-    for (int32_t j = 0; j < frmCount; j++) {
+    for (int32_t j = 0; j < frmCount; ++j) {
         binFs[j] = stepHz * j;
     }
     int32_t index = 0;
-    for (size_t i = 2; i < filterHzPos.size(); i++) {
+    for (size_t i = 2; i < filterHzPos.size(); ++i) {
         double prevFreq = filterHzPos[i - 2];
         double thisFreq = filterHzPos[i - 1];
         double nextFreq = filterHzPos[i];
@@ -251,7 +250,7 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
             SEN_HILOGE("The divisor cannot be 0");
             return Sensors::ERROR;
         }
-        for (int32_t j = 0; j < frmCount; j++) {
+        for (int32_t j = 0; j < frmCount; ++j) {
             double binFreq = binFs[j];
             double lower = (binFreq - prevFreq) / (thisFreq - prevFreq);
             double upper = (nextFreq - binFreq) / (nextFreq - thisFreq);
@@ -261,11 +260,7 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
         }
     }
     melBasis = OHOS::Sensors::TransposeMatrix(nMels, basis);
-    if (melBasis.empty()) {
-        SEN_HILOGE("melBasis is empty");
-        return Sensors::ERROR;
-    }
-    return Sensors::SUCCESS;
+    return melBasis.empty() ? Sensors::ERROR : Sensors::SUCCESS;
 }
 } // namespace Sensors
 } // namespace OHOS

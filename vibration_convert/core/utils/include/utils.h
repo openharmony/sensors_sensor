@@ -55,10 +55,10 @@ enum WindowType {
     WND_TYPE_HANNING = 3,
 };
 
-enum FilterMethod{
-	LOW_RESONANT_FILTER = 1,
-	HIGH_RESONANT_FILTER = 2,
-	BAND_PASS_FILTER = 3,
+enum FilterMethod {
+    LOW_RESONANT_FILTER = 1,
+    HIGH_RESONANT_FILTER = 2,
+    BAND_PASS_FILTER = 3,
 };
 
 bool IsPowerOfTwo(uint32_t x);
@@ -180,12 +180,6 @@ template<typename T>
 inline bool IsEqual(const T& left, const T& right)
 {
     return (std::abs(left - right) <= std::numeric_limits<T>::epsilon());
-}
-
-template<typename T>
-decltype(auto) MakeSharedArray(size_t size)
-{
-    return std::shared_ptr<T>(new T[size], std::default_delete<T[]>());
 }
 
 inline double ConvertHtkMel(double frequencies)

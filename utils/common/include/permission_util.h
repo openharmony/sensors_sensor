@@ -16,6 +16,9 @@
 #ifndef PERMISSION_UTIL_H
 #define PERMISSION_UTIL_H
 
+#include <string>
+#include <unordered_map>
+
 #include "access_token.h"
 #include "singleton.h"
 

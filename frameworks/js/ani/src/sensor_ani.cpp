@@ -628,13 +628,14 @@ static int32_t RemoveCallback(ani_env *env, int32_t sensorTypeId, ani_object cal
     return callbackInfos.size();
 }
 
-static int32_t UnsubscribeSensor(int32_t sensorTypeId)
+static int32_t UnaniSubscribeSensor(int32_t sensorTypeId)
 {
     int32_t ret = DeactivateSensor(sensorTypeId, &user);
     if (ret != ERR_OK) {
         SEN_HILOGE("DeactivateSensor failed");
         return ret;
     }
+
     return UnsubscribeSensor(sensorTypeId, &user);
 }
 
@@ -671,9 +672,9 @@ static void Off([[maybe_unused]] ani_env *env, ani_string type, ani_object callb
         SEN_HILOGW("There are other client subscribe system js api as well, not need unsubscribe");
         return;
     }
-    int32_t ret = UnsubscribeSensor(sensorTypeId);
+    int32_t ret = UnaniSubscribeSensor(sensorTypeId);
     if (ret == PARAMETER_ERROR || ret == PERMISSION_DENIED) {
-        ThrowBusinessError(env, ret, "UnsubscribeSensor fail");
+        ThrowBusinessError(env, ret, "UnaniSubscribeSensor fail");
     }
     return;
 }
