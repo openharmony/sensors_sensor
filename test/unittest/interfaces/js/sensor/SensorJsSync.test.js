@@ -125,26 +125,27 @@ describe("SensorSyncTest", function () {
         try {
             let ret = sensor.getSingleSensorByDeviceSync(sensor.SensorId.ACCELEROMETER);
             console.info('getSingleSensorByDeviceSync: ' + JSON.stringify(ret));
-            if (Array.isArray(ret) && ret.length > 0) {
-                const sensorInfo = ret[0];
-                const callback = (data) => {
-                    console.info('Accelerometer data received: ' + JSON.stringify(data));
-                };
-                const sensorInfoParam = {
-                    deviceId: sensorInfo.deviceId,
-                    sensorIndex: sensorInfo.sensorIndex
-                };
-                const options = {
-                    interval: 10000000,
-                    sensorInfoParam: sensorInfoParam
-                };
-                sensor.on(sensorInfo.sensorId, callback, options);
-                sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            if (!Array.isArray(ret) || ret.length === 0) {
+                console.info('No local sensors found. Test case will return true.');
                 expect(true).assertTrue();
-            } else {
-                console.info('No local accelerometer sensor found. Test case will return true.');
-                expect(true).assertTrue();
+                done();
+                return;
             }
+            const sensorInfo = ret[0];
+            const callback = (data) => {
+                console.info('Accelerometer data received: ' + JSON.stringify(data));
+            };
+            const sensorInfoParam = {
+                deviceId: sensorInfo.deviceId,
+                sensorIndex: sensorInfo.sensorIndex
+            };
+            const options = {
+                interval: 10000000,
+                sensorInfoParam: sensorInfoParam
+            };
+            sensor.on(sensorInfo.sensorId, callback, options);
+            sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            expect(true).assertTrue();
             done();
         } catch (err) {
             console.error('getSingleSensorByDeviceSync err: ' + JSON.stringify(err));
@@ -168,26 +169,27 @@ describe("SensorSyncTest", function () {
         try {
             let ret = sensor.getSingleSensorByDeviceSync(sensor.SensorId.ACCELEROMETER, validDeviceId);
             console.info(`getSingleSensorByDeviceSync deviceId=${validDeviceId}: ` + JSON.stringify(ret));
-            if (Array.isArray(ret) && ret.length > 0) {
-                const sensorInfo = ret[0];
-                const callback = (data) => {
-                    console.info('Accelerometer data received: ' + JSON.stringify(data));
-                };
-                const sensorInfoParam = {
-                    deviceId: sensorInfo.deviceId,
-                    sensorIndex: sensorInfo.sensorIndex
-                };
-                const options = {
-                    interval: 10000000,
-                    sensorInfoParam: sensorInfoParam
-                };
-                sensor.on(sensorInfo.sensorId, callback, options);
-                sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            if (!Array.isArray(ret) || ret.length === 0) {
+                console.info('No local sensors found. Test case will return true.');
                 expect(true).assertTrue();
-            } else {
-                console.info('No local accelerometer sensor found with the given deviceId. Test case will return true.');
-                expect(true).assertTrue();
+                done();
+                return;
             }
+            const sensorInfo = ret[0];
+            const callback = (data) => {
+                console.info('Accelerometer data received: ' + JSON.stringify(data));
+            };
+            const sensorInfoParam = {
+                deviceId: sensorInfo.deviceId,
+                sensorIndex: sensorInfo.sensorIndex
+            };
+            const options = {
+                interval: 10000000,
+                sensorInfoParam: sensorInfoParam
+            };
+            sensor.on(sensorInfo.sensorId, callback, options);
+            sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            expect(true).assertTrue();
             done();
         } catch (err) {
             console.error(`getSingleSensorByDeviceSync deviceId=${validDeviceId} err: ` + JSON.stringify(err));
@@ -258,26 +260,27 @@ describe("SensorSyncTest", function () {
         try {
             let ret = sensor.getSensorListByDeviceSync();
             console.info('getSensorListByDeviceSync default device: ' + JSON.stringify(ret));
-            if (Array.isArray(ret) && ret.length > 0) {
-                const sensorInfo = ret[0];
-                const callback = (data) => {
-                    console.info('Sensor data received: ' + JSON.stringify(data));
-                };
-                const sensorInfoParam = {
-                    deviceId: sensorInfo.deviceId,
-                    sensorIndex: sensorInfo.sensorIndex
-                };
-                const options = {
-                    interval: 10000000,
-                    sensorInfoParam: sensorInfoParam
-                };
-                sensor.on(sensorInfo.sensorId, callback, options);
-                sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
-                expect(true).assertTrue();
-            } else {
+            if (!Array.isArray(ret) || ret.length === 0) {
                 console.info('No local sensors found. Test case will return true.');
                 expect(true).assertTrue();
+                done();
+                return;
             }
+            const sensorInfo = ret[0];
+            const callback = (data) => {
+                console.info('Sensor data received: ' + JSON.stringify(data));
+            };
+            const sensorInfoParam = {
+                deviceId: sensorInfo.deviceId,
+                sensorIndex: sensorInfo.sensorIndex
+            };
+            const options = {
+                interval: 10000000,
+                sensorInfoParam: sensorInfoParam
+            };
+            sensor.on(sensorInfo.sensorId, callback, options);
+            sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            expect(true).assertTrue();
             done();
         } catch (err) {
             console.error('getSensorListByDeviceSync default device err: ' + JSON.stringify(err));
@@ -301,26 +304,27 @@ describe("SensorSyncTest", function () {
         try {
             let ret = sensor.getSensorListByDeviceSync(validDeviceId);
             console.info(`getSensorListByDeviceSync deviceId=${validDeviceId}: ` + JSON.stringify(ret));
-            if (Array.isArray(ret) && ret.length > 0) {
-                const sensorInfo = ret[0];
-                const callback = (data) => {
-                    console.info(`Sensor ${sensorInfo.type} data received: ` + JSON.stringify(data));
-                };
-                const sensorInfoParam = {
-                    deviceId: sensorInfo.deviceId,
-                    sensorIndex: sensorInfo.sensorIndex
-                };
-                const options = {
-                    interval: 10000000,
-                    sensorInfoParam: sensorInfoParam
-                };
-                sensor.on(sensorInfo.sensorId, callback, options);
-                sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            if (!Array.isArray(ret) || ret.length === 0) {
+                console.info('No local sensors found. Test case will return true.');
                 expect(true).assertTrue();
-            } else {
-                console.info(`No local sensors found with deviceId=${validDeviceId}. Test case will return true.`);
-                expect(true).assertTrue();
+                done();
+                return;
             }
+            const sensorInfo = ret[0];
+            const callback = (data) => {
+                console.info(`Sensor ${sensorInfo.type} data received: ` + JSON.stringify(data));
+            };
+            const sensorInfoParam = {
+                deviceId: sensorInfo.deviceId,
+                sensorIndex: sensorInfo.sensorIndex
+            };
+            const options = {
+                interval: 10000000,
+                sensorInfoParam: sensorInfoParam
+            };
+            sensor.on(sensorInfo.sensorId, callback, options);
+            sensor.off(sensorInfo.sensorId, sensorInfoParam, callback);
+            expect(true).assertTrue();
             done();
         } catch (err) {
             console.error(`getSensorListByDeviceSync deviceId=${validDeviceId} err: ` + JSON.stringify(err));

@@ -24,16 +24,17 @@
 namespace OHOS {
 namespace Sensors {
 const unsigned int XCOLLIE_TIMEOUT_15S = 15;
+const unsigned int XCOLLIE_TIMEOUT_10S = 10;
 const unsigned int XCOLLIE_TIMEOUT_5S = 5;
 
 class SensorXcollie {
 public:
-    SensorXcollie(const std::string& tag, unsigned int timeoutSeconds = 10,
+    SensorXcollie(const std::string& tag, unsigned int timeoutSeconds = XCOLLIE_TIMEOUT_10S,
                   std::function<void(void*)> func = nullptr, void *arg = nullptr,
                   unsigned int flag = HiviewDFX::XCOLLIE_FLAG_LOG);
     ~SensorXcollie();
 private:
-    int id_;
+    std::atomic_int32_t id_;
     std::string tag_;
 };
 } // namespace Sensors

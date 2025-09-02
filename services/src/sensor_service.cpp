@@ -24,6 +24,7 @@
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
+#include "iservice_registry.h"
 #ifdef MEMMGR_ENABLE
 #include "mem_mgr_client.h"
 #endif // MEMMGR_ENABLE
@@ -499,7 +500,7 @@ ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, in
 ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_t pid)
 {
     CALL_LOG_ENTER;
-    if (!(CheckSensorId(sensorDesc) || ((!CheckSensorId(sensorDesc)) && clientInfo_.GetSensorState(sensorDesc)))) {
+    if ((!CheckSensorId(sensorDesc)) && (!clientInfo_.GetSensorState(sensorDesc))) {
         SEN_HILOGE("sensorDesc is invalid");
         return ERR_NO_INIT;
     }
@@ -529,7 +530,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     clientInfo_.ClearDataQueue(sensorDesc);
     int32_t ret = sensorManager_.AfterDisableSensor(sensorDesc);
 #ifdef MEMMGR_ENABLE
-    if (isMemoryMgrServiceActive_ && !clientInfo_.IsClientSubscribe() && isCritical_) {
+    if (isMemoryMgrServiceActive_ && !clientInfo_.IsSubscribe() && isCritical_) {
         if (Memory::MemMgrClient::GetInstance().SetCritical(getpid(), false, SENSOR_SERVICE_ABILITY_ID) != ERR_OK) {
             SEN_HILOGE("SetCritical failed");
             return ret;

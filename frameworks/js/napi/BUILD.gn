@@ -45,6 +45,7 @@ ohos_shared_library("libsensor") {
     "hilog:libhilog",
     "ipc:ipc_single",
     "napi:ace_napi",
+    "samgr:samgr_proxy",
   ]
   relative_install_dir = "module"
   part_name = "sensor"

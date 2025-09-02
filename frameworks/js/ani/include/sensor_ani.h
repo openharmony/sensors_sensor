@@ -117,15 +117,11 @@ public:
     ~AsyncCallbackInfo()
     {
         CALL_LOG_ENTER;
-        if (type != ONCE_CALLBACK) {
-            for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
-                if (callback[i] != nullptr) {
-                    SEN_HILOGD("Delete reference, i:%{public}d", i);
-                    env->GlobalReference_Delete(callback[i]);
-                    callback[i] = nullptr;
-                    env = nullptr;
-                    vm = nullptr;
-                }
+        for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
+            if (callback[i] != nullptr) {
+                SEN_HILOGD("Delete reference, i:%{public}d", i);
+                env->GlobalReference_Delete(callback[i]);
+                callback[i] = nullptr;
             }
         }
     }

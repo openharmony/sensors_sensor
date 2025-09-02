@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <cinttypes>
 #include "sensor_client_stub.h"
 
 #include "sensor_agent_proxy.h"
