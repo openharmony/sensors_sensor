@@ -171,53 +171,71 @@ std::map<int32_t, std::vector<sptr<CallbackObject>>> g_onceCallbackInfos;
 std::map<int32_t, std::vector<sptr<CallbackObject>>> g_onCallbackInfos;
 std::mutex g_sensorTaiheAttrListMutex;
 
-RotationMatrixResponse getRotationMatrixSyncGrav(array_view<float> gravity, array_view<float> geomagnetic)
+std::vector<float> transformDoubleToFloat(array_view<double> doubleArray)
+{
+    std::vector<float> floatArray;
+    for (size_t i = 0; i < doubleArray.size(); ++i) {
+        floatArray.push_back(static_cast<float>(doubleArray[i]));
+    }
+    return floatArray;
+}
+
+array<double> transformFloatToDouble(std::vector<float> floatArray)
+{
+    array<double> doubleArray = array<double>::make(floatArray.size());
+    for (size_t i = 0; i < floatArray.size(); ++i) {
+        doubleArray[i] = static_cast<double>(floatArray[i]);
+    }
+    return doubleArray;
+}
+
+RotationMatrixResponse getRotationMatrixSyncGrav(array_view<double> gravity, array_view<double> geomagnetic)
 {
     std::vector<float> rotation(THREE_DIMENSIONAL_MATRIX_LENGTH);
     std::vector<float> inclination(THREE_DIMENSIONAL_MATRIX_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    std::vector<float> gravityVector(gravity.begin(), gravity.end());
-    std::vector<float> geomagneticVector(geomagnetic.begin(), geomagnetic.end());
+    std::vector<float> gravityVector = transformDoubleToFloat(gravity);
+    std::vector<float> geomagneticVector = transformDoubleToFloat(geomagnetic);
     int32_t ret = sensorAlgorithm.CreateRotationAndInclination(gravityVector, geomagneticVector, rotation, inclination);
     ohos::sensor::RotationMatrixResponse rsp = {
-        .rotation = array<float>::make(THREE_DIMENSIONAL_MATRIX_LENGTH),
-        .inclination = array<float>::make(THREE_DIMENSIONAL_MATRIX_LENGTH),
+        .rotation = array<double>::make(THREE_DIMENSIONAL_MATRIX_LENGTH),
+        .inclination = array<double>::make(THREE_DIMENSIONAL_MATRIX_LENGTH),
     };
     if (ret != OHOS::ERR_OK) {
         taihe::set_business_error(ret, "Create rotation and inclination matrix fail");
         return rsp;
     }
     for (int32_t i = 0; i < THREE_DIMENSIONAL_MATRIX_LENGTH; ++i) {
-        rsp.rotation[i] = rotation[i];
-        rsp.inclination[i] = inclination[i];
+        rsp.rotation[i] = static_cast<double>(rotation[i]);
+        rsp.inclination[i] = static_cast<double>(inclination[i]);
     }
     return rsp;
 }
 
-array<float> getOrientationSync(array_view<float> rotationMatrix)
+array<double> getOrientationSync(array_view<double> rotationMatrix)
 {
     std::vector<float> rotationAngle(ROTATION_VECTOR_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    std::vector<float> rotationMatrixVector(rotationMatrix.begin(), rotationMatrix.end());
+    std::vector<float> rotationMatrixVector = transformDoubleToFloat(rotationMatrix);
     int32_t ret = sensorAlgorithm.GetDirection(rotationMatrixVector, rotationAngle);
     if (ret != OHOS::ERR_OK) {
         taihe::set_business_error(ret, "Get direction fail");
-        return taihe::array<float>(rotationAngle);
+        return transformFloatToDouble(rotationAngle);
     }
-    return taihe::array<float>(rotationAngle);
+    return transformFloatToDouble(rotationAngle);
 }
 
-array<float> getRotationMatrixSync(array_view<float> rotation)
+array<double> getRotationMatrixSync(array_view<double> rotation)
 {
     std::vector<float> rotationMatrix(THREE_DIMENSIONAL_MATRIX_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    std::vector<float> rotationVector(rotation.begin(), rotation.end());
+    std::vector<float> rotationVector = transformDoubleToFloat(rotation);
     int32_t ret = sensorAlgorithm.CreateRotationMatrix(rotationVector, rotationMatrix);
     if (ret != OHOS::ERR_OK) {
         taihe::set_business_error(ret, "Create rotation matrix fail");
-        return taihe::array<float>(rotationMatrix);
+        return transformFloatToDouble(rotationMatrix);
     }
-    return taihe::array<float>(rotationMatrix);
+    return transformFloatToDouble(rotationMatrix);
 }
 
 array<Sensor> getSensorListSync()
@@ -296,9 +314,9 @@ void CallBackAccelermeter(std::map<std::string, responseSensorData> data, sptr<C
     };
     AccelerometerResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
     };
     auto &func = std::get<taihe::callback<void(AccelerometerResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -320,9 +338,9 @@ void CallBackGyroscope(std::map<std::string, responseSensorData> data, sptr<Call
     };
     GyroscopeResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
     };
     auto &func = std::get<taihe::callback<void(GyroscopeResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -344,9 +362,9 @@ void CallBackAmbientLight(std::map<std::string, responseSensorData> data, sptr<C
     };
     LightResponse responseData = {
         .base = res,
-        .intensity = std::get<float>(data["intensity"]),
-        .colorTemperature = taihe::optional<float>(std::in_place_t{}, std::get<float>(data["colorTemperature"])),
-        .infraredLuminance = taihe::optional<float>(std::in_place_t{}, std::get<float>(data["infraredLuminance"])),
+        .intensity = std::get<double>(data["intensity"]),
+        .colorTemperature = taihe::optional<double>(std::in_place_t{}, std::get<double>(data["colorTemperature"])),
+        .infraredLuminance = taihe::optional<double>(std::in_place_t{}, std::get<double>(data["infraredLuminance"])),
     };
     auto &func = std::get<taihe::callback<void(LightResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -368,9 +386,9 @@ void CallBackMagneticField(std::map<std::string, responseSensorData> data, sptr<
     };
     MagneticFieldResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
     };
     auto &func = std::get<taihe::callback<void(MagneticFieldResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -392,7 +410,7 @@ void CallBackBarometer(std::map<std::string, responseSensorData> data, sptr<Call
     };
     BarometerResponse responseData = {
         .base = res,
-        .pressure = std::get<float>(data["pressure"]),
+        .pressure = std::get<double>(data["pressure"]),
     };
     auto &func = std::get<taihe::callback<void(BarometerResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -414,7 +432,7 @@ void CallBackHall(std::map<std::string, responseSensorData> data, sptr<CallbackO
     };
     HallResponse responseData = {
         .base = res,
-        .status = std::get<float>(data["status"]),
+        .status = std::get<double>(data["status"]),
     };
     auto &func = std::get<taihe::callback<void(HallResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -436,7 +454,7 @@ void CallBackProximity(std::map<std::string, responseSensorData> data, sptr<Call
     };
     ProximityResponse responseData = {
         .base = res,
-        .distance = std::get<float>(data["distance"]),
+        .distance = std::get<double>(data["distance"]),
     };
     auto &func = std::get<taihe::callback<void(ProximityResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -458,7 +476,7 @@ void CallBackHumidity(std::map<std::string, responseSensorData> data, sptr<Callb
     };
     HumidityResponse responseData = {
         .base = res,
-        .humidity = std::get<float>(data["humidity"]),
+        .humidity = std::get<double>(data["humidity"]),
     };
     auto &func = std::get<taihe::callback<void(HumidityResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -480,9 +498,9 @@ void CallBackOrientation(std::map<std::string, responseSensorData> data, sptr<Ca
     };
     OrientationResponse responseData = {
         .base = res,
-        .alpha = std::get<float>(data["alpha"]),
-        .beta = std::get<float>(data["beta"]),
-        .gamma = std::get<float>(data["gamma"]),
+        .alpha = std::get<double>(data["alpha"]),
+        .beta = std::get<double>(data["beta"]),
+        .gamma = std::get<double>(data["gamma"]),
     };
     auto &func = std::get<taihe::callback<void(OrientationResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -504,9 +522,9 @@ void CallBackGravity(std::map<std::string, responseSensorData> data, sptr<Callba
     };
     GravityResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
     };
     auto &func = std::get<taihe::callback<void(GravityResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -528,9 +546,9 @@ void CallBackLinearAcceleration(std::map<std::string, responseSensorData> data, 
     };
     LinearAccelerometerResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
     };
     auto &func = std::get<taihe::callback<void(LinearAccelerometerResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -552,10 +570,10 @@ void CallBackRotationVector(std::map<std::string, responseSensorData> data, sptr
     };
     RotationVectorResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
-        .w = std::get<float>(data["w"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
+        .w = std::get<double>(data["w"]),
     };
     auto &func = std::get<taihe::callback<void(RotationVectorResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -577,7 +595,7 @@ void CallBackAmbientTemperature(std::map<std::string, responseSensorData> data, 
     };
     AmbientTemperatureResponse responseData = {
         .base = res,
-        .temperature = std::get<float>(data["temperature"]),
+        .temperature = std::get<double>(data["temperature"]),
     };
     auto &func = std::get<taihe::callback<void(AmbientTemperatureResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -601,12 +619,12 @@ void CallBackMagneticFieldUncalibrated(std::map<std::string, responseSensorData>
     };
     MagneticFieldUncalibratedResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
-        .biasX = std::get<float>(data["biasX"]),
-        .biasY = std::get<float>(data["biasY"]),
-        .biasZ = std::get<float>(data["biasZ"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
+        .biasX = std::get<double>(data["biasX"]),
+        .biasY = std::get<double>(data["biasY"]),
+        .biasZ = std::get<double>(data["biasZ"]),
     };
     auto &func = std::get<taihe::callback<void(MagneticFieldUncalibratedResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -629,12 +647,12 @@ void CallBackGyroscopeUncalibrated(std::map<std::string, responseSensorData> dat
     };
     GyroscopeUncalibratedResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
-        .biasX = std::get<float>(data["biasX"]),
-        .biasY = std::get<float>(data["biasY"]),
-        .biasZ = std::get<float>(data["biasZ"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
+        .biasX = std::get<double>(data["biasX"]),
+        .biasY = std::get<double>(data["biasY"]),
+        .biasZ = std::get<double>(data["biasZ"]),
     };
     auto &func = std::get<taihe::callback<void(GyroscopeUncalibratedResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -656,7 +674,7 @@ void CallBackSignificantMotion(std::map<std::string, responseSensorData> data, s
     };
     SignificantMotionResponse responseData = {
         .base = res,
-        .scalar = std::get<float>(data["scalar"]),
+        .scalar = std::get<double>(data["scalar"]),
     };
     auto &func = std::get<taihe::callback<void(SignificantMotionResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -678,7 +696,7 @@ void CallBackPedometerDetection(std::map<std::string, responseSensorData> data, 
     };
     PedometerDetectionResponse responseData = {
         .base = res,
-        .scalar = std::get<float>(data["scalar"]),
+        .scalar = std::get<double>(data["scalar"]),
     };
     auto &func = std::get<taihe::callback<void(PedometerDetectionResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -700,7 +718,7 @@ void CallBackPedometer(std::map<std::string, responseSensorData> data, sptr<Call
     };
     PedometerResponse responseData = {
         .base = res,
-        .steps = std::get<float>(data["steps"]),
+        .steps = std::get<double>(data["steps"]),
     };
     auto &func = std::get<taihe::callback<void(PedometerResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -722,7 +740,7 @@ void CallBackHeartRate(std::map<std::string, responseSensorData> data, sptr<Call
     };
     HeartRateResponse responseData = {
         .base = res,
-        .heartRate = std::get<float>(data["heartRate"]),
+        .heartRate = std::get<double>(data["heartRate"]),
     };
     auto &func = std::get<taihe::callback<void(HeartRateResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -744,7 +762,7 @@ void CallBackWearDetection(std::map<std::string, responseSensorData> data, sptr<
     };
     WearDetectionResponse responseData = {
         .base = res,
-        .value = std::get<float>(data["value"]),
+        .value = std::get<double>(data["value"]),
     };
     auto &func = std::get<taihe::callback<void(WearDetectionResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -768,12 +786,12 @@ void CallBackAccelerometerUncalibrated(std::map<std::string, responseSensorData>
     };
     AccelerometerUncalibratedResponse responseData = {
         .base = res,
-        .x = std::get<float>(data["x"]),
-        .y = std::get<float>(data["y"]),
-        .z = std::get<float>(data["z"]),
-        .biasX = std::get<float>(data["biasX"]),
-        .biasY = std::get<float>(data["biasY"]),
-        .biasZ = std::get<float>(data["biasZ"]),
+        .x = std::get<double>(data["x"]),
+        .y = std::get<double>(data["y"]),
+        .z = std::get<double>(data["z"]),
+        .biasX = std::get<double>(data["biasX"]),
+        .biasY = std::get<double>(data["biasY"]),
+        .biasZ = std::get<double>(data["biasZ"]),
     };
     auto &func = std::get<taihe::callback<void(AccelerometerUncalibratedResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -795,8 +813,8 @@ void CallBackColor(std::map<std::string, responseSensorData> data, sptr<Callback
     };
     ColorResponse responseData = {
         .base = res,
-        .lightIntensity = std::get<float>(data["lightIntensity"]),
-        .colorTemperature = std::get<float>(data["colorTemperature"]),
+        .lightIntensity = std::get<double>(data["lightIntensity"]),
+        .colorTemperature = std::get<double>(data["colorTemperature"]),
     };
     auto &func = std::get<taihe::callback<void(ColorResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -818,7 +836,7 @@ void CallBackSar(std::map<std::string, responseSensorData> data, sptr<CallbackOb
     };
     SarResponse responseData = {
         .base = res,
-        .absorptionRatio = std::get<float>(data["absorptionRatio"]),
+        .absorptionRatio = std::get<double>(data["absorptionRatio"]),
     };
     auto &func = std::get<taihe::callback<void(SarResponse const &)>>(callbackObject->callback);
     func(responseData);
@@ -857,7 +875,7 @@ void CallbackSensorData(sptr<CallbackObject> callbackObject, SensorEvent *event)
     }
     std::map<std::string, responseSensorData> dataMap;
     for (size_t i = 0; i < size; ++i) {
-        dataMap.emplace(sensorAttributes[i].c_str(), static_cast<float>(dataNow[i]));
+        dataMap.emplace(sensorAttributes[i].c_str(), static_cast<double>(dataNow[i]));
     }
     dataMap.emplace("timestamp", event->timestamp);
     ohos::sensor::SensorAccuracy sensorAccuracyTemp(static_cast<ohos::sensor::SensorAccuracy::key_t>(event->option));
@@ -1142,7 +1160,7 @@ void OffCommon(int32_t sensorTypeId, optional_view<uintptr_t> opq)
     }
 }
 
-void OffWearDetection(optional_view<uintptr_t> opq)
+void OffWearDetection(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_WEAR_DETECTION, opq);
 }
@@ -1158,7 +1176,7 @@ void OnceSignificantMotion(callback_view<void(SignificantMotionResponse const &)
     OnceCommon(SENSOR_TYPE_ID_SIGNIFICANT_MOTION, f, opq);
 }
 
-void OffSignificantMotion(optional_view<uintptr_t> opq)
+void OffSignificantMotion(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_SIGNIFICANT_MOTION, opq);
 }
@@ -1174,7 +1192,7 @@ void OnceRotationVector(callback_view<void(RotationVectorResponse const &)> f, u
     OnceCommon(SENSOR_TYPE_ID_ROTATION_VECTOR, f, opq);
 }
 
-void OffRotationVector(optional_view<uintptr_t> opq)
+void OffRotationVector(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_ROTATION_VECTOR, opq);
 }
@@ -1189,7 +1207,7 @@ void OnceProximity(callback_view<void(ProximityResponse const &)> f, uintptr_t o
     OnceCommon(SENSOR_TYPE_ID_PROXIMITY, f, opq);
 }
 
-void OffProximity(optional_view<uintptr_t> opq)
+void OffProximity(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_PROXIMITY, opq);
 }
@@ -1205,7 +1223,7 @@ void OncePedometerDetection(callback_view<void(PedometerDetectionResponse const 
     OnceCommon(SENSOR_TYPE_ID_PEDOMETER_DETECTION, f, opq);
 }
 
-void OffPedometerDetection(optional_view<uintptr_t> opq)
+void OffPedometerDetection(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_PEDOMETER_DETECTION, opq);
 }
@@ -1220,7 +1238,7 @@ void OncePedometer(callback_view<void(PedometerResponse const &)> f, uintptr_t o
     OnceCommon(SENSOR_TYPE_ID_PEDOMETER, f, opq);
 }
 
-void OffPedometer(optional_view<uintptr_t> opq)
+void OffPedometer(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_PEDOMETER, opq);
 }
@@ -1235,7 +1253,7 @@ void OnceOrientation(callback_view<void(OrientationResponse const &)> f, uintptr
     OnceCommon(SENSOR_TYPE_ID_ORIENTATION, f, opq);
 }
 
-void OffOrientation(optional_view<uintptr_t> opq)
+void OffOrientation(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_ORIENTATION, opq);
 }
@@ -1251,7 +1269,7 @@ void OnceMagneticFieldUncalibrated(callback_view<void(MagneticFieldUncalibratedR
     OnceCommon(SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED, f, opq);
 }
 
-void OffMagneticFieldUncalibrated(optional_view<uintptr_t> opq)
+void OffMagneticFieldUncalibrated(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_MAGNETIC_FIELD_UNCALIBRATED, opq);
 }
@@ -1267,7 +1285,7 @@ void OnceMagneticField(callback_view<void(MagneticFieldResponse const &)> f, uin
     OnceCommon(SENSOR_TYPE_ID_MAGNETIC_FIELD, f, opq);
 }
 
-void OffMagneticField(optional_view<uintptr_t> opq)
+void OffMagneticField(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_MAGNETIC_FIELD, opq);
 }
@@ -1283,7 +1301,7 @@ void OnceLinearAccelerometer(callback_view<void(LinearAccelerometerResponse cons
     OnceCommon(SENSOR_TYPE_ID_LINEAR_ACCELERATION, f, opq);
 }
 
-void OffLinearAccelerometer(optional_view<uintptr_t> opq)
+void OffLinearAccelerometer(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_LINEAR_ACCELERATION, opq);
 }
@@ -1298,7 +1316,7 @@ void OnceHumidity(callback_view<void(HumidityResponse const &)> f, uintptr_t opq
     OnceCommon(SENSOR_TYPE_ID_HUMIDITY, f, opq);
 }
 
-void OffHumidity(optional_view<uintptr_t> opq)
+void OffHumidity(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_HUMIDITY, opq);
 }
@@ -1313,7 +1331,7 @@ void OnceHeartRate(callback_view<void(HeartRateResponse const &)> f, uintptr_t o
     OnceCommon(SENSOR_TYPE_ID_HEART_RATE, f, opq);
 }
 
-void OffHeartRate(optional_view<uintptr_t> opq)
+void OffHeartRate(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_HEART_RATE, opq);
 }
@@ -1328,7 +1346,7 @@ void OnceHall(callback_view<void(HallResponse const &)> f, uintptr_t opq)
     OnceCommon(SENSOR_TYPE_ID_HALL, f, opq);
 }
 
-void OffHall(optional_view<uintptr_t> opq)
+void OffHall(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_HALL, opq);
 }
@@ -1344,7 +1362,7 @@ void OnceGyroscopeUncalibrated(callback_view<void(GyroscopeUncalibratedResponse 
     OnceCommon(SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, f, opq);
 }
 
-void OffGyroscopeUncalibrated(optional_view<uintptr_t> opq)
+void OffGyroscopeUncalibrated(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED, opq);
 }
@@ -1359,7 +1377,7 @@ void OnceGyroscope(callback_view<void(GyroscopeResponse const &)> f, uintptr_t o
     OnceCommon(SENSOR_TYPE_ID_GYROSCOPE, f, opq);
 }
 
-void OffGyroscope(optional_view<uintptr_t> opq)
+void OffGyroscope(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_GYROSCOPE, opq);
 }
@@ -1374,7 +1392,7 @@ void OnceGravity(callback_view<void(GravityResponse const &)> f, uintptr_t opq)
     OnceCommon(SENSOR_TYPE_ID_GRAVITY, f, opq);
 }
 
-void OffGravity(optional_view<uintptr_t> opq)
+void OffGravity(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_GRAVITY, opq);
 }
@@ -1389,7 +1407,7 @@ void OnceBarometer(callback_view<void(BarometerResponse const &)> f, uintptr_t o
     OnceCommon(SENSOR_TYPE_ID_BAROMETER, f, opq);
 }
 
-void OffBarometer(optional_view<uintptr_t> opq)
+void OffBarometer(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_BAROMETER, opq);
 }
@@ -1405,7 +1423,7 @@ void OnceAmbientTemperature(callback_view<void(AmbientTemperatureResponse const 
     OnceCommon(SENSOR_TYPE_ID_AMBIENT_TEMPERATURE, f, opq);
 }
 
-void OffAmbientTemperature(optional_view<uintptr_t> opq)
+void OffAmbientTemperature(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_AMBIENT_TEMPERATURE, opq);
 }
@@ -1420,7 +1438,7 @@ void OnceAmbientLight(callback_view<void(LightResponse const &)> f, uintptr_t op
     OnceCommon(SENSOR_TYPE_ID_AMBIENT_LIGHT, f, opq);
 }
 
-void OffAmbientLight(optional_view<uintptr_t> opq)
+void OffAmbientLight(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_AMBIENT_LIGHT, opq);
 }
@@ -1436,7 +1454,7 @@ void OnceAccelerometerUncalibrated(callback_view<void(AccelerometerUncalibratedR
     OnceCommon(SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, f, opq);
 }
 
-void OffAccelerometerUncalibrated(optional_view<uintptr_t> opq)
+void OffAccelerometerUncalibrated(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, opq);
 }
@@ -1452,7 +1470,7 @@ void OnceAccelerometer(callback_view<void(AccelerometerResponse const &)> f, uin
     OnceCommon(SENSOR_TYPE_ID_ACCELEROMETER, f, opq);
 }
 
-void OffAccelerometer(optional_view<uintptr_t> opq)
+void OffAccelerometer(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_ACCELEROMETER, opq);
 }
@@ -1462,7 +1480,7 @@ void OnSar(callback_view<void(SarResponse const &)> f, uintptr_t opq, optional_v
     OnCommon(SENSOR_TYPE_ID_SAR, f, opq, options);
 }
 
-void OffSar(optional_view<uintptr_t> opq)
+void OffSar(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_SAR, opq);
 }
@@ -1472,7 +1490,7 @@ void OnColor(callback_view<void(ColorResponse const &)> f, uintptr_t opq, option
     OnCommon(SENSOR_TYPE_ID_COLOR, f, opq, options);
 }
 
-void OffColor(optional_view<uintptr_t> opq)
+void OffColor(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
 {
     OffCommon(SENSOR_TYPE_ID_COLOR, opq);
 }
