@@ -310,7 +310,7 @@ void CallBackAccelermeter(std::map<std::string, responseSensorData> data, sptr<C
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     AccelerometerResponse responseData = {
         .base = res,
@@ -334,7 +334,7 @@ void CallBackGyroscope(std::map<std::string, responseSensorData> data, sptr<Call
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     GyroscopeResponse responseData = {
         .base = res,
@@ -358,7 +358,7 @@ void CallBackAmbientLight(std::map<std::string, responseSensorData> data, sptr<C
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     LightResponse responseData = {
         .base = res,
@@ -382,7 +382,7 @@ void CallBackMagneticField(std::map<std::string, responseSensorData> data, sptr<
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     MagneticFieldResponse responseData = {
         .base = res,
@@ -406,7 +406,7 @@ void CallBackBarometer(std::map<std::string, responseSensorData> data, sptr<Call
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     BarometerResponse responseData = {
         .base = res,
@@ -428,7 +428,7 @@ void CallBackHall(std::map<std::string, responseSensorData> data, sptr<CallbackO
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     HallResponse responseData = {
         .base = res,
@@ -450,7 +450,7 @@ void CallBackProximity(std::map<std::string, responseSensorData> data, sptr<Call
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     ProximityResponse responseData = {
         .base = res,
@@ -472,7 +472,7 @@ void CallBackHumidity(std::map<std::string, responseSensorData> data, sptr<Callb
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     HumidityResponse responseData = {
         .base = res,
@@ -494,7 +494,7 @@ void CallBackOrientation(std::map<std::string, responseSensorData> data, sptr<Ca
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     OrientationResponse responseData = {
         .base = res,
@@ -518,7 +518,7 @@ void CallBackGravity(std::map<std::string, responseSensorData> data, sptr<Callba
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     GravityResponse responseData = {
         .base = res,
@@ -542,7 +542,7 @@ void CallBackLinearAcceleration(std::map<std::string, responseSensorData> data, 
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     LinearAccelerometerResponse responseData = {
         .base = res,
@@ -566,7 +566,7 @@ void CallBackRotationVector(std::map<std::string, responseSensorData> data, sptr
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     RotationVectorResponse responseData = {
         .base = res,
@@ -591,7 +591,7 @@ void CallBackAmbientTemperature(std::map<std::string, responseSensorData> data, 
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     AmbientTemperatureResponse responseData = {
         .base = res,
@@ -615,7 +615,7 @@ void CallBackMagneticFieldUncalibrated(std::map<std::string, responseSensorData>
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     MagneticFieldUncalibratedResponse responseData = {
         .base = res,
@@ -643,7 +643,7 @@ void CallBackGyroscopeUncalibrated(std::map<std::string, responseSensorData> dat
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     GyroscopeUncalibratedResponse responseData = {
         .base = res,
@@ -670,7 +670,7 @@ void CallBackSignificantMotion(std::map<std::string, responseSensorData> data, s
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     SignificantMotionResponse responseData = {
         .base = res,
@@ -692,7 +692,7 @@ void CallBackPedometerDetection(std::map<std::string, responseSensorData> data, 
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     PedometerDetectionResponse responseData = {
         .base = res,
@@ -714,7 +714,7 @@ void CallBackPedometer(std::map<std::string, responseSensorData> data, sptr<Call
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     PedometerResponse responseData = {
         .base = res,
@@ -736,7 +736,7 @@ void CallBackHeartRate(std::map<std::string, responseSensorData> data, sptr<Call
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     HeartRateResponse responseData = {
         .base = res,
@@ -758,7 +758,7 @@ void CallBackWearDetection(std::map<std::string, responseSensorData> data, sptr<
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     WearDetectionResponse responseData = {
         .base = res,
@@ -782,7 +782,7 @@ void CallBackAccelerometerUncalibrated(std::map<std::string, responseSensorData>
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     AccelerometerUncalibratedResponse responseData = {
         .base = res,
@@ -809,7 +809,7 @@ void CallBackColor(std::map<std::string, responseSensorData> data, sptr<Callback
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     ColorResponse responseData = {
         .base = res,
@@ -832,7 +832,7 @@ void CallBackSar(std::map<std::string, responseSensorData> data, sptr<CallbackOb
     }
     ohos::sensor::Response res = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
-        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+        .accuracy = std::get<int32_t>(data["accuracy"]),
     };
     SarResponse responseData = {
         .base = res,
@@ -878,8 +878,7 @@ void CallbackSensorData(sptr<CallbackObject> callbackObject, SensorEvent *event)
         dataMap.emplace(sensorAttributes[i].c_str(), static_cast<double>(dataNow[i]));
     }
     dataMap.emplace("timestamp", event->timestamp);
-    ohos::sensor::SensorAccuracy sensorAccuracyTemp(static_cast<ohos::sensor::SensorAccuracy::key_t>(event->option));
-    dataMap.emplace("accuracy", sensorAccuracyTemp);
+    dataMap.emplace("accuracy", event->option);
     CallbackDataBySensorTypeId(sensorTypeId, dataMap, callbackObject);
 }
 
