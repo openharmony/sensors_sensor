@@ -45,6 +45,7 @@ extern "C" {
     }
 }
 #endif // OHOS_BUILD_ENABLE_RUST
+constexpr int32_t LOCAL_DEVICE = 1;
 constexpr int32_t LOADSA_TIMEOUT_MS = 10000;
 } // namespace
 
@@ -292,11 +293,14 @@ std::vector<Sensor> SensorServiceClient::GetSensorListByDevice(int32_t deviceId)
 int32_t SensorServiceClient::GetLocalDeviceId(int32_t& deviceId)
 {
     CALL_LOG_ENTER;
-    if (sensorList_.empty()) {
-        std::vector<Sensor> allSensors = GetSensorList();
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
     }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
     for (const auto& sensor : sensorList_) {
-        if (sensor.GetLocation() == 1) {
+        if (sensor.GetLocation() == LOCAL_DEVICE) {
             SEN_HILOGD("local deviceId is:%{public}d", sensor.GetDeviceId());
             deviceId = sensor.GetDeviceId();
             return ERR_OK;
