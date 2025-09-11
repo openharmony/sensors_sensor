@@ -17,7 +17,7 @@ import type { Callback } from '@ohos.base';
 import { BusinessError } from '@ohos.base';
 
 export default namespace sensor {
-    loadLibrary("sensor_ani");
+    loadLibraryWithPermissionCheck("sensor_ani", "@ohos.sensor");
 
     export native function on(type: 'orientationChange', callback: Callback<OrientationResponse>, options?: Options): void;
     export native function off(type: 'orientationChange', callback?: Callback<OrientationResponse>): void;
