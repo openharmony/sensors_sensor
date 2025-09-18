@@ -1395,176 +1395,92 @@ function getRotationMatrixSync(rotationVector: Array<f64>): Array<f64>;
 @gen_promise("getSensorList")
 function getSensorListSync(): Array<Sensor>;
 
-@!sts_inject("""
-    function on(type: string, callback: (arg0 : Object) => void, options?: Options) {
-        switch(type) {
-            case "wearDetectionChange": return onWearDetection(callback as (info: WearDetectionResponse) => void, callback, options);
-            case "significantMotionChange": return onSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback, options);
-            case "rotationVectorChange": return onRotationVector(callback as (info: RotationVectorResponse) => void, callback, options);
-            case "proximityChange": return onProximity(callback as (info: ProximityResponse) => void, callback, options);
-            case "pedometerDetectionChange": return onPedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback, options);
-            case "pedometerChange": return onPedometer(callback as (info: PedometerResponse) => void, callback, options);
-            case "orientationChange": return onOrientation(callback as (info: OrientationResponse) => void, callback, options);
-            case "magneticFieldUncalibratedChange": return onMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback, options);
-            case "magneticFieldChange": return onMagneticField(callback as (info: MagneticFieldResponse) => void, callback, options);
-            case "linearAccelerometerChange": return onLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback, options);
-            case "humidityChange": return onHumidity(callback as (info: HumidityResponse) => void, callback, options);
-            case "heartRateChange": return onHeartRate(callback as (info: HeartRateResponse) => void, callback, options);
-            case "hallChange": return onHall(callback as (info: HallResponse) => void, callback, options);
-            case "gyroscopeUncalibratedChange": return onGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback, options);
-            case "gyroscopeChange": return onGyroscope(callback as (info: GyroscopeResponse) => void, callback, options);
-            case "gravityChange": return onGravity(callback as (info: GravityResponse) => void, callback, options);
-            case "barometerChange": return onBarometer(callback as (info: BarometerResponse) => void, callback, options);
-            case "ambientTemperatureChange": return onAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback, options);
-            case "ambientLightChange": return onAmbientLight(callback as (info: LightResponse) => void, callback, options);
-            case "accelerometerUncalibratedChange": return onAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback, options);
-            case "accelerometerChange": return onAccelerometer(callback as (info: AccelerometerResponse) => void, callback, options);
-            case "sarChange": return onSar(callback as (info: SarResponse) => void, callback, options);
-            case "colorChange": return onColor(callback as (info: ColorResponse) => void, callback, options);
-            default: throw new Error(`Unknown type: ${type}`);
-        }
-    }
-    function once(type: string, callback: (arg0 : Object) => void) {
-        switch(type) {
-            case "wearDetectionChange": return onceWearDetection(callback as (info: WearDetectionResponse) => void, callback);
-            case "significantMotionChange": return onceSignificantMotion(callback as (info: SignificantMotionResponse) => void, callback);
-            case "rotationVectorChange": return onceRotationVector(callback as (info: RotationVectorResponse) => void, callback);
-            case "proximityChange": return onceProximity(callback as (info: ProximityResponse) => void, callback);
-            case "pedometerDetectionChange": return oncePedometerDetection(callback as (info: PedometerDetectionResponse) => void, callback);
-            case "pedometerChange": return oncePedometer(callback as (info: PedometerResponse) => void, callback);
-            case "orientationChange": return onceOrientation(callback as (info: OrientationResponse) => void, callback);
-            case "magneticFieldUncalibratedChange": return onceMagneticFieldUncalibrated(callback as (info: MagneticFieldUncalibratedResponse) => void, callback);
-            case "magneticFieldChange": return onceMagneticField(callback as (info: MagneticFieldResponse) => void, callback);
-            case "linearAccelerometerChange": return onceLinearAccelerometer(callback as (info: LinearAccelerometerResponse) => void, callback);
-            case "humidityChange": return onceHumidity(callback as (info: HumidityResponse) => void, callback);
-            case "heartRateChange": return onceHeartRate(callback as (info: HeartRateResponse) => void, callback);
-            case "hallChange": return onceHall(callback as (info: HallResponse) => void, callback);
-            case "gyroscopeUncalibratedChange": return onceGyroscopeUncalibrated(callback as (info: GyroscopeUncalibratedResponse) => void, callback);
-            case "gyroscopeChange": return onceGyroscope(callback as (info: GyroscopeResponse) => void, callback);
-            case "gravityChange": return onceGravity(callback as (info: GravityResponse) => void, callback);
-            case "barometerChange": return onceBarometer(callback as (info: BarometerResponse) => void, callback);
-            case "ambientTemperatureChange": return onceAmbientTemperature(callback as (info: AmbientTemperatureResponse) => void, callback);
-            case "ambientLightChange": return onceAmbientLight(callback as (info: LightResponse) => void, callback);
-            case "accelerometerUncalibratedChange": return onceAccelerometerUncalibrated(callback as (info: AccelerometerUncalibratedResponse) => void, callback);
-            case "accelerometerChange": return onceAccelerometer(callback as (info: AccelerometerResponse) => void, callback);
-            default: throw new Error(`Unknown type: ${type}`);
-        }
-    }
-    function off(type: string, sensorInfoParam?: SensorInfoParam, callback?: (arg0 : Object) => void) {
-        switch(type) {
-            case "wearDetectionChange": return offWearDetection(sensorInfoParam, callback);
-            case "significantMotionChange": return offSignificantMotion(sensorInfoParam, callback);
-            case "rotationVectorChange": return offRotationVector(sensorInfoParam, callback);
-            case "proximityChange": return offProximity(sensorInfoParam, callback);
-            case "pedometerDetectionChange": return offPedometerDetection(sensorInfoParam, callback);
-            case "pedometerChange": return offPedometer(sensorInfoParam, callback);
-            case "orientationChange": return offOrientation(sensorInfoParam, callback);
-            case "magneticFieldUncalibratedChange": return offMagneticFieldUncalibrated(sensorInfoParam, callback);
-            case "magneticFieldChange": return offMagneticField(sensorInfoParam, callback);
-            case "linearAccelerometerChange": return offLinearAccelerometer(sensorInfoParam, callback);
-            case "humidityChange": return offHumidity(sensorInfoParam, callback);
-            case "heartRateChange": return offHeartRate(sensorInfoParam, callback);
-            case "hallChange": return offHall(sensorInfoParam, callback);
-            case "gyroscopeUncalibratedChange": return offGyroscopeUncalibrated(sensorInfoParam, callback);
-            case "gyroscopeChange": return offGyroscope(sensorInfoParam, callback);
-            case "gravityChange": return offGravity(sensorInfoParam, callback);
-            case "barometerChange": return offBarometer(sensorInfoParam, callback);
-            case "ambientTemperatureChange": return offAmbientTemperature(sensorInfoParam, callback);
-            case "ambientLightChange": return offAmbientLight(sensorInfoParam, callback);
-            case "accelerometerUncalibratedChange": return offAccelerometerUncalibrated(sensorInfoParam, callback);
-            case "accelerometerChange": return offAccelerometer(sensorInfoParam, callback);
-            case "sarChange": return offSar(sensorInfoParam, callback);
-            case "colorChange": return offColor(sensorInfoParam, callback);
-            default: throw new Error(`Unknown type: ${type}`);
-        }
-    }
-""")
-function OnWearDetection(f: (info: WearDetectionResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceWearDetection(f: (info: WearDetectionResponse) => void, opq: Opaque);
-function OffWearDetection(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnWearDetectionChange(f: (info: WearDetectionResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceWearDetectionChange(f: (info: WearDetectionResponse) => void, @sts_last opq: Opaque);
+function OffWearDetectionChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<WearDetectionResponse, void>") Opaque>);
 
-function OnSignificantMotion(f: (info: SignificantMotionResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceSignificantMotion(f: (info: SignificantMotionResponse) => void, opq: Opaque);
-function OffSignificantMotion(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnSignificantMotionChange(f: (info: SignificantMotionResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceSignificantMotionChange(f: (info: SignificantMotionResponse) => void, @sts_last opq: Opaque);
+function OffSignificantMotionChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<SignificantMotionResponse, void>") Opaque>);
 
-function OnRotationVector(f: (info: RotationVectorResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceRotationVector(f: (info: RotationVectorResponse) => void, opq: Opaque);
-function OffRotationVector(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnRotationVectorChange(f: (info: RotationVectorResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceRotationVectorChange(f: (info: RotationVectorResponse) => void, @sts_last opq: Opaque);
+function OffRotationVectorChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<RotationVectorResponse, void>") Opaque>);
 
-function OnProximity(f: (info: ProximityResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceProximity(f: (info: ProximityResponse) => void, opq: Opaque);
-function OffProximity(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnProximityChange(f: (info: ProximityResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceProximityChange(f: (info: ProximityResponse) => void, @sts_last opq: Opaque);
+function OffProximityChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<ProximityResponse, void>") Opaque>);
 
-function OnPedometerDetection(f: (info: PedometerDetectionResponse) => void, opq: Opaque, options: Optional<Options>);
-function OncePedometerDetection(f: (info: PedometerDetectionResponse) => void, opq: Opaque);
-function OffPedometerDetection(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnPedometerDetectionChange(f: (info: PedometerDetectionResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OncePedometerDetectionChange(f: (info: PedometerDetectionResponse) => void, @sts_last opq: Opaque);
+function OffPedometerDetectionChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<PedometerDetectionResponse, void>") Opaque>);
 
-function OnPedometer(f: (info: PedometerResponse) => void, opq: Opaque, options: Optional<Options>);
-function OncePedometer(f: (info: PedometerResponse) => void, opq: Opaque);
-function OffPedometer(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnPedometerChange(f: (info: PedometerResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OncePedometerChange(f: (info: PedometerResponse) => void, @sts_last opq: Opaque);
+function OffPedometerChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<PedometerResponse, void>") Opaque>);
 
-function OnOrientation(f: (info: OrientationResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceOrientation(f: (info: OrientationResponse) => void, opq: Opaque);
-function OffOrientation(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnOrientationChange(f: (info: OrientationResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceOrientationChange(f: (info: OrientationResponse) => void, @sts_last opq: Opaque);
+function OffOrientationChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<OrientationResponse, void>") Opaque>);
 
-function OnMagneticFieldUncalibrated(f: (info: MagneticFieldUncalibratedResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceMagneticFieldUncalibrated(f: (info: MagneticFieldUncalibratedResponse) => void, opq: Opaque);
-function OffMagneticFieldUncalibrated(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnMagneticFieldUncalibratedChange(f: (info: MagneticFieldUncalibratedResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceMagneticFieldUncalibratedChange(f: (info: MagneticFieldUncalibratedResponse) => void, @sts_last opq: Opaque);
+function OffMagneticFieldUncalibratedChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<MagneticFieldUncalibratedResponse, void>") Opaque>);
 
-function OnMagneticField(f: (info: MagneticFieldResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceMagneticField(f: (info: MagneticFieldResponse) => void, opq: Opaque);
-function OffMagneticField(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnMagneticFieldChange(f: (info: MagneticFieldResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceMagneticFieldChange(f: (info: MagneticFieldResponse) => void, @sts_last opq: Opaque);
+function OffMagneticFieldChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<MagneticFieldResponse, void>") Opaque>);
 
-function OnLinearAccelerometer(f: (info: LinearAccelerometerResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceLinearAccelerometer(f: (info: LinearAccelerometerResponse) => void, opq: Opaque);
-function OffLinearAccelerometer(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnLinearAccelerometerChange(f: (info: LinearAccelerometerResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceLinearAccelerometerChange(f: (info: LinearAccelerometerResponse) => void, @sts_last opq: Opaque);
+function OffLinearAccelerometerChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<LinearAccelerometerResponse, void>") Opaque>);
 
-function OnHumidity(f: (info: HumidityResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceHumidity(f: (info: HumidityResponse) => void, opq: Opaque);
-function OffHumidity(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnHumidityChange(f: (info: HumidityResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceHumidityChange(f: (info: HumidityResponse) => void, @sts_last opq: Opaque);
+function OffHumidityChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<HumidityResponse, void>") Opaque>);
 
-function OnHeartRate(f: (info: HeartRateResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceHeartRate(f: (info: HeartRateResponse) => void, opq: Opaque);
-function OffHeartRate(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnHeartRateChange(f: (info: HeartRateResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceHeartRateChange(f: (info: HeartRateResponse) => void, @sts_last opq: Opaque);
+function OffHeartRateChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<HeartRateResponse, void>") Opaque>);
 
-function OnHall(f: (info: HallResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceHall(f: (info: HallResponse) => void, opq: Opaque);
-function OffHall(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnHallChange(f: (info: HallResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceHallChange(f: (info: HallResponse) => void, @sts_last opq: Opaque);
+function OffHallChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<HallResponse, void>") Opaque>);
 
-function OnGyroscopeUncalibrated(f: (info: GyroscopeUncalibratedResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceGyroscopeUncalibrated(f: (info: GyroscopeUncalibratedResponse) => void, opq: Opaque);
-function OffGyroscopeUncalibrated(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnGyroscopeUncalibratedChange(f: (info: GyroscopeUncalibratedResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceGyroscopeUncalibratedChange(f: (info: GyroscopeUncalibratedResponse) => void, @sts_last opq: Opaque);
+function OffGyroscopeUncalibratedChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<GyroscopeUncalibratedResponse, void>") Opaque>);
 
-function OnGyroscope(f: (info: GyroscopeResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceGyroscope(f: (info: GyroscopeResponse) => void, opq: Opaque);
-function OffGyroscope(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnGyroscopeChange(f: (info: GyroscopeResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceGyroscopeChange(f: (info: GyroscopeResponse) => void, @sts_last opq: Opaque);
+function OffGyroscopeChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<GyroscopeResponse, void>") Opaque>);
 
-function OnGravity(f: (info: GravityResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceGravity(f: (info: GravityResponse) => void, opq: Opaque);
-function OffGravity(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnGravityChange(f: (info: GravityResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceGravityChange(f: (info: GravityResponse) => void, @sts_last opq: Opaque);
+function OffGravityChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<GravityResponse, void>") Opaque>);
 
-function OnBarometer(f: (info: BarometerResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceBarometer(f: (info: BarometerResponse) => void, opq: Opaque);
-function OffBarometer(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnBarometerChange(f: (info: BarometerResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceBarometerChange(f: (info: BarometerResponse) => void, @sts_last opq: Opaque);
+function OffBarometerChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<BarometerResponse, void>") Opaque>);
 
-function OnAmbientTemperature(f: (info: AmbientTemperatureResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceAmbientTemperature(f: (info: AmbientTemperatureResponse) => void, opq: Opaque);
-function OffAmbientTemperature(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnAmbientTemperatureChange(f: (info: AmbientTemperatureResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceAmbientTemperatureChange(f: (info: AmbientTemperatureResponse) => void, @sts_last opq: Opaque);
+function OffAmbientTemperatureChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<AmbientTemperatureResponse, void>") Opaque>);
 
-function OnAmbientLight(f: (info: LightResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceAmbientLight(f: (info: LightResponse) => void, opq: Opaque);
-function OffAmbientLight(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnAmbientLightChange(f: (info: LightResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceAmbientLightChange(f: (info: LightResponse) => void, @sts_last opq: Opaque);
+function OffAmbientLightChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<LightResponse, void>") Opaque>);
 
-function OnAccelerometerUncalibrated(f: (info: AccelerometerUncalibratedResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceAccelerometerUncalibrated(f: (info: AccelerometerUncalibratedResponse) => void, opq: Opaque);
-function OffAccelerometerUncalibrated(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnAccelerometerUncalibratedChange(f: (info: AccelerometerUncalibratedResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceAccelerometerUncalibratedChange(f: (info: AccelerometerUncalibratedResponse) => void, @sts_last opq: Opaque);
+function OffAccelerometerUncalibratedChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<AccelerometerUncalibratedResponse, void>") Opaque>);
 
-function OnAccelerometer(f: (info: AccelerometerResponse) => void, opq: Opaque, options: Optional<Options>);
-function OnceAccelerometer(f: (info: AccelerometerResponse) => void, opq: Opaque);
-function OffAccelerometer(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnAccelerometerChange(f: (info: AccelerometerResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OnceAccelerometerChange(f: (info: AccelerometerResponse) => void, @sts_last opq: Opaque);
+function OffAccelerometerChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<AccelerometerResponse, void>") Opaque>);
 
-function OnSar(f: (info: SarResponse) => void, opq: Opaque, options: Optional<Options>);
-function OffSar(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnSarChange(f: (info: SarResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OffSarChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<SarResponse, void>") Opaque>);
 
-function OnColor(f: (info: ColorResponse) => void, opq: Opaque, options: Optional<Options>);
-function OffColor(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<Opaque>);
+function OnColorChange(f: (info: ColorResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OffColorChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<ColorResponse, void>") Opaque>);
