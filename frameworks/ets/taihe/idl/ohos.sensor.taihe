@@ -1201,6 +1201,38 @@ struct GeomagneticResponse {
 }
 
 /**
+ * Indicates geographic location.
+ * @typedef LocationOptions
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 8
+ */
+struct LocationOptions {
+    /**
+     * Specifies the latitude of the point.
+     * @type { f64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    latitude: f64;
+
+    /**
+     * Specifies the longitude of the point.
+     * @type { f64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    longitude: f64;
+
+    /**
+     * Specifies the altitude of the point.
+     * @type { f64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 8
+     */
+    altitude: f64;
+}
+
+/**
  * Indicates sensor information.
  * @typedef Sensor
  * @syscap SystemCapability.Sensors.Sensor
@@ -1394,6 +1426,117 @@ function getRotationMatrixSync(rotationVector: Array<f64>): Array<f64>;
 @gen_async("getSensorList")
 @gen_promise("getSensorList")
 function getSensorListSync(): Array<Sensor>;
+
+/**
+ * Obtains the sensor information of a specified type.
+ * @param { SensorId } type - Indicate the sensor type, {@code SensorId}.
+ * @param { AsyncCallback<Sensor> } callback - callback sensor info.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @throws { BusinessError } 14500102 - The sensor is not supported by the device.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 12
+ */
+@gen_async("getSingleSensor")
+@gen_promise("getSingleSensor")
+function getSingleSensorSync(type: SensorId): Sensor;
+
+/**
+ * convert a rotation vector to a normalized quaternion.
+ * @param { Array<f64> } rotationVector - rotationVector Indicates the rotation vector.
+ * @param { AsyncCallback<Array<f64>> } callback - callback a normalized quaternion.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getQuaternion")
+@gen_promise("getQuaternion")
+function getQuaternionSync(rotationVector: Array<f64>): Array<f64>;
+
+/**
+ * Rotate the provided rotation matrix so that it can be represented in a different way coordinate System.
+ * @param { Array<f64> } inRotationVector - inRotationVector Indicates the rotation matrix to be transformed.
+ * @param { CoordinatesOptions } coordinates - coordinates Indicates coordinate system guidance, {@code CoordinatesOptions}.
+ * @param { AsyncCallback<Array<f64>> } callback - callback rotation matrix.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("transformRotationMatrix")
+@gen_promise("transformRotationMatrix")
+function transformRotationMatrixSync(inRotationVector: Array<f64>, coordinates: CoordinatesOptions): Array<f64>;
+
+/**
+ * Get the angle variation between two rotation matrices.
+ * @param { Array<f64> } currentRotationMatrix - currentRotationMatrix Indicates the current rotation matrix.
+ * @param { Array<f64> } preRotationMatrix - preRotationMatrix Indicates the current rotation matrix.
+ * @param { AsyncCallback<Array<f64>> } callback - callback angle variation.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getAngleVariation")
+@gen_promise("getAngleVariation")
+function getAngleVariationSync(currentRotationMatrix: Array<f64>, preRotationMatrix: Array<f64>): Array<f64>;
+
+/**
+ * Computes the geomagnetic inclination in radians from the inclination matrix.
+ * @param { Array<f64> } inclinationMatrix - Indicates the inclination matrix.
+ * @param { AsyncCallback<f64> } callback - callback inclination in radians.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getInclination")
+@gen_promise("getInclination")
+function getInclinationSync(inclinationMatrix: Array<f64>): f64;
+
+/**
+ * Obtains the altitude at which the device is located based on the current atmospheric pressure.
+ * @param { f64 } seaPressure - seaPressure Indicates the sea level pressure, in hPa.
+ * @param { f64 } currentPressure - currentPressure Indicates the atmospheric pressure measured by the barometer, in hPa.
+ * @param { AsyncCallback<f64> } callback - callback device altitude.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getDeviceAltitude")
+@gen_promise("getDeviceAltitude")
+function getDeviceAltitudeSync(seaPressure: f64, currentPressure: f64): f64;
+
+/**
+ * Obtains the geomagnetic field at a specific location on the Earth.
+ * @param { LocationOptions } locationOptions - LocationOptions Indicates geographic location, {@code LocationOptions}.
+ * @param { i64 } timeMillis - timeMillis Indicates the time at which the magnetic declination is to be obtained, 
+ * in milliseconds since the Unix epoch.
+ * @param { AsyncCallback<GeomagneticResponse> } callback - callback geomagnetic field.
+ * @throws { BusinessError } 401 - Parameter error. Possible causes: 1. Mandatory parameters are left unspecified;
+ * <br> 2. Incorrect parameter types; 3. Parameter verification failed.
+ * @throws { BusinessError } 14500101 - Service exception. Possible causes: 1. Sensor hdf service exception;
+ * <br> 2. Sensor service ipc exception;3. Sensor data channel exception.
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 9
+ */
+@gen_async("getGeomagneticInfo")
+@gen_promise("getGeomagneticInfo")
+function getGeomagneticInfoSync(locationOptions: LocationOptions, timeMillis: i64): GeomagneticResponse;
 
 function OnWearDetectionChange(f: (info: WearDetectionResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
 function OnceWearDetectionChange(f: (info: WearDetectionResponse) => void, @sts_last opq: Opaque);
