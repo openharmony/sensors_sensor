@@ -287,12 +287,12 @@ struct Response {
 
     /**
      * The accuracy levels of data reported by a sensor.
-     * @type { i32 }
+     * @type { SensorAccuracy }
      * @syscap SystemCapability.Sensors.Sensor
      * @atomicservice
      * @since 11
      */
-    accuracy: i32;
+    accuracy: SensorAccuracy;
 }
 
 /**
