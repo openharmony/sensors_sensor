@@ -22,6 +22,7 @@
 #include <string>
 #include <unistd.h>
 
+#include "geomagnetic_field.h"
 #include "ohos.sensor.proj.hpp"
 #include "refbase.h"
 #include "securec.h"
@@ -69,8 +70,10 @@ struct CallbackObject : public RefBase {
 
 namespace {
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
+constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t REPORTING_INTERVAL = 200000000;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
+constexpr int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_MAX_DATA_LENGTH = 16;
 
 void CallBackAccelermeter(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
@@ -270,6 +273,133 @@ array<Sensor> getSensorListSync()
         result.push_back(sensorInfo);
     }
     return taihe::array<::ohos::sensor::Sensor>(result);
+}
+
+ohos::sensor::Sensor getSingleSensorSync(ohos::sensor::SensorId type)
+{
+    ohos::sensor::Sensor sensor = {
+        .sensorName = "",
+        .vendorName = "",
+        .firmwareVersion = "",
+        .hardwareVersion = "",
+        .sensorId = 0,
+        .maxRange = 0,
+        .minSamplePeriod = 0,
+        .maxSamplePeriod = 0,
+        .precision = 0,
+        .power = 0
+    };
+    int32_t count = 0;
+    SensorInfo *sensorInfos = nullptr;
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get sensor list fail");
+        return sensor;
+    }
+    for (int32_t i = 0; i < count; ++i) {
+        if (sensorInfos[i].sensorTypeId == type.get_value()) {
+            sensor = {
+                .sensorName = sensorInfos[i].sensorName,
+                .vendorName = sensorInfos[i].vendorName,
+                .firmwareVersion = sensorInfos[i].firmwareVersion,
+                .hardwareVersion = sensorInfos[i].hardwareVersion,
+                .sensorId = sensorInfos[i].sensorId,
+                .maxRange = sensorInfos[i].maxRange,
+                .minSamplePeriod = sensorInfos[i].minSamplePeriod,
+                .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
+                .precision = sensorInfos[i].precision,
+                .power = sensorInfos[i].power,
+            };
+            return sensor;
+        }
+    }
+    taihe::set_business_error(SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
+    return sensor;
+}
+
+taihe::array<double> getQuaternionSync(taihe::array_view<double> rotationVector)
+{
+    SensorAlgorithm sensorAlgorithm;
+    std::vector<float> vecRotation(transformDoubleToFloat(rotationVector));
+    std::vector<float> vecQuaternion(QUATERNION_LENGTH);
+    int32_t ret = sensorAlgorithm.CreateQuaternion(vecRotation, vecQuaternion);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "CreateQuaternion fail");
+    }
+    return transformFloatToDouble(vecQuaternion);
+}
+
+taihe::array<double> transformRotationMatrixSync(taihe::array_view<double> inRotationVector,
+    ohos::sensor::CoordinatesOptions const& coordinates)
+{
+    std::vector<float> vecInRotation(transformDoubleToFloat(inRotationVector));
+    size_t length = inRotationVector.size();
+    if ((length != DATA_LENGTH) && (length != THREE_DIMENSIONAL_MATRIX_LENGTH)) {
+        taihe::set_business_error(PARAMETER_ERROR, "Wrong inRotationVector length");
+        return transformFloatToDouble(vecInRotation);
+    }
+    std::vector<float> vecOutRotation(length);
+    SensorAlgorithm sensorAlgorithm;
+    int32_t ret = sensorAlgorithm.TransformCoordinateSystem(
+        vecInRotation, coordinates.x, coordinates.y, vecOutRotation);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Transform coordinate system fail");
+    }
+    return transformFloatToDouble(vecOutRotation);
+}
+
+taihe::array<double> getAngleVariationSync(taihe::array_view<double> currentRotationMatrix,
+    taihe::array_view<double> preRotationMatrix)
+{
+    std::vector<float> angleChange(ROTATION_VECTOR_LENGTH);
+    std::vector<float> curRotationVector(transformDoubleToFloat(currentRotationMatrix));
+    std::vector<float> preRotationVector(transformDoubleToFloat(preRotationMatrix));
+    SensorAlgorithm sensorAlgorithm;
+    int32_t ret = sensorAlgorithm.GetAngleModify(curRotationVector, preRotationVector, angleChange);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get angle modify fail");
+    }
+    return transformFloatToDouble(angleChange);
+}
+
+double getInclinationSync(taihe::array_view<double> inclinationMatrix)
+{
+    float geomagneticDip = 0;
+    SensorAlgorithm sensorAlgorithm;
+    std::vector<float> vecInclinationMatrix(transformDoubleToFloat(inclinationMatrix));
+    int32_t ret = sensorAlgorithm.GetGeomagneticDip(vecInclinationMatrix, &geomagneticDip);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get geomagnetic dip fail");
+    }
+    return static_cast<double>(geomagneticDip);
+}
+
+double getDeviceAltitudeSync(double seaPressure, double currentPressure)
+{
+    float altitude = 0;
+    SensorAlgorithm sensorAlgorithm;
+    int32_t ret = sensorAlgorithm.GetAltitude(static_cast<float>(seaPressure),
+        static_cast<float>(currentPressure), &altitude);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get altitude fail");
+    }
+    return static_cast<double>(altitude);
+}
+
+ohos::sensor::GeomagneticResponse getGeomagneticInfoSync(
+    ohos::sensor::LocationOptions const& locationOptions, int64_t timeMillis)
+{
+    GeomagneticField geomagneticField(locationOptions.latitude,
+        locationOptions.longitude, locationOptions.altitude, timeMillis);
+    return ohos::sensor::GeomagneticResponse {
+        .x = geomagneticField.ObtainX(),
+        .y = geomagneticField.ObtainY(),
+        .z = geomagneticField.ObtainZ(),
+        .geomagneticDip = geomagneticField.ObtainGeomagneticDip(),
+        .deflectionAngle = geomagneticField.ObtainDeflectionAngle(),
+        .levelIntensity = geomagneticField.ObtainLevelIntensity(),
+        .totalIntensity = geomagneticField.ObtainTotalIntensity()
+    };
 }
 
 bool GetInterval(const Options &options, int64_t &interval)
@@ -1502,6 +1632,13 @@ TH_EXPORT_CPP_API_getRotationMatrixSyncGrav(getRotationMatrixSyncGrav);
 TH_EXPORT_CPP_API_getOrientationSync(getOrientationSync);
 TH_EXPORT_CPP_API_getRotationMatrixSync(getRotationMatrixSync);
 TH_EXPORT_CPP_API_getSensorListSync(getSensorListSync);
+TH_EXPORT_CPP_API_getSingleSensorSync(getSingleSensorSync);
+TH_EXPORT_CPP_API_getQuaternionSync(getQuaternionSync);
+TH_EXPORT_CPP_API_transformRotationMatrixSync(transformRotationMatrixSync);
+TH_EXPORT_CPP_API_getAngleVariationSync(getAngleVariationSync);
+TH_EXPORT_CPP_API_getInclinationSync(getInclinationSync);
+TH_EXPORT_CPP_API_getDeviceAltitudeSync(getDeviceAltitudeSync);
+TH_EXPORT_CPP_API_getGeomagneticInfoSync(getGeomagneticInfoSync);
 TH_EXPORT_CPP_API_OnWearDetectionChange(OnWearDetection);
 TH_EXPORT_CPP_API_OnceWearDetectionChange(OnceWearDetection);
 TH_EXPORT_CPP_API_OffWearDetectionChange(OffWearDetection);
