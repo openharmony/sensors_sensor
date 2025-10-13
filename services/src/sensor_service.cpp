@@ -70,6 +70,7 @@ SensorService::SensorService()
 SensorService::~SensorService()
 {
     UnloadMotionSensor();
+    UnloadMotionSensorRevision();
 }
 
 void SensorService::OnDump()
@@ -122,6 +123,10 @@ bool SensorService::IsNeedLoadMotionLib()
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
+    if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
+        SEN_HILOGI("Common event service start");
+        AddSystemAbilityListener(DISTRIBUTED_KV_DATA_SERVICE_ABILITY_ID);
+    }
 #ifdef MEMMGR_ENABLE
     if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
         Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
@@ -138,6 +143,28 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     /* When sensor_correction_enable is true, the motion whitelist logic is not executed */
     if (!IsCameraCorrectionEnable()) {
         LoadMotionTransform(systemAbilityId);
+    } else {
+        MotionSensorRevision(systemAbilityId);
+    }
+    if (systemAbilityId == DISTRIBUTED_KV_DATA_SERVICE_ABILITY_ID) {
+        SEN_HILOGI("Common event service start");
+        AddSystemAbilityListener(DISTRIBUTED_KV_DATA_SERVICE_ABILITY_ID);
+    }
+}
+
+void SensorService::UpdateDeviceStatus(int32_t systemAbilityId)
+{
+    if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
+        std::string statusStr = GetDmsDeviceStatus();
+        int32_t statusNum;
+        auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
+        if (res.ec != std::errc()) {
+            SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
+            return;
+        }
+        uint32_t status = static_cast<uint32_t>(statusNum);
+        clientInfo_.SetDeviceStatus(status);
+        SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
     }
 }
 
@@ -153,18 +180,22 @@ void SensorService::LoadMotionTransform(int32_t systemAbilityId)
         }
     }
 #endif // MSDP_MOTION_ENABLE
-    if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
-        std::string statusStr = GetDmsDeviceStatus();
-        int32_t statusNum;
-        auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
-        if (res.ec != std::errc()) {
-            SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
-            return;
+    UpdateDeviceStatus(systemAbilityId);
+}
+
+void SensorService::MotionSensorRevision(int32_t systemAbilityId)
+{
+        SEN_HILOGI("MotionSensorRevision systemAbilityId:%{public}d", systemAbilityId);
+#ifdef MSDP_MOTION_ENABLE
+    if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
+        if (!IsNeedLoadMotionLib()) {
+            SEN_HILOGI("No need to load motion lib");
+        } else if (!LoadMotionSensorRevision()) {
+            SEN_HILOGI("LoadMotionSensorRevision fail");
         }
-        uint32_t status = static_cast<uint32_t>(statusNum);
-        clientInfo_.SetDeviceStatus(status);
-        SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
     }
+#endif // MSDP_MOTION_ENABLE
+    UpdateDeviceStatus(systemAbilityId);
 }
 
 void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
@@ -228,6 +259,7 @@ void SensorService::OnStart()
     AddSystemAbilityListener(MSDP_MOTION_SERVICE_ID);
 #endif // MSDP_MOTION_ENABLE
     AddSystemAbilityListener(DISPLAY_MANAGER_SERVICE_SA_ID);
+    AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
 }
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR

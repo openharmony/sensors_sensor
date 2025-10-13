@@ -101,6 +101,8 @@ private:
     bool IsNeedLoadMotionLib();
     void SetCritical();
     void LoadMotionTransform(int32_t systemAbilityId);
+    void MotionSensorRevision(int32_t systemAbilityId);
+    void UpdateDeviceStatus(int32_t systemAbilityId);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;

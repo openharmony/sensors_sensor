@@ -299,6 +299,7 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 #ifdef MSDP_MOTION_ENABLE
         if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
             MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
+            MotionSensorRevision(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
         }
 #endif // MSDP_MOTION_ENABLE
         SendEvents(channel, sensorData);

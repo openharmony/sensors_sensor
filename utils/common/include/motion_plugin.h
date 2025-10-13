@@ -29,14 +29,20 @@ namespace OHOS {
 namespace Sensors {
 #if (defined(__aarch64__) || defined(__x86_64__))
 const std::string PLUGIN_SO_PATH = "/system/lib64/libmotion_param.z.so";
+const std::string PLUGIN_MOTION_SENSOR_REVISION_SO_PATH = "/system/lib64/libmotion_sensor_revision.z.so";
 #else
 const std::string PLUGIN_SO_PATH = "/system/lib/libmotion_param.z.so";
+const std::string PLUGIN_MOTION_SENSOR_REVISION_SO_PATH = "/system/lib/libmotion_sensor_revision.z.so";
 #endif
 
 using MotionTransformIfRequiredPtr = void (*)(const std::string& pkName, uint32_t state, SensorData* sensorData);
+using MotionSensorRevisionPtr = void (*)(const std::string& pkName, uint32_t state, SensorData* sensorData);
 bool LoadMotionSensor(void);
 void UnloadMotionSensor(void);
+bool LoadMotionSensorRevision(void);
+void UnloadMotionSensorRevision(void);
 void MotionTransformIfRequired(const std::string& pkName, uint32_t state, SensorData* sensorData);
+void MotionSensorRevision(const std::string& pkName, uint32_t state, SensorData* sensorData);
 }
 }
 #endif /* MOTION_PLUGIN_H */
