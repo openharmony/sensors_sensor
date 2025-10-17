@@ -20,6 +20,7 @@
     "deps": {
       "components": [
         "bundle_framework",
+        "common_event_service",
         "c_utils",
         "hilog",
         "build_framework",

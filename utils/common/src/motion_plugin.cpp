@@ -110,7 +110,7 @@ __attribute__((no_sanitize("cfi"))) void MotionSensorRevision(const std::string&
         SEN_HILOGD("g_motion_sensor_revision is nullptr");
         return;
     }
-    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motion_sensor_revision, "TransformIfRequired"));
+    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motion_sensor_revision, "MotionSensorRevision"));
     if (func == nullptr) {
         SEN_HILOGE("func is nullptr");
         return;

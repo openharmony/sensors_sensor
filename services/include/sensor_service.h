@@ -16,9 +16,11 @@
 #ifndef SENSOR_SERVICE_H
 #define SENSOR_SERVICE_H
 
+#include "common_event_manager.h"
 #include "system_ability.h"
 
 #include "death_recipient_template.h"
+#include "sensor_common_event_subscriber.h"
 #include "sensor_delayed_sp_singleton.h"
 #include "sensor_power_policy.h"
 #include "sensor_service_stub.h"
@@ -101,8 +103,10 @@ private:
     bool IsNeedLoadMotionLib();
     void SetCritical();
     void LoadMotionTransform(int32_t systemAbilityId);
-    void MotionSensorRevision(int32_t systemAbilityId);
-    void UpdateDeviceStatus(int32_t systemAbilityId);
+    void MotionSensorRevision();
+    void UpdateDeviceStatus();
+    int32_t SubscribeCommonEvent(const std::string &eventName, EventReceiver receiver);
+    void OnReceiveEvent(const EventFwk::CommonEventData &data);
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
