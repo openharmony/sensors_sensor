@@ -33,6 +33,7 @@
 #include "parameters.h"
 
 #include "print_sensor_data.h"
+#include "sensor_data_manager.h"
 #include "sensor_dump.h"
 #include "system_ability_definition.h"
 
@@ -60,6 +61,7 @@ const std::set<int32_t> g_systemApiSensorCall = {
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
 std::atomic_bool SensorService::isMemoryMgrServiceActive_ = false;
 std::atomic_bool SensorService::isCritical_ = false;
+std::atomic_bool SensorService::isDataShareReady_ = false;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -178,6 +180,16 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
     if (action == "usual.event.DATA_SHARE_READY") {
         SEN_HILOGI("On receive usual.event.DATA_SHARE_READY");
         if (IsCameraCorrectionEnable()) {
+            if (isDataShareReady_) {
+                SEN_HILOGI("SensorDataMgr already init");
+                return;
+            }
+            if (SensorDataMgr->Init()) {
+                SEN_HILOGI("SensorDataMgr init success");
+                isDataShareReady_ = true;
+            } else {
+                SEN_HILOGE("PriorityManager init fail");
+            }
 #ifdef MSDP_MOTION_ENABLE
             MotionSensorRevision();
 #endif // MSDP_MOTION_ENABLE

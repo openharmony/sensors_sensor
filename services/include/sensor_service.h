@@ -134,6 +134,7 @@ private:
     static std::atomic_bool isAccessTokenServiceActive_;
     static std::atomic_bool isMemoryMgrServiceActive_;
     static std::atomic_bool isCritical_;
+    static std::atomic_bool isDataShareReady_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()
