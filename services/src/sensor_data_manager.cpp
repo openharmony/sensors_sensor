@@ -288,7 +288,8 @@ void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compat
     }
 }
 
-std::vector<std::string> SensorDataManager::GetCompatibleAppStragegyList(){
+std::vector<std::string> SensorDataManager::GetCompatibleAppStragegyList()
+{
     std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
     return compatibleAppStragegyList_;
 }
