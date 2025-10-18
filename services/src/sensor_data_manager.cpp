@@ -15,9 +15,6 @@
 
 #include "sensor_data_manager.h"
 
-#include <tokenid_kit.h>
-
-#include "accesstoken_kit.h"
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
@@ -36,13 +33,13 @@ using namespace OHOS::HiviewDFX;
 namespace {
 const std::string SETTING_COLUMN_KEYWORD = "KEYWORD";
 const std::string SETTING_COLUMN_VALUE = "VALUE";
-const std::string SETTING_FEEDBACK_KEY = "physic_navi_haptic_feedback_enabled";
-const std::string SETTING_RINGER_MODE_KEY = "ringer_mode";
+const std::string SETTING_COMPATIBLE_APP_STRATEGY_KEY = "COMPATIBLE_APP_STRATEGY";
 const std::string SETTING_URI_PROXY = "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
 constexpr const char *SETTINGS_DATA_EXT_URI = "datashare:///com.ohos.settingsdata.DataAbility";
 constexpr int32_t DECEM_BASE = 10;
 constexpr int32_t DATA_SHARE_READY = 0;
 constexpr int32_t DATA_SHARE_NOT_READY = 1055;
+constexpr int32_t CORRECTION_EXEMPTION_MODE = 8;
 }  // namespace
 
 SensorDataManager::SensorDataManager()
@@ -63,35 +60,19 @@ bool SensorDataManager::Init()
         SEN_HILOGE("sm cannot be nullptr");
         return false;
     }
-    remoteObj_ = sm->GetSystemAbility(MISCDEVICE_SERVICE_ABILITY_ID);
+    remoteObj_ = sm->GetSystemAbility(SENSOR_SERVICE_ABILITY_ID);
     if (remoteObj_ == nullptr) {
         SEN_HILOGE("GetSystemAbility return nullptr");
         return false;
     }
     SensorObserver::UpdateFunc updateFunc = [&]() {
-        int32_t feedback = miscFeedback_;
-        if (GetIntValue(SETTING_FEEDBACK_KEY, feedback) != ERR_OK) {
-            SEN_HILOGE("Get feedback failed");
+        std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
+        std::string compatibleAppStraegy;
+        if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStraegy) != ERR_OK) {
+            SEN_HILOGE("Get compatible app strategy failed");
         }
-        miscFeedback_ = feedback;
-        SEN_HILOGI("feedback:%{public}d", feedback);
-#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::MISCDEVICE, "SWITCHES_TOGGLE",
-            HiSysEvent::EventType::BEHAVIOR, "SWITCH_TYPE", "feedback", "STATUS", feedback);
-#endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        int32_t ringerMode = miscAudioRingerMode_;
-        if (GetIntValue(SETTING_RINGER_MODE_KEY, ringerMode) != ERR_OK) {
-            SEN_HILOGE("Get ringerMode failed");
-        }
-        miscAudioRingerMode_ = ringerMode;
-#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::MISCDEVICE, "SWITCHES_TOGGLE",
-            HiSysEvent::EventType::BEHAVIOR, "SWITCH_TYPE", "ringerMode", "STATUS", ringerMode);
-#endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGI("ringerMode:%{public}d", ringerMode);
-#ifdef OHOS_BUILD_ENABLE_VIBRATOR_CROWN
-        MiscCrownIntensityFeedbackInit();
-#endif
+        GetCompatibleAppStragegyList(compatibleAppStraegy);
+        SEN_HILOGI("compatibleAppStraegy:%{public}s", compatibleAppStraegy.c_str());
     };
     auto observer_ = CreateObserver(updateFunc);
     if (observer_ == nullptr) {
@@ -122,7 +103,7 @@ int32_t SensorDataManager::GetLongValue(const std::string &key, int64_t &value)
     int32_t ret = GetStringValue(key, valueStr);
     if (ret != ERR_OK) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::MISCDEVICE, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
             "PKG_NAME", "GetStringValue", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("GetStringValue failed, ret:%{public}d", ret);
@@ -169,26 +150,6 @@ int32_t SensorDataManager::GetStringValue(const std::string &key, std::string &v
     resultSet->Close();
     IPCSkeleton::SetCallingIdentity(callingIdentity);
     return ERR_OK;
-}
-
-void SensorDataManager::UpdateStatus()
-{
-    if (miscFeedback_ == FEEDBACK_MODE_INVALID) {
-        int32_t feedback = FEEDBACK_MODE_INVALID;
-        if (GetIntValue(SETTING_FEEDBACK_KEY, feedback) != ERR_OK) {
-            feedback = FEEDBACK_MODE_ON;
-            SEN_HILOGE("Get feedback failed");
-        }
-        miscFeedback_ = feedback;
-    }
-    if (miscAudioRingerMode_ == RINGER_MODE_INVALID) {
-        int32_t ringerMode = RINGER_MODE_INVALID;
-        if (GetIntValue(SETTING_RINGER_MODE_KEY, ringerMode) != ERR_OK) {
-            ringerMode = RINGER_MODE_NORMAL;
-            SEN_HILOGE("Get ringerMode failed");
-        }
-        miscAudioRingerMode_ = ringerMode;
-    }
 }
 
 sptr<SensorObserver> SensorDataManager::CreateObserver(const SensorObserver::UpdateFunc &func)
@@ -253,31 +214,27 @@ int32_t SensorDataManager::RegisterObserver(const sptr<SensorObserver> &observer
     auto helper = CreateDataShareHelper(SETTING_URI_PROXY);
     if (helper == nullptr) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::MISCDEVICE, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
             "PKG_NAME", "RegisterObserver", "ERROR_CODE", ERR_NO_INIT);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         IPCSkeleton::SetCallingIdentity(callingIdentity);
         return ERR_NO_INIT;
     }
-    auto uriFeedback = AssembleUri(SETTING_FEEDBACK_KEY);
-    helper->RegisterObserver(uriFeedback, observer);
-    helper->NotifyChange(uriFeedback);
-#ifdef OHOS_BUILD_ENABLE_VIBRATOR_CROWN
-    auto uriCrownFeedback = AssembleUri(SETTING_CROWN_FEEDBACK_KEY);
-    helper->RegisterObserver(uriCrownFeedback, observer);
-    helper->NotifyChange(uriCrownFeedback);
-    auto uriIntensityContrl = AssembleUri(SETTING_VIBRATE_INTENSITY_KEY);
-    helper->RegisterObserver(uriIntensityContrl, observer);
-    helper->NotifyChange(uriIntensityContrl);
-#endif
-    auto uriRingerMode = AssembleUri(SETTING_RINGER_MODE_KEY);
-    helper->RegisterObserver(uriRingerMode, observer);
-    helper->NotifyChange(uriRingerMode);
+    auto uriCompatibleAppStraegy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
+    helper->RegisterObserver(uriCompatibleAppStraegy, observer);
+    helper->NotifyChange(uriCompatibleAppStraegy);
     std::thread execCb(SensorDataManager::ExecRegisterCb, observer);
     execCb.detach();
     ReleaseDataShareHelper(helper);
     IPCSkeleton::SetCallingIdentity(callingIdentity);
     SEN_HILOGI("Succeed to register observer of uri");
+    std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
+    std::string compatibleAppStraegy;
+    if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStraegy) != ERR_OK) {
+        SEN_HILOGE("Get compatible app strategy failed");
+    }
+    SEN_HILOGI("compatibleAppStraegy:%{public}s", compatibleAppStraegy.c_str());
+    GetCompatibleAppStragegyList(compatibleAppStraegy);
     return ERR_OK;
 }
 
@@ -291,26 +248,45 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
     auto helper = CreateDataShareHelper(SETTING_URI_PROXY);
     if (helper == nullptr) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::MISCDEVICE, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
             "PKG_NAME", "UnregisterObserver", "ERROR_CODE", ERR_NO_INIT);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         IPCSkeleton::SetCallingIdentity(callingIdentity);
         return ERR_NO_INIT;
     }
-    auto uriFeedback = AssembleUri(SETTING_FEEDBACK_KEY);
-    helper->UnregisterObserver(uriFeedback, observer);
-#ifdef OHOS_BUILD_ENABLE_VIBRATOR_CROWN
-    auto uriCrownnFeedback = AssembleUri(SETTING_CROWN_FEEDBACK_KEY);
-    helper->UnregisterObserver(uriCrownnFeedback, observer);
-    auto uriIntensityContrl = AssembleUri(SETTING_CROWN_FEEDBACK_KEY);
-    helper->UnregisterObserver(uriIntensityContrl, observer);
-#endif
-    auto uriRingerMode = AssembleUri(SETTING_RINGER_MODE_KEY);
-    helper->UnregisterObserver(uriRingerMode, observer);
+    auto uriCompatibleAppStraegy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
+    helper->UnregisterObserver(uriCompatibleAppStraegy, observer);
     ReleaseDataShareHelper(helper);
     IPCSkeleton::SetCallingIdentity(callingIdentity);
     SEN_HILOGI("Succeed to unregister observer");
     return ERR_OK;
+}
+
+void SensorDataManager::GetCompatibleAppStragegyList(const std::string &compatibleAppStraegy)
+{
+    nlohmann::json compatibleAppStragegyJson = nlohmann::json::parse(compatibleAppStraegy, nullptr, false);
+    if (compatibleAppStragegyJson.is_discarded()) {
+        SEN_HILOGE("Parse json failed");
+        return;
+    }
+    for (auto it = compatibleAppStragegyJson.begin(); it != compatibleAppStragegyJson.end(); ++it) {
+        const std::string& key = it.key();
+        SEN_HILOGD("key:%{public}s", key.c_str());
+        const nlohmann::json& value = it.value();
+        std::string name = "";
+        int32_t mode = -1;
+        bool exemptNaturalDirectionCorrect = false;
+        GetJsonValue(value, "name", name);
+        if (name.empty()) {
+            continue;
+        }
+        SEN_HILOGD("name:%{public}s", name.c_str());
+        GetJsonValue(value, "mode", mode);
+        GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
+        if (exemptNaturalDirectionCorrect && mode == CORRECTION_EXEMPTION_MODE) {
+            compatibleAppStragegyList_.emplace_back(name);
+        }
+    }
 }
 }  // namespace Sensors
 }  // namespace OHOS

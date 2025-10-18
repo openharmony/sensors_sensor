@@ -16,9 +16,8 @@
 #ifndef SENSOR_DATA_MANAGER_H
 #define SENSOR_DATA_MANAGER_H
 
-#ifdef OHOS_BUILD_ENABLE_DO_NOT_DISTURB
-#include "cJSON.h"
-#endif // OHOS_BUILD_ENABLE_DO_NOT_DISTURB
+#include "nlohmann/json.hpp"
+
 #include "datashare_helper.h"
 #include "singleton.h"
 
@@ -27,23 +26,35 @@
 
 namespace OHOS {
 namespace Sensors {
-enum RingerMode {
-    RINGER_MODE_INVALID = -1,
-    RINGER_MODE_SILENT = 0,
-    RINGER_MODE_VIBRATE = 1,
-    RINGER_MODE_NORMAL = 2
-};
-
-enum FeedbackMode {
-    FEEDBACK_MODE_INVALID = -1,
-    FEEDBACK_MODE_OFF = 0,
-    FEEDBACK_MODE_ON = 1
-};
 class SensorDataManager {
     DECLARE_DELAYED_SINGLETON(SensorDataManager);
 public:
     DISALLOW_COPY_AND_MOVE(SensorDataManager);
     bool Init();
+    template<typename T>
+    static bool GetJsonValue(const nlohmann::json& payload, const std::string& key, T& result)
+    {
+        if (!payload.contains(key)) {
+            return false;
+        }
+        if constexpr (std::is_same_v<T, std::string>) {
+            if (payload[key].is_string()) {
+                result = payload[key].get<std::string>();
+                return true;
+            }
+        } else if constexpr (std::is_same_v<T, bool>) {
+            if (payload[key].is_boolean()) {
+                result = payload[key].get<bool>();
+                return true;
+            }
+        } else if constexpr (std::is_arithmetic_v<T>) {
+            if (payload[key].is_number()) {
+                result = payload[key].get<int32_t>();
+                return true;
+            }
+        }
+        return false;
+    }
 
 private:
     static void ExecRegisterCb(const sptr<SensorObserver> &observer);
@@ -56,11 +67,11 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(const std::string &tableUrl);
     bool ReleaseDataShareHelper(std::shared_ptr<DataShare::DataShareHelper> &helper);
     sptr<SensorObserver> CreateObserver(const SensorObserver::UpdateFunc &func);
-    void UpdateStatus();
+    void GetCompatibleAppStragegyList(const std::string &compatibleAppStraegy);
     sptr<IRemoteObject> remoteObj_ { nullptr };
     sptr<SensorObserver> observer_ { nullptr };
-    std::atomic_int32_t miscFeedback_ = FEEDBACK_MODE_INVALID;
-    std::atomic_int32_t miscAudioRingerMode_ = RINGER_MODE_INVALID;
+    std::mutex compatibleAppStraegyMutex_;
+    std::vector<std::string> compatibleAppStragegyList_;
 };
 #define SensorDataMgr DelayedSingleton<SensorDataManager>::GetInstance()
 }  // namespace Sensors

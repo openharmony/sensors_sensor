@@ -153,6 +153,11 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     if (!IsCameraCorrectionEnable()) {
         LoadMotionTransform(systemAbilityId);
     }
+#ifdef MSDP_MOTION_ENABLE
+    if (IsCameraCorrectionEnable()) {
+        MotionSensorRevision();
+    }
+#endif // MSDP_MOTION_ENABLE
 }
 
 int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
@@ -190,9 +195,6 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
             } else {
                 SEN_HILOGE("PriorityManager init fail");
             }
-#ifdef MSDP_MOTION_ENABLE
-            MotionSensorRevision();
-#endif // MSDP_MOTION_ENABLE
         }
     }
 }
