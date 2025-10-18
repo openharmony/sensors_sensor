@@ -262,6 +262,12 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
 
 void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compatibleAppStraegy)
 {
+    {
+        std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
+        if (!compatibleAppStragegyList_.empty()) {
+            compatibleAppStragegyList_.clear();
+        }
+    }
     nlohmann::json compatibleAppStragegyJson = nlohmann::json::parse(compatibleAppStraegy, nullptr, false);
     if (compatibleAppStragegyJson.is_discarded()) {
         SEN_HILOGE("Parse json failed");
