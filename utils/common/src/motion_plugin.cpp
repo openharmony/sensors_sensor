@@ -103,14 +103,13 @@ __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::st
     return func(pkName, state, sensorData);
 }
 
-__attribute__((no_sanitize("cfi"))) void MotionSensorRevision(const std::string& pkName,
-    uint32_t state, SensorData* sensorData)
+__attribute__((no_sanitize("cfi"))) void MotionSensorRevision(uint32_t state, SensorData* sensorData)
 {
     if (g_motion_sensor_revision == nullptr) {
         SEN_HILOGD("g_motion_sensor_revision is nullptr");
         return;
     }
-    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motion_sensor_revision, "MotionSensorRevision"));
+    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motion_sensor_revision, "RevisionSensorData"));
     if (func == nullptr) {
         SEN_HILOGE("func is nullptr");
         return;
@@ -120,7 +119,7 @@ __attribute__((no_sanitize("cfi"))) void MotionSensorRevision(const std::string&
         SEN_HILOGE("dlsym error: %{public}s", dlsymError);
         return;
     }
-    return func(pkName, state, sensorData);
+    return func(state, sensorData);
 }
 }
 }

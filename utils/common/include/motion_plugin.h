@@ -36,13 +36,13 @@ const std::string PLUGIN_MOTION_SENSOR_REVISION_SO_PATH = "/system/lib/libmotion
 #endif
 
 using MotionTransformIfRequiredPtr = void (*)(const std::string& pkName, uint32_t state, SensorData* sensorData);
-using MotionSensorRevisionPtr = void (*)(const std::string& pkName, uint32_t state, SensorData* sensorData);
+using MotionSensorRevisionPtr = void (*)(uint32_t state, SensorData* sensorData);
 bool LoadMotionSensor(void);
 void UnloadMotionSensor(void);
 bool LoadMotionSensorRevision(void);
 void UnloadMotionSensorRevision(void);
 void MotionTransformIfRequired(const std::string& pkName, uint32_t state, SensorData* sensorData);
-void MotionSensorRevision(const std::string& pkName, uint32_t state, SensorData* sensorData);
+void MotionSensorRevision(uint32_t state, SensorData* sensorData);
 }
 }
 #endif /* MOTION_PLUGIN_H */

@@ -66,12 +66,11 @@ bool SensorDataManager::Init()
         return false;
     }
     SensorObserver::UpdateFunc updateFunc = [&]() {
-        std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
         std::string compatibleAppStraegy;
         if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStraegy) != ERR_OK) {
             SEN_HILOGE("Get compatible app strategy failed");
         }
-        GetCompatibleAppStragegyList(compatibleAppStraegy);
+        ParseCompatibleAppStragegyList(compatibleAppStraegy);
         SEN_HILOGI("compatibleAppStraegy:%{public}s", compatibleAppStraegy.c_str());
     };
     auto observer_ = CreateObserver(updateFunc);
@@ -228,13 +227,12 @@ int32_t SensorDataManager::RegisterObserver(const sptr<SensorObserver> &observer
     ReleaseDataShareHelper(helper);
     IPCSkeleton::SetCallingIdentity(callingIdentity);
     SEN_HILOGI("Succeed to register observer of uri");
-    std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
     std::string compatibleAppStraegy;
     if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStraegy) != ERR_OK) {
         SEN_HILOGE("Get compatible app strategy failed");
     }
     SEN_HILOGI("compatibleAppStraegy:%{public}s", compatibleAppStraegy.c_str());
-    GetCompatibleAppStragegyList(compatibleAppStraegy);
+    ParseCompatibleAppStragegyList(compatibleAppStraegy);
     return ERR_OK;
 }
 
@@ -262,7 +260,7 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
     return ERR_OK;
 }
 
-void SensorDataManager::GetCompatibleAppStragegyList(const std::string &compatibleAppStraegy)
+void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compatibleAppStraegy)
 {
     nlohmann::json compatibleAppStragegyJson = nlohmann::json::parse(compatibleAppStraegy, nullptr, false);
     if (compatibleAppStragegyJson.is_discarded()) {
@@ -284,9 +282,15 @@ void SensorDataManager::GetCompatibleAppStragegyList(const std::string &compatib
         GetJsonValue(value, "mode", mode);
         GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
         if (exemptNaturalDirectionCorrect && mode == CORRECTION_EXEMPTION_MODE) {
+            std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
             compatibleAppStragegyList_.emplace_back(name);
         }
     }
+}
+
+std::vector<std::string> SensorDataManager::GetCompatibleAppStragegyList(){
+    std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
+    return compatibleAppStragegyList_;
 }
 }  // namespace Sensors
 }  // namespace OHOS

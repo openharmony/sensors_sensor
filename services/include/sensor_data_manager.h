@@ -31,6 +31,7 @@ class SensorDataManager {
 public:
     DISALLOW_COPY_AND_MOVE(SensorDataManager);
     bool Init();
+    std::vector<std::string> GetCompatibleAppStragegyList();
     template<typename T>
     static bool GetJsonValue(const nlohmann::json& payload, const std::string& key, T& result)
     {
@@ -67,7 +68,7 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(const std::string &tableUrl);
     bool ReleaseDataShareHelper(std::shared_ptr<DataShare::DataShareHelper> &helper);
     sptr<SensorObserver> CreateObserver(const SensorObserver::UpdateFunc &func);
-    void GetCompatibleAppStragegyList(const std::string &compatibleAppStraegy);
+    void ParseCompatibleAppStragegyList(const std::string &compatibleAppStraegy);
     sptr<IRemoteObject> remoteObj_ { nullptr };
     sptr<SensorObserver> observer_ { nullptr };
     std::mutex compatibleAppStraegyMutex_;
