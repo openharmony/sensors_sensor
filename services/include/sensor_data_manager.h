@@ -21,7 +21,6 @@
 #include "datashare_helper.h"
 #include "singleton.h"
 
-// #include "sensor_delayed_sp_singleton.h"
 #include "sensor_observer.h"
 
 namespace OHOS {

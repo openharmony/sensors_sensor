@@ -231,10 +231,12 @@ void SensorService::MotionSensorRevision()
 {
     SEN_HILOGI("MotionSensorRevision in");
 #ifdef MSDP_MOTION_ENABLE
-    if (!IsNeedLoadMotionLib()) {
+    if (IsNeedLoadMotionLib()) {
+        if (!LoadMotionSensorRevision()) {
+            SEN_HILOGI("LoadMotionSensorRevision fail");
+        }
+    } else {
         SEN_HILOGI("No need to load motion lib");
-    } else if (!LoadMotionSensorRevision()) {
-        SEN_HILOGI("LoadMotionSensorRevision fail");
     }
 #endif // MSDP_MOTION_ENABLE
 }
