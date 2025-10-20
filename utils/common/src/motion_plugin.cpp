@@ -27,6 +27,7 @@ namespace {
 }
 
 static void *g_handle = nullptr;
+static void *g_motionSensorRevision = nullptr;
 
 bool LoadMotionSensor(void)
 {
@@ -55,6 +56,33 @@ void UnloadMotionSensor(void)
     }
 }
 
+bool LoadMotionSensorRevision(void)
+{
+    SEN_HILOGI("Load motion plugin in");
+    if (g_motionSensorRevision != nullptr) {
+        SEN_HILOGW("Motion plugin has already exits");
+        return true;
+    }
+    int32_t cnt = 0;
+    int32_t retryTimes = 3;
+    do {
+        cnt++;
+        g_motionSensorRevision = dlopen(PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), RTLD_LAZY);
+        SEN_HILOGI("dlopen %{public}s, retry cnt: %{public}d", PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), cnt);
+        usleep(SLEEP_TIME_US);
+    } while (!g_motionSensorRevision && cnt < retryTimes);
+    return (g_motionSensorRevision != nullptr);
+}
+
+void UnloadMotionSensorRevision(void)
+{
+    SEN_HILOGI("Unload motion plugin in");
+    if (g_motionSensorRevision != nullptr) {
+        dlclose(g_motionSensorRevision);
+        g_motionSensorRevision = nullptr;
+    }
+}
+
 __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::string& pkName,
     uint32_t state, SensorData* sensorData)
 {
@@ -73,6 +101,25 @@ __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::st
         return;
     }
     return func(pkName, state, sensorData);
+}
+
+__attribute__((no_sanitize("cfi"))) void MotionSensorRevision(uint32_t state, SensorData* sensorData)
+{
+    if (g_motionSensorRevision == nullptr) {
+        SEN_HILOGD("g_motionSensorRevision is nullptr");
+        return;
+    }
+    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motionSensorRevision, "RevisionSensorData"));
+    if (func == nullptr) {
+        SEN_HILOGE("func is nullptr");
+        return;
+    }
+    const char* dlsymError = dlerror();
+    if  (dlsymError) {
+        SEN_HILOGE("dlsym error: %{public}s", dlsymError);
+        return;
+    }
+    return func(state, sensorData);
 }
 }
 }

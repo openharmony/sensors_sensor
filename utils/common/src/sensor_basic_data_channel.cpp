@@ -36,7 +36,7 @@ constexpr int32_t SENSOR_READ_DATA_SIZE = sizeof(SensorData) * 100;
 constexpr int32_t DEFAULT_CHANNEL_SIZE = 2 * 1024;
 constexpr int32_t MAX_RECV_LIMIT = 32;
 constexpr int32_t SOCKET_PAIR_SIZE = 2;
-constexpr int32_t SEND_RETRY_LIMIT = 5;
+constexpr int32_t SEND_RETRY_LIMIT = 3;
 constexpr int32_t SEND_RETRY_SLEEP_TIME = 500;
 }  // namespace
 

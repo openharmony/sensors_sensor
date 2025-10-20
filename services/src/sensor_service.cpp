@@ -33,6 +33,7 @@
 #include "parameters.h"
 
 #include "print_sensor_data.h"
+#include "sensor_data_manager.h"
 #include "sensor_dump.h"
 #include "system_ability_definition.h"
 
@@ -60,6 +61,7 @@ const std::set<int32_t> g_systemApiSensorCall = {
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
 std::atomic_bool SensorService::isMemoryMgrServiceActive_ = false;
 std::atomic_bool SensorService::isCritical_ = false;
+std::atomic_bool SensorService::isDataShareReady_ = false;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -70,6 +72,7 @@ SensorService::SensorService()
 SensorService::~SensorService()
 {
     UnloadMotionSensor();
+    UnloadMotionSensorRevision();
 }
 
 void SensorService::OnDump()
@@ -122,6 +125,14 @@ bool SensorService::IsNeedLoadMotionLib()
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
+    if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
+        SEN_HILOGI("Common event service start");
+        int32_t ret = SubscribeCommonEvent("usual.event.DATA_SHARE_READY",
+            [this](const EventFwk::CommonEventData &data) { this->OnReceiveEvent(data); });
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
+        }
+    }
 #ifdef MEMMGR_ENABLE
     if (systemAbilityId == MEMORY_MANAGER_SA_ID) {
         Memory::MemMgrClient::GetInstance().NotifyProcessStatus(getpid(),
@@ -135,10 +146,71 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         isAccessTokenServiceActive_ = true;
     }
 #endif // ACCESS_TOKEN_ENABLE
+    if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
+        UpdateDeviceStatus();
+    }
     /* When sensor_correction_enable is true, the motion whitelist logic is not executed */
     if (!IsCameraCorrectionEnable()) {
         LoadMotionTransform(systemAbilityId);
     }
+#ifdef MSDP_MOTION_ENABLE
+    if (IsCameraCorrectionEnable()) {
+        MotionSensorRevision();
+    }
+#endif // MSDP_MOTION_ENABLE
+}
+
+int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
+    EventReceiver receiver) __attribute__((no_sanitize("cfi")))
+{
+    if (receiver == nullptr) {
+        SEN_HILOGE("receiver is nullptr");
+        return ERROR;
+    }
+    EventFwk::MatchingSkills matchingSkills;
+    matchingSkills.AddEvent(eventName);
+    EventFwk::CommonEventSubscribeInfo subscribeInfo(matchingSkills);
+    auto subscribePtr = std::make_shared<SensorCommonEventSubscriber>(subscribeInfo, receiver);
+    if (!EventFwk::CommonEventManager::SubscribeCommonEvent(subscribePtr)) {
+        SEN_HILOGE("Subscribe common event fail");
+        return ERROR;
+    }
+    return ERR_OK;
+}
+
+void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
+{
+    const auto &want = data.GetWant();
+    std::string action = want.GetAction();
+    if (action == "usual.event.DATA_SHARE_READY") {
+        SEN_HILOGI("On receive usual.event.DATA_SHARE_READY");
+        if (IsCameraCorrectionEnable()) {
+            if (isDataShareReady_) {
+                SEN_HILOGI("SENSOR_DATA_MGR already init");
+                return;
+            }
+            if (SENSOR_DATA_MGR->Init()) {
+                SEN_HILOGI("SENSOR_DATA_MGR init success");
+                isDataShareReady_ = true;
+            } else {
+                SEN_HILOGE("PriorityManager init fail");
+            }
+        }
+    }
+}
+
+void SensorService::UpdateDeviceStatus()
+{
+    std::string statusStr = GetDmsDeviceStatus();
+    int32_t statusNum;
+    auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
+    if (res.ec != std::errc()) {
+        SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
+        return;
+    }
+    uint32_t status = static_cast<uint32_t>(statusNum);
+    clientInfo_.SetDeviceStatus(status);
+    SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
 }
 
 void SensorService::LoadMotionTransform(int32_t systemAbilityId)
@@ -153,18 +225,20 @@ void SensorService::LoadMotionTransform(int32_t systemAbilityId)
         }
     }
 #endif // MSDP_MOTION_ENABLE
-    if (systemAbilityId == DISPLAY_MANAGER_SERVICE_SA_ID) {
-        std::string statusStr = GetDmsDeviceStatus();
-        int32_t statusNum;
-        auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
-        if (res.ec != std::errc()) {
-            SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
-            return;
+}
+
+void SensorService::MotionSensorRevision()
+{
+    SEN_HILOGI("MotionSensorRevision in");
+#ifdef MSDP_MOTION_ENABLE
+    if (IsNeedLoadMotionLib()) {
+        if (!LoadMotionSensorRevision()) {
+            SEN_HILOGI("LoadMotionSensorRevision fail");
         }
-        uint32_t status = static_cast<uint32_t>(statusNum);
-        clientInfo_.SetDeviceStatus(status);
-        SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
+    } else {
+        SEN_HILOGI("No need to load motion lib");
     }
+#endif // MSDP_MOTION_ENABLE
 }
 
 void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
@@ -228,6 +302,7 @@ void SensorService::OnStart()
     AddSystemAbilityListener(MSDP_MOTION_SERVICE_ID);
 #endif // MSDP_MOTION_ENABLE
     AddSystemAbilityListener(DISPLAY_MANAGER_SERVICE_SA_ID);
+    AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
 }
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR

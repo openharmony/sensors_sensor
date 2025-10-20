@@ -24,6 +24,7 @@
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "motion_plugin.h"
 #include "print_sensor_data.h"
+#include "sensor_data_manager.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorDataProcesser"
@@ -299,6 +300,10 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 #ifdef MSDP_MOTION_ENABLE
         if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
             MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
+            std::vector<std::string> appList = SENSOR_DATA_MGR->GetCompatibleAppStragegyList();
+            if (std::find(appList.begin(), appList.end(), channel->GetPackageName()) != appList.end()) {
+                MotionSensorRevision(clientInfo_.GetDeviceStatus(), &sensorData);
+            }
         }
 #endif // MSDP_MOTION_ENABLE
         SendEvents(channel, sensorData);
