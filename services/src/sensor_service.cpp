@@ -186,11 +186,11 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
         SEN_HILOGI("On receive usual.event.DATA_SHARE_READY");
         if (IsCameraCorrectionEnable()) {
             if (isDataShareReady_) {
-                SEN_HILOGI("SensorDataMgr already init");
+                SEN_HILOGI("SENSOR_DATA_MGR already init");
                 return;
             }
-            if (SensorDataMgr->Init()) {
-                SEN_HILOGI("SensorDataMgr init success");
+            if (SENSOR_DATA_MGR->Init()) {
+                SEN_HILOGI("SENSOR_DATA_MGR init success");
                 isDataShareReady_ = true;
             } else {
                 SEN_HILOGE("PriorityManager init fail");

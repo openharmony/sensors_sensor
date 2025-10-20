@@ -27,7 +27,7 @@ namespace {
 }
 
 static void *g_handle = nullptr;
-static void *g_motion_sensor_revision = nullptr;
+static void *g_motionSensorRevision = nullptr;
 
 bool LoadMotionSensor(void)
 {
@@ -59,7 +59,7 @@ void UnloadMotionSensor(void)
 bool LoadMotionSensorRevision(void)
 {
     SEN_HILOGI("Load motion plugin in");
-    if (g_motion_sensor_revision != nullptr) {
+    if (g_motionSensorRevision != nullptr) {
         SEN_HILOGW("Motion plugin has already exits");
         return true;
     }
@@ -67,19 +67,19 @@ bool LoadMotionSensorRevision(void)
     int32_t retryTimes = 3;
     do {
         cnt++;
-        g_motion_sensor_revision = dlopen(PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), RTLD_LAZY);
+        g_motionSensorRevision = dlopen(PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), RTLD_LAZY);
         SEN_HILOGI("dlopen %{public}s, retry cnt: %{public}d", PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), cnt);
         usleep(SLEEP_TIME_US);
-    } while (!g_motion_sensor_revision && cnt < retryTimes);
-    return (g_motion_sensor_revision != nullptr);
+    } while (!g_motionSensorRevision && cnt < retryTimes);
+    return (g_motionSensorRevision != nullptr);
 }
 
 void UnloadMotionSensorRevision(void)
 {
     SEN_HILOGI("Unload motion plugin in");
-    if (g_motion_sensor_revision != nullptr) {
-        dlclose(g_motion_sensor_revision);
-        g_motion_sensor_revision = nullptr;
+    if (g_motionSensorRevision != nullptr) {
+        dlclose(g_motionSensorRevision);
+        g_motionSensorRevision = nullptr;
     }
 }
 
@@ -105,11 +105,11 @@ __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::st
 
 __attribute__((no_sanitize("cfi"))) void MotionSensorRevision(uint32_t state, SensorData* sensorData)
 {
-    if (g_motion_sensor_revision == nullptr) {
-        SEN_HILOGD("g_motion_sensor_revision is nullptr");
+    if (g_motionSensorRevision == nullptr) {
+        SEN_HILOGD("g_motionSensorRevision is nullptr");
         return;
     }
-    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motion_sensor_revision, "RevisionSensorData"));
+    MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motionSensorRevision, "RevisionSensorData"));
     if (func == nullptr) {
         SEN_HILOGE("func is nullptr");
         return;

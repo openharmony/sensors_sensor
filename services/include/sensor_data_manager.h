@@ -73,7 +73,7 @@ private:
     std::mutex compatibleAppStraegyMutex_;
     std::vector<std::string> compatibleAppStragegyList_;
 };
-#define SensorDataMgr DelayedSingleton<SensorDataManager>::GetInstance()
+#define SENSOR_DATA_MGR DelayedSingleton<SensorDataManager>::GetInstance()
 }  // namespace Sensors
 }  // namespace OHOS
 #endif  // SENSOR_DATA_MANAGER_H
