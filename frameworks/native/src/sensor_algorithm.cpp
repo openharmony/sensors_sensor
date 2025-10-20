@@ -35,7 +35,7 @@ int32_t SensorAlgorithm::CreateQuaternion(std::vector<float> rotationVector, std
     if (static_cast<int32_t>(rotationVector.size()) == ROTATION_VECTOR_LENGTH) {
         quaternion[0] = 1 - static_cast<float>((pow(rotationVector[0], 2) + pow(rotationVector[1], 2)
             + pow(rotationVector[2], 2)));
-        quaternion[0]  = (quaternion[0] > 0) ? static_cast<float>(std::sqrt(quaternion[0])) : 0;
+        quaternion[0] = (quaternion[0] > 0) ? static_cast<float>(std::sqrt(quaternion[0])) : 0;
     } else {
         quaternion[0] = rotationVector[3];
     }
