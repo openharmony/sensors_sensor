@@ -58,6 +58,7 @@ ohos_fuzztest("TransferClientRemoteObjectStubFuzzTest") {
     "access_token:libnativetoken_shared",
     "access_token:libtokensetproc_shared",
     "c_utils:utils",
+    "common_event_service:cesfwk_innerkits",
     "cJSON:cjson_static",
     "drivers_interface_sensor:libsensor_proxy_3.0",
     "hilog:libhilog",
