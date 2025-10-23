@@ -22,6 +22,7 @@
 #include <string>
 #include <unistd.h>
 
+#include "geomagnetic_field.h"
 #include "ohos.sensor.proj.hpp"
 #include "refbase.h"
 #include "securec.h"
@@ -69,8 +70,10 @@ struct CallbackObject : public RefBase {
 
 namespace {
 constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
+constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t REPORTING_INTERVAL = 200000000;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
+constexpr int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_MAX_DATA_LENGTH = 16;
 
 void CallBackAccelermeter(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
@@ -270,6 +273,133 @@ array<Sensor> getSensorListSync()
         result.push_back(sensorInfo);
     }
     return taihe::array<::ohos::sensor::Sensor>(result);
+}
+
+ohos::sensor::Sensor getSingleSensorSync(ohos::sensor::SensorId type)
+{
+    ohos::sensor::Sensor sensor = {
+        .sensorName = "",
+        .vendorName = "",
+        .firmwareVersion = "",
+        .hardwareVersion = "",
+        .sensorId = 0,
+        .maxRange = 0,
+        .minSamplePeriod = 0,
+        .maxSamplePeriod = 0,
+        .precision = 0,
+        .power = 0
+    };
+    int32_t count = 0;
+    SensorInfo *sensorInfos = nullptr;
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get sensor list fail");
+        return sensor;
+    }
+    for (int32_t i = 0; i < count; ++i) {
+        if (sensorInfos[i].sensorTypeId == type.get_value()) {
+            sensor = {
+                .sensorName = sensorInfos[i].sensorName,
+                .vendorName = sensorInfos[i].vendorName,
+                .firmwareVersion = sensorInfos[i].firmwareVersion,
+                .hardwareVersion = sensorInfos[i].hardwareVersion,
+                .sensorId = sensorInfos[i].sensorId,
+                .maxRange = sensorInfos[i].maxRange,
+                .minSamplePeriod = sensorInfos[i].minSamplePeriod,
+                .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
+                .precision = sensorInfos[i].precision,
+                .power = sensorInfos[i].power,
+            };
+            return sensor;
+        }
+    }
+    taihe::set_business_error(SENSOR_NO_SUPPORT, "The sensor is not supported by the device");
+    return sensor;
+}
+
+taihe::array<double> getQuaternionSync(taihe::array_view<double> rotationVector)
+{
+    SensorAlgorithm sensorAlgorithm;
+    std::vector<float> vecRotation(transformDoubleToFloat(rotationVector));
+    std::vector<float> vecQuaternion(QUATERNION_LENGTH);
+    int32_t ret = sensorAlgorithm.CreateQuaternion(vecRotation, vecQuaternion);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "CreateQuaternion fail");
+    }
+    return transformFloatToDouble(vecQuaternion);
+}
+
+taihe::array<double> transformRotationMatrixSync(taihe::array_view<double> inRotationVector,
+    ohos::sensor::CoordinatesOptions const& coordinates)
+{
+    std::vector<float> vecInRotation(transformDoubleToFloat(inRotationVector));
+    size_t length = inRotationVector.size();
+    if ((length != DATA_LENGTH) && (length != THREE_DIMENSIONAL_MATRIX_LENGTH)) {
+        taihe::set_business_error(PARAMETER_ERROR, "Wrong inRotationVector length");
+        return transformFloatToDouble(vecInRotation);
+    }
+    std::vector<float> vecOutRotation(length);
+    SensorAlgorithm sensorAlgorithm;
+    int32_t ret = sensorAlgorithm.TransformCoordinateSystem(
+        vecInRotation, coordinates.x, coordinates.y, vecOutRotation);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Transform coordinate system fail");
+    }
+    return transformFloatToDouble(vecOutRotation);
+}
+
+taihe::array<double> getAngleVariationSync(taihe::array_view<double> currentRotationMatrix,
+    taihe::array_view<double> preRotationMatrix)
+{
+    std::vector<float> angleChange(ROTATION_VECTOR_LENGTH);
+    std::vector<float> curRotationVector(transformDoubleToFloat(currentRotationMatrix));
+    std::vector<float> preRotationVector(transformDoubleToFloat(preRotationMatrix));
+    SensorAlgorithm sensorAlgorithm;
+    int32_t ret = sensorAlgorithm.GetAngleModify(curRotationVector, preRotationVector, angleChange);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get angle modify fail");
+    }
+    return transformFloatToDouble(angleChange);
+}
+
+double getInclinationSync(taihe::array_view<double> inclinationMatrix)
+{
+    float geomagneticDip = 0;
+    SensorAlgorithm sensorAlgorithm;
+    std::vector<float> vecInclinationMatrix(transformDoubleToFloat(inclinationMatrix));
+    int32_t ret = sensorAlgorithm.GetGeomagneticDip(vecInclinationMatrix, &geomagneticDip);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get geomagnetic dip fail");
+    }
+    return static_cast<double>(geomagneticDip);
+}
+
+double getDeviceAltitudeSync(double seaPressure, double currentPressure)
+{
+    float altitude = 0;
+    SensorAlgorithm sensorAlgorithm;
+    int32_t ret = sensorAlgorithm.GetAltitude(static_cast<float>(seaPressure),
+        static_cast<float>(currentPressure), &altitude);
+    if (ret != OHOS::ERR_OK) {
+        taihe::set_business_error(ret, "Get altitude fail");
+    }
+    return static_cast<double>(altitude);
+}
+
+ohos::sensor::GeomagneticResponse getGeomagneticInfoSync(
+    ohos::sensor::LocationOptions const& locationOptions, int64_t timeMillis)
+{
+    GeomagneticField geomagneticField(locationOptions.latitude,
+        locationOptions.longitude, locationOptions.altitude, timeMillis);
+    return ohos::sensor::GeomagneticResponse {
+        .x = geomagneticField.ObtainX(),
+        .y = geomagneticField.ObtainY(),
+        .z = geomagneticField.ObtainZ(),
+        .geomagneticDip = geomagneticField.ObtainGeomagneticDip(),
+        .deflectionAngle = geomagneticField.ObtainDeflectionAngle(),
+        .levelIntensity = geomagneticField.ObtainLevelIntensity(),
+        .totalIntensity = geomagneticField.ObtainTotalIntensity()
+    };
 }
 
 bool GetInterval(const Options &options, int64_t &interval)
@@ -1502,71 +1632,78 @@ TH_EXPORT_CPP_API_getRotationMatrixSyncGrav(getRotationMatrixSyncGrav);
 TH_EXPORT_CPP_API_getOrientationSync(getOrientationSync);
 TH_EXPORT_CPP_API_getRotationMatrixSync(getRotationMatrixSync);
 TH_EXPORT_CPP_API_getSensorListSync(getSensorListSync);
-TH_EXPORT_CPP_API_OnWearDetection(OnWearDetection);
-TH_EXPORT_CPP_API_OnceWearDetection(OnceWearDetection);
-TH_EXPORT_CPP_API_OffWearDetection(OffWearDetection);
-TH_EXPORT_CPP_API_OnSignificantMotion(OnSignificantMotion);
-TH_EXPORT_CPP_API_OnceSignificantMotion(OnceSignificantMotion);
-TH_EXPORT_CPP_API_OffSignificantMotion(OffSignificantMotion);
-TH_EXPORT_CPP_API_OnRotationVector(OnRotationVector);
-TH_EXPORT_CPP_API_OnceRotationVector(OnceRotationVector);
-TH_EXPORT_CPP_API_OffRotationVector(OffRotationVector);
-TH_EXPORT_CPP_API_OnProximity(OnProximity);
-TH_EXPORT_CPP_API_OnceProximity(OnceProximity);
-TH_EXPORT_CPP_API_OffProximity(OffProximity);
-TH_EXPORT_CPP_API_OnPedometerDetection(OnPedometerDetection);
-TH_EXPORT_CPP_API_OncePedometerDetection(OncePedometerDetection);
-TH_EXPORT_CPP_API_OffPedometerDetection(OffPedometerDetection);
-TH_EXPORT_CPP_API_OnPedometer(OnPedometer);
-TH_EXPORT_CPP_API_OncePedometer(OncePedometer);
-TH_EXPORT_CPP_API_OffPedometer(OffPedometer);
-TH_EXPORT_CPP_API_OnOrientation(OnOrientation);
-TH_EXPORT_CPP_API_OnceOrientation(OnceOrientation);
-TH_EXPORT_CPP_API_OffOrientation(OffOrientation);
-TH_EXPORT_CPP_API_OnMagneticFieldUncalibrated(OnMagneticFieldUncalibrated);
-TH_EXPORT_CPP_API_OnceMagneticFieldUncalibrated(OnceMagneticFieldUncalibrated);
-TH_EXPORT_CPP_API_OffMagneticFieldUncalibrated(OffMagneticFieldUncalibrated);
-TH_EXPORT_CPP_API_OnMagneticField(OnMagneticField);
-TH_EXPORT_CPP_API_OnceMagneticField(OnceMagneticField);
-TH_EXPORT_CPP_API_OffMagneticField(OffMagneticField);
-TH_EXPORT_CPP_API_OnLinearAccelerometer(OnLinearAccelerometer);
-TH_EXPORT_CPP_API_OnceLinearAccelerometer(OnceLinearAccelerometer);
-TH_EXPORT_CPP_API_OffLinearAccelerometer(OffLinearAccelerometer);
-TH_EXPORT_CPP_API_OnHumidity(OnHumidity);
-TH_EXPORT_CPP_API_OnceHumidity(OnceHumidity);
-TH_EXPORT_CPP_API_OffHumidity(OffHumidity);
-TH_EXPORT_CPP_API_OnHeartRate(OnHeartRate);
-TH_EXPORT_CPP_API_OnceHeartRate(OnceHeartRate);
-TH_EXPORT_CPP_API_OffHeartRate(OffHeartRate);
-TH_EXPORT_CPP_API_OnHall(OnHall);
-TH_EXPORT_CPP_API_OnceHall(OnceHall);
-TH_EXPORT_CPP_API_OffHall(OffHall);
-TH_EXPORT_CPP_API_OnGyroscopeUncalibrated(OnGyroscopeUncalibrated);
-TH_EXPORT_CPP_API_OnceGyroscopeUncalibrated(OnceGyroscopeUncalibrated);
-TH_EXPORT_CPP_API_OffGyroscopeUncalibrated(OffGyroscopeUncalibrated);
-TH_EXPORT_CPP_API_OnGyroscope(OnGyroscope);
-TH_EXPORT_CPP_API_OnceGyroscope(OnceGyroscope);
-TH_EXPORT_CPP_API_OffGyroscope(OffGyroscope);
-TH_EXPORT_CPP_API_OnGravity(OnGravity);
-TH_EXPORT_CPP_API_OnceGravity(OnceGravity);
-TH_EXPORT_CPP_API_OffGravity(OffGravity);
-TH_EXPORT_CPP_API_OnBarometer(OnBarometer);
-TH_EXPORT_CPP_API_OnceBarometer(OnceBarometer);
-TH_EXPORT_CPP_API_OffBarometer(OffBarometer);
-TH_EXPORT_CPP_API_OnAmbientTemperature(OnAmbientTemperature);
-TH_EXPORT_CPP_API_OnceAmbientTemperature(OnceAmbientTemperature);
-TH_EXPORT_CPP_API_OffAmbientTemperature(OffAmbientTemperature);
-TH_EXPORT_CPP_API_OnAmbientLight(OnAmbientLight);
-TH_EXPORT_CPP_API_OnceAmbientLight(OnceAmbientLight);
-TH_EXPORT_CPP_API_OffAmbientLight(OffAmbientLight);
-TH_EXPORT_CPP_API_OnAccelerometerUncalibrated(OnAccelerometerUncalibrated);
-TH_EXPORT_CPP_API_OnceAccelerometerUncalibrated(OnceAccelerometerUncalibrated);
-TH_EXPORT_CPP_API_OffAccelerometerUncalibrated(OffAccelerometerUncalibrated);
-TH_EXPORT_CPP_API_OnAccelerometer(OnAccelerometer);
-TH_EXPORT_CPP_API_OnceAccelerometer(OnceAccelerometer);
-TH_EXPORT_CPP_API_OffAccelerometer(OffAccelerometer);
-TH_EXPORT_CPP_API_OnSar(OnSar);
-TH_EXPORT_CPP_API_OffSar(OffSar);
-TH_EXPORT_CPP_API_OnColor(OnColor);
-TH_EXPORT_CPP_API_OffColor(OffColor);
+TH_EXPORT_CPP_API_getSingleSensorSync(getSingleSensorSync);
+TH_EXPORT_CPP_API_getQuaternionSync(getQuaternionSync);
+TH_EXPORT_CPP_API_transformRotationMatrixSync(transformRotationMatrixSync);
+TH_EXPORT_CPP_API_getAngleVariationSync(getAngleVariationSync);
+TH_EXPORT_CPP_API_getInclinationSync(getInclinationSync);
+TH_EXPORT_CPP_API_getDeviceAltitudeSync(getDeviceAltitudeSync);
+TH_EXPORT_CPP_API_getGeomagneticInfoSync(getGeomagneticInfoSync);
+TH_EXPORT_CPP_API_OnWearDetectionChange(OnWearDetection);
+TH_EXPORT_CPP_API_OnceWearDetectionChange(OnceWearDetection);
+TH_EXPORT_CPP_API_OffWearDetectionChange(OffWearDetection);
+TH_EXPORT_CPP_API_OnSignificantMotionChange(OnSignificantMotion);
+TH_EXPORT_CPP_API_OnceSignificantMotionChange(OnceSignificantMotion);
+TH_EXPORT_CPP_API_OffSignificantMotionChange(OffSignificantMotion);
+TH_EXPORT_CPP_API_OnRotationVectorChange(OnRotationVector);
+TH_EXPORT_CPP_API_OnceRotationVectorChange(OnceRotationVector);
+TH_EXPORT_CPP_API_OffRotationVectorChange(OffRotationVector);
+TH_EXPORT_CPP_API_OnProximityChange(OnProximity);
+TH_EXPORT_CPP_API_OnceProximityChange(OnceProximity);
+TH_EXPORT_CPP_API_OffProximityChange(OffProximity);
+TH_EXPORT_CPP_API_OnPedometerDetectionChange(OnPedometerDetection);
+TH_EXPORT_CPP_API_OncePedometerDetectionChange(OncePedometerDetection);
+TH_EXPORT_CPP_API_OffPedometerDetectionChange(OffPedometerDetection);
+TH_EXPORT_CPP_API_OnPedometerChange(OnPedometer);
+TH_EXPORT_CPP_API_OncePedometerChange(OncePedometer);
+TH_EXPORT_CPP_API_OffPedometerChange(OffPedometer);
+TH_EXPORT_CPP_API_OnOrientationChange(OnOrientation);
+TH_EXPORT_CPP_API_OnceOrientationChange(OnceOrientation);
+TH_EXPORT_CPP_API_OffOrientationChange(OffOrientation);
+TH_EXPORT_CPP_API_OnMagneticFieldUncalibratedChange(OnMagneticFieldUncalibrated);
+TH_EXPORT_CPP_API_OnceMagneticFieldUncalibratedChange(OnceMagneticFieldUncalibrated);
+TH_EXPORT_CPP_API_OffMagneticFieldUncalibratedChange(OffMagneticFieldUncalibrated);
+TH_EXPORT_CPP_API_OnMagneticFieldChange(OnMagneticField);
+TH_EXPORT_CPP_API_OnceMagneticFieldChange(OnceMagneticField);
+TH_EXPORT_CPP_API_OffMagneticFieldChange(OffMagneticField);
+TH_EXPORT_CPP_API_OnLinearAccelerometerChange(OnLinearAccelerometer);
+TH_EXPORT_CPP_API_OnceLinearAccelerometerChange(OnceLinearAccelerometer);
+TH_EXPORT_CPP_API_OffLinearAccelerometerChange(OffLinearAccelerometer);
+TH_EXPORT_CPP_API_OnHumidityChange(OnHumidity);
+TH_EXPORT_CPP_API_OnceHumidityChange(OnceHumidity);
+TH_EXPORT_CPP_API_OffHumidityChange(OffHumidity);
+TH_EXPORT_CPP_API_OnHeartRateChange(OnHeartRate);
+TH_EXPORT_CPP_API_OnceHeartRateChange(OnceHeartRate);
+TH_EXPORT_CPP_API_OffHeartRateChange(OffHeartRate);
+TH_EXPORT_CPP_API_OnHallChange(OnHall);
+TH_EXPORT_CPP_API_OnceHallChange(OnceHall);
+TH_EXPORT_CPP_API_OffHallChange(OffHall);
+TH_EXPORT_CPP_API_OnGyroscopeUncalibratedChange(OnGyroscopeUncalibrated);
+TH_EXPORT_CPP_API_OnceGyroscopeUncalibratedChange(OnceGyroscopeUncalibrated);
+TH_EXPORT_CPP_API_OffGyroscopeUncalibratedChange(OffGyroscopeUncalibrated);
+TH_EXPORT_CPP_API_OnGyroscopeChange(OnGyroscope);
+TH_EXPORT_CPP_API_OnceGyroscopeChange(OnceGyroscope);
+TH_EXPORT_CPP_API_OffGyroscopeChange(OffGyroscope);
+TH_EXPORT_CPP_API_OnGravityChange(OnGravity);
+TH_EXPORT_CPP_API_OnceGravityChange(OnceGravity);
+TH_EXPORT_CPP_API_OffGravityChange(OffGravity);
+TH_EXPORT_CPP_API_OnBarometerChange(OnBarometer);
+TH_EXPORT_CPP_API_OnceBarometerChange(OnceBarometer);
+TH_EXPORT_CPP_API_OffBarometerChange(OffBarometer);
+TH_EXPORT_CPP_API_OnAmbientTemperatureChange(OnAmbientTemperature);
+TH_EXPORT_CPP_API_OnceAmbientTemperatureChange(OnceAmbientTemperature);
+TH_EXPORT_CPP_API_OffAmbientTemperatureChange(OffAmbientTemperature);
+TH_EXPORT_CPP_API_OnAmbientLightChange(OnAmbientLight);
+TH_EXPORT_CPP_API_OnceAmbientLightChange(OnceAmbientLight);
+TH_EXPORT_CPP_API_OffAmbientLightChange(OffAmbientLight);
+TH_EXPORT_CPP_API_OnAccelerometerUncalibratedChange(OnAccelerometerUncalibrated);
+TH_EXPORT_CPP_API_OnceAccelerometerUncalibratedChange(OnceAccelerometerUncalibrated);
+TH_EXPORT_CPP_API_OffAccelerometerUncalibratedChange(OffAccelerometerUncalibrated);
+TH_EXPORT_CPP_API_OnAccelerometerChange(OnAccelerometer);
+TH_EXPORT_CPP_API_OnceAccelerometerChange(OnceAccelerometer);
+TH_EXPORT_CPP_API_OffAccelerometerChange(OffAccelerometer);
+TH_EXPORT_CPP_API_OnSarChange(OnSar);
+TH_EXPORT_CPP_API_OffSarChange(OffSar);
+TH_EXPORT_CPP_API_OnColorChange(OnColor);
+TH_EXPORT_CPP_API_OffColorChange(OffColor);
 // NOLINTEND
