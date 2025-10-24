@@ -33,7 +33,7 @@
 
 namespace OHOS {
 namespace Sensors {
-namespace{
+namespace {
 constexpr double PERCENTAGE_RANGE = 100.0;
 constexpr int32_t VOICE_MIN_INTENSITY_NORM = 25;
 constexpr size_t MAX_SIZE = 26460000;

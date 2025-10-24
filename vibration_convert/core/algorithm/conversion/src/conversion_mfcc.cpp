@@ -232,7 +232,6 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
     std::vector<double> filterHzPos(nMels + 2);
     double stepMel = (maxMel - minMel) / (nMels + 1);
     double stepHz = static_cast<double>(sr) / nFft;
-
     double nextMel = minMel;
     for (size_t i = 0; i < (nMels + 2); i++) {
         filterHzPos[i] = OHOS::Sensors::ConvertHtkHz(nextMel);
@@ -261,11 +260,7 @@ int32_t ConversionMfcc::FiltersMel(int32_t nFft, MfccInputPara para,
         }
     }
     melBasis = OHOS::Sensors::TransposeMatrix(nMels, basis);
-    if (melBasis.empty()) {
-        SEN_HILOGE("melBasis is empty");
-        return Sensors::ERROR;
-    }
-    return Sensors::SUCCESS;
+    return melBasis.empty() ? Sensors::ERROR : Sensors::SUCCESS;
 }
 } // namespace Sensors
 } // namespace OHOS
