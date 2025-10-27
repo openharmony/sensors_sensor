@@ -43,18 +43,24 @@ const std::set<int32_t> g_noNeedMotionTransform = {
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
 {
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
     SEN_HILOGD("sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
 }
 
 SensorDataProcesser::~SensorDataProcesser()
 {
-    dataCountMap_.clear();
+    {
+        std::lock_guard<std::mutex> dataCountLock(dataCountMutex_);
+        dataCountMap_.clear();
+    }
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     sensorMap_.clear();
 }
 
 void SensorDataProcesser::UpdateSensorMap(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
 {
+    std::lock_guard<std::mutex> sensorLock(sensorMutex_);
     sensorMap_.clear();
     sensorMap_.insert(sensorMap.begin(), sensorMap.end());
     SEN_HILOGD("sensorMap_.size:%{public}d", int32_t { sensorMap_.size() });
