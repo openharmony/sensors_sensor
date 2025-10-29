@@ -857,6 +857,7 @@ void ClientInfo::DestroySensorClient(const sptr<IRemoteObject> &sensorClient)
 void ClientInfo::SendMsgToClient(SensorPlugData info)
 {
     CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> lock(sensorClientMutex_);
     for (const auto &client : sensorClients_) {
         sptr<ISensorClient> clientProxy = iface_cast<ISensorClient>(client);
         if (clientProxy != nullptr) {

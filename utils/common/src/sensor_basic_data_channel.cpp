@@ -42,7 +42,7 @@ constexpr int32_t SEND_RETRY_SLEEP_TIME = 500;
 
 SensorBasicDataChannel::SensorBasicDataChannel() : sendFd_(-1), receiveFd_(-1), isActive_(false)
 {
-    SEN_HILOGD("isActive_:%{public}d, sendFd:%{public}d", isActive_, sendFd_);
+    SEN_HILOGD("isActive_:%{public}d, sendFd:%{public}d", isActive_.load(), sendFd_);
 }
 
 int32_t SensorBasicDataChannel::CreateSensorBasicChannel()

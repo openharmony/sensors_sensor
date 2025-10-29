@@ -49,7 +49,7 @@ private:
     std::mutex fdLock_;
     int32_t sendFd_;
     int32_t receiveFd_;
-    bool isActive_;
+    std::atomic_bool isActive_;
     std::mutex statusLock_;
     std::unordered_map<SensorDescription, SensorData> dataCacheBuf_;
     std::string packageName_;
