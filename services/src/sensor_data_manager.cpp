@@ -39,7 +39,6 @@ constexpr const char *SETTINGS_DATA_EXT_URI = "datashare:///com.ohos.settingsdat
 constexpr int32_t DECEM_BASE = 10;
 constexpr int32_t DATA_SHARE_READY = 0;
 constexpr int32_t DATA_SHARE_NOT_READY = 1055;
-constexpr int32_t CORRECTION_EXEMPTION_MODE = 8;
 }  // namespace
 
 SensorDataManager::SensorDataManager()
@@ -278,16 +277,14 @@ void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compat
         SEN_HILOGD("key:%{public}s", key.c_str());
         const nlohmann::json& value = it.value();
         std::string name = "";
-        int32_t mode = -1;
         bool exemptNaturalDirectionCorrect = false;
         GetJsonValue(value, "name", name);
         if (name.empty()) {
             continue;
         }
         SEN_HILOGD("name:%{public}s", name.c_str());
-        GetJsonValue(value, "mode", mode);
         GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
-        if (exemptNaturalDirectionCorrect && mode == CORRECTION_EXEMPTION_MODE) {
+        if (exemptNaturalDirectionCorrect) {
             std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
             compatibleAppStragegyList_.emplace_back(name);
         }
