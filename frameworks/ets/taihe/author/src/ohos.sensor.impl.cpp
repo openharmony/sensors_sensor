@@ -1649,7 +1649,8 @@ void OffColor(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uint
     OffCommon(SENSOR_TYPE_ID_COLOR, opq);
 }
 
-void OnFusionPressure(callback_view<void(FusionPressureResponse const &)> f, uintptr_t opq, optional_view<Options> options)
+void OnFusionPressure(
+    callback_view<void(FusionPressureResponse const &)> f, uintptr_t opq, optional_view<Options> options)
 {
     OnCommon(SENSOR_TYPE_ID_FUSION_PRESSURE, f, opq, options);
 }
