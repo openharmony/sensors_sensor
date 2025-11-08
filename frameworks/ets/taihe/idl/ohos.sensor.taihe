@@ -212,7 +212,14 @@ enum SensorId: i32 {
      * @syscap SystemCapability.Sensors.Sensor
      * @since 9
      */
-    ACCELEROMETER_UNCALIBRATED = 281
+    ACCELEROMETER_UNCALIBRATED = 281,
+
+    /**
+     * Fusion pressure sensor.
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 22
+     */
+    FUSION_PRESSURE = 283
 }
 
 /**
@@ -1200,6 +1207,23 @@ struct GeomagneticResponse {
     totalIntensity: f64;
 }
 
+
+/**
+ * Indicates fusion pressure data.
+ * @typedef FusionPressureResponse
+ * @syscap SystemCapability.Sensors.Sensor
+ * @since 22
+ */
+struct FusionPressureResponse {
+    /**
+     * Fusion pressure percent data.
+     * @type { f64 }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 22
+     */
+    fusionPressure: f64;
+}
+
 /**
  * Indicates geographic location.
  * @typedef LocationOptions
@@ -1627,3 +1651,6 @@ function OffSarChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<
 
 function OnColorChange(f: (info: ColorResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
 function OffColorChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<ColorResponse, void>") Opaque>);
+
+function OnFusionPressureChange(f: (info: FusionPressureResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
+function OffFusionPressureChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<FusionPressureResponse, void>") Opaque>);

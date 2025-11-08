@@ -55,7 +55,7 @@ using callbackType = std::variant<taihe::callback<void(WearDetectionResponse con
     taihe::callback<void(BarometerResponse const &)>, taihe::callback<void(AmbientTemperatureResponse const &)>,
     taihe::callback<void(LightResponse const &)>, taihe::callback<void(AccelerometerUncalibratedResponse const &)>,
     taihe::callback<void(AccelerometerResponse const &)>, taihe::callback<void(SarResponse const &)>,
-    taihe::callback<void(ColorResponse const &)>>;
+    taihe::callback<void(FusionPressureResponse const &)>, taihe::callback<void(ColorResponse const &)>>;
 
 struct CallbackObject : public RefBase {
     CallbackObject(callbackType cb, ani_ref ref) : callback(cb), ref(ref)
@@ -101,6 +101,7 @@ void CallBackAccelerometerUncalibrated(std::map<std::string, responseSensorData>
     sptr<CallbackObject> callbackObject);
 void CallBackColor(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
 void CallBackSar(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
+void CallBackFusionPressure(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
 void EmitOnceCallback(SensorEvent *event);
 
 std::map<taihe::string, int64_t> g_samplingPeriod = {
@@ -163,6 +164,7 @@ std::map<int32_t, std::function<void(std::map<std::string, responseSensorData>, 
         { SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED, CallBackAccelerometerUncalibrated },
         { SENSOR_TYPE_ID_COLOR, CallBackColor },
         { SENSOR_TYPE_ID_SAR, CallBackSar },
+        { SENSOR_TYPE_ID_FUSION_PRESSURE, CallBackFusionPressure },
     };
 
 std::mutex g_mutex;
@@ -950,6 +952,28 @@ void CallBackColor(std::map<std::string, responseSensorData> data, sptr<Callback
     func(responseData);
 }
 
+void CallBackFusionPressure(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject)
+{
+    if (callbackObject == nullptr) {
+        SEN_HILOGE("callbackObject is null");
+        return;
+    }
+    if (!std::holds_alternative<taihe::callback<void(FusionPressureResponse const &)>>(callbackObject->callback)) {
+        SEN_HILOGE("callbackObject is not of type callback FusionPressureResponse function");
+        return;
+    }
+    ohos::sensor::Response res = {
+        .timestamp = std::get<int64_t>(data["timestamp"]),
+        .accuracy = std::get<ohos::sensor::SensorAccuracy>(data["accuracy"]),
+    };
+    FusionPressureResponse responseData = {
+        .base = res,
+        .fusionPressure = std::get<double>(data["fusionPressure"]),
+    };
+    auto &func = std::get<taihe::callback<void(FusionPressureResponse const &)>>(callbackObject->callback);
+    func(responseData);
+}
+
 void CallBackSar(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject)
 {
     if (callbackObject == nullptr) {
@@ -1624,6 +1648,16 @@ void OffColor(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uint
 {
     OffCommon(SENSOR_TYPE_ID_COLOR, opq);
 }
+
+void OnFusionPressure(callback_view<void(FusionPressureResponse const &)> f, uintptr_t opq, optional_view<Options> options)
+{
+    OnCommon(SENSOR_TYPE_ID_FUSION_PRESSURE, f, opq, options);
+}
+
+void OffFusionPressure(optional_view<SensorInfoParam> sensorInfoParam, optional_view<uintptr_t> opq)
+{
+    OffCommon(SENSOR_TYPE_ID_FUSION_PRESSURE, opq);
+}
 } // namespace
 
 // Since there macros are auto-generate, lint will cause false positive.
@@ -1706,4 +1740,6 @@ TH_EXPORT_CPP_API_OnSarChange(OnSar);
 TH_EXPORT_CPP_API_OffSarChange(OffSar);
 TH_EXPORT_CPP_API_OnColorChange(OnColor);
 TH_EXPORT_CPP_API_OffColorChange(OffColor);
+TH_EXPORT_CPP_API_OnFusionPressureChange(OnFusionPressure);
+TH_EXPORT_CPP_API_OffFusionPressureChange(OffFusionPressure);
 // NOLINTEND
