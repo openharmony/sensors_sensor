@@ -1215,6 +1215,9 @@ struct GeomagneticResponse {
  * @since 22
  */
 struct FusionPressureResponse {
+
+    @extends base: Response;
+
     /**
      * Fusion pressure percent data.
      * @type { f64 }
