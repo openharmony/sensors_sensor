@@ -25,6 +25,7 @@
 #include "motion_plugin.h"
 #include "print_sensor_data.h"
 #include "sensor_data_manager.h"
+#include "sensor_shake_control_manager.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorDataProcesser"
@@ -38,6 +39,12 @@ const std::string SENSOR_REPORT_THREAD_NAME = "OS_SenProducer";
 const std::set<int32_t> g_noNeedMotionTransform = {
     SENSOR_TYPE_ID_POSTURE, SENSOR_TYPE_ID_HALL, SENSOR_TYPE_ID_HALL_EXT,
     SENSOR_TYPE_ID_PROXIMITY, SENSOR_TYPE_ID_PROXIMITY1, SENSOR_TYPE_ID_AMBIENT_LIGHT
+};
+const std::set<int32_t> g_shakeSensorControlList = {
+    SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_MAGNETIC_FIELD, SENSOR_TYPE_ID_GYROSCOPE,
+    SENSOR_TYPE_ID_GRAVITY, SENSOR_TYPE_ID_LINEAR_ACCELERATION, SENSOR_TYPE_ID_ROTATION_VECTOR,
+    SENSOR_TYPE_ID_GAME_ROTATION_VECTOR, SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED,
+    SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR
 };
 } // namespace
 
@@ -312,6 +319,12 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
             }
         }
 #endif // MSDP_MOTION_ENABLE
+        if ((g_shakeSensorControlList.find(sensorData.sensorTypeId) != g_shakeSensorControlList.end())
+            && (SENSOR_SHAKE_CONTROL_MGR->CheckAppIsNeedControl(channel->GetPackageName(), channel->GetAccessTokenId(),
+            channel->GetUserId()))) {
+            SEN_HILOGD("Shake the sensor data for control, bundleName:%{public}s", channel->GetPackageName().c_str());
+            continue;
+        }
         SendEvents(channel, sensorData);
     }
 }

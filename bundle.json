@@ -39,7 +39,8 @@
         "init",
         "selinux_adapter",
         "cJSON",
-	"runtime_core"
+        "runtime_core",
+        "os_account"
       ],
       "third_party": []
     },
