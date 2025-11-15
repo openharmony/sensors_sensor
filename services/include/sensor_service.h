@@ -107,6 +107,9 @@ private:
     void UpdateDeviceStatus();
     int32_t SubscribeCommonEvent(const std::string &eventName, EventReceiver receiver);
     void OnReceiveEvent(const EventFwk::CommonEventData &data);
+    void OnReceiveUserSwitchEvent(const EventFwk::CommonEventData &data);
+    void LoadSecurityPrivacyManager();
+    void NotifyAppSubscribeSensor();
     SensorServiceState state_;
     std::mutex serviceLock_;
     std::mutex sensorsMutex_;
@@ -135,6 +138,7 @@ private:
     static std::atomic_bool isMemoryMgrServiceActive_;
     static std::atomic_bool isCritical_;
     static std::atomic_bool isDataShareReady_;
+    static std::atomic_bool isSensorShakeControlManagerReady_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()

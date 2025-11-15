@@ -33,6 +33,8 @@
 #include "parameters.h"
 
 #include "print_sensor_data.h"
+#include "security_privacy_manager_plugin.h"
+#include "sensor_shake_control_manager.h"
 #include "sensor_data_manager.h"
 #include "sensor_dump.h"
 #include "system_ability_definition.h"
@@ -62,6 +64,7 @@ std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
 std::atomic_bool SensorService::isMemoryMgrServiceActive_ = false;
 std::atomic_bool SensorService::isCritical_ = false;
 std::atomic_bool SensorService::isDataShareReady_ = false;
+std::atomic_bool SensorService::isSensorShakeControlManagerReady_ = false;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -73,6 +76,7 @@ SensorService::~SensorService()
 {
     UnloadMotionSensor();
     UnloadMotionSensorRevision();
+    UnloadSecurityPrivacyServer();
 }
 
 void SensorService::OnDump()
@@ -125,12 +129,18 @@ bool SensorService::IsNeedLoadMotionLib()
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
+    LoadSecurityPrivacyManager();
     if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
         SEN_HILOGI("Common event service start");
         int32_t ret = SubscribeCommonEvent("usual.event.DATA_SHARE_READY",
             [this](const EventFwk::CommonEventData &data) { this->OnReceiveEvent(data); });
         if (ret != ERR_OK) {
             SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
+        }
+        ret = SubscribeCommonEvent("usual.event.USER_SWITCHED",
+            [this](const EventFwk::CommonEventData &data) { this->OnReceiveUserSwitchEvent(data); });
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Subscribe usual.event.USER_SWITCHED fail");
         }
     }
 #ifdef MEMMGR_ENABLE
@@ -184,6 +194,16 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
     std::string action = want.GetAction();
     if (action == "usual.event.DATA_SHARE_READY") {
         SEN_HILOGI("On receive usual.event.DATA_SHARE_READY");
+        if (isSensorShakeControlManagerReady_) {
+            SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
+        } else {
+            if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
+                SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
+                isSensorShakeControlManagerReady_ = true;
+            } else {
+                SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
+            }
+        }
         if (IsCameraCorrectionEnable()) {
             if (isDataShareReady_) {
                 SEN_HILOGI("SENSOR_DATA_MGR already init");
@@ -196,6 +216,24 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
                 SEN_HILOGE("PriorityManager init fail");
             }
         }
+    }
+}
+
+void SensorService::OnReceiveUserSwitchEvent(const EventFwk::CommonEventData &data)
+{
+    const auto &want = data.GetWant();
+    std::string action = want.GetAction();
+    if (action == "usual.event.USER_SWITCHED") {
+        SEN_HILOGI("OnReceiveUserSwitchEvent user switched");
+        SENSOR_SHAKE_CONTROL_MGR->UpdateRegisterShakeSensorControlObserver();
+    }
+}
+
+void SensorService::LoadSecurityPrivacyManager()
+{
+    SEN_HILOGI("LoadSecurityPrivacyManager in");
+    if (!LoadSecurityPrivacyServer()) {
+        SEN_HILOGE("LoadSecurityPrivacyServer fail");
     }
 }
 
@@ -567,7 +605,31 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
         ReportActiveInfo(sensorDesc, pid);
     }
     PrintSensorData::GetInstance().ResetHdiCounter(sensorDesc.sensorType);
+    NotifyAppSubscribeSensor();
     return ret;
+}
+
+void SensorService::NotifyAppSubscribeSensor()
+{
+    int32_t userId = SENSOR_SHAKE_CONTROL_MGR->GetCurrentUserId();
+    AccessTokenID tokenId = GetCallingTokenID();
+    std::string packageName("");
+    sensorManager_.GetPackageName(tokenId, packageName, isAccessTokenServiceActive_);
+    AppPolicyEventExt appPolicyEventExt;
+    appPolicyEventExt.objectId = std::to_string(tokenId);
+    appPolicyEventExt.objectType = ObjectType::ACCESS_TOKEN_ID;
+    appPolicyEventExt.bundleName = packageName;
+    appPolicyEventExt.policyName = PolicyName::MOTION_SENSOR;
+    if (appPolicyEventExt.objectId.empty() || appPolicyEventExt.bundleName.empty()) {
+        SEN_HILOGE("ModifyAppPolicy param error");
+        return;
+    }
+    if (SENSOR_SHAKE_CONTROL_MGR->CheckAppInfoIsNeedModify(packageName, appPolicyEventExt.objectId, userId)) {
+        int32_t ret = ModifyAppPolicy(userId, appPolicyEventExt);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("ModifyAppPolicy failed");
+        }
+    }
 }
 
 ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
@@ -792,6 +854,8 @@ ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObj
     sensorManager_.GetPackageName(callerToken, packageName, isAccessTokenServiceActive_);
     SEN_HILOGI("Calling packageName:%{public}s", packageName.c_str());
     sensorBasicDataChannel->SetPackageName(packageName);
+    sensorBasicDataChannel->SetUserId(SENSOR_SHAKE_CONTROL_MGR->GetCurrentUserId());
+    sensorBasicDataChannel->SetAccessTokenId(std::to_string(callerToken));
     RegisterClientDeathRecipient(sensorClient, pid);
     SEN_HILOGI("Done");
     return ERR_OK;

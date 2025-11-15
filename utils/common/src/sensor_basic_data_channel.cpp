@@ -309,5 +309,29 @@ void SensorBasicDataChannel::SetPackageName(std::string packageName)
     std::unique_lock<std::mutex> lock(pkNameLock_);
     packageName_ = packageName;
 }
+
+int32_t SensorBasicDataChannel::GetUserId()
+{
+    return userId_.load();
+}
+
+void SensorBasicDataChannel::SetUserId(int32_t userId)
+{
+    SEN_HILOGD("SetUserId in");
+    userId_ = userId;
+}
+
+std::string SensorBasicDataChannel::GetAccessTokenId()
+{
+    std::unique_lock<std::mutex> lock(accessTokenIdLock_);
+    return accessTokenId_;
+}
+
+void SensorBasicDataChannel::SetAccessTokenId(std::string accessTokenId)
+{
+    SEN_HILOGD("SetAccessTokenId in");
+    std::unique_lock<std::mutex> lock(accessTokenIdLock_);
+    accessTokenId_ = accessTokenId;
+}
 } // namespace Sensors
 } // namespace OHOS

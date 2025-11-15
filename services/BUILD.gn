@@ -26,6 +26,7 @@ ohos_shared_library("libsensor_service") {
     "src/sensor_observer.cpp",
     "src/sensor_power_policy.cpp",
     "src/sensor_service.cpp",
+    "src/sensor_shake_control_manager.cpp",
     "src/stream_server.cpp",
   ]
 
@@ -83,6 +84,7 @@ ohos_shared_library("libsensor_service") {
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "os_account:os_account_innerkits",
   ]
 
   if (sensor_memmgr_enable) {
@@ -151,6 +153,7 @@ ohos_static_library("libsensor_service_static") {
     "src/sensor_observer.cpp",
     "src/sensor_power_policy.cpp",
     "src/sensor_service.cpp",
+    "src/sensor_shake_control_manager.cpp",
     "src/stream_server.cpp",
   ]
 
@@ -208,6 +211,7 @@ ohos_static_library("libsensor_service_static") {
     "ipc:ipc_single",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "os_account:os_account_innerkits",
   ]
 
   if (sensor_memmgr_enable) {

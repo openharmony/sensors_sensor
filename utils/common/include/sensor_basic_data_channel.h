@@ -44,6 +44,10 @@ public:
     const std::unordered_map<SensorDescription, SensorData> &GetDataCacheBuf() const;
     std::string GetPackageName();
     void SetPackageName(std::string packageName);
+    int32_t GetUserId();
+    void SetUserId(int32_t userId);
+    std::string GetAccessTokenId();
+    void SetAccessTokenId(std::string accessTokenId);
 
 private:
     std::mutex fdLock_;
@@ -54,6 +58,9 @@ private:
     std::unordered_map<SensorDescription, SensorData> dataCacheBuf_;
     std::string packageName_;
     std::mutex pkNameLock_;
+    std::atomic_int32_t userId_;
+    std::string accessTokenId_;
+    std::mutex accessTokenIdLock_;
 };
 } // namespace Sensors
 } // namespace OHOS
