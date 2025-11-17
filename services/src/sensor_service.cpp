@@ -829,7 +829,7 @@ std::vector<Sensor> SensorService::GetSensorList()
 
 ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient)
 {
-    SEN_HILOGI("In");
+    CALL_LOG_ENTER;
     sptr<SensorBasicDataChannel> sensorBasicDataChannel = new (std::nothrow) SensorBasicDataChannel();
     CHKPR(sensorBasicDataChannel, OBJECT_NULL);
     auto ret = sensorBasicDataChannel->CreateSensorBasicChannelBySendFd(sendFd);
@@ -857,7 +857,6 @@ ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObj
     sensorBasicDataChannel->SetUserId(SENSOR_SHAKE_CONTROL_MGR->GetCurrentUserId());
     sensorBasicDataChannel->SetAccessTokenId(std::to_string(callerToken));
     RegisterClientDeathRecipient(sensorClient, pid);
-    SEN_HILOGI("Done");
     return ERR_OK;
 }
 
