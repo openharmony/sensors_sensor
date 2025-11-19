@@ -137,6 +137,11 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         if (ret != ERR_OK) {
             SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
         }
+        ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
+            [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
+        if (ret != ERR_OK) {
+            SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
+        }
         ret = SubscribeCommonEvent("usual.event.USER_SWITCHED",
             [this](const EventFwk::CommonEventData &data) { this->OnReceiveUserSwitchEvent(data); });
         if (ret != ERR_OK) {
@@ -188,12 +193,12 @@ int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
     return ERR_OK;
 }
 
-void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
+void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
 {
     const auto &want = data.GetWant();
     std::string action = want.GetAction();
-    if (action == "usual.event.DATA_SHARE_READY") {
-        SEN_HILOGI("On receive usual.event.DATA_SHARE_READY");
+    if (action == "usual.event.BOOT_COMPLETED") {
+        SEN_HILOGI("On receive usual.event.BOOT_COMPLETED");
         if (isSensorShakeControlManagerReady_) {
             SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
         } else {
@@ -204,6 +209,15 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
                 SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
             }
         }
+    }
+}
+
+void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
+{
+    const auto &want = data.GetWant();
+    std::string action = want.GetAction();
+    if (action == "usual.event.DATA_SHARE_READY") {
+        SEN_HILOGI("On receive usual.event.DATA_SHARE_READY");
         if (IsCameraCorrectionEnable()) {
             if (isDataShareReady_) {
                 SEN_HILOGI("SENSOR_DATA_MGR already init");
@@ -579,6 +593,9 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     }
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
+    if (isSensorShakeControlManagerReady_) {
+        NotifyAppSubscribeSensor();
+    }
     if (clientInfo_.GetSensorState(sensorDesc)) {
         return SensorReportEvent(sensorDesc, samplingPeriodNs, maxReportDelayNs, pid);
     }
@@ -605,7 +622,6 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
         ReportActiveInfo(sensorDesc, pid);
     }
     PrintSensorData::GetInstance().ResetHdiCounter(sensorDesc.sensorType);
-    NotifyAppSubscribeSensor();
     return ret;
 }
 

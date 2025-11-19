@@ -47,9 +47,9 @@ struct AppPolicyEventExt {
 };
 
 #if (defined(__aarch64__) || defined(__x86_64__))
-const std::string SECURITY_PRIVACY_SDK_SO_PATH = "/system/lib64/libsps_security_privacy_sdk.z.so";
+const std::string SECURITY_PRIVACY_SDK_SO_PATH = "/system/lib64/libsps_app_policy_sdk.z.so";
 #else
-const std::string SECURITY_PRIVACY_SDK_SO_PATH = "/system/lib/libsps_security_privacy_sdk.z.so";
+const std::string SECURITY_PRIVACY_SDK_SO_PATH = "/system/lib/libsps_app_policy_sdk.z.so";
 #endif
 
 using ModifyAppPolicyPtr = int32_t (*)(int32_t systemAbilityId, int32_t userId,
@@ -59,12 +59,14 @@ using QueryAppPolicyByPolicyNamePtr = int32_t (*)(int32_t systemAbilityId, int32
 using RegisterAppPolicyObserverPtr = int32_t (*)(int32_t systemAbilityId, int32_t userId,
     const std::function<void()> &callback);
 using UnregisterAppPolicyObserverPtr = int32_t (*)(int32_t systemAbilityId, int32_t userId);
+using CreateAppPolicyDBPtr = int32_t (*)(int32_t userId);
 bool LoadSecurityPrivacyServer(void);
 void UnloadSecurityPrivacyServer(void);
 int32_t ModifyAppPolicy(int32_t userId, const AppPolicyEventExt &appPolicyEvent);
 int32_t QueryAppPolicyByPolicyName(int32_t userId, PolicyName policyName, std::vector<AppPolicyEventExt> &appPolicies);
 int32_t RegisterAppPolicyObserver(int32_t userId, const std::function<void()> &callback);
 int32_t UnregisterAppPolicyObserver(int32_t userId);
+int32_t CreateAppPolicyDB(int32_t userId);
 }
 }
 #endif /* SECURITY_PRIVACY_MANAGER_PLUGIN_H */
