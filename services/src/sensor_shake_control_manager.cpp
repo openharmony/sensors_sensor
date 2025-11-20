@@ -101,8 +101,13 @@ int32_t SensorShakeControlManager::UpdateCurrentUserId()
 int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver()
 {
     SEN_HILOGI("RegisterShakeSensorControlObserver start");
+    int32_t ret = CreateAppPolicyDB(currentUserId_.load());
+    if (ret != ERR_OK) {
+        SEN_HILOGE("CreateAppPolicyDB failed, ret::%{public}d", ret);
+        return ret;
+    }
     std::function<void()> updateFunc = [&]() { InitShakeSensorControlAppInfos(); };
-    int32_t ret = RegisterAppPolicyObserver(currentUserId_.load(), updateFunc);
+    ret = RegisterAppPolicyObserver(currentUserId_.load(), updateFunc);
     if (ret != ERR_OK) {
         SEN_HILOGE("RegisterAppPolicyObserver failed, ret::%{public}d", ret);
         return ret;

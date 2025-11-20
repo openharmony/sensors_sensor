@@ -138,5 +138,25 @@ __attribute__((no_sanitize("cfi"))) int32_t UnregisterAppPolicyObserver(int32_t 
     }
     return func(SENSOR_SYSTEM_ABILITY_ID, userId);
 }
+
+__attribute__((no_sanitize("cfi"))) int32_t CreateAppPolicyDB(int32_t userId)
+{
+    if (g_handle == nullptr) {
+        SEN_HILOGD("g_handle is nullptr");
+        return ERROR;
+    }
+    CreateAppPolicyDBPtr func = (CreateAppPolicyDBPtr)(dlsym(g_handle,
+        "CreateAppPolicyDB"));
+    const char* dlsymError = dlerror();
+    if  (dlsymError) {
+        SEN_HILOGE("dlsym error: %{public}s", dlsymError);
+        return ERROR;
+    }
+    if (func == nullptr) {
+        SEN_HILOGE("func is nullptr");
+        return ERROR;
+    }
+    return func(userId);
+}
 }
 }
