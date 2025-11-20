@@ -312,7 +312,7 @@ int32_t SensorServiceClient::GetLocalDeviceId(int32_t& deviceId)
 
 int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorDataChannel)
 {
-    SEN_HILOGI("In");
+    CALL_LOG_ENTER;
     CHKPR(sensorDataChannel, INVALID_POINTER);
     {
         std::lock_guard<std::mutex> channelLock(channelMutex_);
@@ -336,7 +336,6 @@ int32_t SensorServiceClient::TransferDataChannel(sptr<SensorDataChannel> sensorD
 #ifdef HIVIEWDFX_HITRACE_ENABLE
     FinishTrace(HITRACE_TAG_SENSORS);
 #endif // HIVIEWDFX_HITRACE_ENABLE
-    SEN_HILOGI("Done");
     return ret;
 }
 
@@ -567,14 +566,13 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
 void SensorServiceClient::UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod,
     int64_t maxReportDelay)
 {
-    SEN_HILOGI("In");
+    CALL_LOG_ENTER;
     SensorBasicInfo sensorInfo;
     sensorInfo.SetSamplingPeriodNs(samplingPeriod);
     sensorInfo.SetMaxReportDelayNs(maxReportDelay);
     sensorInfo.SetSensorState(true);
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     sensorInfoMap_[sensorDesc] = sensorInfo;
-    SEN_HILOGI("Done");
     return;
 }
 
