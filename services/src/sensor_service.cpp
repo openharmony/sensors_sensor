@@ -137,10 +137,19 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         if (ret != ERR_OK) {
             SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
         }
-        ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
-            [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
-        if (ret != ERR_OK) {
-            SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
+        if (OHOS::system::GetBoolParameter("usual.event.BOOT_COMPLETED", false)) {
+            SEN_HILOGI("GetBoolParameter success");
+            if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
+                isSensorShakeControlManagerReady_ = true;
+            } else {
+                SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
+            }
+        } else {
+            ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
+                [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
+            if (ret != ERR_OK) {
+                SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
+            }
         }
         ret = SubscribeCommonEvent("usual.event.USER_SWITCHED",
             [this](const EventFwk::CommonEventData &data) { this->OnReceiveUserSwitchEvent(data); });
