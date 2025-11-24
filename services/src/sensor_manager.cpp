@@ -45,7 +45,7 @@ void SensorManager::InitSensorMap(const std::unordered_map<SensorDescription, Se
 bool SensorManager::SetBestSensorParams(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, sensorType:%{public}d", sensorDesc.sensorType);
+    CALL_LOG_ENTER;
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
         return false;
@@ -65,7 +65,6 @@ bool SensorManager::SetBestSensorParams(const SensorDescription &sensorDesc, int
         SEN_HILOGE("SetBatch is failed");
         return false;
     }
-    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
     return true;
 }
 
