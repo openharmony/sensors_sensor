@@ -126,6 +126,16 @@ bool SensorService::IsNeedLoadMotionLib()
     return false;
 }
 
+void SensorService::InitShakeControl()
+{
+    if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
+        SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
+        isSensorShakeControlManagerReady_ = true;
+        return;
+    }
+    SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
+}
+
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
@@ -138,12 +148,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
             SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
         }
         if (OHOS::system::GetBoolParameter("usual.event.BOOT_COMPLETED", false)) {
-            SEN_HILOGI("GetBoolParameter success");
-            if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
-                isSensorShakeControlManagerReady_ = true;
-            } else {
-                SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
-            }
+            InitShakeControl();
         } else {
             ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
                 [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
@@ -211,12 +216,7 @@ void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
         if (isSensorShakeControlManagerReady_) {
             SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
         } else {
-            if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
-                SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
-                isSensorShakeControlManagerReady_ = true;
-            } else {
-                SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
-            }
+            InitShakeControl();
         }
     }
 }
