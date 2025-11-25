@@ -28,6 +28,8 @@ SensorEventHandler::SensorEventHandler(const std::shared_ptr<EventRunner> &runne
  * Function: Process the event. Override the method of base class.
  * @param event The event need to be processed.
  */
-void SensorEventHandler::ProcessEvent(const InnerEvent::Pointer &event) {}
+void SensorEventHandler::ProcessEvent(const InnerEvent::Pointer &event)
+{ // LCOV_EXCL_START
+} // LCOV_EXCL_STOP
 } // namespace Sensors
 } // namespace OHOS

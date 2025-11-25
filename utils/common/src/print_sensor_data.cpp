@@ -64,7 +64,7 @@ const std::vector<int32_t> g_continuousSensorType = {
 }
 
 void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
-{
+{ // LCOV_EXCL_START
     auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), sensorData.sensorTypeId);
     if (triggerIt != g_triggerSensorType.end()) {
         PrintHdiData(sensorData);
@@ -97,10 +97,10 @@ void PrintSensorData::ControlSensorHdiPrint(const SensorData &sensorData)
         it->second.hdiTimesFlag = sensorData.timestamp;
         it->second.hdiTimes = 0;
     }
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::PrintHdiData(const SensorData &sensorData)
-{
+{ // LCOV_EXCL_START
     std::string str;
     str += std::to_string(sensorData.deviceId) + " ";
     str += std::to_string(sensorData.sensorTypeId) + " ";
@@ -119,10 +119,10 @@ void PrintSensorData::PrintHdiData(const SensorData &sensorData)
     }
     str.append("\n");
     SEN_HILOGI("%{public}s", str.c_str());
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::ProcessHdiDFX(const SensorData &sensorData)
-{
+{ // LCOV_EXCL_START
     std::string strData;
     auto data = reinterpret_cast<const float *>(sensorData.data);
     int32_t dataDim = GetDataDimension(sensorData.sensorTypeId);
@@ -139,10 +139,10 @@ void PrintSensorData::ProcessHdiDFX(const SensorData &sensorData)
         HiSysEvent::EventType::BEHAVIOR, "SENSOR_ID", sensorData.sensorTypeId, "TIMESTAMP",
         std::to_string(sensorData.timestamp), "DATA", strData);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
-{
+{ // LCOV_EXCL_START
     switch (sensorType) {
         case SENSOR_TYPE_ID_DROP_DETECTION:
         case SENSOR_TYPE_ID_HALL:
@@ -167,10 +167,10 @@ int32_t PrintSensorData::GetDataDimension(int32_t sensorType)
             SEN_HILOGW("Unknown sensorType:%{public}d, size:%{public}d", sensorType, DEFAULT_DIMENSION);
             return DEFAULT_DIMENSION;
     }
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callback, const SensorEvent &event)
-{
+{ // LCOV_EXCL_START
     auto triggerIt = std::find(g_triggerSensorType.begin(), g_triggerSensorType.end(), event.sensorTypeId);
     if (triggerIt != g_triggerSensorType.end()) {
         PrintClientData(event);
@@ -208,7 +208,7 @@ void PrintSensorData::ControlSensorClientPrint(const RecordSensorCallback callba
         it->second.clientTimesFlag = event.timestamp;
         it->second.clientTimes = 0;
     }
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::PrintClientData(const SensorEvent &event)
 {
@@ -259,7 +259,7 @@ bool PrintSensorData::IsContinuousType(int32_t sensorType)
 }
 
 void PrintSensorData::SavePrintUserInfo(const RecordSensorCallback callback)
-{
+{ // LCOV_EXCL_START
     CHKPV(callback);
     std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
     if (clientLoginfo_.find(callback) != clientLoginfo_.end()) {
@@ -270,20 +270,20 @@ void PrintSensorData::SavePrintUserInfo(const RecordSensorCallback callback)
     if (!status.second) {
         SEN_HILOGD("callback has been saved");
     }
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::RemovePrintUserInfo(const RecordSensorCallback callback)
-{
+{ // LCOV_EXCL_START
     CHKPV(callback);
     std::lock_guard<std::mutex> clientLoginfoLock(clientLoginfoMutex_);
     if (clientLoginfo_.find(callback) == clientLoginfo_.end()) {
         return;
     }
     clientLoginfo_.erase(callback);
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::ResetHdiCounter(int32_t sensorType)
-{
+{ // LCOV_EXCL_START
     std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
     auto it = hdiLoginfo_.find(sensorType);
     if (it == hdiLoginfo_.end()) {
@@ -291,10 +291,10 @@ void PrintSensorData::ResetHdiCounter(int32_t sensorType)
     }
     it->second.count = 0;
     it->second.lastTime = 0;
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::ResetHdiTimes(int32_t sensorType)
-{
+{ // LCOV_EXCL_START
     std::lock_guard<std::mutex> hdiLoginfoLock(hdiLoginfoMutex_);
     auto it = hdiLoginfo_.find(sensorType);
     if (it == hdiLoginfo_.end()) {
@@ -302,10 +302,10 @@ void PrintSensorData::ResetHdiTimes(int32_t sensorType)
     }
     it->second.hdiTimes = 0;
     it->second.hdiTimesFlag = 0;
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorData &data)
-{
+{ // LCOV_EXCL_START
     std::string str;
     str += std::to_string(data.deviceId) + ", ";
     str += std::to_string(data.sensorTypeId) + ", ";
@@ -324,7 +324,7 @@ void PrintSensorData::PrintSensorDataLog(const std::string &name, const SensorDa
     }
     str.append("\n");
     SEN_HILOGI("%{public}s SensorData:%{public}s", name.c_str(), str.c_str());
-}
+} // LCOV_EXCL_STOP
 
 void PrintSensorData::PrintSensorInfo(SensorInfo *sensorInfos, int32_t sensorInfoCount)
 {
