@@ -134,7 +134,7 @@ void SensorService::InitShakeControl()
     }
     if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
         SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
-        isSensorShakeControlManagerReady_.load() = true;
+        isSensorShakeControlManagerReady_.store(true);
         return;
     }
     SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
