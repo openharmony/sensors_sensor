@@ -128,9 +128,13 @@ bool SensorService::IsNeedLoadMotionLib()
 
 void SensorService::InitShakeControl()
 {
+    if (isSensorShakeControlManagerReady_.load()) {
+        SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
+        return;
+    }
     if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
         SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
-        isSensorShakeControlManagerReady_ = true;
+        isSensorShakeControlManagerReady_.load() = true;
         return;
     }
     SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
@@ -213,11 +217,7 @@ void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
     std::string action = want.GetAction();
     if (action == "usual.event.BOOT_COMPLETED") {
         SEN_HILOGI("On receive usual.event.BOOT_COMPLETED");
-        if (isSensorShakeControlManagerReady_) {
-            SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
-        } else {
-            InitShakeControl();
-        }
+        InitShakeControl();
     }
 }
 
@@ -602,7 +602,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     }
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
-    if (isSensorShakeControlManagerReady_) {
+    if (isSensorShakeControlManagerReady_.load()) {
         NotifyAppSubscribeSensor();
     }
     if (clientInfo_.GetSensorState(sensorDesc)) {
