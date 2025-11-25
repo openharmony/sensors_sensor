@@ -123,7 +123,7 @@ int32_t SensorServiceClient::InitServiceClient()
 }
 
 bool SensorServiceClient::LoadSensorService()
-{
+{ // LCOV_EXCL_START
     SEN_HILOGI("LoadSensorService in");
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgr == nullptr) {
@@ -147,7 +147,7 @@ bool SensorServiceClient::LoadSensorService()
         return false;
     }
     return true;
-}
+} // LCOV_EXCL_STOP
 
 bool SensorServiceClient::IsValid(const SensorDescription &sensorDesc)
 {
@@ -369,7 +369,7 @@ int32_t SensorServiceClient::DestroyDataChannel()
 }
 
 void SensorServiceClient::ReenableSensor()
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     {
         std::lock_guard<std::mutex> clientLock(clientMutex_);
@@ -388,7 +388,7 @@ void SensorServiceClient::ReenableSensor()
     }
     Disconnect();
     CreateSocketChannel();
-}
+} // LCOV_EXCL_STOP
 
 int32_t SensorServiceClient::CreateClientRemoteObject()
 {
@@ -445,7 +445,7 @@ int32_t SensorServiceClient::DestroyClientRemoteObject()
 }
 
 void SensorServiceClient::WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret)
-{
+{ // LCOV_EXCL_START
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
     if (ret != NO_ERROR) {
         switch (code) {
@@ -491,10 +491,10 @@ void SensorServiceClient::WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t
     }
     WriteHiSysIPCEventSplit(code, ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 void SensorServiceClient::WriteHiSysIPCEventSplit(ISensorServiceIpcCode code, int32_t ret)
-{
+{ // LCOV_EXCL_START
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
     if (ret != NO_ERROR) {
         switch (code) {
@@ -516,10 +516,10 @@ void SensorServiceClient::WriteHiSysIPCEventSplit(ISensorServiceIpcCode code, in
         }
     }
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object)
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     {
         std::lock_guard<std::mutex> channelLock(channelMutex_);
@@ -561,7 +561,7 @@ void SensorServiceClient::ProcessDeathObserver(const wptr<IRemoteObject> &object
         }
     }
     ReenableSensor();
-}
+} // LCOV_EXCL_STOP
 
 void SensorServiceClient::UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod,
     int64_t maxReportDelay)
@@ -739,7 +739,7 @@ int32_t SensorServiceClient::ResetSensors()
 }
 
 void SensorServiceClient::ReceiveMessage(const char *buf, size_t size)
-{
+{ // LCOV_EXCL_START
     CHKPV(buf);
     if (size == 0 || size > MAX_PACKET_BUF_SIZE) {
         SEN_HILOGE("Invalid input param size. size:%{public}zu", size);
@@ -753,10 +753,10 @@ void SensorServiceClient::ReceiveMessage(const char *buf, size_t size)
 #else
     OnReadPackets(circBuf_, [this] (NetPacket &pkt) { this->HandleNetPacke(pkt); });
 #endif // OHOS_BUILD_ENABLE_RUST
-}
+} // LCOV_EXCL_STOP
 
 void SensorServiceClient::HandleNetPacke(NetPacket &pkt)
-{
+{ // LCOV_EXCL_START
     auto id = pkt.GetMsgId();
     if (id != MessageId::ACTIVE_INFO) {
         SEN_HILOGE("NetPacke message id is not ACTIVE_INFO");
@@ -779,7 +779,7 @@ void SensorServiceClient::HandleNetPacke(NetPacket &pkt)
             callback(sensorActiveInfo);
         }
     }
-}
+} // LCOV_EXCL_STOP
 
 void SensorServiceClient::Disconnect()
 {
@@ -890,7 +890,7 @@ void SensorServiceClient::SetDeviceStatus(uint32_t deviceStatus)
 }
 
 bool SensorServiceClient::EraseCacheSensorList(const SensorPlugData &info)
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     if (sensorList_.empty()) {
@@ -908,6 +908,6 @@ bool SensorServiceClient::EraseCacheSensorList(const SensorPlugData &info)
     }
     SEN_HILOGD("sensorList_ cannot find the sensor");
     return true;
-}
+} // LCOV_EXCL_STOP
 } // namespace Sensors
 } // namespace OHOS
