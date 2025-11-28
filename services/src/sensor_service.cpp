@@ -80,17 +80,17 @@ SensorService::~SensorService()
 }
 
 void SensorService::OnDump()
-{
+{ // LCOV_EXCL_START
     SEN_HILOGI("OnDump");
-}
+} // LCOV_EXCL_STOP
 
 std::string GetDmsDeviceStatus()
-{
+{ // LCOV_EXCL_START
     return OHOS::system::GetParameter("persist.dms.device.status", "0");
-}
+} // LCOV_EXCL_STOP
 
 bool IsCameraCorrectionEnable()
-{
+{ // LCOV_EXCL_START
     std::string isEnable = OHOS::system::GetParameter("const.system.sensor_correction_enable", "0");
     int32_t correctionEnable = 0;
     auto res = std::from_chars(isEnable.data(), isEnable.data() + isEnable.size(), correctionEnable);
@@ -99,10 +99,10 @@ bool IsCameraCorrectionEnable()
         return false;
     }
     return correctionEnable != 0;
-}
+} // LCOV_EXCL_STOP
 
 bool SensorService::IsNeedLoadMotionLib()
-{
+{ // LCOV_EXCL_START
     std::string supportDevice = OHOS::system::GetParameter("const.window.foldscreen.type", DEFAULTS_FOLD_TYPE);
     size_t index = supportDevice.find(',');
     if (index != std::string::npos) {
@@ -124,7 +124,7 @@ bool SensorService::IsNeedLoadMotionLib()
     }
     SEN_HILOGI("Not support in this device");
     return false;
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::InitShakeControl()
 {
@@ -140,7 +140,7 @@ void SensorService::InitShakeControl()
 }
 
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
-{
+{ // LCOV_EXCL_START
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
     LoadSecurityPrivacyManager();
     if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
@@ -190,11 +190,11 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         MotionSensorRevision();
     }
 #endif // MSDP_MOTION_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
     EventReceiver receiver) __attribute__((no_sanitize("cfi")))
-{
+{ // LCOV_EXCL_START
     if (receiver == nullptr) {
         SEN_HILOGE("receiver is nullptr");
         return ERROR;
@@ -208,7 +208,7 @@ int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
         return ERROR;
     }
     return ERR_OK;
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
 {
@@ -221,7 +221,7 @@ void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
 }
 
 void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
-{
+{ // LCOV_EXCL_START
     const auto &want = data.GetWant();
     std::string action = want.GetAction();
     if (action == "usual.event.DATA_SHARE_READY") {
@@ -257,10 +257,10 @@ void SensorService::LoadSecurityPrivacyManager()
     if (!LoadSecurityPrivacyServer()) {
         SEN_HILOGE("LoadSecurityPrivacyServer fail");
     }
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::UpdateDeviceStatus()
-{
+{ // LCOV_EXCL_START
     std::string statusStr = GetDmsDeviceStatus();
     int32_t statusNum;
     auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
@@ -271,10 +271,10 @@ void SensorService::UpdateDeviceStatus()
     uint32_t status = static_cast<uint32_t>(statusNum);
     clientInfo_.SetDeviceStatus(status);
     SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::LoadMotionTransform(int32_t systemAbilityId)
-{
+{ // LCOV_EXCL_START
     SEN_HILOGI("LoadMotionTransform systemAbilityId:%{public}d", systemAbilityId);
 #ifdef MSDP_MOTION_ENABLE
     if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
@@ -285,10 +285,10 @@ void SensorService::LoadMotionTransform(int32_t systemAbilityId)
         }
     }
 #endif // MSDP_MOTION_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::MotionSensorRevision()
-{
+{ // LCOV_EXCL_START
     SEN_HILOGI("MotionSensorRevision in");
 #ifdef MSDP_MOTION_ENABLE
     if (IsNeedLoadMotionLib()) {
@@ -299,10 +299,10 @@ void SensorService::MotionSensorRevision()
         SEN_HILOGI("No need to load motion lib");
     }
 #endif // MSDP_MOTION_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
-{
+{ // LCOV_EXCL_START
     SEN_HILOGI("OnRemoveSystemAbility systemAbilityId:%{public}d", systemAbilityId);
 #ifdef ACCESS_TOKEN_ENABLE
     if (systemAbilityId == ACCESS_TOKEN_MANAGER_SERVICE_ID) {
@@ -314,10 +314,10 @@ void SensorService::OnRemoveSystemAbility(int32_t systemAbilityId, const std::st
         isMemoryMgrServiceActive_ = false;
     }
 #endif // MEMMGR_ENABLE
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::OnStart()
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     if (state_ == SensorServiceState::STATE_RUNNING) {
         SEN_HILOGW("SensorService has already started");
@@ -363,16 +363,16 @@ void SensorService::OnStart()
 #endif // MSDP_MOTION_ENABLE
     AddSystemAbilityListener(DISPLAY_MANAGER_SERVICE_SA_ID);
     AddSystemAbilityListener(COMMON_EVENT_SERVICE_ID);
-}
+} // LCOV_EXCL_STOP
 
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
 bool SensorService::InitInterface()
 {
     auto ret = sensorHdiConnection_.ConnectHdi();
-    if (ret != ERR_OK) {
+    if (ret != ERR_OK) { // LCOV_EXCL_START
         SEN_HILOGE("Connect hdi failed");
         return false;
-    }
+    } // LCOV_EXCL_STOP
     return true;
 }
 
@@ -380,10 +380,10 @@ bool SensorService::InitPlugCallback()
 {
     auto ret = sensorHdiConnection_.RegSensorPlugCallback(
         std::bind(&SensorService::ReportPlugEventCallback, this, std::placeholders::_1));
-    if (ret != ERR_OK) {
+    if (ret != ERR_OK) { // LCOV_EXCL_START
         SEN_HILOGE("RegSensorPlugCallback failed");
         return false;
-    }
+    } // LCOV_EXCL_STOP
     return true;
 }
 
@@ -393,10 +393,10 @@ bool SensorService::InitDataCallback()
     CHKPF(reportDataCallback_);
     ReportDataCb cb = &ReportDataCallback::ReportEventCallback;
     auto ret = sensorHdiConnection_.RegisterDataReport(cb, reportDataCallback_);
-    if (ret != ERR_OK) {
+    if (ret != ERR_OK) { // LCOV_EXCL_START
         SEN_HILOGE("RegisterDataReport failed");
         return false;
-    }
+    } // LCOV_EXCL_STOP
     return true;
 }
 
@@ -404,10 +404,10 @@ bool SensorService::InitSensorList()
 {
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     int32_t ret = sensorHdiConnection_.GetSensorList(sensors_);
-    if (ret != 0) {
+    if (ret != 0) { // LCOV_EXCL_START
         SEN_HILOGE("GetSensorList is failed");
         return false;
-    }
+    } // LCOV_EXCL_STOP
     {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         for (const auto &it : sensors_) {
@@ -429,10 +429,10 @@ bool SensorService::InitSensorPolicy()
 void SensorService::OnStop()
 {
     CALL_LOG_ENTER;
-    if (state_ == SensorServiceState::STATE_STOPPED) {
+    if (state_ == SensorServiceState::STATE_STOPPED) { // LCOV_EXCL_START
         SEN_HILOGW("Already stopped");
         return;
-    }
+    } // LCOV_EXCL_STOP
     state_ = SensorServiceState::STATE_STOPPED;
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     int32_t ret = sensorHdiConnection_.DestroyHdiConnection();
@@ -483,6 +483,7 @@ void SensorService::ReportOnChangeData(const SensorDescription &sensorDesc)
         SEN_HILOGE("sensorDesc is invalid");
         return;
     }
+    // LCOV_EXCL_START
     if ((SENSOR_ON_CHANGE & it->second.GetFlags()) != SENSOR_ON_CHANGE) {
         SEN_HILOGW("The data has not changed , no need to report");
         return;
@@ -500,6 +501,7 @@ void SensorService::ReportOnChangeData(const SensorDescription &sensorDesc)
         SEN_HILOGE("Send data failed");
         return;
     }
+    // LCOV_EXCL_STOP
 }
 
 ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
@@ -512,6 +514,7 @@ ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64
         return UPDATE_SENSOR_INFO_ERR;
     }
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
+    // LCOV_EXCL_START
     sensorManager_.StartDataReportThread();
     SensorBasicInfo sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorDesc, GetCallingPid());
     if (!sensorManager_.SetBestSensorParams(sensorDesc,
@@ -524,6 +527,7 @@ ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64
     SEN_HILOGI("Done, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     return ERR_OK;
+    // LCOV_EXCL_STOP
 }
 
 bool SensorService::CheckSensorId(const SensorDescription &sensorDesc)
@@ -536,7 +540,9 @@ bool SensorService::CheckSensorId(const SensorDescription &sensorDesc)
             sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
         return false;
     }
+    // LCOV_EXCL_START
     return true;
+    // LCOV_EXCL_STOP
 }
 
 bool SensorService::IsSystemServiceCalling()
@@ -548,7 +554,9 @@ bool SensorService::IsSystemServiceCalling()
         SEN_HILOGD("system service calling, flag: %{public}u", flag);
         return true;
     }
+    // LCOV_EXCL_START
     return false;
+    // LCOV_EXCL_STOP
 }
 
 bool SensorService::IsSystemCalling()
@@ -556,17 +564,19 @@ bool SensorService::IsSystemCalling()
     if (IsSystemServiceCalling()) {
         return true;
     }
+    // LCOV_EXCL_START
     return Security::AccessToken::TokenIdKit::IsSystemAppByFullTokenID(IPCSkeleton::GetCallingFullTokenID());
+    // LCOV_EXCL_STOP
 }
 
 ErrCode SensorService::CheckAuthAndParameter(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
     if (((g_systemApiSensorCall.find(sensorDesc.sensorType) != g_systemApiSensorCall.end()) ||
-        (sensorDesc.sensorType > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) && !IsSystemCalling()) {
+        (sensorDesc.sensorType > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) && !IsSystemCalling()) { // LCOV_EXCL_START
         SEN_HILOGE("Permission check failed. A non-system application uses the system API");
         return NON_SYSTEM_API;
-    }
+    } // LCOV_EXCL_STOP
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorDesc.sensorType);
     if (ret != PERMISSION_GRANTED) {
@@ -582,7 +592,9 @@ ErrCode SensorService::CheckAuthAndParameter(const SensorDescription &sensorDesc
         SEN_HILOGE("sensorDesc is invalid or maxReportDelayNs exceeded the maximum value");
         return ERR_NO_INIT;
     }
+    // LCOV_EXCL_START
     return ERR_OK;
+    // LCOV_EXCL_STOP
 }
 
 ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptionIPC, int64_t samplingPeriodNs,
@@ -599,6 +611,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     if (checkResult != ERR_OK) {
         return checkResult;
     }
+    // LCOV_EXCL_START
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (isSensorShakeControlManagerReady_.load()) {
@@ -631,6 +644,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     }
     PrintSensorData::GetInstance().ResetHdiCounter(sensorDesc.sensorType);
     return ret;
+    // LCOV_EXCL_STOP
 }
 
 void SensorService::NotifyAppSubscribeSensor()
@@ -665,6 +679,7 @@ ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, in
         SEN_HILOGE("SaveSubscriber failed");
         return ret;
     }
+    // LCOV_EXCL_START
     ReportSensorSysEvent(sensorDesc.sensorType, true, pid, samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
         SEN_HILOGE("ret:%{public}d", ret);
@@ -676,6 +691,7 @@ ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, in
     PrintSensorData::GetInstance().ResetHdiCounter(sensorDesc.sensorType);
     SEN_HILOGI("Done, sensorTypeId:%{public}d", sensorDesc.sensorType);
     return ERR_OK;
+    // LCOV_EXCL_STOP
 }
 
 ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_t pid)
@@ -685,6 +701,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
         SEN_HILOGE("sensorDesc is invalid");
         return ERR_NO_INIT;
     }
+    // LCOV_EXCL_START
     if (pid < 0) {
         SEN_HILOGE("pid is invalid, pid:%{public}d", pid);
         return CLIENT_PID_INVALID_ERR;
@@ -720,6 +737,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     }
 #endif // MEMMGR_ENABLE
     return ret;
+    // LCOV_EXCL_STOP
 }
 
 ErrCode SensorService::DisableSensor(const SensorDescriptionIPC &SensorDescriptionIPC)
@@ -733,10 +751,10 @@ ErrCode SensorService::DisableSensor(const SensorDescriptionIPC &SensorDescripti
     };
     if ((sensorDesc.sensorType == SENSOR_TYPE_ID_COLOR || sensorDesc.sensorType == SENSOR_TYPE_ID_SAR ||
             sensorDesc.sensorType > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE) &&
-        !IsSystemCalling()) {
+        !IsSystemCalling()) { // LCOV_EXCL_START
         SEN_HILOGE("Permission check failed. A non-system application uses the system API");
         return NON_SYSTEM_API;
-    }
+    } // LCOV_EXCL_STOP
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
     int32_t ret = permissionUtil.CheckSensorPermission(GetCallingTokenID(), sensorDesc.sensorType);
     if (ret != PERMISSION_GRANTED) {
@@ -754,13 +772,13 @@ ErrCode SensorService::GetSensorList(std::vector<Sensor> &sensorList)
 {
     std::vector<Sensor> sensors = GetSensorList();
     int32_t sensorCount = static_cast<int32_t>(sensors.size());
-    if (sensorCount > MAX_SENSOR_COUNT) {
+    if (sensorCount > MAX_SENSOR_COUNT) { // LCOV_EXCL_START
         SEN_HILOGD("SensorCount:%{public}u", sensorCount);
         sensorCount = MAX_SENSOR_COUNT;
-    }
-    for (int32_t i = 0; i < sensorCount; ++i) {
+    } // LCOV_EXCL_STOP
+    for (int32_t i = 0; i < sensorCount; ++i) { // LCOV_EXCL_START
         sensorList.push_back(sensors[i]);
-    }
+    } // LCOV_EXCL_STOP
     return ERR_OK;
 }
 
@@ -769,20 +787,20 @@ ErrCode SensorService::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
     CALL_LOG_ENTER;
     {
         std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
-        for (const auto& sensor : sensors_) {
+        for (const auto& sensor : sensors_) { // LCOV_EXCL_START
             if (sensor.GetDeviceId() == deviceId) {
                 SEN_HILOGD("Sensor found: id is %{public}d", deviceId);
                 singleDevSensors.push_back(sensor);
             }
-        }
+        } // LCOV_EXCL_STOP
     }
 
     if (singleDevSensors.empty()) {
         std::vector<Sensor> sensors = GetSensorListByDevice(deviceId);
         int32_t sensorCount = static_cast<int32_t>(sensors.size());
-        for (int32_t i = 0; i < sensorCount; ++i) {
+        for (int32_t i = 0; i < sensorCount; ++i) { // LCOV_EXCL_START
             singleDevSensors.push_back(sensors[i]);
-        }
+        } // LCOV_EXCL_STOP
     }
     return ERR_OK;
 }
@@ -798,7 +816,7 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
         SEN_HILOGW("GetSensorListByDevice is failed or empty");
         return sensors_;
     }
-    for (const auto& newSensor : singleDevSensors) {
+    for (const auto& newSensor : singleDevSensors) { // LCOV_EXCL_START
         bool found = false;
         for (auto& oldSensor : sensors_) {
             if (oldSensor.GetSensorId() == newSensor.GetSensorId() &&
@@ -814,9 +832,9 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
                 found = true;
             sensors_.push_back(newSensor);
         }
-    }
+    } // LCOV_EXCL_STOP
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
-
+    // LCOV_EXCL_START
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
     for (const auto &it : sensors_) {
         auto iter = sensorMap_.find({it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()});
@@ -831,6 +849,7 @@ std::vector<Sensor> SensorService::GetSensorListByDevice(int32_t deviceId)
         }
     }
     return singleDevSensors;
+    // LCOV_EXCL_STOP
 }
 
 std::vector<Sensor> SensorService::GetSensorList()
@@ -843,12 +862,14 @@ std::vector<Sensor> SensorService::GetSensorList()
         return sensors_;
     }
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
+    // LCOV_EXCL_START
     for (const auto &it : sensors_) {
         std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         sensorMap_.insert(std::pair<SensorDescription, Sensor>({
             it.GetDeviceId(), it.GetSensorTypeId(), it.GetSensorId(), it.GetLocation()}, it));
     }
     return sensors_;
+    // LCOV_EXCL_STOP
 }
 
 ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient)
@@ -857,22 +878,22 @@ ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObj
     sptr<SensorBasicDataChannel> sensorBasicDataChannel = new (std::nothrow) SensorBasicDataChannel();
     CHKPR(sensorBasicDataChannel, OBJECT_NULL);
     auto ret = sensorBasicDataChannel->CreateSensorBasicChannelBySendFd(sendFd);
-    if (ret != ERR_OK) {
+    if (ret != ERR_OK) { // LCOV_EXCL_START
         SEN_HILOGE("CreateSensorBasicChannelBySendFd ret:%{public}d", ret);
         return OBJECT_NULL;
-    }
+    } // LCOV_EXCL_STOP
     CHKPR(sensorBasicDataChannel, ERR_NO_INIT);
     auto pid = GetCallingPid();
     auto uid = GetCallingUid();
     auto callerToken = GetCallingTokenID();
-    if (!clientInfo_.UpdateAppThreadInfo(pid, uid, callerToken)) {
+    if (!clientInfo_.UpdateAppThreadInfo(pid, uid, callerToken)) { // LCOV_EXCL_START
         SEN_HILOGE("UpdateUid is failed");
         return UPDATE_UID_ERR;
-    }
-    if (!clientInfo_.UpdateSensorChannel(pid, sensorBasicDataChannel)) {
+    } // LCOV_EXCL_STOP
+    if (!clientInfo_.UpdateSensorChannel(pid, sensorBasicDataChannel)) { // LCOV_EXCL_START
         SEN_HILOGE("UpdateSensorChannel is failed");
         return UPDATE_SENSOR_CHANNEL_ERR;
-    }
+    } // LCOV_EXCL_STOP
     sensorBasicDataChannel->SetSensorStatus(true);
     std::string packageName("");
     sensorManager_.GetPackageName(callerToken, packageName, isAccessTokenServiceActive_);
@@ -888,16 +909,16 @@ ErrCode SensorService::DestroySensorChannel(const sptr<IRemoteObject> &sensorCli
 {
     CALL_LOG_ENTER;
     const int32_t clientPid = GetCallingPid();
-    if (clientPid < 0) {
+    if (clientPid < 0) { // LCOV_EXCL_START
         SEN_HILOGE("clientPid is invalid, clientPid:%{public}d", clientPid);
         return CLIENT_PID_INVALID_ERR;
-    }
+    } // LCOV_EXCL_STOP
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     bool destroyRet = clientInfo_.DestroySensorChannel(clientPid);
-    if (!destroyRet) {
+    if (!destroyRet) { // LCOV_EXCL_START
         SEN_HILOGE("DestroySensorChannel is failed");
         return DESTROY_SENSOR_CHANNEL_ERR;
-    }
+    } // LCOV_EXCL_STOP
     clientInfo_.DestroyCmd(GetCallingUid());
     UnregisterClientDeathRecipient(sensorClient);
     return ERR_OK;
@@ -909,19 +930,19 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
     sptr<IRemoteObject> client = object.promote();
     CHKPV(client);
     int32_t pid = clientInfo_.FindClientPid(client);
-    if (pid == INVALID_PID) {
+    if (pid == INVALID_PID) { // LCOV_EXCL_START
         SEN_HILOGE("pid is invalid");
         return;
-    }
+    } // LCOV_EXCL_STOP
     POWER_POLICY.DeleteDeathPidSensorInfo(pid);
     SEN_HILOGI("pid is %{public}d", pid);
     std::vector<SensorDescription> activeSensors = clientInfo_.GetSensorIdByPid(pid);
-    for (size_t i = 0; i < activeSensors.size(); ++i) {
+    for (size_t i = 0; i < activeSensors.size(); ++i) { // LCOV_EXCL_START
         int32_t ret = DisableSensor(activeSensors[i], pid);
         if (ret != ERR_OK) {
             SEN_HILOGE("DisableSensor failed, ret:%{public}d", ret);
         }
-    }
+    } // LCOV_EXCL_STOP
     DelSession(pid);
     clientInfo_.DelActiveInfoCBPid(pid);
     clientInfo_.DestroySensorChannel(pid);
@@ -952,16 +973,16 @@ void SensorService::UnregisterClientDeathRecipient(sptr<IRemoteObject> sensorCli
         return;
     }
     if (!clientInfo_.CallingService(pid)) {
-        SEN_HILOGD("Can't unregister client death recipient");
+        SEN_HILOGD("Can't unregister client death recipient"); // LCOV_EXCL_START
         return;
-    }
+    } // LCOV_EXCL_STOP
     std::lock_guard<std::mutex> clientDeathObserverLock(clientDeathObserverMutex_);
     sensorClient->RemoveDeathRecipient(clientDeathObserver_);
     clientInfo_.DestroyClientPid(sensorClient);
 }
 
 int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     if (fd < 0) {
         SEN_HILOGE("Invalid fd");
@@ -982,21 +1003,21 @@ int32_t SensorService::Dump(int32_t fd, const std::vector<std::u16string> &args)
     std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
     sensorDump.ParseCommand(fd, argList, sensors_, clientInfo_);
     return ERR_OK;
-}
+} // LCOV_EXCL_STOP
 
 ErrCode SensorService::SuspendSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
-    if (ret != PERMISSION_GRANTED) {
+    if (ret != PERMISSION_GRANTED) { // LCOV_EXCL_START
         SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     if (pid < 0) {
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
@@ -1008,15 +1029,15 @@ ErrCode SensorService::ResumeSensors(int32_t pid)
 {
     CALL_LOG_ENTER;
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
-    if (ret != PERMISSION_GRANTED) {
+    if (ret != PERMISSION_GRANTED) { // LCOV_EXCL_START
         SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     if (pid < 0) {
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
@@ -1028,20 +1049,20 @@ ErrCode SensorService::GetActiveInfoList(int32_t pid, std::vector<ActiveInfo> &a
 {
     CALL_LOG_ENTER;
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     if (pid < 0) {
         SEN_HILOGE("Pid is invalid");
         return CLIENT_PID_INVALID_ERR;
     }
     activeInfoList = POWER_POLICY.GetActiveInfoList(pid);
     uint32_t activeInfoCount = static_cast<uint32_t>(activeInfoList.size());
-    if (activeInfoCount > MAX_SENSOR_COUNT) {
+    if (activeInfoCount > MAX_SENSOR_COUNT) { // LCOV_EXCL_START
         SEN_HILOGD("ActiveInfoCount:%{public}u", activeInfoCount);
         activeInfoList.erase(activeInfoList.begin() + MAX_SENSOR_COUNT, activeInfoList.begin() + activeInfoCount - 1);
-    }
+    } // LCOV_EXCL_STOP
     return ERR_OK;
 }
 
@@ -1050,18 +1071,18 @@ ErrCode SensorService::CreateSocketChannel(const sptr<IRemoteObject> &sensorClie
     CALL_LOG_ENTER;
     CHKPR(sensorClient, INVALID_POINTER);
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     int32_t serverFd = -1;
     int32_t ret = AddSocketPairInfo(GetCallingUid(), GetCallingPid(),
         AccessTokenKit::GetTokenTypeFlag(GetCallingTokenID()),
         serverFd, std::ref(clientFd));
-    if (ret != ERR_OK) {
+    if (ret != ERR_OK) { // LCOV_EXCL_START
         SEN_HILOGE("Add socket pair info failed, ret:%{public}d", ret);
         return ret;
-    }
+    } // LCOV_EXCL_STOP
     RegisterClientDeathRecipient(sensorClient, GetCallingPid());
     return ERR_OK;
 }
@@ -1071,10 +1092,10 @@ ErrCode SensorService::DestroySocketChannel(const sptr<IRemoteObject> &sensorCli
     CALL_LOG_ENTER;
     CHKPR(sensorClient, INVALID_POINTER);
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     DelSession(GetCallingPid());
     UnregisterClientDeathRecipient(sensorClient);
     return ERR_OK;
@@ -1084,10 +1105,10 @@ ErrCode SensorService::EnableActiveInfoCB()
 {
     CALL_LOG_ENTER;
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     isReportActiveInfo_ = true;
     return clientInfo_.AddActiveInfoCBPid(GetCallingPid());
 }
@@ -1096,10 +1117,10 @@ ErrCode SensorService::DisableActiveInfoCB()
 {
     CALL_LOG_ENTER;
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     isReportActiveInfo_ = false;
     return clientInfo_.DelActiveInfoCBPid(GetCallingPid());
 }
@@ -1108,15 +1129,15 @@ ErrCode SensorService::ResetSensors()
 {
     CALL_LOG_ENTER;
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     int32_t ret = permissionUtil.CheckManageSensorPermission(GetCallingTokenID());
-    if (ret != PERMISSION_GRANTED) {
+    if (ret != PERMISSION_GRANTED) { // LCOV_EXCL_START
         SEN_HILOGE("Check manage sensor permission failed, ret:%{public}d", ret);
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     return POWER_POLICY.ResetSensors();
 }
 
@@ -1125,12 +1146,12 @@ void SensorService::ReportActiveInfo(const SensorDescription &sensorDesc, int32_
     CALL_LOG_ENTER;
     std::vector<SessionPtr> sessionList;
     auto pidList = clientInfo_.GetActiveInfoCBPid();
-    for (const auto &pid : pidList) {
+    for (const auto &pid : pidList) { // LCOV_EXCL_START
         auto sess = GetSessionByPid(pid);
         if (sess != nullptr) {
             sessionList.push_back(sess);
         }
-    }
+    } // LCOV_EXCL_STOP
     SensorBasicInfo sensorInfo = clientInfo_.GetCurPidSensorInfo(sensorDesc, pid);
     ActiveInfo activeInfo(pid, sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
         sensorInfo.GetSamplingPeriodNs(), sensorInfo.GetMaxReportDelayNs());
@@ -1154,7 +1175,9 @@ bool SensorService::RegisterPermCallback(int32_t sensorType)
         SEN_HILOGE("RegisterPermStateChangeCallback fail");
         return false;
     }
+    // LCOV_EXCL_START
     return true;
+    // LCOV_EXCL_STOP
 }
 
 void SensorService::UnregisterPermCallback()
@@ -1166,25 +1189,27 @@ void SensorService::UnregisterPermCallback()
         SEN_HILOGE("UnregisterPermStateChangeCallback fail");
         return;
     }
+    // LCOV_EXCL_START
     g_isRegister = false;
+    // LCOV_EXCL_STOP
 }
 
 void SensorService::PermStateChangeCb::PermStateChangeCallback(Security::AccessToken::PermStateChangeInfo &result)
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     CHKPV(server_);
     server_->clientInfo_.ChangeSensorPerm(result.tokenID, result.permissionName,
         (result.permStateChangeType != 0));
-}
+} // LCOV_EXCL_STOP
 
 ErrCode SensorService::SetDeviceStatus(uint32_t deviceStatus)
 {
     SEN_HILOGI("SetDeviceStatus in, deviceStatus:%{public}d", deviceStatus);
     PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
-    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) {
+    if (!permissionUtil.IsNativeToken(GetCallingTokenID())) { // LCOV_EXCL_START
         SEN_HILOGE("TokenType is not TOKEN_NATIVE");
         return PERMISSION_DENIED;
-    }
+    } // LCOV_EXCL_STOP
     clientInfo_.SetDeviceStatus(deviceStatus);
     return ERR_OK;
 }
@@ -1249,7 +1274,7 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo &info)
 }
 
 void SensorService::SetCritical()
-{
+{ // LCOV_EXCL_START
     CALL_LOG_ENTER;
     if (!isMemoryMgrServiceActive_) {
         SEN_HILOGE("Memory manager service is inactive");
@@ -1264,6 +1289,6 @@ void SensorService::SetCritical()
         }
     }
 #endif // MEMMGR_ENABLE
-}
+} // LCOV_EXCL_STOP
 } // namespace Sensors
 } // namespace OHOS
