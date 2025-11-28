@@ -158,7 +158,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
             ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
                 [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
             if (ret != ERR_OK) {
-                SEN_HILOGW("Subscribe usual.event.BOOT_COMPLETED fail");
+                SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
             }
         }
         ret = SubscribeCommonEvent("usual.event.USER_SWITCHED",
