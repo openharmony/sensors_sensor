@@ -65,6 +65,8 @@ std::atomic_bool SensorService::isMemoryMgrServiceActive_ = false;
 std::atomic_bool SensorService::isCritical_ = false;
 std::atomic_bool SensorService::isDataShareReady_ = false;
 std::atomic_bool SensorService::isSensorShakeControlManagerReady_ = false;
+std::atomic_bool SensorService::isSensorShakeControlInitialize_ = false;
+std::mutex SensorService::initializeShakeControlMutex_;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -126,21 +128,39 @@ bool SensorService::IsNeedLoadMotionLib()
     return false;
 } // LCOV_EXCL_STOP
 
+void SensorService::InitShakeControl()
+{
+    std::lock_guard<std::mutex> initializeShakeControlLock(initializeShakeControlMutex_);
+    if (!isSensorShakeControlInitialize_.load() || !isSensorShakeControlManagerReady_.load()) {
+        LoadSecurityPrivacyManager();
+        if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
+            SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
+            isSensorShakeControlManagerReady_.store(true);
+        } else {
+            SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
+        }
+        isSensorShakeControlInitialize_.store(true);
+    }
+}
+
 void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 { // LCOV_EXCL_START
     SEN_HILOGI("OnAddSystemAbility systemAbilityId:%{public}d", systemAbilityId);
-    LoadSecurityPrivacyManager();
     if (systemAbilityId == COMMON_EVENT_SERVICE_ID) {
         SEN_HILOGI("Common event service start");
         int32_t ret = SubscribeCommonEvent("usual.event.DATA_SHARE_READY",
             [this](const EventFwk::CommonEventData &data) { this->OnReceiveEvent(data); });
         if (ret != ERR_OK) {
-            SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
+            SEN_HILOGW("Subscribe usual.event.DATA_SHARE_READY fail");
         }
-        ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
-            [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
-        if (ret != ERR_OK) {
-            SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
+        if (OHOS::system::GetBoolParameter("bootevent.boot.completed", false)) {
+            InitShakeControl();
+        } else {
+            ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
+                [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
+            if (ret != ERR_OK) {
+                SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
+            }
         }
         ret = SubscribeCommonEvent("usual.event.USER_SWITCHED",
             [this](const EventFwk::CommonEventData &data) { this->OnReceiveUserSwitchEvent(data); });
@@ -199,15 +219,10 @@ void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
     std::string action = want.GetAction();
     if (action == "usual.event.BOOT_COMPLETED") {
         SEN_HILOGI("On receive usual.event.BOOT_COMPLETED");
-        if (isSensorShakeControlManagerReady_) {
+        if (isSensorShakeControlManagerReady_.load()) {
             SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
         } else {
-            if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
-                SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
-                isSensorShakeControlManagerReady_ = true;
-            } else {
-                SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
-            }
+            InitShakeControl();
         }
     }
 }
@@ -606,7 +621,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     // LCOV_EXCL_START
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
-    if (isSensorShakeControlManagerReady_) {
+    if (isSensorShakeControlManagerReady_.load()) {
         NotifyAppSubscribeSensor();
     }
     if (clientInfo_.GetSensorState(sensorDesc)) {
@@ -867,6 +882,9 @@ std::vector<Sensor> SensorService::GetSensorList()
 ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
+    if (!isSensorShakeControlInitialize_.load() && OHOS::system::GetBoolParameter("bootevent.boot.completed", false)) {
+        InitShakeControl();
+    }
     sptr<SensorBasicDataChannel> sensorBasicDataChannel = new (std::nothrow) SensorBasicDataChannel();
     CHKPR(sensorBasicDataChannel, OBJECT_NULL);
     auto ret = sensorBasicDataChannel->CreateSensorBasicChannelBySendFd(sendFd);

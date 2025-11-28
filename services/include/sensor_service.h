@@ -69,6 +69,7 @@ private:
     DISALLOW_COPY_AND_MOVE(SensorService);
     std::vector<Sensor> GetSensorList();
     std::vector<Sensor> GetSensorListByDevice(int32_t deviceId);
+    void InitShakeControl();
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId) override;
     ErrCode CheckAuthAndParameter(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
@@ -140,6 +141,8 @@ private:
     static std::atomic_bool isCritical_;
     static std::atomic_bool isDataShareReady_;
     static std::atomic_bool isSensorShakeControlManagerReady_;
+    static std::atomic_bool isSensorShakeControlInitialize_;
+    static std::mutex initializeShakeControlMutex_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()
