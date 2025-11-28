@@ -141,6 +141,8 @@ private:
     static std::atomic_bool isCritical_;
     static std::atomic_bool isDataShareReady_;
     static std::atomic_bool isSensorShakeControlManagerReady_;
+    static std::atomic_bool isSensorShakeControlInitialize_;
+    static std::mutex initializeShakeControlMutex_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()
