@@ -136,7 +136,6 @@ void SensorService::InitShakeControl()
             SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
             isSensorShakeControlManagerReady_.store(true);
         } else {
-            isSensorShakeControlManagerReady_.store(false);
             SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
         }
         isSensorShakeControlInitialize_.store(true);
@@ -159,7 +158,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
             ret = SubscribeCommonEvent("usual.event.BOOT_COMPLETED",
                 [this](const EventFwk::CommonEventData &data) { this->OnReceiveBootEvent(data); });
             if (ret != ERR_OK) {
-                SEN_HILOGE("Subscribe usual.event.BOOT_COMPLETED fail");
+                SEN_HILOGW("Subscribe usual.event.BOOT_COMPLETED fail");
             }
         }
         ret = SubscribeCommonEvent("usual.event.USER_SWITCHED",
