@@ -150,7 +150,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
         int32_t ret = SubscribeCommonEvent("usual.event.DATA_SHARE_READY",
             [this](const EventFwk::CommonEventData &data) { this->OnReceiveEvent(data); });
         if (ret != ERR_OK) {
-            SEN_HILOGE("Subscribe usual.event.DATA_SHARE_READY fail");
+            SEN_HILOGW("Subscribe usual.event.DATA_SHARE_READY fail");
         }
         if (OHOS::system::GetBoolParameter("bootevent.boot.completed", false)) {
             InitShakeControl();
