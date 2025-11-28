@@ -66,6 +66,7 @@ std::atomic_bool SensorService::isCritical_ = false;
 std::atomic_bool SensorService::isDataShareReady_ = false;
 std::atomic_bool SensorService::isSensorShakeControlManagerReady_ = false;
 std::atomic_bool SensorService::isSensorShakeControlInitialize_ = false;
+std::mutex SensorService::initializeShakeControlMutex_;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
