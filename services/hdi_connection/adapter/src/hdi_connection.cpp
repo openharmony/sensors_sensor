@@ -47,6 +47,7 @@ std::map<SensorDescription, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 std::mutex g_sensorInterfaceMutex;
 constexpr int32_t DEFAULT_GROUP_ID = 0;
+constexpr uint32_t MOCK_SENSOR = 1;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
 constexpr uint32_t WAIT_MS = 200;
 constexpr int32_t HEADPOSTURE_FIFO_COUNT = 5;
@@ -120,7 +121,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
-        sensor.SetIsMockSensor((sensorInfos[i].reserved >> 24 == 0 ? true : false));
+        sensor.SetIsMockSensor(((sensorInfos[i].reserved == MOCK_SENSOR) ? true : false));
         if (sensorInfos[i].deviceSensorInfo.sensorType == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
@@ -499,7 +500,7 @@ int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
-        sensor.SetIsMockSensor((sensorInfos[i].reserved >> 24 == 0 ? true : false));
+        sensor.SetIsMockSensor(((sensorInfos[i].reserved == MOCK_SENSOR) ? true : false));
         if (sensorInfos[i].deviceSensorInfo.sensorType == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
