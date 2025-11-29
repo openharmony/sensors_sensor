@@ -120,6 +120,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
+        sensor.SetIsMockSensor((sensorInfos[i].reserved >> 24 == 0 ? true : false));
         if (sensorInfos[i].deviceSensorInfo.sensorType == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
@@ -498,6 +499,7 @@ int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
         sensor.SetPower(sensorInfos[i].power);
         sensor.SetMinSamplePeriodNs(sensorInfos[i].minDelay);
         sensor.SetMaxSamplePeriodNs(sensorInfos[i].maxDelay);
+        sensor.SetIsMockSensor((sensorInfos[i].reserved >> 24 == 0 ? true : false));
         if (sensorInfos[i].deviceSensorInfo.sensorType == SENSOR_TYPE_ID_HEADPOSTURE) {
             sensor.SetFifoMaxEventCount(HEADPOSTURE_FIFO_COUNT);
         }
