@@ -127,7 +127,7 @@ typedef struct SensorInfo {
     int32_t deviceId = -1;        /**< Device ID */
     int32_t location = -1;        /**< Is the device a local device or an external device */
     int32_t sensorIndex = -1;     /**< Sensor Index */
-    bool isMockSensor = true; /**< Is virtual sensor or real sensor */
+    bool isMockSensor = true; /**< Is the device a mock device or a real device */
 } SensorInfo;
 
 /**
