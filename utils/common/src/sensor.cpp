@@ -198,7 +198,7 @@ bool Sensor::GetIsMockSensor() const
     return isMockSensor_;
 }
 
-void Sensor::SetIsMockSensor(int32_t isMockSensor)
+void Sensor::SetIsMockSensor(bool isMockSensor)
 {
     isMockSensor_ = isMockSensor;
 }

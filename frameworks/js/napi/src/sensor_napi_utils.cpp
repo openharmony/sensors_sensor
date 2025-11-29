@@ -290,7 +290,7 @@ bool ConvertToSensorInfo(const napi_env &env, const SensorInfo &sensorInfo, napi
     CHKNRF(env, napi_create_int64(env, sensorInfo.maxSamplePeriod, &value), "napi_create_int64");
     CHKNRF(env, napi_set_named_property(env, result, "maxSamplePeriod", value), "napi_set_named_property");
     value = nullptr;
-    CHKNRF(env, napi_create_bool(env, sensorInfo.isMockSensor, &value), "napi_create_bool");
+    CHKNRF(env, napi_get_bool(env, sensorInfo.isMockSensor, &value), "napi_create_bool");
     CHKNRF(env, napi_set_named_property(env, result, "isMockSensor", value), "napi_set_named_property");
     return true;
 }
