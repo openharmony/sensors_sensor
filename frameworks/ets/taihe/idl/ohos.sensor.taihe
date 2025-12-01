@@ -1318,6 +1318,14 @@ struct Sensor {
      * @since 9
      */
     power: f64;
+
+    /**
+     * Is the device a mock device or a real device.
+     * @type { bool }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 23
+     */
+    isMockSensor: Optional<bool>;
 }
 
 /**
