@@ -30,6 +30,18 @@ namespace {
 
 static void *g_handle = nullptr;
 
+AppPolicyCallback::AppPolicyCallback()
+{
+}
+
+AppPolicyCallback::~AppPolicyCallback()
+{
+}
+
+void AppPolicyCallback::OnResult(int32_t result)
+{
+}
+
 bool LoadSecurityPrivacyServer(void)
 {
     SEN_HILOGI("Load security privacy manager plugin in");
@@ -139,7 +151,8 @@ __attribute__((no_sanitize("cfi"))) int32_t UnregisterAppPolicyObserver(int32_t 
     return func(SENSOR_SYSTEM_ABILITY_ID, userId);
 }
 
-__attribute__((no_sanitize("cfi"))) int32_t CreateAppPolicyDB(int32_t userId)
+__attribute__((no_sanitize("cfi"))) int32_t CreateAppPolicyDB(int32_t userId,
+    const std::shared_ptr<AppPolicyCallback> &callback)
 {
     if (g_handle == nullptr) {
         SEN_HILOGD("g_handle is nullptr");
@@ -156,7 +169,7 @@ __attribute__((no_sanitize("cfi"))) int32_t CreateAppPolicyDB(int32_t userId)
         SEN_HILOGE("func is nullptr");
         return ERROR;
     }
-    return func(userId);
+    return func(userId, callback);
 }
 }
 }

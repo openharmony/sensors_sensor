@@ -25,6 +25,13 @@
 
 namespace OHOS {
 namespace Sensors {
+class AppPolicyCallback {
+public:
+    AppPolicyCallback();
+    virtual ~AppPolicyCallback();
+    virtual void OnResult(int32_t result) = 0;
+};
+
 enum PolicyName {
     MOTION_SENSOR,
 };
@@ -59,14 +66,14 @@ using QueryAppPolicyByPolicyNamePtr = int32_t (*)(int32_t systemAbilityId, int32
 using RegisterAppPolicyObserverPtr = int32_t (*)(int32_t systemAbilityId, int32_t userId,
     const std::function<void()> &callback);
 using UnregisterAppPolicyObserverPtr = int32_t (*)(int32_t systemAbilityId, int32_t userId);
-using CreateAppPolicyDBPtr = int32_t (*)(int32_t userId);
+using CreateAppPolicyDBPtr = int32_t (*)(int32_t userId, const std::shared_ptr<AppPolicyCallback> &callback);
 bool LoadSecurityPrivacyServer(void);
 void UnloadSecurityPrivacyServer(void);
 int32_t ModifyAppPolicy(int32_t userId, const AppPolicyEventExt &appPolicyEvent);
 int32_t QueryAppPolicyByPolicyName(int32_t userId, PolicyName policyName, std::vector<AppPolicyEventExt> &appPolicies);
 int32_t RegisterAppPolicyObserver(int32_t userId, const std::function<void()> &callback);
 int32_t UnregisterAppPolicyObserver(int32_t userId);
-int32_t CreateAppPolicyDB(int32_t userId);
+int32_t CreateAppPolicyDB(int32_t userId, const std::shared_ptr<AppPolicyCallback> &callback);
 }
 }
 #endif /* SECURITY_PRIVACY_MANAGER_PLUGIN_H */
