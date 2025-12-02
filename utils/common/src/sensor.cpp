@@ -328,6 +328,10 @@ bool SensorDescriptionIPC::Marshalling(Parcel &parcel) const
         SEN_HILOGE("Failed, write sensorId failed");
         return false;
     }
+    if (!parcel.WriteInt32(location)) {
+        SEN_HILOGE("Failed, write location_ failed");
+        return false;
+    }
     return true;
 }
 
@@ -352,6 +356,12 @@ SensorDescriptionIPC* SensorDescriptionIPC::Unmarshalling(Parcel &data)
     }
     if (!(data.ReadInt32(sensorDesc->sensorId))) {
         SEN_HILOGE("Read sensorId failed");
+        delete sensorDesc;
+        sensorDesc = nullptr;
+        return sensorDesc;
+    }
+    if (!(data.ReadInt32(sensorDesc->location))) {
+        SEN_HILOGE("Read location_ failed");
         delete sensorDesc;
         sensorDesc = nullptr;
         return sensorDesc;

@@ -708,7 +708,7 @@ static napi_value OffPlugSensor(napi_env env, size_t argc, const napi_value type
     }
     int32_t ret = UnsubscribeSensorPlug(&user);
     if (ret != ERR_OK) {
-        ThrowErr(env, ret, "UnSubscribeSensorPlug fail");
+        SEN_HILOGE("UnSubscribeSensorPlug fail, ret:%{public}d", ret);
         return nullptr;
     }
     return nullptr;
