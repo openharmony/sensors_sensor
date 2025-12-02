@@ -40,7 +40,7 @@ Sensor::Sensor()
       maxSamplePeriodNs_(0),
       deviceId_(0),
       location_(0),
-      isMockSensor_(true)
+      isMockSensor_(false)
 {}
 
 int32_t Sensor::GetSensorId() const

@@ -269,7 +269,7 @@ array<Sensor> getSensorListSync()
             .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
             .precision = sensorInfos[i].precision,
             .power = sensorInfos[i].power,
-            .isMockSensor = taihe::optional<double>(std::in_place_t{}, sensorInfos[i].isMockSensor),
+            .isMockSensor = taihe::optional<bool>(std::in_place_t{}, sensorInfos[i].isMockSensor),
         };
         result.push_back(sensorInfo);
     }
@@ -289,7 +289,7 @@ ohos::sensor::Sensor getSingleSensorSync(ohos::sensor::SensorId type)
         .maxSamplePeriod = 0,
         .precision = 0,
         .power = 0,
-        .isMockSensor = taihe::optional<bool>(std::in_place_t{}, true)
+        .isMockSensor = taihe::optional<bool>(std::in_place_t{}, false)
     };
     int32_t count = 0;
     SensorInfo *sensorInfos = nullptr;
