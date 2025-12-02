@@ -16,10 +16,22 @@
 #ifndef SENSOR_SHAKE_CONTROL_MANAGER_H
 #define SENSOR_SHAKE_CONTROL_MANAGER_H
 
+#include "security_privacy_manager_plugin.h"
 #include "singleton.h"
 
 namespace OHOS {
 namespace Sensors {
+class AppPolicyCallbackImpl : public AppPolicyCallback {
+    std::function<void(int32_t)> func_;
+public:
+    AppPolicyCallbackImpl() = default;
+    ~AppPolicyCallbackImpl() override = default;
+    explicit AppPolicyCallbackImpl(std::function<void(int32_t)> func) : func_(func) {}
+    void OnResult(int32_t result) override
+    {
+        func_(result);
+    }
+};
 struct ShakeControlAppInfo {
     std::string bundleName;
     std::string tokenId;
@@ -30,8 +42,8 @@ class SensorShakeControlManager {
     DECLARE_DELAYED_SINGLETON(SensorShakeControlManager);
 public:
     DISALLOW_COPY_AND_MOVE(SensorShakeControlManager);
-    bool Init();
-    void UpdateRegisterShakeSensorControlObserver();
+    bool Init(std::atomic_bool &shakeControlInitReady);
+    void UpdateRegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady);
     bool CheckAppIsNeedControl(const std::string &bundleName, const std::string &tokenId, const int32_t &userId);
     bool CheckAppInfoIsNeedModify(const std::string &bundleName, const std::string &tokenId, const int32_t &userId);
     int32_t GetCurrentUserId();
@@ -39,7 +51,7 @@ public:
 private:
     void InitShakeSensorControlAppInfos();
     int32_t UpdateCurrentUserId();
-    int32_t RegisterShakeSensorControlObserver();
+    int32_t RegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady);
     int32_t UnregisterShakeSensorControlObserver();
     std::mutex shakeSensorControlAppInfoMutex_;
     std::vector<ShakeControlAppInfo> shakeSensorControlAppInfoList_;

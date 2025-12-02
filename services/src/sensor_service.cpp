@@ -131,11 +131,10 @@ bool SensorService::IsNeedLoadMotionLib()
 void SensorService::InitShakeControl()
 {
     std::lock_guard<std::mutex> initializeShakeControlLock(initializeShakeControlMutex_);
-    if (!isSensorShakeControlInitialize_.load() || !isSensorShakeControlManagerReady_.load()) {
+    if (!isSensorShakeControlInitialize_.load()) {
         LoadSecurityPrivacyManager();
-        if (SENSOR_SHAKE_CONTROL_MGR->Init()) {
-            SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init success");
-            isSensorShakeControlManagerReady_.store(true);
+        if (SENSOR_SHAKE_CONTROL_MGR->Init(isSensorShakeControlManagerReady_)) {
+            SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init complete");
         } else {
             SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
         }
@@ -254,7 +253,7 @@ void SensorService::OnReceiveUserSwitchEvent(const EventFwk::CommonEventData &da
     std::string action = want.GetAction();
     if (action == "usual.event.USER_SWITCHED") {
         SEN_HILOGI("OnReceiveUserSwitchEvent user switched");
-        SENSOR_SHAKE_CONTROL_MGR->UpdateRegisterShakeSensorControlObserver();
+        SENSOR_SHAKE_CONTROL_MGR->UpdateRegisterShakeSensorControlObserver(isSensorShakeControlManagerReady_);
     }
 }
 
@@ -656,6 +655,10 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
 
 void SensorService::NotifyAppSubscribeSensor()
 {
+    if (IsSystemServiceCalling()) {
+        SEN_HILOGD("The system service is not subject to control");
+        return;
+    }
     int32_t userId = SENSOR_SHAKE_CONTROL_MGR->GetCurrentUserId();
     AccessTokenID tokenId = GetCallingTokenID();
     std::string packageName("");
@@ -882,7 +885,8 @@ std::vector<Sensor> SensorService::GetSensorList()
 ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
-    if (!isSensorShakeControlInitialize_.load() && OHOS::system::GetBoolParameter("bootevent.boot.completed", false)) {
+    if (!isSensorShakeControlInitialize_.load() && OHOS::system::GetBoolParameter("bootevent.boot.completed", false)
+        && !IsSystemServiceCalling()) {
         InitShakeControl();
     }
     sptr<SensorBasicDataChannel> sensorBasicDataChannel = new (std::nothrow) SensorBasicDataChannel();

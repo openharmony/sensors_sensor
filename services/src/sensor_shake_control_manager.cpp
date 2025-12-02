@@ -16,7 +16,6 @@
 #include "sensor_shake_control_manager.h"
 
 #include "os_account_manager.h"
-#include "security_privacy_manager_plugin.h"
 #include "sensor_errors.h"
 
 #undef LOG_TAG
@@ -33,14 +32,14 @@ SensorShakeControlManager::~SensorShakeControlManager()
     UnregisterShakeSensorControlObserver();
 }
 
-bool SensorShakeControlManager::Init()
+bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
 {
     int32_t ret = UpdateCurrentUserId();
     if (ret != ERR_OK) {
         SEN_HILOGE("UpdateCurrentUserId failed ret:%{public}d", ret);
         return false;
     }
-    ret = RegisterShakeSensorControlObserver();
+    ret = RegisterShakeSensorControlObserver(shakeControlInitReady);
     if (ret != ERR_OK) {
         SEN_HILOGE("RegisterShakeSensorControlObserver failed ret:%{public}d", ret);
         return false;
@@ -51,7 +50,6 @@ bool SensorShakeControlManager::Init()
 void SensorShakeControlManager::InitShakeSensorControlAppInfos()
 {
     SEN_HILOGI("InitShakeSensorControlAppInfos start");
-    std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
     std::vector<AppPolicyEventExt> appPolicyEventList;
     int32_t ret = QueryAppPolicyByPolicyName(currentUserId_.load(), PolicyName::MOTION_SENSOR,
         appPolicyEventList);
@@ -59,6 +57,7 @@ void SensorShakeControlManager::InitShakeSensorControlAppInfos()
         SEN_HILOGE("QueryAppPolicyByPolicyName failed, ret::%{public}d", ret);
         return;
     }
+    std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
     if (appPolicyEventList.empty()) {
         SEN_HILOGI("appPolicyEventList empty");
         shakeSensorControlAppInfoList_.clear();
@@ -98,21 +97,30 @@ int32_t SensorShakeControlManager::UpdateCurrentUserId()
     return ERR_OK;
 }
 
-int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver()
+int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady)
 {
     SEN_HILOGI("RegisterShakeSensorControlObserver start");
-    int32_t ret = CreateAppPolicyDB(currentUserId_.load());
+    std::shared_ptr<AppPolicyCallbackImpl> createCallBack = std::make_shared<AppPolicyCallbackImpl>([this,
+        &shakeControlInitReady] (int32_t result) {
+        if (result != ERR_OK) {
+            SEN_HILOGE("CreateAppPolicyDB failed, result:%{public}d", result);
+            shakeControlInitReady.store(false);
+            return;
+        }
+        std::function<void()> updateFunc = [&]() { this->InitShakeSensorControlAppInfos(); };
+        int32_t ret = RegisterAppPolicyObserver(currentUserId_.load(), updateFunc);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("RegisterAppPolicyObserver failed, ret::%{public}d", ret);
+            shakeControlInitReady.store(false);
+            return;
+        }
+        this->InitShakeSensorControlAppInfos();
+        shakeControlInitReady.store(true);
+    });
+    int32_t ret = CreateAppPolicyDB(currentUserId_.load(), createCallBack);
     if (ret != ERR_OK) {
         SEN_HILOGE("CreateAppPolicyDB failed, ret::%{public}d", ret);
-        return ret;
     }
-    std::function<void()> updateFunc = [&]() { InitShakeSensorControlAppInfos(); };
-    ret = RegisterAppPolicyObserver(currentUserId_.load(), updateFunc);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("RegisterAppPolicyObserver failed, ret::%{public}d", ret);
-        return ret;
-    }
-    InitShakeSensorControlAppInfos();
     return ret;
 }
 
@@ -126,12 +134,12 @@ int32_t SensorShakeControlManager::UnregisterShakeSensorControlObserver()
     return ret;
 }
 
-void SensorShakeControlManager::UpdateRegisterShakeSensorControlObserver()
+void SensorShakeControlManager::UpdateRegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady)
 {
     SEN_HILOGI("UpdateRegisterShakeSensorControlObserver start");
     UnregisterShakeSensorControlObserver();
     UpdateCurrentUserId();
-    RegisterShakeSensorControlObserver();
+    RegisterShakeSensorControlObserver(shakeControlInitReady);
 }
 
 bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleName,
