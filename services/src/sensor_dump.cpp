@@ -204,13 +204,14 @@ bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
         if (sensorMap_.find(sensorTypeId) == sensorMap_.end()) {
             continue;
         }
+        bool isMockSensor = sensor.GetIsMockSensor();
         dprintf(fd,
                 "deviceIndex:%d | sensorType:%s |sensorId:%8u  |sensorIndex:%d  | sensorName:%s | vendorName:%s"
                 "| maxRange:%f| fifoMaxEventCount:%d | minSamplePeriodNs:%" PRId64 ""
-                "| maxSamplePeriodNs:%" PRId64 "\n",
+                "| maxSamplePeriodNs:%" PRId64 " | isMockSensor:%s\n",
                 deviceId, sensorMap_[sensorTypeId].c_str(), sensorTypeId, sensorId, sensor.GetSensorName().c_str(),
                 sensor.GetVendorName().c_str(), sensor.GetMaxRange(), sensor.GetFifoMaxEventCount(),
-                sensor.GetMinSamplePeriodNs(), sensor.GetMaxSamplePeriodNs());
+                sensor.GetMinSamplePeriodNs(), sensor.GetMaxSamplePeriodNs(), isMockSensor ? "true" : "false");
     }
     return true;
 }

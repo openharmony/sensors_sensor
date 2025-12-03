@@ -39,7 +39,8 @@ Sensor::Sensor()
       minSamplePeriodNs_(0),
       maxSamplePeriodNs_(0),
       deviceId_(0),
-      location_(0)
+      location_(0),
+      isMockSensor_(false)
 {}
 
 int32_t Sensor::GetSensorId() const
@@ -192,6 +193,16 @@ void Sensor::SetLocation(int32_t location)
     location_ = location;
 }
 
+bool Sensor::GetIsMockSensor() const
+{
+    return isMockSensor_;
+}
+
+void Sensor::SetIsMockSensor(bool isMockSensor)
+{
+    isMockSensor_ = isMockSensor;
+}
+
 bool Sensor::Marshalling(Parcel &parcel) const
 {
     if (!parcel.WriteInt32(sensorId_)) {
@@ -254,6 +265,10 @@ bool Sensor::Marshalling(Parcel &parcel) const
         SEN_HILOGE("Failed, write location_ failed");
         return false;
     }
+    if (!parcel.WriteBool(isMockSensor_)) {
+        SEN_HILOGE("Failed, write isMockSensor_ failed");
+        return false;
+    }
     return true;
 }
 
@@ -284,7 +299,8 @@ bool Sensor::ReadFromParcel(Parcel &parcel)
         (!parcel.ReadInt64(minSamplePeriodNs_)) ||
         (!parcel.ReadInt64(maxSamplePeriodNs_)) ||
         (!parcel.ReadInt32(deviceId_)) ||
-        (!parcel.ReadInt32(location_))) {
+        (!parcel.ReadInt32(location_)) ||
+        (!parcel.ReadBool(isMockSensor_))) {
         return false;
     }
     return true;

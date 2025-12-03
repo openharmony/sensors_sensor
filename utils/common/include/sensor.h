@@ -99,6 +99,8 @@ public:
     void SetDeviceId(int32_t deviceId);
     int32_t GetLocation() const;
     void SetLocation(int32_t location);
+    bool GetIsMockSensor() const;
+    void SetIsMockSensor(bool isMockSensor);
     bool ReadFromParcel(Parcel &parcel);
     static Sensor* Unmarshalling(Parcel &parcel);
     virtual bool Marshalling(Parcel &parcel) const override;
@@ -119,6 +121,7 @@ private:
     int64_t maxSamplePeriodNs_;
     int32_t deviceId_;
     int32_t location_;
+    bool isMockSensor_;
 };
 } // namespace Sensors
 } // namespace OHOS
