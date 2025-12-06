@@ -15,6 +15,9 @@
 
 #include "sensor_shake_control_manager.h"
 
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+#include "hisysevent.h"
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "os_account_manager.h"
 #include "sensor_errors.h"
 
@@ -23,6 +26,9 @@
 
 namespace OHOS {
 namespace Sensors {
+using namespace OHOS::HiviewDFX;
+static constexpr int32_t SHAKE_CONTROL_SWITCH_CLOSE = 0;
+static constexpr int32_t SHAKE_CONTROL_SWITCH_OPEN = 1;
 
 SensorShakeControlManager::SensorShakeControlManager()
 {}
@@ -47,7 +53,7 @@ bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
     return true;
 }
 
-void SensorShakeControlManager::InitShakeSensorControlAppInfos()
+void SensorShakeControlManager::InitShakeSensorControlAppInfos(bool isAutoMonitor)
 {
     SEN_HILOGI("InitShakeSensorControlAppInfos start");
     std::vector<AppPolicyEventExt> appPolicyEventList;
@@ -55,6 +61,10 @@ void SensorShakeControlManager::InitShakeSensorControlAppInfos()
         appPolicyEventList);
     if (ret != ERR_OK) {
         SEN_HILOGE("QueryAppPolicyByPolicyName failed, ret::%{public}d", ret);
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "QueryAppPolicyByPolicyName", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         return;
     }
     std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
@@ -64,18 +74,55 @@ void SensorShakeControlManager::InitShakeSensorControlAppInfos()
         shakeSensorNoControlAppInfoList_.clear();
         return;
     }
+    std::unordered_set<ShakeControlAppInfo> oldClosedApps(shakeSensorControlAppInfoList_.begin(),
+        shakeSensorControlAppInfoList_.end());
     shakeSensorControlAppInfoList_.clear();
     shakeSensorNoControlAppInfoList_.clear();
     size_t vecLength = appPolicyEventList.size();
+    int32_t tempCurrentUserId = currentUserId_.load();
     for (size_t i = 0; i < vecLength; i++) {
-        ShakeControlAppInfo appInfo;
-        appInfo.bundleName = appPolicyEventList[i].bundleName;
-        appInfo.tokenId = appPolicyEventList[i].objectId;
-        appInfo.userId = currentUserId_.load();
+        ShakeControlAppInfo appInfo = {appPolicyEventList[i].bundleName, appPolicyEventList[i].objectId,
+            tempCurrentUserId};
         if (appPolicyEventList[i].policyValue == PolicyValue::CLOSE) {
-            shakeSensorControlAppInfoList_.push_back(appInfo);
+            shakeSensorControlAppInfoList_.insert(appInfo);
         } else {
-            shakeSensorNoControlAppInfoList_.push_back(appInfo);
+            shakeSensorNoControlAppInfoList_.insert(appInfo);
+        }
+    }
+    if (isAutoMonitor) {
+        ReportAppSwitchChangeLog(oldClosedApps, shakeSensorControlAppInfoList_, shakeSensorNoControlAppInfoList_);
+    }
+    SEN_HILOGI("InitShakeSensorControlAppInfos end");
+}
+
+void SensorShakeControlManager::ReportAppSwitchChangeLog(const std::unordered_set<ShakeControlAppInfo> &oldClosedApps,
+    const std::unordered_set<ShakeControlAppInfo> &latestClosedApps,
+    const std::unordered_set<ShakeControlAppInfo> &latestOpenedApps)
+{
+    std::vector<ShakeControlAppInfo> openSwitchApps;
+    std::vector<ShakeControlAppInfo> closeSwitchApps;
+    for (const auto& item : oldClosedApps) {
+        if (latestClosedApps.find(item) == latestClosedApps.end()) {
+            openSwitchApps.push_back(item);
+        }
+    }
+    for (const auto& item : latestClosedApps) {
+        if (oldClosedApps.find(item) == oldClosedApps.end()) {
+            closeSwitchApps.push_back(item);
+        }
+    }
+    for (const auto& item : closeSwitchApps) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SHAKE_SWITCHES_TOGGLE", HiSysEvent::EventType::BEHAVIOR,
+            "PKG_NAME", item.bundleName, "STATUS", SHAKE_CONTROL_SWITCH_CLOSE);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+    }
+    for (const auto& item : openSwitchApps) {
+        if (latestOpenedApps.find(item) != latestOpenedApps.end()) {
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SHAKE_SWITCHES_TOGGLE", HiSysEvent::EventType::BEHAVIOR,
+                "PKG_NAME", item.bundleName, "STATUS", SHAKE_CONTROL_SWITCH_OPEN);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         }
     }
 }
@@ -92,7 +139,7 @@ int32_t SensorShakeControlManager::UpdateCurrentUserId()
         SEN_HILOGE("activeUserIds empty");
         return ERROR;
     }
-    currentUserId_ = activeUserIds[0];
+    currentUserId_.store(activeUserIds[0]);
     SEN_HILOGI("currentUserId_ is %{public}d", currentUserId_.load());
     return ERR_OK;
 }
@@ -105,21 +152,33 @@ int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver(std::atomi
         if (result != ERR_OK) {
             SEN_HILOGE("CreateAppPolicyDB failed, result:%{public}d", result);
             shakeControlInitReady.store(false);
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+                HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateAppPolicyDB", "ERROR_CODE", result);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
             return;
         }
-        std::function<void()> updateFunc = [&]() { this->InitShakeSensorControlAppInfos(); };
+        std::function<void()> updateFunc = [&]() { this->InitShakeSensorControlAppInfos(true); };
         int32_t ret = RegisterAppPolicyObserver(currentUserId_.load(), updateFunc);
         if (ret != ERR_OK) {
             SEN_HILOGE("RegisterAppPolicyObserver failed, ret::%{public}d", ret);
             shakeControlInitReady.store(false);
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+                HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisterAppPolicyObserver", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
             return;
         }
-        this->InitShakeSensorControlAppInfos();
+        this->InitShakeSensorControlAppInfos(false);
         shakeControlInitReady.store(true);
     });
     int32_t ret = CreateAppPolicyDB(currentUserId_.load(), createCallBack);
     if (ret != ERR_OK) {
         SEN_HILOGE("CreateAppPolicyDB failed, ret::%{public}d", ret);
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+            HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateAppPolicyDB", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
     }
     return ret;
 }
@@ -148,13 +207,10 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     SEN_HILOGD("CheckAppIsNeedControl start");
     std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
     if (!shakeSensorControlAppInfoList_.empty()) {
-        size_t vecLength = shakeSensorControlAppInfoList_.size();
-        for (size_t i = 0; i < vecLength; i++) {
-            ShakeControlAppInfo tempData = shakeSensorControlAppInfoList_[i];
-            if (bundleName == tempData.bundleName && tokenId == tempData.tokenId && userId == tempData.userId) {
-                SEN_HILOGD("Shake the sensor data for control, bundleName:%{public}s", bundleName.c_str());
-                return true;
-            }
+        ShakeControlAppInfo appInfo = {bundleName, tokenId, userId};
+        if (shakeSensorControlAppInfoList_.find(appInfo) != shakeSensorControlAppInfoList_.end()) {
+            SEN_HILOGD("Shake the sensor data for control, bundleName:%{public}s", bundleName.c_str());
+            return true;
         }
     }
     return false;
@@ -166,23 +222,17 @@ bool SensorShakeControlManager::CheckAppInfoIsNeedModify(const std::string &bund
     SEN_HILOGD("CheckAppInfoIsNeedModify start");
     std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
     if (!shakeSensorNoControlAppInfoList_.empty()) {
-        size_t vecLength = shakeSensorNoControlAppInfoList_.size();
-        for (size_t i = 0; i < vecLength; i++) {
-            ShakeControlAppInfo tempData = shakeSensorNoControlAppInfoList_[i];
-            if (bundleName == tempData.bundleName && tokenId == tempData.tokenId && userId == tempData.userId) {
-                SEN_HILOGD("The app info no need modify, bundleName:%{public}s", bundleName.c_str());
-                return false;
-            }
+        ShakeControlAppInfo appInfo = {bundleName, tokenId, userId};
+        if (shakeSensorNoControlAppInfoList_.find(appInfo) != shakeSensorNoControlAppInfoList_.end()) {
+            SEN_HILOGD("The app info no need modify, bundleName:%{public}s", bundleName.c_str());
+            return false;
         }
     }
     if (!shakeSensorControlAppInfoList_.empty()) {
-        size_t vecLength = shakeSensorControlAppInfoList_.size();
-        for (size_t i = 0; i < vecLength; i++) {
-            ShakeControlAppInfo tempData = shakeSensorControlAppInfoList_[i];
-            if (bundleName == tempData.bundleName && tokenId == tempData.tokenId && userId == tempData.userId) {
-                SEN_HILOGD("The app info no need modify, bundleName:%{public}s", bundleName.c_str());
-                return false;
-            }
+        ShakeControlAppInfo appInfo = {bundleName, tokenId, userId};
+        if (shakeSensorControlAppInfoList_.find(appInfo) != shakeSensorControlAppInfoList_.end()) {
+            SEN_HILOGD("The app info no need modify, bundleName:%{public}s", bundleName.c_str());
+            return false;
         }
     }
     return true;

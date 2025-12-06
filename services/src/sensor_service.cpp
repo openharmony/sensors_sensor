@@ -58,6 +58,12 @@ const std::string DEFAULTS_FOLD_TYPE = "0,0,0,0";
 const std::set<int32_t> g_systemApiSensorCall = {
     SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_HEADPOSTURE
 };
+const std::set<int32_t> g_shakeSensorControlList = {
+    SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_MAGNETIC_FIELD, SENSOR_TYPE_ID_GYROSCOPE,
+    SENSOR_TYPE_ID_GRAVITY, SENSOR_TYPE_ID_LINEAR_ACCELERATION, SENSOR_TYPE_ID_ROTATION_VECTOR,
+    SENSOR_TYPE_ID_GAME_ROTATION_VECTOR, SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED,
+    SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR
+};
 } // namespace
 
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
@@ -65,8 +71,8 @@ std::atomic_bool SensorService::isMemoryMgrServiceActive_ = false;
 std::atomic_bool SensorService::isCritical_ = false;
 std::atomic_bool SensorService::isDataShareReady_ = false;
 std::atomic_bool SensorService::isSensorShakeControlManagerReady_ = false;
-std::atomic_bool SensorService::isSensorShakeControlInitialize_ = false;
-std::mutex SensorService::initializeShakeControlMutex_;
+std::atomic_bool SensorService::isUpdateCurrentUserId_ = false;
+std::mutex SensorService::updateCurrentUserIdMutex_;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -130,15 +136,24 @@ bool SensorService::IsNeedLoadMotionLib()
 
 void SensorService::InitShakeControl()
 {
-    std::lock_guard<std::mutex> initializeShakeControlLock(initializeShakeControlMutex_);
-    if (!isSensorShakeControlInitialize_.load()) {
-        LoadSecurityPrivacyManager();
-        if (SENSOR_SHAKE_CONTROL_MGR->Init(isSensorShakeControlManagerReady_)) {
-            SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init complete");
-        } else {
-            SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
+    if (LoadSecurityPrivacyManager() && SENSOR_SHAKE_CONTROL_MGR->Init(isSensorShakeControlManagerReady_)) {
+        SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR init complete");
+        isUpdateCurrentUserId_.store(true);
+        return;
+    }
+    SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR init fail");
+}
+
+void SensorService::UpdateCurrentUserId()
+{
+    std::lock_guard<std::mutex> updateCurrentUserIdLock(updateCurrentUserIdMutex_);
+    if (!isUpdateCurrentUserId_.load()) {
+        int32_t ret = SENSOR_SHAKE_CONTROL_MGR->UpdateCurrentUserId();
+        if (ret != ERR_OK) {
+            SEN_HILOGE("SENSOR_SHAKE_CONTROL_MGR update current userId fail");
+            return;
         }
-        isSensorShakeControlInitialize_.store(true);
+        isUpdateCurrentUserId_.store(true);
     }
 }
 
@@ -251,18 +266,20 @@ void SensorService::OnReceiveUserSwitchEvent(const EventFwk::CommonEventData &da
 {
     const auto &want = data.GetWant();
     std::string action = want.GetAction();
-    if (action == "usual.event.USER_SWITCHED") {
+    if (action == "usual.event.USER_SWITCHED" && LoadSecurityPrivacyManager()) {
         SEN_HILOGI("OnReceiveUserSwitchEvent user switched");
         SENSOR_SHAKE_CONTROL_MGR->UpdateRegisterShakeSensorControlObserver(isSensorShakeControlManagerReady_);
     }
 }
 
-void SensorService::LoadSecurityPrivacyManager()
+bool SensorService::LoadSecurityPrivacyManager()
 {
     SEN_HILOGI("LoadSecurityPrivacyManager in");
     if (!LoadSecurityPrivacyServer()) {
         SEN_HILOGE("LoadSecurityPrivacyServer fail");
+        return false;
     }
+    return true;
 } // LCOV_EXCL_STOP
 
 void SensorService::UpdateDeviceStatus()
@@ -621,7 +638,7 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     int32_t pid = GetCallingPid();
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
     if (isSensorShakeControlManagerReady_.load()) {
-        NotifyAppSubscribeSensor();
+        NotifyAppSubscribeSensor(sensorDesc.sensorType);
     }
     if (clientInfo_.GetSensorState(sensorDesc)) {
         return SensorReportEvent(sensorDesc, samplingPeriodNs, maxReportDelayNs, pid);
@@ -653,10 +670,10 @@ ErrCode SensorService::EnableSensor(const SensorDescriptionIPC &SensorDescriptio
     // LCOV_EXCL_STOP
 }
 
-void SensorService::NotifyAppSubscribeSensor()
+void SensorService::NotifyAppSubscribeSensor(int32_t sensorTypeId)
 {
-    if (IsSystemServiceCalling()) {
-        SEN_HILOGD("The system service is not subject to control");
+    if ((g_shakeSensorControlList.find(sensorTypeId) == g_shakeSensorControlList.end()) || IsSystemCalling()) {
+        SEN_HILOGD("The service is not subject to control");
         return;
     }
     int32_t userId = SENSOR_SHAKE_CONTROL_MGR->GetCurrentUserId();
@@ -676,6 +693,10 @@ void SensorService::NotifyAppSubscribeSensor()
         int32_t ret = ModifyAppPolicy(userId, appPolicyEventExt);
         if (ret != ERR_OK) {
             SEN_HILOGE("ModifyAppPolicy failed");
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+                HiSysEvent::EventType::FAULT, "PKG_NAME", "ModifyAppPolicy", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
         }
     }
 }
@@ -885,9 +906,9 @@ std::vector<Sensor> SensorService::GetSensorList()
 ErrCode SensorService::TransferDataChannel(int32_t sendFd, const sptr<IRemoteObject> &sensorClient)
 {
     CALL_LOG_ENTER;
-    if (!isSensorShakeControlInitialize_.load() && OHOS::system::GetBoolParameter("bootevent.boot.completed", false)
-        && !IsSystemServiceCalling()) {
-        InitShakeControl();
+    if (!isUpdateCurrentUserId_.load() && !IsSystemCalling()
+        && OHOS::system::GetBoolParameter("bootevent.boot.completed", false)) {
+        UpdateCurrentUserId();
     }
     sptr<SensorBasicDataChannel> sensorBasicDataChannel = new (std::nothrow) SensorBasicDataChannel();
     CHKPR(sensorBasicDataChannel, OBJECT_NULL);
