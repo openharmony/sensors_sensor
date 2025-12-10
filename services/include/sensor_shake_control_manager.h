@@ -16,8 +16,33 @@
 #ifndef SENSOR_SHAKE_CONTROL_MANAGER_H
 #define SENSOR_SHAKE_CONTROL_MANAGER_H
 
+#include <unordered_set>
+
 #include "security_privacy_manager_plugin.h"
 #include "singleton.h"
+
+struct ShakeControlAppInfo {
+    std::string bundleName;
+    std::string tokenId;
+    int32_t userId;
+    bool operator == (const ShakeControlAppInfo& other) const
+    {
+        return bundleName == other.bundleName && tokenId == other.tokenId && userId == other.userId;
+    }
+};
+
+namespace std {
+    template <>
+    struct hash<ShakeControlAppInfo> {
+        std::size_t operator()(const ShakeControlAppInfo& appInfo) const
+        {
+            std::size_t h1 = std::hash<std::string>{}(appInfo.bundleName);
+            std::size_t h2 = std::hash<std::string>{}(appInfo.tokenId);
+            std::size_t h3 = std::hash<int32_t>{}(appInfo.userId);
+            return h1 ^ h2 ^ h3;
+        }
+    };
+}
 
 namespace OHOS {
 namespace Sensors {
@@ -32,11 +57,6 @@ public:
         func_(result);
     }
 };
-struct ShakeControlAppInfo {
-    std::string bundleName;
-    std::string tokenId;
-    int32_t userId;
-};
 const int32_t INVALID_USERID = 100;
 class SensorShakeControlManager {
     DECLARE_DELAYED_SINGLETON(SensorShakeControlManager);
@@ -47,15 +67,18 @@ public:
     bool CheckAppIsNeedControl(const std::string &bundleName, const std::string &tokenId, const int32_t &userId);
     bool CheckAppInfoIsNeedModify(const std::string &bundleName, const std::string &tokenId, const int32_t &userId);
     int32_t GetCurrentUserId();
+    int32_t UpdateCurrentUserId();
 
 private:
-    void InitShakeSensorControlAppInfos();
-    int32_t UpdateCurrentUserId();
+    void InitShakeSensorControlAppInfos(bool isAutoMonitor);
+    void ReportAppSwitchChangeLog(const std::unordered_set<ShakeControlAppInfo> &oldClosedApps,
+        const std::unordered_set<ShakeControlAppInfo> &latestClosedApps,
+        const std::unordered_set<ShakeControlAppInfo> &latestOpenedApps);
     int32_t RegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady);
     int32_t UnregisterShakeSensorControlObserver();
     std::mutex shakeSensorControlAppInfoMutex_;
-    std::vector<ShakeControlAppInfo> shakeSensorControlAppInfoList_;
-    std::vector<ShakeControlAppInfo> shakeSensorNoControlAppInfoList_;
+    std::unordered_set<ShakeControlAppInfo> shakeSensorControlAppInfoList_;
+    std::unordered_set<ShakeControlAppInfo> shakeSensorNoControlAppInfoList_;
     std::atomic_int32_t currentUserId_ = INVALID_USERID;
 };
 #define SENSOR_SHAKE_CONTROL_MGR DelayedSingleton<SensorShakeControlManager>::GetInstance()
