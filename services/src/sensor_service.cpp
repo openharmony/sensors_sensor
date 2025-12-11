@@ -530,8 +530,6 @@ void SensorService::ReportOnChangeData(const SensorDescription &sensorDesc)
 ErrCode SensorService::SaveSubscriber(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
-        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (!sensorManager_.SaveSubscriber(sensorDesc, GetCallingPid(), samplingPeriodNs, maxReportDelayNs)) {
         SEN_HILOGE("SaveSubscriber failed");
         return UPDATE_SENSOR_INFO_ERR;

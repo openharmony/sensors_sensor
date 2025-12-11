@@ -108,7 +108,6 @@ void SensorManager::InitSensorMap(const std::unordered_map<SensorDescription, Se
 bool SensorManager::SaveSubscriber(const SensorDescription &sensorDesc, uint32_t pid, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
     SensorBasicInfo sensorInfo = GetSensorInfo(sensorDesc, samplingPeriodNs, maxReportDelayNs);
     if (!clientInfo_.UpdateSensorInfo(sensorDesc, pid, sensorInfo)) {
         SEN_HILOGE("UpdateSensorInfo is failed");
@@ -121,7 +120,6 @@ bool SensorManager::SaveSubscriber(const SensorDescription &sensorDesc, uint32_t
 SensorBasicInfo SensorManager::GetSensorInfo(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
-    SEN_HILOGI("In, sensorType:%{public}d", sensorDesc.sensorType);
     SensorBasicInfo sensorInfo;
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
     auto it = sensorMap_.find(sensorDesc);
