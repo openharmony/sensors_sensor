@@ -46,7 +46,7 @@ ErrCode SensorPowerPolicy::SuspendSensors(int32_t pid)
     std::vector<SensorDescription> sensorDescList = clientInfo_.GetSensorIdByPid(pid);
     if (sensorDescList.empty()) {
         SEN_HILOGD("Suspend sensors failed, sensorIdList is empty, pid:%{public}d", pid);
-        return SUSPEND_ERR;
+        return ERR_OK;
     }
     std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
@@ -107,7 +107,7 @@ ErrCode SensorPowerPolicy::ResumeSensors(int32_t pid)
     auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
     if (pidSensorInfoIt == pidSensorInfoMap_.end()) {
         SEN_HILOGD("Resume sensors failed, please suspend sensors first, pid:%{public}d", pid);
-        return RESUME_ERR;
+        return ERR_OK;
     }
     bool isAllResume = true;
     std::unordered_map<SensorDescription, SensorBasicInfo> sensorInfoMap = pidSensorInfoIt->second;

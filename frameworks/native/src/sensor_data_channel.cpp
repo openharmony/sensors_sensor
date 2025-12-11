@@ -45,7 +45,6 @@ int32_t SensorDataChannel::RestoreSensorDataChannel()
 
 int32_t SensorDataChannel::InnerSensorDataChannel()
 {
-    SEN_HILOGI("In");
     std::lock_guard<std::mutex> eventRunnerLock(eventRunnerMutex_);
     // create basic data channel
     int32_t ret = CreateSensorBasicChannel();

@@ -333,8 +333,7 @@ void HdiConnection::UpdateSensorBasicInfo(const SensorDescription &sensorDesc, i
 
 void HdiConnection::SetSensorBasicInfoState(const SensorDescription &sensorDesc, bool state)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
-        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = g_sensorBasicInfoMap.find(sensorDesc);
     if (it == g_sensorBasicInfoMap.end()) {
@@ -355,8 +354,6 @@ void HdiConnection::DeleteSensorBasicInfoState(const SensorDescription &sensorDe
     if (it != g_sensorBasicInfoMap.end()) {
         g_sensorBasicInfoMap.erase(sensorDesc);
     }
-    SEN_HILOGI("Done,deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
-        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
 }
 
 void HdiConnection::RegisterHdiDeathRecipient()
