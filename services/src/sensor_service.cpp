@@ -692,7 +692,7 @@ void SensorService::NotifyAppSubscribeSensor(int32_t sensorTypeId)
         if (ret != ERR_OK) {
             SEN_HILOGE("ModifyAppPolicy failed");
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
                 HiSysEvent::EventType::FAULT, "PKG_NAME", "ModifyAppPolicy", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         }
