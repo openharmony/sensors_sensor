@@ -101,7 +101,7 @@ int32_t SensorDataManager::GetLongValue(const std::string &key, int64_t &value)
     int32_t ret = GetStringValue(key, valueStr);
     if (ret != ERR_OK) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION", HiSysEvent::EventType::FAULT,
             "PKG_NAME", "GetStringValue", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         SEN_HILOGE("GetStringValue failed, ret:%{public}d", ret);
@@ -212,7 +212,7 @@ int32_t SensorDataManager::RegisterObserver(const sptr<SensorObserver> &observer
     auto helper = CreateDataShareHelper(SETTING_URI_PROXY);
     if (helper == nullptr) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION", HiSysEvent::EventType::FAULT,
             "PKG_NAME", "RegisterObserver", "ERROR_CODE", ERR_NO_INIT);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         IPCSkeleton::SetCallingIdentity(callingIdentity);
@@ -245,7 +245,7 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
     auto helper = CreateDataShareHelper(SETTING_URI_PROXY);
     if (helper == nullptr) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "DATASHARE_EXCEPTION", HiSysEvent::EventType::FAULT,
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION", HiSysEvent::EventType::FAULT,
             "PKG_NAME", "UnregisterObserver", "ERROR_CODE", ERR_NO_INIT);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         IPCSkeleton::SetCallingIdentity(callingIdentity);

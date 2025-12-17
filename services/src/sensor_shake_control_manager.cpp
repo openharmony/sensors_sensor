@@ -62,7 +62,7 @@ void SensorShakeControlManager::InitShakeSensorControlAppInfos(bool isAutoMonito
     if (ret != ERR_OK) {
         SEN_HILOGE("QueryAppPolicyByPolicyName failed, ret::%{public}d", ret);
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "QueryAppPolicyByPolicyName", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         return;
@@ -113,15 +113,15 @@ void SensorShakeControlManager::ReportAppSwitchChangeLog(const std::unordered_se
     }
     for (const auto& item : closeSwitchApps) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SHAKE_SWITCHES_TOGGLE", HiSysEvent::EventType::BEHAVIOR,
-            "PKG_NAME", item.bundleName, "STATUS", SHAKE_CONTROL_SWITCH_CLOSE);
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION", HiSysEvent::EventType::FAULT,
+            "PKG_NAME", item.bundleName, "ERROR_CODE", SHAKE_CONTROL_SWITCH_CLOSE);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
     }
     for (const auto& item : openSwitchApps) {
         if (latestOpenedApps.find(item) != latestOpenedApps.end()) {
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SHAKE_SWITCHES_TOGGLE", HiSysEvent::EventType::BEHAVIOR,
-                "PKG_NAME", item.bundleName, "STATUS", SHAKE_CONTROL_SWITCH_OPEN);
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION", HiSysEvent::EventType::FAULT,
+                "PKG_NAME", item.bundleName, "ERROR_CODE", SHAKE_CONTROL_SWITCH_OPEN);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
         }
     }
@@ -153,7 +153,7 @@ int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver(std::atomi
             SEN_HILOGE("CreateAppPolicyDB failed, result:%{public}d", result);
             shakeControlInitReady.store(false);
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
                 HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateAppPolicyDB", "ERROR_CODE", result);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
             return;
@@ -164,7 +164,7 @@ int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver(std::atomi
             SEN_HILOGE("RegisterAppPolicyObserver failed, ret::%{public}d", ret);
             shakeControlInitReady.store(false);
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+            HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
                 HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisterAppPolicyObserver", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
             return;
@@ -176,7 +176,7 @@ int32_t SensorShakeControlManager::RegisterShakeSensorControlObserver(std::atomi
     if (ret != ERR_OK) {
         SEN_HILOGE("CreateAppPolicyDB failed, ret::%{public}d", ret);
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SECURITY_PRIVACY_EXCEPTION",
+        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION",
             HiSysEvent::EventType::FAULT, "PKG_NAME", "CreateAppPolicyDB", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
     }
