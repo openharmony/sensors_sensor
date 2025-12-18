@@ -54,6 +54,7 @@ constexpr int32_t SENSOR_ONLINE = 1;
 std::atomic_bool g_isRegister = false;
 constexpr int32_t SINGLE_DISPLAY_SMALL_FOLD = 4;
 constexpr int32_t SINGLE_DISPLAY_THREE_FOLD = 6;
+constexpr int32_t SINGLE_DISPLAY_HP_FOLD = 7;
 const std::string DEFAULTS_FOLD_TYPE = "0,0,0,0";
 const std::set<int32_t> g_systemApiSensorCall = {
     SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_HEADPOSTURE
@@ -126,7 +127,8 @@ bool SensorService::IsNeedLoadMotionLib()
             SEN_HILOGE("Failed to convert string %{public}s to number", firstValue.c_str());
             return false;
         }
-        if (firstValueNum == SINGLE_DISPLAY_SMALL_FOLD || firstValueNum == SINGLE_DISPLAY_THREE_FOLD) {
+        if (firstValueNum == SINGLE_DISPLAY_SMALL_FOLD || firstValueNum == SINGLE_DISPLAY_THREE_FOLD
+            || firstValueNum == SINGLE_DISPLAY_HP_FOLD) {
             return true;
         }
     }
