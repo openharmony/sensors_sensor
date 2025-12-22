@@ -1863,6 +1863,8 @@ static napi_value CreateEnumSensorType(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_WEAR_DETECTION", GetNapiInt32(env, SENSOR_TYPE_ID_WEAR_DETECTION)),
         DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED",
             GetNapiInt32(env, SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED)),
+        DECLARE_NAPI_STATIC_PROPERTY("SENSOR_TYPE_ID_FUSION_PRESSURE",
+            GetNapiInt32(env, SENSOR_TYPE_ID_FUSION_PRESSURE)),
     };
     napi_value result = nullptr;
     CHKNRP(env, napi_define_class(env, "SensorType", NAPI_AUTO_LENGTH, EnumClassConstructor, nullptr,
@@ -1901,6 +1903,8 @@ static napi_value CreateEnumSensorId(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_PROPERTY("WEAR_DETECTION", GetNapiInt32(env, SENSOR_TYPE_ID_WEAR_DETECTION)),
         DECLARE_NAPI_STATIC_PROPERTY("ACCELEROMETER_UNCALIBRATED",
             GetNapiInt32(env, SENSOR_TYPE_ID_ACCELEROMETER_UNCALIBRATED)),
+        DECLARE_NAPI_STATIC_PROPERTY("FUSION_PRESSURE",
+            GetNapiInt32(env, SENSOR_TYPE_ID_FUSION_PRESSURE)),
     };
     napi_value result = nullptr;
     CHKNRP(env, napi_define_class(env, "SensorId", NAPI_AUTO_LENGTH, EnumClassConstructor, nullptr,
