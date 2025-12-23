@@ -21,10 +21,6 @@
 #include "accesstoken_kit.h"
 
 #include "net_packet.h"
-#ifdef OHOS_BUILD_ENABLE_RUST
-#include "rust_binding.h"
-#endif // OHOS_BUILD_ENABLE_RUST
-
 
 namespace OHOS {
 namespace Sensors {
@@ -58,15 +54,10 @@ protected:
     std::map<int32_t, std::vector<EventTime>> events_;
     std::string descript_;
     const std::string programName_;
-#ifdef OHOS_BUILD_ENABLE_RUST
-    std::unique_ptr<RustStreamSession, void(*)(RustStreamSession*)> streamSessionPtr_ { StreamSessionCreate(),
-        StreamSessionDelete };
-#else
     int32_t fd_ { -1 };
     const int32_t uid_ { -1 };
     const int32_t pid_ { -1 };
     int32_t tokenType_ { ATokenTypeEnum::TOKEN_INVALID };
-#endif // OHOS_BUILD_ENABLE_RUST
 };
 } // namespace Sensors
 } // namespace OHOS

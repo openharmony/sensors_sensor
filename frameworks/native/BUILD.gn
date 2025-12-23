@@ -80,11 +80,6 @@ ohos_shared_library("libsensor_client") {
     "$SUBSYSTEM_DIR/utils/ipc:libsensor_ipc",
   ]
 
-  if (sensor_rust_socket_ipc) {
-    deps +=
-        [ "$SUBSYSTEM_DIR/rust/utils/socket_ipc_rust_ffi:sensor_rust_util_ffi" ]
-  }
-
   external_deps = [
     "c_utils:utils",
     "eventhandler:libeventhandler",

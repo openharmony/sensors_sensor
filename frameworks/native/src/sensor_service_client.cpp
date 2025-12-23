@@ -33,18 +33,6 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 
 namespace {
-#ifdef OHOS_BUILD_ENABLE_RUST
-extern "C" {
-    void ReadClientPackets(RustStreamBuffer *, OHOS::Sensors::SensorServiceClient *,
-        void(*)(OHOS::Sensors::SensorServiceClient *, RustNetPacket *));
-    void OnPacket(SensorServiceClient *object, RustNetPacket *cPkt)
-    {
-        NetPacket pkt(cPkt->msgId);
-        pkt.streamBufferPtr_.reset(cPkt->streamBuffer);
-        object->HandleNetPacke(pkt);
-    }
-}
-#endif // OHOS_BUILD_ENABLE_RUST
 constexpr int32_t LOCAL_DEVICE = 1;
 constexpr int32_t LOADSA_TIMEOUT_MS = 10000;
 } // namespace
@@ -748,11 +736,7 @@ void SensorServiceClient::ReceiveMessage(const char *buf, size_t size)
     if (!circBuf_.Write(buf, size)) {
         SEN_HILOGE("Write data failed. size:%{public}zu", size);
     }
-#ifdef OHOS_BUILD_ENABLE_RUST
-    ReadClientPackets(circBuf_.streamBufferPtr_.get(), this, OnPacket);
-#else
     OnReadPackets(circBuf_, [this] (NetPacket &pkt) { this->HandleNetPacke(pkt); });
-#endif // OHOS_BUILD_ENABLE_RUST
 } // LCOV_EXCL_STOP
 
 void SensorServiceClient::HandleNetPacke(NetPacket &pkt)
@@ -765,11 +749,7 @@ void SensorServiceClient::HandleNetPacke(NetPacket &pkt)
     SensorActiveInfo sensorActiveInfo;
     pkt >> sensorActiveInfo.pid >> sensorActiveInfo.sensorId >> sensorActiveInfo.samplingPeriodNs >>
         sensorActiveInfo.maxReportDelayNs;
-#ifdef OHOS_BUILD_ENABLE_RUST
-    if (StreamBufferChkRWError(pkt.streamBufferPtr_.get())) {
-#else
     if (pkt.ChkRWError()) {
-#endif // OHOS_BUILD_ENABLE_RUST
         SEN_HILOGE("Packet read type failed");
         return;
     }
@@ -834,11 +814,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
         SEN_HILOGE("Create socket channel failed, ret:%{public}d", ret);
         return ret;
     }
-#ifdef OHOS_BUILD_ENABLE_RUST
-    StreamSocketSetFd(streamSocketPtr_.get(), clientFd);
-#else
     fd_ = clientFd;
-#endif // OHOS_BUILD_ENABLE_RUST
     {
         std::lock_guard<std::mutex> channelLock(channelMutex_);
         if (dataChannel_->AddFdListener(GetFd(),

@@ -15,9 +15,6 @@
 
 #include "sensor_power_policy.h"
 
-#ifdef OHOS_BUILD_ENABLE_RUST
-#include "rust_binding.h"
-#endif // OHOS_BUILD_ENABLE_RUST
 #undef LOG_TAG
 #define LOG_TAG "SensorPowerPolicy"
 
@@ -244,11 +241,7 @@ void SensorPowerPolicy::ReportActiveInfo(const ActiveInfo &activeInfo,
     NetPacket pkt(MessageId::ACTIVE_INFO);
     pkt << activeInfo.GetPid() << activeInfo.GetSensorId() <<
         activeInfo.GetSamplingPeriodNs() << activeInfo.GetMaxReportDelayNs();
-#ifdef OHOS_BUILD_ENABLE_RUST
-    if (StreamBufferChkRWError(pkt.streamBufferPtr_.get())) {
-#else
     if (pkt.ChkRWError()) {
-#endif // OHOS_BUILD_ENABLE_RUST
         SEN_HILOGE("Packet write data failed");
         return;
     }

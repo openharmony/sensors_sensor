@@ -22,9 +22,6 @@
 
 #include "circle_stream_buffer.h"
 #include "net_packet.h"
-#ifdef OHOS_BUILD_ENABLE_RUST
-#include "rust_binding.h"
-#endif // OHOS_BUILD_ENABLE_RUST
 
 namespace OHOS {
 namespace Sensors {
@@ -35,23 +32,11 @@ public:
     virtual ~StreamSocket();
     void Close();
     int32_t GetFd() const;
-#ifndef OHOS_BUILD_ENABLE_RUST
     void OnReadPackets(CircleStreamBuffer &buf, PacketCallBackFun callbackFun);
-#endif // OHOS_BUILD_ENABLE_RUST
     DISALLOW_COPY_AND_MOVE(StreamSocket);
 protected:
-#ifdef OHOS_BUILD_ENABLE_RUST
-    struct RustDelete {
-        void operator() (RustStreamSocket* raw)
-        {
-            StreamSocketDelete(raw);
-        }
-    };
-    std::unique_ptr<RustStreamSocket, RustDelete> streamSocketPtr_ { StreamSocketCreate() };
-#else
     int32_t fd_ { -1 };
     int32_t epollFd_ { -1 };
-#endif // OHOS_BUILD_ENABLE_RUST
 };
 } // namespace Sensors
 } // namespace OHOS
