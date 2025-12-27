@@ -77,7 +77,7 @@ private:
         const std::unordered_set<ShakeControlAppInfo> &latestOpenedApps);
     int32_t RegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady);
     int32_t UnregisterShakeSensorControlObserver();
-    std::vector<std::string> GetShakeIgnoreControlList(const std::string &shakeIgnoreControlStr, char delimiter);
+    std::unordered_set<std::string> GetShakeIgnoreControlList(const std::string &shakeIgnoreControlStr, char delimiter);
     void GetShakeIgnoreControl();
     void OnParameterChanged(const char *key, const char *value, void *context);
     std::mutex shakeSensorControlAppInfoMutex_;

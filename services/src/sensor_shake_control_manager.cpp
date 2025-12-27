@@ -276,7 +276,10 @@ std::unordered_set<std::string> SensorShakeControlManager::GetShakeIgnoreControl
                 noTrimToken << c;
             }
         }
-        result.insert(noTrimToken.str());
+        auto status = result.insert(noTrimToken.str());
+        if (!status.second) {
+            SEN_HILOGE("tokenId insert faild");
+        }
     }
     return result;
 } // LCOV_EXCL_STOP
