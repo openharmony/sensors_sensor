@@ -19,6 +19,7 @@
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "os_account_manager.h"
+#include "parameters.h"
 #include "sensor_errors.h"
 
 #undef LOG_TAG
@@ -29,6 +30,8 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 static constexpr int32_t SHAKE_CONTROL_SWITCH_CLOSE = 0;
 static constexpr int32_t SHAKE_CONTROL_SWITCH_OPEN = 1;
+static const std::string SHAKE_IGNORE_CONTROL_DEFAULT = "0,0,0,0";
+static const std::string SHAKE_IGNORE_CONTROL_kEY = "security.privacy_indicator.shake_ignore_control";
 
 SensorShakeControlManager::SensorShakeControlManager()
 {}
@@ -36,7 +39,31 @@ SensorShakeControlManager::SensorShakeControlManager()
 SensorShakeControlManager::~SensorShakeControlManager()
 {
     UnregisterShakeSensorControlObserver();
+    std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+    int32_t ret = RemoveParameterWatcher(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("RemoveParameterWatcher failed");
+    }
 }
+
+void SensorShakeControlManager::OnParameterChanged(const char *key, const char *value, void *context)
+{ // LCOV_EXCL_START
+    if (key == nullptr || value == nullptr) {
+        SEN_HILOGW("key or value is null");
+        return;
+    }
+    std::string paramKey(key);
+    std::string paramValue(value);
+    if (paramKey.empty() || paramValue.empty()) {
+        SEN_HILOGW("paramKey or paramValue is empty");
+        return;
+    }
+    std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+    shakeIgnoreControlList_.clear();
+    SEN_HILOGD("key:%{public}s, value:%{public}s", key.c_str(), value.c_str());
+    char delimiter = ',';
+    shakeIgnoreControlList_ = GetShakeIgnoreControlList(paramValue, delimiter);
+} // LCOV_EXCL_STOP
 
 bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
 {
@@ -48,6 +75,16 @@ bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
     ret = RegisterShakeSensorControlObserver(shakeControlInitReady);
     if (ret != ERR_OK) {
         SEN_HILOGE("RegisterShakeSensorControlObserver failed ret:%{public}d", ret);
+        return false;
+    }
+    std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+    GetShakeIgnoreControl();
+    parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
+        SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
+    };
+    ret = WatchParameter(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("WatchParameter failed:%{public}d", ret);
         return false;
     }
     return true;
@@ -208,6 +245,14 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
     if (!shakeSensorControlAppInfoList_.empty()) {
         ShakeControlAppInfo appInfo = {bundleName, tokenId, userId};
+        {
+            std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+            if (std::find(shakeIgnoreControlList_.begin(), shakeIgnoreControlList_.end(), tokenId)
+                != shakeIgnoreControlList_.end()) {
+                SEN_HILOGD("Shake ignore control, bundleName:%{public}s", bundleName.c_str());
+                return false;
+            }
+        }
         if (shakeSensorControlAppInfoList_.find(appInfo) != shakeSensorControlAppInfoList_.end()) {
             SEN_HILOGD("Shake the sensor data for control, bundleName:%{public}s", bundleName.c_str());
             return true;
@@ -215,6 +260,28 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     }
     return false;
 }
+
+std::vector<std::string> SensorShakeControlManager::GetShakeIgnoreControlList(const std::string shakeIgnoreControlStr,
+    char delimiter)
+{ // LCOV_EXCL_START
+    std::vector<std::string> result;
+    std::stringstream ss(shakeIgnoreControlStr);
+    std::string token;
+    while (std::getline(ss, token, delimiter)) {
+        result.push_back(token);
+    }
+    return result;
+} // LCOV_EXCL_STOP
+
+void GetShakeIgnoreControl()
+{ // LCOV_EXCL_START
+    CALL_LOG_ENTER;
+    std::string shakeIgnoreControlStr
+        = OHOS::system::GetParameter(SHAKE_IGNORE_CONTROL_kEY, SHAKE_IGNORE_CONTROL_DEFAULT);
+    char delimiter = ',';
+    SEN_HILOGI("shakeIgnoreControlStr:%{public}s", shakeIgnoreControlStr.c_str());
+    shakeIgnoreControlList_ = GetShakeIgnoreControlList(shakeIgnoreControlStr, delimiter);
+} // LCOV_EXCL_STOP
 
 bool SensorShakeControlManager::CheckAppInfoIsNeedModify(const std::string &bundleName,
     const std::string &tokenId, const int32_t &userId)

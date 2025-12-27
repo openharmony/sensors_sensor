@@ -18,6 +18,7 @@
 
 #include <unordered_set>
 
+#include "parameter.h"
 #include "security_privacy_manager_plugin.h"
 #include "singleton.h"
 
@@ -76,10 +77,16 @@ private:
         const std::unordered_set<ShakeControlAppInfo> &latestOpenedApps);
     int32_t RegisterShakeSensorControlObserver(std::atomic_bool &shakeControlInitReady);
     int32_t UnregisterShakeSensorControlObserver();
+    std::vector<std::string> GetShakeIgnoreControlList(const std::string shakeIgnoreControlStr, char delimiter);
+    void GetShakeIgnoreControl();
+    void OnParameterChanged(const char *key, const char *value, void *context);
     std::mutex shakeSensorControlAppInfoMutex_;
     std::unordered_set<ShakeControlAppInfo> shakeSensorControlAppInfoList_;
     std::unordered_set<ShakeControlAppInfo> shakeSensorNoControlAppInfoList_;
     std::atomic_int32_t currentUserId_ = INVALID_USERID;
+    std::vector<std::string> shakeIgnoreControlList_;
+    ParameterChgPtr parameterChangedCallback_;
+    std::mutex shakeIgnoreControlListMutex_;
 };
 #define SENSOR_SHAKE_CONTROL_MGR DelayedSingleton<SensorShakeControlManager>::GetInstance()
 }  // namespace Sensors
