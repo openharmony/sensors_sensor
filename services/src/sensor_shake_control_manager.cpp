@@ -263,8 +263,8 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     return false;
 }
 
-std::unordered_set<std::string> SensorShakeControlManager::GetShakeIgnoreControlList(const std::string &shakeIgnoreControlStr,
-    char delimiter)
+std::unordered_set<std::string> SensorShakeControlManager::GetShakeIgnoreControlList(
+    const std::string &shakeIgnoreControlStr, char delimiter)
 { // LCOV_EXCL_START
     std::unordered_set<std::string> result;
     std::stringstream ss(shakeIgnoreControlStr);
