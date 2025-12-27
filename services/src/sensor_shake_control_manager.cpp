@@ -30,7 +30,6 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 static constexpr int32_t SHAKE_CONTROL_SWITCH_CLOSE = 0;
 static constexpr int32_t SHAKE_CONTROL_SWITCH_OPEN = 1;
-static const std::string SHAKE_IGNORE_CONTROL_DEFAULT;
 static const std::string SHAKE_IGNORE_CONTROL_kEY = "security.privacy_indicator.shake_ignore_control";
 
 SensorShakeControlManager::SensorShakeControlManager()
@@ -281,7 +280,7 @@ void SensorShakeControlManager::GetShakeIgnoreControl()
 { // LCOV_EXCL_START
     CALL_LOG_ENTER;
     std::string shakeIgnoreControlStr
-        = OHOS::system::GetParameter(SHAKE_IGNORE_CONTROL_kEY, SHAKE_IGNORE_CONTROL_DEFAULT);
+        = OHOS::system::GetParameter(SHAKE_IGNORE_CONTROL_kEY, "");
     char delimiter = ',';
     SEN_HILOGI("shakeIgnoreControlStr:%{public}s", shakeIgnoreControlStr.c_str());
     shakeIgnoreControlList_ = GetShakeIgnoreControlList(shakeIgnoreControlStr, delimiter);
