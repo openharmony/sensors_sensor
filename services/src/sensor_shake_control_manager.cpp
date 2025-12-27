@@ -39,10 +39,12 @@ SensorShakeControlManager::SensorShakeControlManager()
 SensorShakeControlManager::~SensorShakeControlManager()
 {
     UnregisterShakeSensorControlObserver();
-    std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
-    int32_t ret = RemoveParameterWatcher(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("RemoveParameterWatcher failed");
+    {
+        std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+        int32_t ret = RemoveParameterWatcher(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("RemoveParameterWatcher failed");
+        }
     }
 }
 
@@ -60,7 +62,7 @@ void SensorShakeControlManager::OnParameterChanged(const char *key, const char *
     }
     std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
     shakeIgnoreControlList_.clear();
-    SEN_HILOGD("key:%{public}s, value:%{public}s", key.c_str(), value.c_str());
+    SEN_HILOGD("key:%{public}s, value:%{public}s", key, value);
     char delimiter = ',';
     shakeIgnoreControlList_ = GetShakeIgnoreControlList(paramValue, delimiter);
 } // LCOV_EXCL_STOP
@@ -77,15 +79,17 @@ bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
         SEN_HILOGE("RegisterShakeSensorControlObserver failed ret:%{public}d", ret);
         return false;
     }
-    std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
-    GetShakeIgnoreControl();
-    parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
-        SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
-    };
-    ret = WatchParameter(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
-    if (ret != ERR_OK) {
-        SEN_HILOGE("WatchParameter failed:%{public}d", ret);
-        return false;
+    {
+        std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+        GetShakeIgnoreControl();
+        parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
+            SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
+        };
+        ret = WatchParameter(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
+        if (ret != ERR_OK) {
+            SEN_HILOGE("WatchParameter failed:%{public}d", ret);
+            return false;
+        }
     }
     return true;
 }
@@ -242,17 +246,17 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     const std::string &tokenId, const int32_t &userId)
 {
     SEN_HILOGD("CheckAppIsNeedControl start");
+    {
+        std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
+        if (std::find(shakeIgnoreControlList_.begin(), shakeIgnoreControlList_.end(), tokenId)
+            != shakeIgnoreControlList_.end()) {
+            SEN_HILOGD("Shake ignore control, bundleName:%{public}s", bundleName.c_str());
+            return false;
+        }
+    }
     std::lock_guard<std::mutex> shakeSensorControlAppInfoLock(shakeSensorControlAppInfoMutex_);
     if (!shakeSensorControlAppInfoList_.empty()) {
         ShakeControlAppInfo appInfo = {bundleName, tokenId, userId};
-        {
-            std::lock_guard<std::mutex> shakeIgnoreCOntrolLock(shakeIgnoreControlListMutex_);
-            if (std::find(shakeIgnoreControlList_.begin(), shakeIgnoreControlList_.end(), tokenId)
-                != shakeIgnoreControlList_.end()) {
-                SEN_HILOGD("Shake ignore control, bundleName:%{public}s", bundleName.c_str());
-                return false;
-            }
-        }
         if (shakeSensorControlAppInfoList_.find(appInfo) != shakeSensorControlAppInfoList_.end()) {
             SEN_HILOGD("Shake the sensor data for control, bundleName:%{public}s", bundleName.c_str());
             return true;
@@ -273,7 +277,7 @@ std::vector<std::string> SensorShakeControlManager::GetShakeIgnoreControlList(co
     return result;
 } // LCOV_EXCL_STOP
 
-void GetShakeIgnoreControl()
+void SensorShakeControlManager::GetShakeIgnoreControl()
 { // LCOV_EXCL_START
     CALL_LOG_ENTER;
     std::string shakeIgnoreControlStr
