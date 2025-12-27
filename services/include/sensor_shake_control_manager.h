@@ -84,7 +84,7 @@ private:
     std::unordered_set<ShakeControlAppInfo> shakeSensorControlAppInfoList_;
     std::unordered_set<ShakeControlAppInfo> shakeSensorNoControlAppInfoList_;
     std::atomic_int32_t currentUserId_ = INVALID_USERID;
-    std::vector<std::string> shakeIgnoreControlList_;
+    std::unordered_set<std::string> shakeIgnoreControlList_;
     ParameterChgPtr parameterChangedCallback_;
     std::mutex shakeIgnoreControlListMutex_;
 };
