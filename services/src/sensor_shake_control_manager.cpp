@@ -246,8 +246,7 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     SEN_HILOGD("CheckAppIsNeedControl start");
     {
         std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
-        if (std::find(shakeIgnoreControlList_.begin(), shakeIgnoreControlList_.end(), tokenId)
-            != shakeIgnoreControlList_.end()) {
+        if (shakeIgnoreControlList_.find(tokenId) != shakeIgnoreControlList_.end()) {
             SEN_HILOGD("Shake ignore control, bundleName:%{public}s", bundleName.c_str());
             return false;
         }
@@ -276,9 +275,11 @@ std::unordered_set<std::string> SensorShakeControlManager::GetShakeIgnoreControl
                 noTrimToken << c;
             }
         }
-        auto status = result.insert(noTrimToken.str());
-        if (!status.second) {
-            SEN_HILOGE("tokenId insert faild");
+        if (!noTrimToken.str().empty()) {
+            auto status = result.insert(noTrimToken.str());
+            if (!status.second) {
+                SEN_HILOGE("tokenId insert faild");
+            }
         }
     }
     return result;
