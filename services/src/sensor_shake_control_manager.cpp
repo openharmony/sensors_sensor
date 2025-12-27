@@ -30,7 +30,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 static constexpr int32_t SHAKE_CONTROL_SWITCH_CLOSE = 0;
 static constexpr int32_t SHAKE_CONTROL_SWITCH_OPEN = 1;
-static const std::string SHAKE_IGNORE_CONTROL_DEFAULT = "0,0,0,0";
+static const std::string SHAKE_IGNORE_CONTROL_DEFAULT;
 static const std::string SHAKE_IGNORE_CONTROL_kEY = "security.privacy_indicator.shake_ignore_control";
 
 SensorShakeControlManager::SensorShakeControlManager()
