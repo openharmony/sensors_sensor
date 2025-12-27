@@ -86,7 +86,7 @@ bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
         };
         ret = WatchParameter(SHAKE_IGNORE_CONTROL_kEY.c_str(), parameterChangedCallback_, nullptr);
         if (ret != ERR_OK) {
-            SEN_HILOGE("WatchParameter failed:%{public}d", ret);
+            SEN_HILOGE("WatchParameter failed, ret:%{public}d", ret);
             return false;
         }
     }
@@ -264,7 +264,7 @@ bool SensorShakeControlManager::CheckAppIsNeedControl(const std::string &bundleN
     return false;
 }
 
-std::vector<std::string> SensorShakeControlManager::GetShakeIgnoreControlList(const std::string shakeIgnoreControlStr,
+std::vector<std::string> SensorShakeControlManager::GetShakeIgnoreControlList(const std::string &shakeIgnoreControlStr,
     char delimiter)
 { // LCOV_EXCL_START
     std::vector<std::string> result;
