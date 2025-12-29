@@ -23,6 +23,7 @@
 
 #include "sensor_agent.h"
 #include "sensor_errors.h"
+#include "sensor_test_common.h"
 #include "system_info.h"
 
 #undef LOG_TAG
@@ -40,6 +41,8 @@ constexpr int32_t SENSOR_ID { 1 };
 constexpr int32_t INVALID_VALUE { -1 };
 constexpr int32_t DEVICE_STATUS { 0 };
 static int32_t g_localDeviceId = -1;
+static MockHapToken* g_mock = nullptr;
+uint64_t g_selfShellTokenId;
 
 PermissionStateFull g_infoManagerTestState = {
     .grantFlags = {1},
@@ -78,19 +81,22 @@ AccessTokenID SensorAgentTest::tokenID_ = 0;
 
 void SensorAgentTest::SetUpTestCase()
 {
-    AccessTokenIDEx tokenIdEx = {0};
-    tokenIdEx = AccessTokenKit::AllocHapToken(g_infoManagerTestInfoParms, g_infoManagerTestPolicyPrams);
-    tokenID_ = tokenIdEx.tokenIdExStruct.tokenID;
-    ASSERT_NE(0, tokenID_);
-    ASSERT_EQ(0, SetSelfTokenID(tokenID_));
+    g_selfShellTokenId = GetSelfTokenID();
+    SensorTestCommon::SetTestEvironment(g_selfShellTokenId);
+    std::vector<std::string> reqPerm;
+    reqPerm.emplace_back("ohos.permission.ACCELEROMETER");
+    g_mock = new (std::nothrow) MockHapToken("sensorAgentTest", reqPerm, true);
+    SensorTestCommon::AllocAndGrantHapTokenByTest(g_infoManagerTestInfoParms, g_infoManagerTestPolicyPrams);
 }
 
 void SensorAgentTest::TearDownTestCase()
 {
-    int32_t ret = AccessTokenKit::DeleteToken(tokenID_);
-    if (tokenID_ != 0) {
-        ASSERT_EQ(RET_SUCCESS, ret);
+    if (g_mock != nullptr) {
+        delete g_mock;
+        g_mock = nullptr;
     }
+    EXPECT_EQ(0, SetSelfTokenID(g_selfShellTokenId));
+    SensorTestCommon::ResetTestEvironment();
 }
 
 void SensorAgentTest::SetUp()

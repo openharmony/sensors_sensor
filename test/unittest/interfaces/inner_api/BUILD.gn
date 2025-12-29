@@ -19,6 +19,7 @@ ohos_unittest("SensorAgentTest") {
 
   sources = [
     "$SUBSYSTEM_DIR/test/unittest/common/src/system_info.cpp",
+    "$SUBSYSTEM_DIR/test/unittest/common/src/sensor_test_common.cpp",
     "$SUBSYSTEM_DIR/test/unittest/interfaces/inner_api/sensor_agent_test.cpp",
   ]
 
