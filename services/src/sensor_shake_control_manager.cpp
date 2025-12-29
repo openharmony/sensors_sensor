@@ -66,6 +66,19 @@ void SensorShakeControlManager::OnParameterChanged(const char *key, const char *
     shakeIgnoreControlList_ = GetShakeIgnoreControlList(paramValue, delimiter);
 } // LCOV_EXCL_STOP
 
+void SensorShakeControlManager::RegisterShakeControlParameter()
+{ // LCOV_EXCL_START
+    std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
+    GetShakeIgnoreControl();
+    parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
+        SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
+    };
+    ret = WatchParameter(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("WatchParameter failed, ret:%{public}d", ret);
+    }
+} // LCOV_EXCL_STOP
+
 bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
 {
     int32_t ret = UpdateCurrentUserId();
@@ -77,17 +90,6 @@ bool SensorShakeControlManager::Init(std::atomic_bool &shakeControlInitReady)
     if (ret != ERR_OK) {
         SEN_HILOGE("RegisterShakeSensorControlObserver failed ret:%{public}d", ret);
         return false;
-    }
-    {
-        std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
-        GetShakeIgnoreControl();
-        parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
-            SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
-        };
-        ret = WatchParameter(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
-        if (ret != ERR_OK) {
-            SEN_HILOGE("WatchParameter failed, ret:%{public}d", ret);
-        }
     }
     return true;
 }

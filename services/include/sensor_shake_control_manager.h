@@ -69,6 +69,7 @@ public:
     bool CheckAppInfoIsNeedModify(const std::string &bundleName, const std::string &tokenId, const int32_t &userId);
     int32_t GetCurrentUserId();
     int32_t UpdateCurrentUserId();
+    void RegisterShakeControlParameter();
 
 private:
     void InitShakeSensorControlAppInfos(bool isAutoMonitor);

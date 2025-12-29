@@ -235,6 +235,7 @@ void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
     std::string action = want.GetAction();
     if (action == "usual.event.BOOT_COMPLETED") {
         SEN_HILOGI("On receive usual.event.BOOT_COMPLETED");
+        SENSOR_SHAKE_CONTROL_MGR->RegisterShakeControlParameter();
         if (isSensorShakeControlManagerReady_.load()) {
             SEN_HILOGI("SENSOR_SHAKE_CONTROL_MGR already init");
         } else {
