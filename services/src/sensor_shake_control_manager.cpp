@@ -45,7 +45,7 @@ SensorShakeControlManager::~SensorShakeControlManager()
             if (ret != ERR_OK) {
                 SEN_HILOGE("RemoveParameterWatcher failed");
             }
-            parameterChangedCallback_ == nullptr;
+            parameterChangedCallback_ = nullptr;
         }
     }
 }
