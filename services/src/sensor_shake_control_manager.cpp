@@ -297,7 +297,6 @@ void SensorShakeControlManager::GetShakeIgnoreControl()
         = OHOS::system::GetParameter(SHAKE_IGNORE_CONTROL_KEY, "");
     char delimiter = ',';
     SEN_HILOGI("shakeIgnoreControlStr:%{public}s", shakeIgnoreControlStr.c_str());
-    std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
     shakeIgnoreControlList_ = GetShakeIgnoreControlList(shakeIgnoreControlStr, delimiter);
 } // LCOV_EXCL_STOP
 
