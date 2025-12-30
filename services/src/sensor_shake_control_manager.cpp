@@ -73,12 +73,8 @@ void SensorShakeControlManager::RegisterShakeControlParameter()
 { // LCOV_EXCL_START
     std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
     GetShakeIgnoreControl();
-    std::weak_ptr<SensorShakeControlManager> weakMgr = SENSOR_SHAKE_CONTROL_MGR;
-    parameterChangedCallback_ = [weakMgr](const char *key, const char *value, void *context) {
-        auto mgr = weakMgr.lock();
-        if (mgr) {
-            mgr->OnParameterChanged(key, value, context);
-        }
+    parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
+        SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
     };
     int32_t ret = WatchParameter(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
     if (ret != ERR_OK) {
