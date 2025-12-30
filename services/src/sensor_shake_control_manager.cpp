@@ -73,7 +73,7 @@ void SensorShakeControlManager::RegisterShakeControlParameter()
     parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
         SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
     };
-    ret = WatchParameter(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
+    int32_t ret = WatchParameter(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
     if (ret != ERR_OK) {
         SEN_HILOGE("WatchParameter failed, ret:%{public}d", ret);
     }
