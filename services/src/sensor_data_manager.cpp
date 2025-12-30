@@ -289,7 +289,7 @@ void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compat
                 if (valueTmp.is_number()) {
                     policy = valueTmp.get<int32_t>();
                 }
-                SEN_HILOGD("policy:%{public}s", policy);
+                SEN_HILOGD("policy:%{public}d", policy);
             }
         }
         GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
@@ -298,7 +298,7 @@ void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compat
             std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
             data.name = name;
             data.policy = policy;
-            SEN_HILOGI("name:%{public}s, policy:%{public}s", name.c_str(), policy);
+            SEN_HILOGI("name:%{public}s, policy:%{public}d", name.c_str(), policy);
             compatibleAppStragegyList_.emplace_back(data);
         }
     }
