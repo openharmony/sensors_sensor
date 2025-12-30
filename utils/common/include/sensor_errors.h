@@ -97,6 +97,7 @@ enum {
     SUSPEND_ERR = REGIST_CALLBACK_ERR + 1,
     RESUME_ERR = SUSPEND_ERR + 1,
     RESET_ERR = RESUME_ERR + 1,
+    CONNECT_TRANSFORM_ERR = RESET_ERR + 1,
 };
 
 // Error code for Sensor utils

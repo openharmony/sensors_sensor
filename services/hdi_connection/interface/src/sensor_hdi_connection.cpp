@@ -84,6 +84,29 @@ int32_t SensorHdiConnection::ConnectHdi()
     return ERR_OK;
 }
 
+int32_t SensorHdiConnection::ConnectSensorTransformHdi()
+{
+    CHKPR(iSensorHdiConnection_, CONNECT_TRANSFORM_ERR);
+    int32_t ret = iSensorHdiConnection_->ConnectSensorTransformHdi();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Connect transform hdi failed");
+        return CONNECT_TRANSFORM_ERR;
+    }
+    return ERR_OK;
+}
+
+int32_t SensorHdiConnection::TransformSensorData(uint32_t state, uint32_t policy, SensorData* sensorData)
+{
+    CHKPR(iSensorHdiConnection_, CONNECT_TRANSFORM_ERR);
+    CHKPR(sensorData, ERROR);
+    int32_t ret = iSensorHdiConnection_->TransformSensorData(state, policy, sensorData);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("transform sensor data failed");
+        return CONNECT_TRANSFORM_ERR;
+    }
+    return ERR_OK;
+}
+
 int32_t SensorHdiConnection::ConnectHdiService()
 {
     int32_t ret = iSensorHdiConnection_->ConnectHdi();

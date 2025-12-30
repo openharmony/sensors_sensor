@@ -26,6 +26,7 @@
 #include "print_sensor_data.h"
 #include "sensor_data_manager.h"
 #include "sensor_shake_control_manager.h"
+#include "sensor_utils.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorDataProcesser"
@@ -46,6 +47,10 @@ const std::set<int32_t> g_shakeSensorControlList = {
     SENSOR_TYPE_ID_GAME_ROTATION_VECTOR, SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED,
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR
 };
+#ifdef MSDP_MOTION_ENABLE
+constexpr int32_t SINGLE_DISPLAY_THREE_FOLD = 6;
+constexpr int32_t SINGLE_DISPLAY_HP_FOLD = 7;
+#endif // MSDP_MOTION_ENABLE
 } // namespace
 
 SensorDataProcesser::SensorDataProcesser(const std::unordered_map<SensorDescription, Sensor> &sensorMap)
@@ -313,9 +318,18 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 #ifdef MSDP_MOTION_ENABLE
         if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
             MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
-            std::vector<std::string> appList = SENSOR_DATA_MGR->GetCompatibleAppStragegyList();
-            if (std::find(appList.begin(), appList.end(), channel->GetPackageName()) != appList.end()) {
-                MotionSensorRevision(clientInfo_.GetDeviceStatus(), &sensorData);
+            std::vector<CompatibleAppData> appList = SENSOR_DATA_MGR->GetCompatibleAppStragegyList();
+            auto it = std::find_if(applist.begin(), applist.end(), [this, channel](const CompatibleAppData &app) {
+                return app.name == channel->GetPackageName();
+            });
+            if (it != appList.end()) {
+                uint32_t state = clientInfo_.GetDeviceStatus();
+                if (clientInfo_.GetDeviceType == SINGLE_DISPLAY_HP_FOLD &&
+                    static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_HOPE_FULL) {
+                        SensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
+                } else if (clientInfo_.GetDeviceType == SINGLE_DISPLAY_THREE_FOLD) {
+                    MotionSensorRevision(state, &sensorData);
+                }
             }
         }
 #endif // MSDP_MOTION_ENABLE

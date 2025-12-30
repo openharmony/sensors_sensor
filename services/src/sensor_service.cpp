@@ -65,6 +65,9 @@ const std::set<int32_t> g_shakeSensorControlList = {
     SENSOR_TYPE_ID_GAME_ROTATION_VECTOR, SENSOR_TYPE_ID_GYROSCOPE_UNCALIBRATED,
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR
 };
+const std::set<int32_t> g_needLoadMotionLibType = {
+    SINGLE_DISPLAY_SMALL_FOLD, SINGLE_DISPLAY_THREE_FOLD, SINGLE_DISPLAY_HP_FOLD
+};
 } // namespace
 
 std::atomic_bool SensorService::isAccessTokenServiceActive_ = false;
@@ -74,6 +77,7 @@ std::atomic_bool SensorService::isDataShareReady_ = false;
 std::atomic_bool SensorService::isSensorShakeControlManagerReady_ = false;
 std::atomic_bool SensorService::isUpdateCurrentUserId_ = false;
 std::mutex SensorService::updateCurrentUserIdMutex_;
+std::atomic_int32_t SensorService::deviceType_ = 0;
 
 SensorService::SensorService()
     : SystemAbility(SENSOR_SERVICE_ABILITY_ID, true), state_(SensorServiceState::STATE_STOPPED)
@@ -110,7 +114,7 @@ bool IsCameraCorrectionEnable()
     return correctionEnable != 0;
 } // LCOV_EXCL_STOP
 
-bool SensorService::IsNeedLoadMotionLib()
+int32_t SensorService::GetDeviceType()
 { // LCOV_EXCL_START
     std::string supportDevice = OHOS::system::GetParameter("const.window.foldscreen.type", DEFAULTS_FOLD_TYPE);
     size_t index = supportDevice.find(',');
@@ -119,21 +123,19 @@ bool SensorService::IsNeedLoadMotionLib()
         SEN_HILOGI("firstValue:%{public}s", firstValue.c_str());
         if (std::isdigit(firstValue[0]) == 0) {
             SEN_HILOGI("firstValue is not number");
-            return false;
+            return ERROR;
         }
         int32_t firstValueNum = 0;
         auto res = std::from_chars(firstValue.data(), firstValue.data() + firstValue.size(), firstValueNum);
         if (res.ec != std::errc()) {
             SEN_HILOGE("Failed to convert string %{public}s to number", firstValue.c_str());
-            return false;
+            return ERROR;
         }
-        if (firstValueNum == SINGLE_DISPLAY_SMALL_FOLD || firstValueNum == SINGLE_DISPLAY_THREE_FOLD
-            || firstValueNum == SINGLE_DISPLAY_HP_FOLD) {
-            return true;
-        }
+        clientInfo_.SetDeviceType(firstValueNum);
+        return firstValueNum;
     }
     SEN_HILOGI("Not support in this device");
-    return false;
+    return ERROR;
 } // LCOV_EXCL_STOP
 
 void SensorService::InitShakeControl()
@@ -203,12 +205,15 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     /* When sensor_correction_enable is true, the motion whitelist logic is not executed */
     if (!IsCameraCorrectionEnable()) {
         LoadMotionTransform(systemAbilityId);
+    } else {
+        if (GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD) {
+            MotionSensorRevision();
+        } else if (GetDeviceType() == SINGLE_DISPLAY_HP_FOLD) {
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
+            sensorHdiConnection_.ConnectSensorTransformHdi();
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
+        }
     }
-#ifdef MSDP_MOTION_ENABLE
-    if (IsCameraCorrectionEnable()) {
-        MotionSensorRevision();
-    }
-#endif // MSDP_MOTION_ENABLE
 } // LCOV_EXCL_STOP
 
 int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
@@ -295,7 +300,7 @@ void SensorService::UpdateDeviceStatus()
     }
     uint32_t status = static_cast<uint32_t>(statusNum);
     clientInfo_.SetDeviceStatus(status);
-    SEN_HILOGI("GetDeviceStatus, deviceStatus:%{public}d", status);
+    SEN_HILOGI("SetDeviceStatus, deviceStatus:%{public}d", status);
 } // LCOV_EXCL_STOP
 
 void SensorService::LoadMotionTransform(int32_t systemAbilityId)
@@ -303,7 +308,7 @@ void SensorService::LoadMotionTransform(int32_t systemAbilityId)
     SEN_HILOGI("LoadMotionTransform systemAbilityId:%{public}d", systemAbilityId);
 #ifdef MSDP_MOTION_ENABLE
     if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
-        if (!IsNeedLoadMotionLib()) {
+        if (g_needLoadMotionLibType.find(GetDeviceType_()) == g_needLoadMotionLibType.end()) {
             SEN_HILOGI("No need to load motion lib");
         } else if (!LoadMotionSensor()) {
             SEN_HILOGI("LoadMotionSensor fail");
@@ -316,12 +321,8 @@ void SensorService::MotionSensorRevision()
 { // LCOV_EXCL_START
     SEN_HILOGI("MotionSensorRevision in");
 #ifdef MSDP_MOTION_ENABLE
-    if (IsNeedLoadMotionLib()) {
-        if (!LoadMotionSensorRevision()) {
-            SEN_HILOGI("LoadMotionSensorRevision fail");
-        }
-    } else {
-        SEN_HILOGI("No need to load motion lib");
+    if (!LoadMotionSensorRevision()) {
+        SEN_HILOGI("LoadMotionSensorRevision fail");
     }
 #endif // MSDP_MOTION_ENABLE
 } // LCOV_EXCL_STOP

@@ -25,12 +25,17 @@
 
 namespace OHOS {
 namespace Sensors {
+struct CompatibleAppData {
+    std::string name;
+    int32_t policy;
+};
+
 class SensorDataManager {
     DECLARE_DELAYED_SINGLETON(SensorDataManager);
 public:
     DISALLOW_COPY_AND_MOVE(SensorDataManager);
     bool Init();
-    std::vector<std::string> GetCompatibleAppStragegyList();
+    std::vector<CompatibleAppData> GetCompatibleAppStragegyList();
     template<typename T>
     static bool GetJsonValue(const nlohmann::json& payload, const std::string& key, T& result)
     {
@@ -71,7 +76,7 @@ private:
     sptr<IRemoteObject> remoteObj_ { nullptr };
     sptr<SensorObserver> observer_ { nullptr };
     std::mutex compatibleAppStraegyMutex_;
-    std::vector<std::string> compatibleAppStragegyList_;
+    std::vector<CompatibleAppData> compatibleAppStragegyList_;
 };
 #define SENSOR_DATA_MGR DelayedSingleton<SensorDataManager>::GetInstance()
 }  // namespace Sensors

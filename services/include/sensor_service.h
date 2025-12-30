@@ -101,7 +101,7 @@ private:
     void ReportActiveInfo(const SensorDescription &sensorDesc, int32_t pid);
     bool IsSystemServiceCalling();
     bool IsSystemCalling();
-    bool IsNeedLoadMotionLib();
+    int32_t GetDeviceType();
     void SetCritical();
     void LoadMotionTransform(int32_t systemAbilityId);
     void MotionSensorRevision();
@@ -144,6 +144,7 @@ private:
     static std::atomic_bool isSensorShakeControlManagerReady_;
     static std::atomic_bool isUpdateCurrentUserId_;
     static std::mutex updateCurrentUserIdMutex_;
+    static std::atomic_int32_t deviceType_;
 };
 
 #define POWER_POLICY SensorPowerPolicy::GetInstance()

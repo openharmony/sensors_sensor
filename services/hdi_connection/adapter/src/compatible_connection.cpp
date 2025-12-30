@@ -226,5 +226,15 @@ DevicePlugCallback CompatibleConnection::GetSensorPlugCb()
 {
     return NULL;
 }
+
+int32_t CompatibleConnection::ConnectSensorTransformHdi()
+{
+    return ERR_OK;
+}
+
+int32_t CompatibleConnection::TransformSensorData(uint32_t state, uint32_t policy, SensorData* sensorData)
+{
+    return ERR_OK;
+}
 } // namespace Sensors
 } // namespace OHOS
