@@ -40,9 +40,12 @@ SensorShakeControlManager::~SensorShakeControlManager()
     UnregisterShakeSensorControlObserver();
     {
         std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
-        int32_t ret = RemoveParameterWatcher(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
-        if (ret != ERR_OK) {
-            SEN_HILOGE("RemoveParameterWatcher failed");
+        if (parameterChangedCallback_ !=nullptr) {
+            int32_t ret = RemoveParameterWatcher(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
+            if (ret != ERR_OK) {
+                SEN_HILOGE("RemoveParameterWatcher failed");
+            }
+            parameterChangedCallback_ == nullptr;
         }
     }
 }
@@ -294,6 +297,7 @@ void SensorShakeControlManager::GetShakeIgnoreControl()
         = OHOS::system::GetParameter(SHAKE_IGNORE_CONTROL_KEY, "");
     char delimiter = ',';
     SEN_HILOGI("shakeIgnoreControlStr:%{public}s", shakeIgnoreControlStr.c_str());
+    std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
     shakeIgnoreControlList_ = GetShakeIgnoreControlList(shakeIgnoreControlStr, delimiter);
 } // LCOV_EXCL_STOP
 
