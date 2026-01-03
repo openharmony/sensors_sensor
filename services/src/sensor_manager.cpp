@@ -70,7 +70,7 @@ bool SensorManager::SetBestSensorParams(const SensorDescription &sensorDesc, int
 
 bool SensorManager::ResetBestSensorParams(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
@@ -120,6 +120,7 @@ bool SensorManager::SaveSubscriber(const SensorDescription &sensorDesc, uint32_t
 SensorBasicInfo SensorManager::GetSensorInfo(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs)
 {
+    CALL_LOG_ENTER;
     SensorBasicInfo sensorInfo;
     std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
     auto it = sensorMap_.find(sensorDesc);
@@ -142,13 +143,12 @@ SensorBasicInfo SensorManager::GetSensorInfo(const SensorDescription &sensorDesc
     sensorInfo.SetSamplingPeriodNs(curSamplingPeriodNs);
     sensorInfo.SetMaxReportDelayNs(curReportDelayNs);
     sensorInfo.SetSensorState(true);
-    SEN_HILOGI("Done, sensorType:%{public}d", sensorDesc.sensorType);
     return sensorInfo;
 }
 
 bool SensorManager::IsOtherClientUsingSensor(const SensorDescription &sensorDesc, int32_t clientPid)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, clientPid:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, clientPid:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, clientPid);
     if (clientInfo_.OnlyCurPidSensorEnabled(sensorDesc, clientPid)) {
         SEN_HILOGD("Only current client using this sensor");
@@ -167,7 +167,7 @@ bool SensorManager::IsOtherClientUsingSensor(const SensorDescription &sensorDesc
 
 ErrCode SensorManager::AfterDisableSensor(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, sensorType:%{public}d", sensorDesc.sensorType);
+    SEN_HILOGD("In, sensorType:%{public}d", sensorDesc.sensorType);
     clientInfo_.ClearSensorInfo(sensorDesc);
     if (sensorDesc.sensorType == PROXIMITY_SENSOR_ID) {
         SensorData sensorData;

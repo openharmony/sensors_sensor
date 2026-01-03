@@ -510,7 +510,7 @@ void SensorService::ReportOnChangeData(const SensorDescription &sensorDesc)
     }
     // LCOV_EXCL_START
     if ((SENSOR_ON_CHANGE & it->second.GetFlags()) != SENSOR_ON_CHANGE) {
-        SEN_HILOGW("The data has not changed , no need to report");
+        SEN_HILOGD("The data has not changed , no need to report");
         return;
     }
     SensorData sensorData;
@@ -704,7 +704,7 @@ void SensorService::NotifyAppSubscribeSensor(int32_t sensorTypeId)
 ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, int64_t samplingPeriodNs,
     int64_t maxReportDelayNs, int32_t pid)
 {
-    SEN_HILOGW("Sensor has been enabled already");
+    SEN_HILOGD("Sensor has been enabled already");
     auto ret = SaveSubscriber(sensorDesc, samplingPeriodNs, maxReportDelayNs);
     if (ret != ERR_OK) {
         SEN_HILOGE("SaveSubscriber failed");

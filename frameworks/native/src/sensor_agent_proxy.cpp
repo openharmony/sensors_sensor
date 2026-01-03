@@ -102,7 +102,7 @@ void SensorAgentProxy::SetIsChannelCreated(bool isChannelCreated)
 
 int32_t SensorAgentProxy::CreateSensorDataChannel()
 {
-    SEN_HILOGI("In");
+    SEN_HILOGD("In");
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (isChannelCreated_) {
         SEN_HILOGI("The channel has already been created");
@@ -137,7 +137,7 @@ int32_t SensorAgentProxy::CreateSensorDataChannel()
 
 int32_t SensorAgentProxy::DestroySensorDataChannel()
 {
-    SEN_HILOGI("In");
+    SEN_HILOGD("In");
     std::lock_guard<std::mutex> chanelLock(chanelMutex_);
     if (!isChannelCreated_) {
         SEN_HILOGI("Channel has been destroyed");
@@ -164,7 +164,7 @@ int32_t SensorAgentProxy::DestroySensorDataChannel()
 
 int32_t SensorAgentProxy::ActivateSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -207,7 +207,7 @@ int32_t SensorAgentProxy::ActivateSensor(const SensorDescription &sensorDesc, co
 
 int32_t SensorAgentProxy::DeactivateSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, peripheralId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d, peripheralId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId, sensorDesc.location);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -283,7 +283,7 @@ int32_t SensorAgentProxy::SetBatch(const SensorDescription &sensorDesc, const Se
 
 int32_t SensorAgentProxy::SubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
@@ -319,7 +319,7 @@ bool SensorAgentProxy::IsSubscribeMapEmpty() const
 
 int32_t SensorAgentProxy::UnsubscribeSensor(const SensorDescription &sensorDesc, const SensorUser *user)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->callback, OHOS::Sensors::ERROR);
