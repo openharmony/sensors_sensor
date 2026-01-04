@@ -578,7 +578,7 @@ void SensorServiceClient::UpdateSensorInfoMap(const SensorDescription &sensorDes
 
 void SensorServiceClient::DeleteSensorInfoItem(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In");
+    SEN_HILOGD("In");
     std::lock_guard<std::mutex> mapLock(mapMutex_);
     auto it = sensorInfoMap_.find(sensorDesc);
     if (it != sensorInfoMap_.end()) {

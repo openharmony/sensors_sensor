@@ -132,7 +132,7 @@ int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 
 int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
@@ -155,7 +155,7 @@ int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 
 int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
@@ -347,8 +347,7 @@ void HdiConnection::SetSensorBasicInfoState(const SensorDescription &sensorDesc,
 
 void HdiConnection::DeleteSensorBasicInfoState(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
-        sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+    CALL_LOG_ENTER;
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
     auto it = g_sensorBasicInfoMap.find(sensorDesc);
     if (it != g_sensorBasicInfoMap.end()) {

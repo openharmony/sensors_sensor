@@ -46,7 +46,7 @@ std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_
 
 bool ClientInfo::GetSensorState(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
@@ -101,7 +101,7 @@ SensorBasicInfo ClientInfo::GetBestSensorInfo(const SensorDescription &sensorDes
 
 bool ClientInfo::OnlyCurPidSensorEnabled(const SensorDescription &sensorDesc, int32_t pid)
 {
-    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGD("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
         SEN_HILOGE("sensorType or pid is invalid");
         return false;
@@ -130,7 +130,7 @@ bool ClientInfo::OnlyCurPidSensorEnabled(const SensorDescription &sensorDesc, in
 
 bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID callerToken)
 {
-    SEN_HILOGI("In, pid:%{public}d", pid);
+    SEN_HILOGD("In, pid:%{public}d", pid);
     if ((uid == INVALID_UID) || (pid <= INVALID_PID)) {
         SEN_HILOGE("uid or pid is invalid");
         return false;
@@ -153,7 +153,7 @@ bool ClientInfo::UpdateAppThreadInfo(int32_t pid, int32_t uid, AccessTokenID cal
 
 void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 {
-    SEN_HILOGI("In, pid:%{public}d", pid);
+    SEN_HILOGD("In, pid:%{public}d", pid);
     if (pid == INVALID_PID) {
         SEN_HILOGE("pid is invalid");
         return;
@@ -170,7 +170,7 @@ void ClientInfo::DestroyAppThreadInfo(int32_t pid)
 
 std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int32_t uid)
 {
-    SEN_HILOGI("In");
+    SEN_HILOGD("In");
     if (uid == INVALID_UID) {
         SEN_HILOGE("uid is invalid");
         return {};
@@ -194,7 +194,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannelByUid(int3
 
 sptr<SensorBasicDataChannel> ClientInfo::GetSensorChannelByPid(int32_t pid)
 {
-    SEN_HILOGI("In, pid:%{public}d", pid);
+    SEN_HILOGD("In, pid:%{public}d", pid);
     if (pid == INVALID_PID) {
         SEN_HILOGE("pid is invalid");
         return nullptr;
@@ -240,7 +240,7 @@ std::vector<sptr<SensorBasicDataChannel>> ClientInfo::GetSensorChannel(const Sen
 
 bool ClientInfo::UpdateSensorInfo(const SensorDescription &sensorDesc, int32_t pid, const SensorBasicInfo &sensorInfo)
 {
-    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGD("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID) || (!sensorInfo.GetSensorState())) {
         SEN_HILOGE("Params are invalid");
         return false;
@@ -265,7 +265,7 @@ bool ClientInfo::UpdateSensorInfo(const SensorDescription &sensorDesc, int32_t p
 
 void ClientInfo::RemoveSubscriber(const SensorDescription &sensorDesc, uint32_t pid)
 {
-    SEN_HILOGI("In, sensorTypeId:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
+    SEN_HILOGD("In, sensorTypeId:%{public}d, pid:%{public}u", sensorDesc.sensorType, pid);
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     auto it = clientMap_.find(sensorDesc);
     if (it == clientMap_.end()) {
@@ -281,7 +281,7 @@ void ClientInfo::RemoveSubscriber(const SensorDescription &sensorDesc, uint32_t 
 
 bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChannel> &channel)
 {
-    SEN_HILOGI("In, pid:%{public}d", pid);
+    SEN_HILOGD("In, pid:%{public}d", pid);
     CHKPR(channel, false);
     if (pid <= INVALID_PID) {
         SEN_HILOGE("pid is invalid");
@@ -305,7 +305,7 @@ bool ClientInfo::UpdateSensorChannel(int32_t pid, const sptr<SensorBasicDataChan
 
 void ClientInfo::ClearSensorInfo(const SensorDescription &sensorDesc)
 {
-    SEN_HILOGI("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
+    SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
     if (sensorDesc.sensorType == INVALID_SENSOR_ID) {
         SEN_HILOGE("sensorType is invalid");
@@ -323,7 +323,7 @@ void ClientInfo::ClearSensorInfo(const SensorDescription &sensorDesc)
 
 void ClientInfo::ClearCurPidSensorInfo(const SensorDescription &sensorDesc, int32_t pid)
 {
-    SEN_HILOGI("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
+    SEN_HILOGD("In, sensorType:%{public}d, pid:%{public}d", sensorDesc.sensorType, pid);
     if ((sensorDesc.sensorType == INVALID_SENSOR_ID) || (pid <= INVALID_PID)) {
         SEN_HILOGE("sensorType or pid is invalid");
         return;
