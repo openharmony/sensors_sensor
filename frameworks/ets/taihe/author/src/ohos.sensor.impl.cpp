@@ -410,9 +410,19 @@ ohos::sensor::GeomagneticResponse getGeomagneticInfoSync(
 bool GetInterval(const Options &options, int64_t &interval)
 {
     if (options.interval.holds_interval_i64()) {
-        interval = *options.interval.get_interval_i64_ptr();
+        auto intervalIntPtr = options.interval.get_interval_i64_ptr();
+        if (intervalIntPtr == nullptr) {
+            SEN_HILOGE("intervalIntPtr is nullptr");
+            return false;
+        }
+        interval = *intervalIntPtr;
     } else if (options.interval.holds_interval_string()) {
-        taihe::string modeTemp = *options.interval.get_interval_string_ptr();
+        auto intervalStrPtr = options.interval.get_interval_string_ptr();
+        if (intervalStrPtr == nullptr) {
+            SEN_HILOGE("intervalStrPtr is nullptr");
+            return false;
+        }
+        taihe::string modeTemp = *intervalStrPtr;
         auto iter = g_samplingPeriod.find(modeTemp);
         if (iter == g_samplingPeriod.end()) {
             SEN_HILOGE("Find interval mode failed");

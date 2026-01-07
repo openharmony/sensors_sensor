@@ -33,7 +33,7 @@ static constexpr int32_t SHAKE_CONTROL_SWITCH_OPEN = 1;
 static const std::string SHAKE_IGNORE_CONTROL_KEY = "security.privacy_indicator.shake_ignore_control";
 
 SensorShakeControlManager::SensorShakeControlManager()
-{}
+    : parameterChangedCallback_(nullptr) {}
 
 SensorShakeControlManager::~SensorShakeControlManager()
 {
