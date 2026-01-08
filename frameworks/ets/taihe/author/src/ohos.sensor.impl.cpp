@@ -1183,6 +1183,10 @@ void OnCommon(int32_t sensorTypeId, callbackType cb, uintptr_t opq, optional_vie
     }
     SEN_HILOGD("Interval is %{public}" PRId64, interval);
     int32_t ret = SubscribeSensor(sensorTypeId, interval, DataCallbackImpl);
+    if (ret == PARAMETER_ERROR) {
+        SEN_HILOGD("SubscribeSensor fail, actual error code:%{public}d", ret);
+        ret = SERVICE_EXCEPTION;
+    }
     if (ret != ERR_OK) {
         taihe::set_business_error(ret, "SubscribeSensor fail");
         return;
@@ -1231,6 +1235,10 @@ void OnceCommon(int32_t sensorTypeId, callbackType cb, uintptr_t opq)
     if (!CheckSubscribe(sensorTypeId)) {
         SEN_HILOGD("No subscription to change sensor data, registration is required");
         int32_t ret = SubscribeSensor(sensorTypeId, REPORTING_INTERVAL, DataCallbackImpl);
+        if (ret == PARAMETER_ERROR) {
+            SEN_HILOGD("SubscribeSensor fail, actual error code:%{public}d", ret);
+            ret = SERVICE_EXCEPTION;
+        }
         if (ret != ERR_OK) {
             taihe::set_business_error(ret, "SubscribeSensor fail");
             return;
@@ -1310,6 +1318,10 @@ void OffCommon(int32_t sensorTypeId, optional_view<uintptr_t> opq)
         return;
     }
     int32_t ret = UnsubscribeSensor(sensorTypeId);
+    if (ret == PARAMETER_ERROR) {
+        SEN_HILOGD("UnsubscribeSensor fail, actual error code:%{public}d", ret);
+        ret = SERVICE_EXCEPTION;
+    }
     if (ret != ERR_OK) {
         SEN_HILOGE("UnsubscribeSensor fail, ret:%{public}d", ret);
         taihe::set_business_error(ret, "UnsubscribeSensor fail");
