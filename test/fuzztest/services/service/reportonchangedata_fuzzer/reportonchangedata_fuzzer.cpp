@@ -19,6 +19,7 @@
 #include <cstdint>
 
 #include "accesstoken_kit.h"
+#include <fuzzer/FuzzedDataProvider.h>
 #include "message_parcel.h"
 #include "nativetoken_kit.h"
 #include "securec.h"
@@ -32,25 +33,10 @@ namespace Sensors {
 using namespace Security::AccessToken;
 using Security::AccessToken::AccessTokenID;
 namespace {
-constexpr size_t U32_AT_SIZE = 4;
 constexpr int64_t SAMPLING_INTERVAL = 200000000;
 constexpr int64_t REPORT_INTERVAL = 200000000;
 auto g_service = SensorDelayedSpSingleton<SensorService>::GetInstance();
 } // namespace
-
-template<class T>
-size_t GetObject(T &object, const uint8_t *data, size_t size)
-{
-    size_t objectSize = sizeof(object);
-    if (objectSize > size) {
-        return 0;
-    }
-    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
-    if (ret != EOK) {
-        return 0;
-    }
-    return objectSize;
-}
 
 void SetUpTestCase()
 {
@@ -76,18 +62,16 @@ void SetUpTestCase()
     delete[] perms;
 }
 
-bool ReportOnChangeDataFuzzTest(const uint8_t *data, size_t size)
+bool ReportOnChangeDataFuzzTest(FuzzedDataProvider &provider)
 {
     SetUpTestCase();
     g_service->OnStart();
-    size_t startPos = 0;
     SensorDescription sensorDesc;
-    startPos += GetObject<int32_t>(sensorDesc.deviceId, data + startPos, size - startPos);
-    startPos += GetObject<int32_t>(sensorDesc.sensorType, data + startPos, size - startPos);
-    startPos += GetObject<int32_t>(sensorDesc.sensorId, data + startPos, size - startPos);
-    startPos += GetObject<int32_t>(sensorDesc.location, data + startPos, size - startPos);
-    int32_t pid = 0;
-    GetObject<int32_t>(pid, data + startPos, size - startPos);
+    sensorDesc.deviceId = provider.ConsumeIntegral<int32_t>();
+    sensorDesc.sensorType = provider.ConsumeIntegral<int32_t>();
+    sensorDesc.sensorId = provider.ConsumeIntegral<int32_t>();
+    sensorDesc.location = provider.ConsumeIntegral<int32_t>();
+    int32_t pid = provider.ConsumeIntegral<int32_t>();
     g_service->SensorReportEvent(sensorDesc, SAMPLING_INTERVAL, REPORT_INTERVAL, pid);
     return true;
 }
@@ -96,16 +80,7 @@ bool ReportOnChangeDataFuzzTest(const uint8_t *data, size_t size)
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
-    /* Run your code on data */
-    if (data == nullptr) {
-        return 0;
-    }
-
-    /* Validate the length of size */
-    if (size < OHOS::Sensors::U32_AT_SIZE) {
-        return 0;
-    }
-
-    OHOS::Sensors::ReportOnChangeDataFuzzTest(data, size);
+    FuzzedDataProvider provider(data, size);
+    OHOS::Sensors::ReportOnChangeDataFuzzTest(provider);
     return 0;
 }
