@@ -88,8 +88,7 @@ bool ReportOnChangeDataFuzzTest(const uint8_t *data, size_t size)
     startPos += GetObject<int32_t>(sensorDesc.location, data + startPos, size - startPos);
     int32_t pid = 0;
     GetObject<int32_t>(pid, data + startPos, size - startPos);
-    g_service -> SensorReportEvent({deviceId, sensorType, sensorId, location},
-        SAMPLING_INTERVAL, REPORT_INTERVAL, pid);
+    g_service->SensorReportEvent(sensorDesc, SAMPLING_INTERVAL, REPORT_INTERVAL, pid);
     return true;
 }
 }  // namespace Sensors
