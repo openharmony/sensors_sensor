@@ -80,17 +80,14 @@ bool ReportOnChangeDataFuzzTest(const uint8_t *data, size_t size)
 {
     SetUpTestCase();
     g_service->OnStart();
-    int32_t deviceId = 0;
-    GetObject<int32_t>(deviceId, data, size);
-    int32_t sensorType = 0;
-    GetObject<int32_t>(sensorType, data, size);
-    int32_t sensorId = 0;
-    GetObject<int32_t>(sensorId, data, size);
-    int32_t location = 0;
-    GetObject<int32_t>(location, data, size);
-    g_service->ReportOnChangeData({deviceId, sensorType, sensorId, location});
+    size_t startPos = 0;
+    SensorDescription sensorDesc;
+    startPos += GetObject<int32_t>(sensorDesc.deviceId, data + startPos, size - startPos);
+    startPos += GetObject<int32_t>(sensorDesc.sensorType, data + startPos, size - startPos);
+    startPos += GetObject<int32_t>(sensorDesc.sensorId, data + startPos, size - startPos);
+    startPos += GetObject<int32_t>(sensorDesc.location, data + startPos, size - startPos);
     int32_t pid = 0;
-    GetObject<int32_t>(pid, data, size);
+    GetObject<int32_t>(pid, data + startPos, size - startPos);
     g_service -> SensorReportEvent({deviceId, sensorType, sensorId, location},
         SAMPLING_INTERVAL, REPORT_INTERVAL, pid);
     return true;
