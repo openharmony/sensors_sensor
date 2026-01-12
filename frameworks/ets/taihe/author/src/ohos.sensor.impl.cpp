@@ -42,7 +42,7 @@ using namespace ohos::sensor;
 using namespace OHOS::Sensors;
 using namespace OHOS;
 
-using responseSensorData = std::variant<int32_t, int64_t, float, double, ohos::sensor::SensorAccuracy>;
+using responseSensorData = std::variant<int32_t, int64_t, float, double, bool, string, ohos::sensor::SensorAccuracy>;
 using callbackType = std::variant<taihe::callback<void(WearDetectionResponse const &)>,
     taihe::callback<void(SignificantMotionResponse const &)>, taihe::callback<void(RotationVectorResponse const &)>,
     taihe::callback<void(ProximityResponse const &)>, taihe::callback<void(PedometerDetectionResponse const &)>,
@@ -55,7 +55,9 @@ using callbackType = std::variant<taihe::callback<void(WearDetectionResponse con
     taihe::callback<void(BarometerResponse const &)>, taihe::callback<void(AmbientTemperatureResponse const &)>,
     taihe::callback<void(LightResponse const &)>, taihe::callback<void(AccelerometerUncalibratedResponse const &)>,
     taihe::callback<void(AccelerometerResponse const &)>, taihe::callback<void(SarResponse const &)>,
-    taihe::callback<void(FusionPressureResponse const &)>, taihe::callback<void(ColorResponse const &)>>;
+    taihe::callback<void(FusionPressureResponse const &)>,
+    taihe::callback<void(ohos::sensor::SensorStatusEvent const &)>,
+    taihe::callback<void(ColorResponse const &)>>;
 
 struct CallbackObject : public RefBase {
     CallbackObject(callbackType cb, ani_ref ref) : callback(cb), ref(ref)
@@ -75,6 +77,16 @@ constexpr int32_t REPORTING_INTERVAL = 200000000;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_MAX_DATA_LENGTH = 16;
+
+constexpr int32_t DEFAULT_DEVICE_ID = 0;
+constexpr int32_t INVALID_SENSOR_TYPE = -1;
+constexpr int32_t GL_SENSOR_TYPE_PRIVATE_MIN_VALUE = 0x80000000;
+constexpr int32_t SENSOR_TYPE_ID_AMBIENT_LIGHT1 = 5;
+constexpr int32_t SENSOR_TYPE_ID_PROXIMITY1 = 8;
+constexpr int32_t IS_LOCAL_DEVICE = 1;
+
+std::mutex g_statusChangeMutex;
+std::vector<sptr<CallbackObject>> g_statusChangeCallbackInfos;
 
 void CallBackAccelermeter(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
 void CallBackGyroscope(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
@@ -102,6 +114,7 @@ void CallBackAccelerometerUncalibrated(std::map<std::string, responseSensorData>
 void CallBackColor(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
 void CallBackSar(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
 void CallBackFusionPressure(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
+void CallBackSensorStatusChange(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject);
 void EmitOnceCallback(SensorEvent *event);
 
 std::map<taihe::string, int64_t> g_samplingPeriod = {
@@ -172,8 +185,8 @@ std::mutex g_bodyMutex;
 std::map<int32_t, std::vector<sptr<CallbackObject>>> g_subscribeCallbacks;
 std::mutex g_onMutex;
 std::mutex g_onceMutex;
-std::map<int32_t, std::vector<sptr<CallbackObject>>> g_onceCallbackInfos;
 std::map<int32_t, std::vector<sptr<CallbackObject>>> g_onCallbackInfos;
+std::map<int32_t, std::vector<sptr<CallbackObject>>> g_onceCallbackInfos;
 std::mutex g_sensorTaiheAttrListMutex;
 
 std::vector<float> transformDoubleToFloat(array_view<double> doubleArray)
@@ -1092,7 +1105,35 @@ void DataCallbackImpl(SensorEvent *event)
     EmitOnceCallback(event);
 }
 
-const SensorUser user = { .callback = DataCallbackImpl };
+void PlugDataCallbackImpl(::SensorStatusEvent *plugEvent)
+{
+    if (plugEvent == nullptr) {
+        SEN_HILOGE("event is null");
+        return;
+    }
+    SEN_HILOGD("PlugDataCallbackImpl: timestamp=%" PRId64 ", sensorId=%d, isSensorOnline=%d,\
+        deviceId=%d, deviceName=%s", plugEvent->timestamp, plugEvent->sensorId,
+        plugEvent->isSensorOnline, plugEvent->deviceId, plugEvent->deviceName.c_str());
+    std::lock_guard<std::mutex> lock(g_statusChangeMutex);
+    if (g_statusChangeCallbackInfos.empty()) {
+        SEN_HILOGD("PlugDataCallbackImpl: no sensor status change callback subscribed");
+        return;
+    }
+    std::map<std::string, responseSensorData> dataMap;
+    dataMap.emplace("timestamp", plugEvent->timestamp);
+    dataMap.emplace("sensorId", plugEvent->sensorId);
+    dataMap.emplace("isSensorOnline", static_cast<bool>(plugEvent->isSensorOnline != 0));
+    dataMap.emplace("deviceId", plugEvent->deviceId);
+    dataMap.emplace("deviceName", std::string(plugEvent->deviceName));
+    for (const auto &callbackObj : g_statusChangeCallbackInfos) {
+        CallBackSensorStatusChange(dataMap, callbackObj);
+    }
+}
+
+const SensorUser user = {
+    .callback = DataCallbackImpl,
+    .plugCallback = PlugDataCallbackImpl
+};
 
 int32_t UnsubscribeSensor(int32_t sensorTypeId)
 {
@@ -1662,6 +1703,303 @@ void OffFusionPressure(optional_view<SensorInfoParam> sensorInfoParam, optional_
 {
     OffCommon(SENSOR_TYPE_ID_FUSION_PRESSURE, opq);
 }
+
+
+void CallBackSensorStatusChange(std::map<std::string, responseSensorData> data, sptr<CallbackObject> callbackObject)
+{
+    if (callbackObject == nullptr) {
+        SEN_HILOGE("callbackObject is null");
+        return;
+    }
+    if (!std::holds_alternative<taihe::callback<void(ohos::sensor::SensorStatusEvent const &)>>(
+        callbackObject->callback)) {
+        SEN_HILOGE("callbackObject is not of type callback SensorStatusEvent function");
+        return;
+    }
+    if (!data.count("timestamp") || !data.count("sensorId") || !data.count("deviceId") ||
+        !data.count("isSensorOnline")) {
+        SEN_HILOGE("SensorStatusChange data missing core field!");
+        return;
+    }
+    ohos::sensor::SensorStatusEvent responseData = {
+        .timestamp = std::get<int64_t>(data["timestamp"]),
+        .sensorId = std::get<int32_t>(data["sensorId"]),
+        .deviceId = std::get<int32_t>(data["deviceId"]),
+        .sensorIndex = std::get<int32_t>(data["sensorIndex"]),
+        .isSensorOnline = std::get<bool>(data["isSensorOnline"]),
+        .deviceName = std::get<string>(data["deviceName"]),
+    };
+
+    auto &func = std::get<taihe::callback<void(ohos::sensor::SensorStatusEvent const &)>>(callbackObject->callback);
+    func(responseData);
+}
+
+
+void UpdateStatusChangeCallbackInfos(callbackType callback, uintptr_t opq)
+{
+    std::lock_guard<std::mutex> lock(g_statusChangeMutex);
+    ani_object callbackObj = reinterpret_cast<ani_object>(opq);
+    ani_ref callbackRef;
+    ani_env *env = taihe::get_env();
+
+    if (env == nullptr || env->GlobalReference_Create(callbackObj, &callbackRef) != ANI_OK) {
+        SEN_HILOGE("Failed to create status change callbackRef");
+        return;
+    }
+
+    bool isSubscribed = std::any_of(g_statusChangeCallbackInfos.begin(), g_statusChangeCallbackInfos.end(),
+        [env, callbackRef](const CallbackObject *obj) {
+        ani_boolean isEqual = false;
+        return (env->Reference_StrictEquals(callbackRef, obj->ref, &isEqual) == ANI_OK) && isEqual;
+    });
+    if (isSubscribed) {
+        env->GlobalReference_Delete(callbackRef);
+        SEN_HILOGE("Status change callback is already subscribed");
+        return;
+    }
+
+    sptr<CallbackObject> callbackInfo = new (std::nothrow) CallbackObject(callback, callbackRef);
+    if (callbackInfo == nullptr) {
+        env->GlobalReference_Delete(callbackRef);
+        SEN_HILOGE("Create status change CallbackObject failed");
+        return;
+    }
+
+    g_statusChangeCallbackInfos.push_back(callbackInfo);
+    SEN_HILOGI("Add status change callback success, count:%{public}zu", g_statusChangeCallbackInfos.size());
+}
+
+
+int32_t RemoveStatusChangeCallback(uintptr_t opq)
+{
+    std::lock_guard<std::mutex> lock(g_statusChangeMutex);
+    ani_object callbackObj = reinterpret_cast<ani_object>(opq);
+    ani_ref callbackRef;
+    ani_env *env = taihe::get_env();
+
+    if (env == nullptr || env->GlobalReference_Create(callbackObj, &callbackRef) != ANI_OK) {
+        SEN_HILOGE("Failed to create status change callbackRef for remove");
+        return 0;
+    }
+
+    for (auto iter = g_statusChangeCallbackInfos.begin(); iter != g_statusChangeCallbackInfos.end();) {
+        CHKPC(*iter);
+        ani_boolean isEqual = false;
+        if ((env->Reference_StrictEquals(callbackRef, (*iter)->ref, &isEqual) == ANI_OK) && isEqual) {
+            env->GlobalReference_Delete((*iter)->ref);
+            iter = g_statusChangeCallbackInfos.erase(iter);
+            SEN_HILOGD("Remove status change callback success");
+        } else {
+            ++iter;
+        }
+    }
+
+    env->GlobalReference_Delete(callbackRef);
+    return static_cast<int32_t>(g_statusChangeCallbackInfos.size());
+}
+
+
+int32_t RemoveAllStatusChangeCallback()
+{
+    std::lock_guard<std::mutex> lock(g_statusChangeMutex);
+    ani_env *env = taihe::get_env();
+
+    for (auto &info : g_statusChangeCallbackInfos) {
+        CHKPC(info);
+        if (env != nullptr) {
+            env->GlobalReference_Delete(info->ref);
+        }
+    }
+
+    g_statusChangeCallbackInfos.clear();
+    SEN_HILOGD("Remove all status change callback success");
+    return 0;
+}
+
+
+void OnSensorStatusChange(::taihe::callback_view<void(ohos::sensor::SensorStatusEvent const &)> f, uintptr_t opq)
+{
+    UpdateStatusChangeCallbackInfos(f, opq);
+}
+
+
+void OffSensorStatusChange(::taihe::callback_view<void(ohos::sensor::SensorStatusEvent const& info)> f, uintptr_t opq)
+{
+    int32_t subscribeSize = -1;
+    if (opq != 0) {
+        subscribeSize = RemoveStatusChangeCallback(opq);
+    } else {
+        subscribeSize = RemoveAllStatusChangeCallback();
+    }
+    if (subscribeSize > 0) {
+        SEN_HILOGW("There are other status change subscribers, skip unsubscribe");
+        return;
+    }
+    SEN_HILOGI("OffSensorStatusChange success, no more subscribers");
+}
+
+::ohos::sensor::Sensor getSingleSensorSyncFunc(::ohos::sensor::SensorId type)
+{
+    return getSingleSensorSync(type);
+}
+
+::taihe::array<::ohos::sensor::Sensor> getSensorListSyncFunc()
+{
+    return getSensorListSync();
+}
+
+int32_t GetLocalDeviceIdInner()
+{
+    SensorInfo* localSensors = nullptr;
+    int32_t localCount = 0;
+    int32_t localDeviceId = DEFAULT_DEVICE_ID;
+
+    if (GetAllSensors(&localSensors, &localCount) == OHOS::ERR_OK && localSensors != nullptr && localCount > 0) {
+        for (int32_t i = 0; i < localCount; ++i) {
+            if (localSensors[i].location == IS_LOCAL_DEVICE) {
+                localDeviceId = localSensors[i].deviceId;
+                break;
+            }
+        }
+        free(localSensors);
+    }
+    SEN_HILOGD("GetLocalDeviceIdInner: local deviceId=%{public}d", localDeviceId);
+    return localDeviceId;
+}
+
+::taihe::array<::ohos::sensor::Sensor> FilterAndConvertSensorInner(const SensorInfo* sensorInfos,
+    int32_t count, int32_t targetTypeId)
+{
+    std::vector<::ohos::sensor::Sensor> result;
+    if (sensorInfos == nullptr || count <= 0 || targetTypeId == INVALID_SENSOR_TYPE) {
+        return taihe::array<::ohos::sensor::Sensor>(result);
+    }
+
+    for (int32_t i = 0; i < count; ++i) {
+        if ((sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) ||
+            (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_PROXIMITY1) ||
+            (sensorInfos[i].sensorTypeId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) {
+            SEN_HILOGD("FilterAndConvertSensorInner: skip secondary/private sensor, typeId=%{public}d",
+                sensorInfos[i].sensorTypeId);
+            continue;
+        }
+
+        if (sensorInfos[i].sensorTypeId == targetTypeId) {
+                ohos::sensor::Sensor sensorInfo = {
+                .sensorName = sensorInfos[i].sensorName,
+                .sensorId = sensorInfos[i].sensorId,
+                .hardwareVersion = sensorInfos[i].hardwareVersion,
+                .vendorName  = sensorInfos[i].vendorName,
+                .firmwareVersion = sensorInfos[i].firmwareVersion,
+                .maxRange = sensorInfos[i].maxRange,
+                .minSamplePeriod = sensorInfos[i].minSamplePeriod,
+                .power = sensorInfos[i].power,
+                .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
+                .precision = sensorInfos[i].precision,
+            };
+            result.push_back(sensorInfo);
+        }
+    }
+    return taihe::array<::ohos::sensor::Sensor>(result);
+}
+
+::taihe::array<::ohos::sensor::Sensor> getSingleSensorByDeviceSync(::ohos::sensor::SensorId type,
+    ::taihe::optional_view<int32_t> deviceId)
+{
+    int32_t targetDeviceId = DEFAULT_DEVICE_ID;
+    if (deviceId.has_value()) {
+        targetDeviceId = deviceId.value();
+        SEN_HILOGD("getSingleSensorByDeviceSync: specified deviceId=%{public}d", targetDeviceId);
+    } else {
+        targetDeviceId = GetLocalDeviceIdInner();
+    }
+
+    std::vector<::ohos::sensor::Sensor> result;
+    int32_t sensorTypeId = type.get_value();
+    if (sensorTypeId == INVALID_SENSOR_TYPE) {
+        SEN_HILOGE("getSingleSensorByDeviceSync: invalid SensorId=%{public}d", static_cast<int32_t>(type));
+        return taihe::array<::ohos::sensor::Sensor>(result);
+    }
+
+    SensorInfo* sensorInfos = nullptr;
+    int32_t sensorCount = 0;
+    int32_t ret = GetDeviceSensors(targetDeviceId, &sensorInfos, &sensorCount);
+    if (ret != OHOS::ERR_OK || sensorInfos == nullptr || sensorCount <= 0) {
+        SEN_HILOGE("getSingleSensorByDeviceSync: GetDeviceSensors failed,\
+            deviceId=%{public}d, ret=%{public}d", targetDeviceId, ret);
+        if (sensorInfos != nullptr) {
+            free(sensorInfos);
+            sensorInfos = nullptr;
+        }
+        return taihe::array<::ohos::sensor::Sensor>(result);
+    }
+
+    auto resultInfo = FilterAndConvertSensorInner(sensorInfos, sensorCount, sensorTypeId);
+
+    if (sensorInfos != nullptr) {
+        free(sensorInfos);
+        sensorInfos = nullptr;
+    }
+
+    if (resultInfo.empty()) {
+        SEN_HILOGW("getSingleSensorByDeviceSync: no sensor found, type=%{public}d, deviceId=%{public}d",
+                   static_cast<int32_t>(type), targetDeviceId);
+    } else {
+        SEN_HILOGI("getSingleSensorByDeviceSync: found sensor, type=%{public}d, deviceId=%{public}d,\
+            sensorId=%{public}d",
+                   static_cast<int32_t>(type), targetDeviceId, resultInfo[0].sensorId);
+    }
+
+    return resultInfo;
+}
+
+::taihe::array<::ohos::sensor::Sensor> getSensorListByDeviceSync(::taihe::optional_view<int32_t> deviceId)
+{
+    int32_t targetDeviceId = DEFAULT_DEVICE_ID;
+    if (deviceId.has_value()) {
+        targetDeviceId = deviceId.value();
+        SEN_HILOGD("getSensorListByDeviceSync: specified deviceId=%{public}d", targetDeviceId);
+    } else {
+        targetDeviceId = GetLocalDeviceIdInner();
+    }
+
+    SensorInfo* sensorInfos = nullptr;
+    int32_t sensorCount = 0;
+    int32_t ret = GetDeviceSensors(targetDeviceId, &sensorInfos, &sensorCount);
+    std::vector<::ohos::sensor::Sensor> result;
+    if (ret != OHOS::ERR_OK || sensorInfos == nullptr || sensorCount <= 0) {
+        SEN_HILOGE("getSensorListByDeviceSync: GetDeviceSensors failed, deviceId=%{public}d, ret=%{public}d",
+            targetDeviceId, ret);
+        if (sensorInfos != nullptr) {
+            free(sensorInfos);
+            sensorInfos = nullptr;
+        }
+        return taihe::array<::ohos::sensor::Sensor>(result);
+    }
+
+    for (int32_t i = 0; i < sensorCount; ++i) {
+        if ((sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) ||
+            (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_PROXIMITY1) ||
+            (sensorInfos[i].sensorTypeId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) {
+            SEN_HILOGD("This sensor is secondary ambient light");
+            continue;
+        }
+        ohos::sensor::Sensor sensorInfo = {
+            .sensorName = sensorInfos[i].sensorName,
+            .vendorName = sensorInfos[i].vendorName,
+            .firmwareVersion = sensorInfos[i].firmwareVersion,
+            .hardwareVersion = sensorInfos[i].hardwareVersion,
+            .sensorId = sensorInfos[i].sensorId,
+            .maxRange = sensorInfos[i].maxRange,
+            .minSamplePeriod = sensorInfos[i].minSamplePeriod,
+            .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
+            .precision = sensorInfos[i].precision,
+            .power = sensorInfos[i].power,
+        };
+        result.push_back(sensorInfo);
+    }
+    return taihe::array<::ohos::sensor::Sensor>(result);
+}
 } // namespace
 
 // Since there macros are auto-generate, lint will cause false positive.
@@ -1746,4 +2084,10 @@ TH_EXPORT_CPP_API_OnColorChange(OnColor);
 TH_EXPORT_CPP_API_OffColorChange(OffColor);
 TH_EXPORT_CPP_API_OnFusionPressureChange(OnFusionPressure);
 TH_EXPORT_CPP_API_OffFusionPressureChange(OffFusionPressure);
+TH_EXPORT_CPP_API_getSingleSensorSyncFunc(getSingleSensorSyncFunc);
+TH_EXPORT_CPP_API_getSensorListSyncFunc(getSensorListSyncFunc);
+TH_EXPORT_CPP_API_getSingleSensorByDeviceSync(getSingleSensorByDeviceSync);
+TH_EXPORT_CPP_API_getSensorListByDeviceSync(getSensorListByDeviceSync);
+TH_EXPORT_CPP_API_OnSensorStatusChange(OnSensorStatusChange);
+TH_EXPORT_CPP_API_OffSensorStatusChange(OffSensorStatusChange);
 // NOLINTEND
