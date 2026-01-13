@@ -600,7 +600,6 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::shared_ptr<
             asyncCallbackInfo->type == SUBSCRIBE_CALLBACK) {
             if (!ConvertToSensorData(env, asyncCallbackInfo, result, sizeof(result) / sizeof(result[0]), cb)) {
                 SEN_HILOGE("ConvertToSensorData fail");
-                napi_throw_error(env, nullptr, "ConvertToSensorData fail");
                 ReleaseCallback(asyncCallbackInfo);
                 napi_close_handle_scope(asyncCallbackInfo->env, scope);
                 return;
