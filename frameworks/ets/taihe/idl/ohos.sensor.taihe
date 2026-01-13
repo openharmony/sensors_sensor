@@ -1407,6 +1407,64 @@ struct SensorInfoParam {
   }
 
 /**
+* Defines the data structure of the device status change event.
+* @typedef SensorStatusEvent
+* @syscap SystemCapability.Sensors.Sensor
+* @since 19
+*/
+struct SensorStatusEvent {
+    /**
+        * Indicates the timestamp of the status change.
+        * @type { number }
+        * @syscap SystemCapability.Sensors.Sensor
+        * @since 19
+        */
+    timestamp: i64;
+
+    /**
+        * Sensor type id.
+        * @type { number }
+        * @syscap SystemCapability.Sensors.Sensor
+        * @since 19
+        */
+    sensorId: i32;
+
+    /**
+        * Index of sensors of the same type.
+        * @type { number }
+        * @syscap SystemCapability.Sensors.Sensor
+        * @since 19
+        */
+    sensorIndex: i32;
+
+    /**
+        * Whether the device is online, true indicates online, false indicates offline.
+        *
+        * @type { boolean }
+        * @syscap SystemCapability.Sensors.Sensor
+        * @since 19
+        */
+    isSensorOnline: bool;
+
+    /**
+        * Device ID.
+        * @type { number }
+        * @syscap SystemCapability.Sensors.Sensor
+        * @since 19
+        */
+    deviceId: i32;
+
+    /**
+        * Device name.
+        * @type { string }
+        * @syscap SystemCapability.Sensors.Sensor
+        * @since 19
+        */
+    deviceName: String;
+}
+
+
+/**
  * Calculate rotation matrix based on gravity vector and geomagnetic vector.
  * @param { Array<f64> } gravity - gravity Indicates the gravity vector.
  * @param { Array<f64> } geomagnetic - geomagnetic Indicates the geomagnetic vector.
@@ -1665,3 +1723,10 @@ function OffColorChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optiona
 
 function OnFusionPressureChange(f: (info: FusionPressureResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
 function OffFusionPressureChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<FusionPressureResponse, void>") Opaque>);
+
+function getSingleSensorSyncFunc(type: SensorId): Sensor;
+function getSensorListSyncFunc(): Array<Sensor>;
+function getSingleSensorByDeviceSync(type: SensorId, deviceId: Optional<i32>): Array<Sensor>;
+function getSensorListByDeviceSync(deviceId: Optional<i32>): Array<Sensor>;
+function OnSensorStatusChange(f: (info: SensorStatusEvent) => void, @sts_last opq: Opaque);
+function OffSensorStatusChange(f: (info: SensorStatusEvent) => void, @sts_last opq: Opaque);
