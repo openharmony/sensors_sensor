@@ -41,11 +41,16 @@ SensorShakeControlManager::~SensorShakeControlManager()
     {
         std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
         if (parameterChangedCallback_ !=nullptr) {
+            if (!hasWatched_) {
+                SEN_HILOGE("Never watched parameter, no need remove");
+                return;
+            }
             int32_t ret = RemoveParameterWatcher(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
             if (ret != ERR_OK) {
                 SEN_HILOGE("RemoveParameterWatcher failed");
+            } else {
+                hasWatched_ = false;
             }
-            parameterChangedCallback_ = nullptr;
         }
     }
 }
@@ -72,6 +77,10 @@ void SensorShakeControlManager::OnParameterChanged(const char *key, const char *
 void SensorShakeControlManager::RegisterShakeControlParameter()
 { // LCOV_EXCL_START
     std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
+    if (hasWatched_) {
+        SEN_HILOGE("Parameter has watched, no need watch again");
+        return;
+    }
     GetShakeIgnoreControl();
     parameterChangedCallback_ = [](const char *key, const char *value, void *context) {
         SENSOR_SHAKE_CONTROL_MGR->OnParameterChanged(key, value, context);
@@ -79,6 +88,9 @@ void SensorShakeControlManager::RegisterShakeControlParameter()
     int32_t ret = WatchParameter(SHAKE_IGNORE_CONTROL_KEY.c_str(), parameterChangedCallback_, nullptr);
     if (ret != ERR_OK) {
         SEN_HILOGE("WatchParameter failed, ret:%{public}d", ret);
+    } else {
+        hasWatched_ = true;
+        SEN_HILOGI("WatchParameter success");
     }
 } // LCOV_EXCL_STOP
 
