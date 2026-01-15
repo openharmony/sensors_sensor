@@ -40,7 +40,7 @@ SensorShakeControlManager::~SensorShakeControlManager()
     UnregisterShakeSensorControlObserver();
     {
         std::lock_guard<std::mutex> shakeIgnoreControlLock(shakeIgnoreControlListMutex_);
-        if (parameterChangedCallback_ !=nullptr) {
+        if (parameterChangedCallback_ != nullptr) {
             if (!hasWatched_) {
                 SEN_HILOGE("Never watched parameter, no need remove");
                 return;
