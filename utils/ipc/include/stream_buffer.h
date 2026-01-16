@@ -24,10 +24,6 @@
 #include "proto.h"
 #include "sensor_errors.h"
 
-#ifdef OHOS_BUILD_ENABLE_RUST
-#include "rust_binding.h"
-#endif // OHOS_BUILD_ENABLE_RUST
-
 #undef LOG_TAG
 #define LOG_TAG "StreamBuffer"
 
@@ -49,7 +45,6 @@ public:
     virtual bool Write(const char *buf, size_t size);
     const std::string &GetErrorStatusRemark() const;
     bool ChkRWError() const;
-#ifndef OHOS_BUILD_ENABLE_RUST
     bool SeekReadPos(size_t n);
     bool IsEmpty() const;
     size_t Size() const;
@@ -57,7 +52,6 @@ public:
     size_t GetAvailableBufSize() const;
     const char *Data() const;
     const char *WriteBuf() const;
-#endif // OHOS_BUILD_ENABLE_RUST
     template<typename T>
     bool Read(T &data);
     template<typename T>
@@ -76,11 +70,6 @@ public:
 
 protected:
     bool Clone(const StreamBuffer &buf);
-#ifdef OHOS_BUILD_ENABLE_RUST
-public:
-    std::unique_ptr<RustStreamBuffer, void(*)(RustStreamBuffer*)> streamBufferPtr_ { StreamBufferCreate(),
-        StreamBufferDelete };
-#else
     enum class ErrorStatus {
         ERROR_STATUS_OK,
         ERROR_STATUS_READ,
@@ -92,21 +81,14 @@ public:
     size_t rPos_ { 0 };
     size_t wPos_ { 0 };
     char szBuff_[MAX_STREAM_BUF_SIZE + 1] = {};
-#endif // OHOS_BUILD_ENABLE_RUST
 };
 
 template<typename T>
 bool StreamBuffer::Read(T &data)
 {
     if (!Read(reinterpret_cast<char *>(&data), sizeof(data))) {
-#ifdef OHOS_BUILD_ENABLE_RUST
-        const char *s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
-        SEN_HILOGE("[%{public}s] size:%{public}zu count:%{public}d",
-            s, sizeof(data), StreamBufferGetRcount(streamBufferPtr_.get()) + 1);
-#else
         SEN_HILOGE("%{public}s, size:%{public}zu, count:%{public}zu",
             GetErrorStatusRemark().c_str(), sizeof(data), rCount_ + 1);
-#endif // OHOS_BUILD_ENABLE_RUST
         return false;
     }
     return true;
@@ -116,14 +98,8 @@ template<typename T>
 bool StreamBuffer::Write(const T &data)
 {
     if (!Write(reinterpret_cast<const char *>(&data), sizeof(data))) {
-#ifdef OHOS_BUILD_ENABLE_RUST
-        const char *s = StreamBufferGetErrorStatusRemark(streamBufferPtr_.get());
-        SEN_HILOGE("[%{public}s] size:%{public}zu,count:%{public}d",
-            s, sizeof(data), StreamBufferGetWcount(streamBufferPtr_.get()) + 1);
-#else
         SEN_HILOGE("%{public}s, size:%{public}zu, count:%{public}zu",
             GetErrorStatusRemark().c_str(), sizeof(data), wCount_ + 1);
-#endif // OHOS_BUILD_ENABLE_RUST
         return false;
     }
     return true;

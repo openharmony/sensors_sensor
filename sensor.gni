@@ -15,7 +15,6 @@ import("//build/ohos.gni")
 
 declare_args() {
   hiviewdfx_hisysevent_enable = false
-  sensor_rust_socket_ipc = false
   hiviewdfx_hitrace_enable = false
 }
 
@@ -24,10 +23,6 @@ SUBSYSTEM_DIR = "//base/sensors/sensor"
 FUZZ_MODULE_OUT_PATH = "sensor/sensor"
 
 sensor_default_defines = []
-
-if (sensor_rust_socket_ipc) {
-  sensor_default_defines += [ "OHOS_BUILD_ENABLE_RUST" ]
-}
 
 if (!defined(global_parts_info) ||
     defined(global_parts_info.hdf_drivers_interface_sensor)) {

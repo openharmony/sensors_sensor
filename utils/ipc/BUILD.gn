@@ -49,11 +49,6 @@ ohos_shared_library("libsensor_ipc") {
 
   defines = sensor_default_defines
 
-  if (sensor_rust_socket_ipc) {
-    deps =
-        [ "$SUBSYSTEM_DIR/rust/utils/socket_ipc_rust_ffi:sensor_rust_util_ffi" ]
-  }
-
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
