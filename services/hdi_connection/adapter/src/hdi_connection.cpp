@@ -22,7 +22,7 @@
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "iproxy_broker.h"
 #include "v3_0/isensor_interface.h"
-#include "v1_0/isensor_convert_interface.h"
+#include "v1_0/isensor_convert_interfaces.h"
 
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
@@ -532,7 +532,7 @@ void CreateInSensorData(SensorData* sensorData, HdfSensorData& in)
     in.location = sensorData->location;
 }
 
-void CreateOutSensorData(const HdfSensorData &data, SensorData* sensorData)
+void CreateOutSensorData(const HdfSensorData &out, SensorData* sensorData)
 {
     if(sensorData == nullptr) {
         SEN_HILOGE("sensorData is nullptr");
@@ -584,7 +584,7 @@ int32_t HdiConnection::TransformSensorData(uint32_t state, uint32_t policy, Sens
         SEN_HILOGE("ConvertSensorData failed");
         return ret;
     }
-    CreateOutSensorData(out, SensorData);
+    CreateOutSensorData(out, sensorData);
     return ERR_OK;
 }
 } // namespace Sensors
