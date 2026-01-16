@@ -88,6 +88,7 @@ private:
     std::unordered_set<std::string> shakeIgnoreControlList_;
     ParameterChgPtr parameterChangedCallback_;
     std::mutex shakeIgnoreControlListMutex_;
+    bool hasWatched_ = false;
 };
 #define SENSOR_SHAKE_CONTROL_MGR DelayedSingleton<SensorShakeControlManager>::GetInstance()
 }  // namespace Sensors
