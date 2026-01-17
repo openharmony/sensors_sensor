@@ -319,15 +319,16 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
         if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
             MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
             std::vector<CompatibleAppData> appList = SENSOR_DATA_MGR->GetCompatibleAppStragegyList();
-            auto it = std::find_if(applist.begin(), applist.end(), [this, channel](const CompatibleAppData &app) {
+            auto it = std::find_if(appList.begin(), appList.end(), [this, channel](const CompatibleAppData &app) {
                 return app.name == channel->GetPackageName();
             });
             if (it != appList.end()) {
                 uint32_t state = clientInfo_.GetDeviceStatus();
-                if (clientInfo_.GetDeviceType == SINGLE_DISPLAY_HP_FOLD &&
+                if (clientInfo_.GetDeviceType() == SINGLE_DISPLAY_HP_FOLD &&
                     static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_HOPE_FULL) {
-                        SensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
-                } else if (clientInfo_.GetDeviceType == SINGLE_DISPLAY_THREE_FOLD) {
+                        sensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
+                }
+                if (clientInfo_.GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD) {
                     MotionSensorRevision(state, &sensorData);
                 }
             }

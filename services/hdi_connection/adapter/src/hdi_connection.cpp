@@ -544,6 +544,10 @@ void CreateOutSensorData(const HdfSensorData &out, SensorData* sensorData)
         return;
     }
     CHKPV(sensorData->data);
+    if (dataSize > SENSOR_MAX_LENGTH) {
+        SEN_HILOGE("Data is invalid");
+        return;
+    }
     for (int32_t i = 0; i < dataSize; i++) {
         sensorData->data[i] = out.data[i];
     }
@@ -554,11 +558,13 @@ int32_t HdiConnection::ConnectSensorTransformHdi()
     CALL_LOG_ENTER;
     int32_t retry = 0;
     while (retry < GET_HDI_SERVICE_COUNT) {
-        std::lock_guard<std::mutex> sensorTransforInterfaceLock(g_sensorTransformInterfaceMutex);
-        g_transforInterface = ISensorConvertInterfaces::Get(true);
-        if (g_transforInterface != nullptr) {
-            SEN_HILOGI("Connect convert V1_0 hdi success");
-            return ERR_OK;
+        {
+            std::lock_guard<std::mutex> sensorTransforInterfaceLock(g_sensorTransformInterfaceMutex);
+            g_transforInterface = ISensorConvertInterfaces::Get(true);
+            if (g_transforInterface != nullptr) {
+                SEN_HILOGI("Connect convert V1_0 hdi success");
+                return ERR_OK;
+            }
         }
         retry++;
         SEN_HILOGW("Connect convert V1_0 hdi failed, retry:%{public}d", retry);
@@ -581,7 +587,7 @@ int32_t HdiConnection::TransformSensorData(uint32_t state, uint32_t policy, Sens
     CHKPR(g_transforInterface, ERR_NO_INIT);
     int32_t ret = g_transforInterface->ConvertSensorData(status, in, out);
     if (ret != ERR_OK) {
-        SEN_HILOGE("ConvertSensorData failed");
+        SEN_HILOGE("ConvertSensorData failed ret:%{public}d", ret);
         return ret;
     }
     CreateOutSensorData(out, sensorData);

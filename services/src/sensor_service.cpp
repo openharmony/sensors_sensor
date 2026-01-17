@@ -308,7 +308,7 @@ void SensorService::LoadMotionTransform(int32_t systemAbilityId)
     SEN_HILOGI("LoadMotionTransform systemAbilityId:%{public}d", systemAbilityId);
 #ifdef MSDP_MOTION_ENABLE
     if (systemAbilityId == MSDP_MOTION_SERVICE_ID) {
-        if (g_needLoadMotionLibType.find(GetDeviceType_()) == g_needLoadMotionLibType.end()) {
+        if (g_needLoadMotionLibType.find(GetDeviceType()) == g_needLoadMotionLibType.end()) {
             SEN_HILOGI("No need to load motion lib");
         } else if (!LoadMotionSensor()) {
             SEN_HILOGI("LoadMotionSensor fail");
