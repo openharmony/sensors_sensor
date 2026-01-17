@@ -514,7 +514,7 @@ int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
 
 void CreateInSensorData(SensorData* sensorData, HdfSensorData& in)
 {
-    if(sensorData == nullptr) {
+    if (sensorData == nullptr) {
         SEN_HILOGE("sensorData is nullptr");
         return;
     }
@@ -534,7 +534,7 @@ void CreateInSensorData(SensorData* sensorData, HdfSensorData& in)
 
 void CreateOutSensorData(const HdfSensorData &out, SensorData* sensorData)
 {
-    if(sensorData == nullptr) {
+    if (sensorData == nullptr) {
         SEN_HILOGE("sensorData is nullptr");
         return;
     }
