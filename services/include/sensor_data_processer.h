@@ -52,6 +52,9 @@ private:
     std::unordered_map<SensorDescription, std::vector<sptr<FifoCacheData>>> dataCountMap_;
     std::mutex sensorMutex_;
     std::unordered_map<SensorDescription, Sensor> sensorMap_;
+#ifdef HDF_DRIVERS_INTERFACE_SENSOR
+    SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
+#endif // HDF_DRIVERS_INTERFACE_SENSOR
 };
 } // namespace Sensors
 } // namespace OHOS

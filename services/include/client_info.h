@@ -80,6 +80,8 @@ public:
     void ChangeSensorPerm(AccessTokenID tokenId, const std::string &permName, bool state);
     void SetDeviceStatus(uint32_t deviceStatus);
     uint32_t GetDeviceStatus();
+    void SetDeviceType(int32_t deviceType);
+    int32_t GetDeviceType() const;
     void SaveSensorClient(const sptr<IRemoteObject> &sensorClient);
     void DestroySensorClient(const sptr<IRemoteObject> &sensorClient);
     void SendMsgToClient(SensorPlugData info);
@@ -107,6 +109,7 @@ private:
     std::unordered_set<int32_t> activeInfoCBPidSet_;
     static std::unordered_map<std::string, std::set<int32_t>> userGrantPermMap_;
     std::atomic<uint32_t> deviceStatus_;
+    std::atomic<int32_t> deviceType_;
     std::vector<sptr<IRemoteObject>> sensorClients_;
 };
 } // namespace Sensors

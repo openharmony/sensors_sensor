@@ -25,6 +25,14 @@ bool IsEqual(const T &left, const T &right)
     return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
 }
 
+enum class DMDeviceStatus : uint32_t {
+    UNKNOWN = 0,
+    STATUS_FOLDED,
+    STATUS_TENT_HOVER,
+    STATUS_TENT,
+    STATUS_GLOBAL_FULL,
+    STATUS_HOPE_FULL
+};
 } // namespace Sensors
 } // namespace OHOS
 #endif // SENSOR_UTILS_H

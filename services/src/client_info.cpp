@@ -871,5 +871,15 @@ bool ClientInfo::IsClientSubscribe()
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     return !clientMap_.empty();
 }
+
+void ClientInfo::SetDeviceType(int32_t deviceType)
+{
+    deviceType_ = deviceType;
+}
+
+int32_t ClientInfo::GetDeviceType() const
+{
+    return deviceType_;
+}
 } // namespace Sensors
 } // namespace OHOS

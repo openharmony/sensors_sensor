@@ -22,6 +22,7 @@
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
 #include "iproxy_broker.h"
 #include "v3_0/isensor_interface.h"
+#include "v1_0/isensor_convert_interfaces.h"
 
 #include "sensor_agent_type.h"
 #include "sensor_errors.h"
@@ -35,6 +36,9 @@
 namespace OHOS {
 namespace Sensors {
 using namespace OHOS::HiviewDFX;
+using OHOS::HDI::Sensor::Convert::V1_0::HdfSensorData;
+using OHOS::HDI::Sensor::Convert::V1_0::HdfDeviceStatusPolicy;
+using OHOS::HDI::Sensor::Convert::V1_0::ISensorConvertInterfaces;
 using OHOS::HDI::Sensor::V3_0::ISensorInterface;
 using OHOS::HDI::Sensor::V3_0::ISensorCallback;
 using OHOS::HDI::Sensor::V3_0::HdfSensorInformation;
@@ -43,9 +47,11 @@ namespace {
 sptr<ISensorInterface> g_sensorInterface = nullptr;
 sptr<ISensorCallback> g_eventCallback = nullptr;
 sptr<ISensorPlugCallback> g_plugCallback = nullptr;
+sptr<ISensorConvertInterfaces> g_transforInterface = nullptr;
 std::map<SensorDescription, SensorBasicInfo> g_sensorBasicInfoMap;
 std::mutex g_sensorBasicInfoMutex;
 std::mutex g_sensorInterfaceMutex;
+std::mutex g_sensorTransformInterfaceMutex;
 constexpr int32_t DEFAULT_GROUP_ID = 0;
 constexpr uint32_t MOCK_SENSOR = 1;
 constexpr int32_t GET_HDI_SERVICE_COUNT = 25;
@@ -502,6 +508,88 @@ int32_t HdiConnection::GetSensorListByDevice(int32_t deviceId, std::vector<Senso
         }
         singleDevSensors.push_back(sensor);
     }
+    return ERR_OK;
+}
+
+void CreateInSensorData(SensorData* sensorData, HdfSensorData& in)
+{
+    if (sensorData == nullptr) {
+        SEN_HILOGE("sensorData is nullptr");
+        return;
+    }
+
+    in.sensorTypeId = sensorData->sensorTypeId;
+    in.version = sensorData->version;
+    in.timestamp = sensorData->timestamp;
+    in.option = sensorData->option;
+    in.mode = sensorData->mode;
+    for (int32_t i = 0; i < SENSOR_MAX_LENGTH; i++) {
+        in.data.emplace_back(sensorData->data[i]);
+    }
+    in.deviceId = sensorData->deviceId;
+    in.sensorId = sensorData->sensorId;
+    in.location = sensorData->location;
+}
+
+void CreateOutSensorData(const HdfSensorData &out, SensorData* sensorData)
+{
+    if (sensorData == nullptr) {
+        SEN_HILOGE("sensorData is nullptr");
+        return;
+    }
+    int32_t dataSize = static_cast<int32_t>(out.data.size());
+    if (dataSize == 0) {
+        SEN_HILOGE("Data is empty");
+        return;
+    }
+    CHKPV(sensorData->data);
+    if (dataSize > SENSOR_MAX_LENGTH) {
+        SEN_HILOGE("Data is invalid");
+        return;
+    }
+    for (int32_t i = 0; i < dataSize; i++) {
+        sensorData->data[i] = out.data[i];
+    }
+}
+
+int32_t HdiConnection::ConnectSensorTransformHdi()
+{
+    CALL_LOG_ENTER;
+    int32_t retry = 0;
+    while (retry < GET_HDI_SERVICE_COUNT) {
+        {
+            std::lock_guard<std::mutex> sensorTransforInterfaceLock(g_sensorTransformInterfaceMutex);
+            g_transforInterface = ISensorConvertInterfaces::Get(true);
+            if (g_transforInterface != nullptr) {
+                SEN_HILOGI("Connect convert V1_0 hdi success");
+                return ERR_OK;
+            }
+        }
+        retry++;
+        SEN_HILOGW("Connect convert V1_0 hdi failed, retry:%{public}d", retry);
+        std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_MS));
+    }
+    SEN_HILOGE("Connect convert V1_0 hdi failed");
+    return ERR_NO_INIT;
+}
+
+int32_t HdiConnection::TransformSensorData(uint32_t state, uint32_t policy, SensorData* sensorData)
+{
+    CHKPR(sensorData, ERROR);
+    HdfDeviceStatusPolicy status;
+    status.deviceStatus = state;
+    status.policy = policy;
+    HdfSensorData in;
+    CreateInSensorData(sensorData, in);
+    HdfSensorData out;
+    std::lock_guard<std::mutex> sensorTransforInterfaceLock(g_sensorTransformInterfaceMutex);
+    CHKPR(g_transforInterface, ERR_NO_INIT);
+    int32_t ret = g_transforInterface->ConvertSensorData(status, in, out);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("ConvertSensorData failed ret:%{public}d", ret);
+        return ret;
+    }
+    CreateOutSensorData(out, sensorData);
     return ERR_OK;
 }
 } // namespace Sensors

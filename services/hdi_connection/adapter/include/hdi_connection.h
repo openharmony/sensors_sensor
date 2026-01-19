@@ -40,6 +40,8 @@ public:
     void ProcessDeathObserver(const wptr<IRemoteObject> &object);
     int32_t RegSensorPlugCallback(DevicePlugCallback cb) override;
     DevicePlugCallback GetSensorPlugCb() override;
+    int32_t ConnectSensorTransformHdi() override;
+    int32_t TransformSensorData(uint32_t state, uint32_t policy, SensorData* sensorData) override;
 
 private:
     DISALLOW_COPY_AND_MOVE(HdiConnection);

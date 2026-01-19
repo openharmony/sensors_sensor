@@ -41,6 +41,8 @@ public:
     virtual int32_t DestroyHdiConnection() = 0;
     virtual int32_t RegSensorPlugCallback(DevicePlugCallback cb) = 0;
     virtual DevicePlugCallback GetSensorPlugCb() = 0;
+    virtual int32_t ConnectSensorTransformHdi() = 0;
+    virtual int32_t TransformSensorData(uint32_t state, uint32_t policy, SensorData* sensorData) = 0;
     static std::mutex dataMutex_;
     static std::condition_variable dataCondition_;
     static std::atomic<bool> dataReady_;

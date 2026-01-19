@@ -282,16 +282,29 @@ void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compat
         if (name.empty()) {
             continue;
         }
-        SEN_HILOGD("name:%{public}s", name.c_str());
+        int32_t policy = 0;
+        if (value.contains("customLogicDirection")) {
+            nlohmann::json policyJson = value.at("customLogicDirection");
+            for (auto& [key, valueTmp] : policyJson.items()) {
+                if (valueTmp.is_number()) {
+                    policy = valueTmp.get<int32_t>();
+                }
+                SEN_HILOGD("policy:%{public}d", policy);
+            }
+        }
         GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
-        if (exemptNaturalDirectionCorrect) {
+        CompatibleAppData data;
+        if (policy != 0 || exemptNaturalDirectionCorrect) {
             std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
-            compatibleAppStragegyList_.emplace_back(name);
+            data.name = name;
+            data.policy = policy;
+            SEN_HILOGI("name:%{public}s, policy:%{public}d", name.c_str(), policy);
+            compatibleAppStragegyList_.emplace_back(data);
         }
     }
 }
 
-std::vector<std::string> SensorDataManager::GetCompatibleAppStragegyList()
+std::vector<CompatibleAppData> SensorDataManager::GetCompatibleAppStragegyList()
 {
     std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
     return compatibleAppStragegyList_;

@@ -53,6 +53,8 @@ constexpr int32_t DEFAULT_LOCATION = 1;
 static int32_t localDeviceId_ = -1;
 #endif // BUILD_VARIANT_ENG
 constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
+constexpr uint32_t CONVERT_ROTATION_270 = 3;
+constexpr int32_t CONVERT_ROTATION_0 = 0;
 } // namespace
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -80,6 +82,33 @@ int32_t SensorHdiConnection::ConnectHdi()
         }
 #endif // BUILD_VARIANT_ENG
         return ret;
+    }
+    return ERR_OK;
+}
+
+int32_t SensorHdiConnection::ConnectSensorTransformHdi()
+{
+    CHKPR(iSensorHdiConnection_, CONNECT_TRANSFORM_ERR);
+    int32_t ret = iSensorHdiConnection_->ConnectSensorTransformHdi();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("Connect transform hdi failed ret:%{public}d", ret);
+        return CONNECT_TRANSFORM_ERR;
+    }
+    return ERR_OK;
+}
+
+int32_t SensorHdiConnection::TransformSensorData(uint32_t state, uint32_t policy, SensorData* sensorData)
+{
+    CHKPR(iSensorHdiConnection_, CONNECT_TRANSFORM_ERR);
+    CHKPR(sensorData, ERROR);
+    if (policy == CONVERT_ROTATION_0 || policy > CONVERT_ROTATION_270) {
+        SEN_HILOGE("No need to convert sensor data");
+        return ERR_OK;
+    }
+    int32_t ret = iSensorHdiConnection_->TransformSensorData(state, policy, sensorData);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("transform sensor data failed");
+        return CONNECT_TRANSFORM_ERR;
     }
     return ERR_OK;
 }
