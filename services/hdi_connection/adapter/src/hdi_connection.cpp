@@ -102,8 +102,13 @@ int32_t HdiConnection::ConnectHdi()
 bool HdiConnection::InitHdiInterface()
 {
     CALL_LOG_ENTER;
-    int32_t ret = GetHdiInterface();
-    if (ret != ERR_OK) {
+    {
+        std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
+        if (g_sensorInterface != nullptr) {
+            return true;
+        }
+    }
+    if (!GetHdiInterface()) {
         SEN_HILOGE("GetHdiInterface failed");
         return false;
     }
