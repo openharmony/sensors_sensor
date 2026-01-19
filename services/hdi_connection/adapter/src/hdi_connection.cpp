@@ -63,20 +63,28 @@ ReportDataCb HdiConnection::reportDataCb_ = nullptr;
 DevicePlugCallback HdiConnection::reportPlugDataCb_ = nullptr;
 sptr<ReportDataCallback> HdiConnection::reportDataCallback_ = nullptr;
 
+bool HdiConnection::GetHdiInterface()
+{
+    std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
+    g_sensorInterface = ISensorInterface::Get();
+    if (g_sensorInterface != nullptr) {
+        SEN_HILOGI("Connect v3_0 hdi success");
+        g_eventCallback = new (std::nothrow) SensorEventCallback();
+        CHKPR(g_eventCallback, ERR_NO_INIT);
+        g_plugCallback = new (std::nothrow) SensorPlugCallback();
+        CHKPR(g_plugCallback, ERR_NO_INIT);
+        RegisterHdiDeathRecipient();
+        return true;
+    }
+    return false;
+}
+
 int32_t HdiConnection::ConnectHdi()
 {
     CALL_LOG_ENTER;
     int32_t retry = 0;
     while (retry < GET_HDI_SERVICE_COUNT) {
-        std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
-        g_sensorInterface = ISensorInterface::Get();
-        if (g_sensorInterface != nullptr) {
-            SEN_HILOGI("Connect v3_0 hdi success");
-            g_eventCallback = new (std::nothrow) SensorEventCallback();
-            CHKPR(g_eventCallback, ERR_NO_INIT);
-            g_plugCallback = new (std::nothrow) SensorPlugCallback();
-            CHKPR(g_plugCallback, ERR_NO_INIT);
-            RegisterHdiDeathRecipient();
+        if (GetHdiInterface()) {
             return ERR_OK;
         }
         retry++;
@@ -91,9 +99,24 @@ int32_t HdiConnection::ConnectHdi()
     return ERR_NO_INIT;
 }
 
+bool HdiConnection::InitHdiInterface()
+{
+    CALL_LOG_ENTER;
+    int32_t ret = GetHdiInterface();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("GetHdiInterface failed");
+        return false;
+    }
+    return true;
+}
+
 int32_t HdiConnection::GetSensorList(std::vector<Sensor> &sensorList)
 {
     CALL_LOG_ENTER;
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     std::vector<HdfSensorInformation> sensorInfos;
@@ -140,6 +163,10 @@ int32_t HdiConnection::EnableSensor(const SensorDescription &sensorDesc)
 {
     SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:EnableSensor", XCOLLIE_TIMEOUT_5S);
@@ -163,6 +190,10 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 {
     SEN_HILOGD("In, deviceIndex:%{public}d, sensortypeId:%{public}d, sensorId:%{public}d",
         sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId);
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:DisableSensor", XCOLLIE_TIMEOUT_5S);
@@ -184,6 +215,11 @@ int32_t HdiConnection::DisableSensor(const SensorDescription &sensorDesc)
 
 int32_t HdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t samplingInterval, int64_t reportInterval)
 {
+    CALL_LOG_ENTER;
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:SetBatch", XCOLLIE_TIMEOUT_5S);
@@ -204,6 +240,10 @@ int32_t HdiConnection::SetBatch(const SensorDescription &sensorDesc, int64_t sam
 int32_t HdiConnection::SetMode(const SensorDescription &sensorDesc, int32_t mode)
 {
     CALL_LOG_ENTER;
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:SetMode", XCOLLIE_TIMEOUT_5S);
@@ -224,6 +264,10 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
 {
     CALL_LOG_ENTER;
     CHKPR(reportDataCallback, ERR_NO_INIT);
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:RegisterDataReport", XCOLLIE_TIMEOUT_5S);
@@ -281,6 +325,10 @@ int32_t HdiConnection::RegSensorPlugCallback(DevicePlugCallback cb)
 {
     CALL_LOG_ENTER;
     CHKPR(cb, ERR_NO_INIT);
+    if (!InitHdiInterface()) {
+        SEN_HILOGE("InitHdiInterface failed");
+        return ERR_NO_INIT;
+    }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
     reportPlugDataCb_ = cb;
