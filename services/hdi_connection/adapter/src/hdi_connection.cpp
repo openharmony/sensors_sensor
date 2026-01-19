@@ -66,6 +66,9 @@ sptr<ReportDataCallback> HdiConnection::reportDataCallback_ = nullptr;
 bool HdiConnection::GetHdiInterface()
 {
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
+    if (g_sensorInterface != nullptr) {
+        return true;
+    }
     g_sensorInterface = ISensorInterface::Get();
     if (g_sensorInterface != nullptr) {
         SEN_HILOGI("Connect v3_0 hdi success");
@@ -102,12 +105,6 @@ int32_t HdiConnection::ConnectHdi()
 bool HdiConnection::InitHdiInterface()
 {
     CALL_LOG_ENTER;
-    {
-        std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
-        if (g_sensorInterface != nullptr) {
-            return true;
-        }
-    }
     if (!GetHdiInterface()) {
         SEN_HILOGE("GetHdiInterface failed");
         return false;
