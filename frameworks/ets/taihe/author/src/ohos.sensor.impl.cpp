@@ -78,11 +78,8 @@ constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr int32_t DATA_LENGTH = 16;
 constexpr int32_t CALLBACK_MAX_DATA_LENGTH = 16;
 
-constexpr int32_t DEFAULT_DEVICE_ID = 0;
+constexpr int32_t DEFAULT_DEVICE_ID = -1;
 constexpr int32_t INVALID_SENSOR_TYPE = -1;
-constexpr int32_t GL_SENSOR_TYPE_PRIVATE_MIN_VALUE = 0x80000000;
-constexpr int32_t SENSOR_TYPE_ID_AMBIENT_LIGHT1 = 5;
-constexpr int32_t SENSOR_TYPE_ID_PROXIMITY1 = 8;
 constexpr int32_t IS_LOCAL_DEVICE = 1;
 
 std::mutex g_statusChangeMutex;
@@ -284,6 +281,8 @@ array<Sensor> getSensorListSync()
             .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
             .precision = sensorInfos[i].precision,
             .power = sensorInfos[i].power,
+            .sensorIndex = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].sensorIndex),
+            .deviceId = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].deviceId),
             .isMockSensor = taihe::optional<bool>(std::in_place_t{}, sensorInfos[i].isMockSensor),
         };
         result.push_back(sensorInfo);
@@ -304,6 +303,8 @@ ohos::sensor::Sensor getSingleSensorSync(ohos::sensor::SensorId type)
         .maxSamplePeriod = 0,
         .precision = 0,
         .power = 0,
+        .sensorIndex = taihe::optional<int>(std::in_place_t{}, 0),
+        .deviceId = taihe::optional<int>(std::in_place_t{}, 0),
         .isMockSensor = taihe::optional<bool>(std::in_place_t{}, false)
     };
     int32_t count = 0;
@@ -326,6 +327,8 @@ ohos::sensor::Sensor getSingleSensorSync(ohos::sensor::SensorId type)
                 .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
                 .precision = sensorInfos[i].precision,
                 .power = sensorInfos[i].power,
+                .sensorIndex = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].sensorIndex),
+                .deviceId = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].deviceId),
                 .isMockSensor = taihe::optional<bool>(std::in_place_t{}, sensorInfos[i].isMockSensor),
             };
             return sensor;
@@ -1844,30 +1847,19 @@ void OnSensorStatusChange(::taihe::callback_view<void(ohos::sensor::SensorStatus
     UpdateStatusChangeCallbackInfos(f, opq);
 }
 
-
-void OffSensorStatusChange(::taihe::callback_view<void(ohos::sensor::SensorStatusEvent const& info)> f, uintptr_t opq)
+void OffSensorStatusChange(::taihe::optional_view<uintptr_t> opq)
 {
     int32_t subscribeSize = -1;
-    if (opq != 0) {
-        subscribeSize = RemoveStatusChangeCallback(opq);
+    if (opq.has_value()) {
+        subscribeSize = RemoveStatusChangeCallback(opq.value());
     } else {
         subscribeSize = RemoveAllStatusChangeCallback();
     }
     if (subscribeSize > 0) {
-        SEN_HILOGW("There are other status change subscribers, skip unsubscribe");
+        SEN_HILOGW("There are other sensor status change subscribers remain, count: %{public}d", subscribeSize);
         return;
     }
-    SEN_HILOGI("OffSensorStatusChange success, no more subscribers");
-}
-
-::ohos::sensor::Sensor getSingleSensorSyncFunc(::ohos::sensor::SensorId type)
-{
-    return getSingleSensorSync(type);
-}
-
-::taihe::array<::ohos::sensor::Sensor> getSensorListSyncFunc()
-{
-    return getSensorListSync();
+    SEN_HILOGI("OffSensorStatusChange success, no more sensor status change subscribers");
 }
 
 int32_t GetLocalDeviceIdInner()
@@ -1876,7 +1868,7 @@ int32_t GetLocalDeviceIdInner()
     int32_t localCount = 0;
     int32_t localDeviceId = DEFAULT_DEVICE_ID;
 
-    if (GetAllSensors(&localSensors, &localCount) == OHOS::ERR_OK && localSensors != nullptr && localCount > 0) {
+    if (GetAllSensors(&localSensors, &localCount) == OHOS::ERR_OK) {
         for (int32_t i = 0; i < localCount; ++i) {
             if (localSensors[i].location == IS_LOCAL_DEVICE) {
                 localDeviceId = localSensors[i].deviceId;
@@ -1909,15 +1901,18 @@ int32_t GetLocalDeviceIdInner()
         if (sensorInfos[i].sensorTypeId == targetTypeId) {
                 ohos::sensor::Sensor sensorInfo = {
                 .sensorName = sensorInfos[i].sensorName,
-                .sensorId = sensorInfos[i].sensorId,
-                .hardwareVersion = sensorInfos[i].hardwareVersion,
                 .vendorName  = sensorInfos[i].vendorName,
                 .firmwareVersion = sensorInfos[i].firmwareVersion,
+                .hardwareVersion = sensorInfos[i].hardwareVersion,
+                .sensorId = sensorInfos[i].sensorId,
                 .maxRange = sensorInfos[i].maxRange,
                 .minSamplePeriod = sensorInfos[i].minSamplePeriod,
-                .power = sensorInfos[i].power,
                 .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
                 .precision = sensorInfos[i].precision,
+                .power = sensorInfos[i].power,
+                .sensorIndex = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].sensorIndex),
+                .deviceId = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].deviceId),
+                .isMockSensor = taihe::optional<bool>(std::in_place_t{}, sensorInfos[i].isMockSensor),
             };
             result.push_back(sensorInfo);
         }
@@ -1946,13 +1941,9 @@ int32_t GetLocalDeviceIdInner()
     SensorInfo* sensorInfos = nullptr;
     int32_t sensorCount = 0;
     int32_t ret = GetDeviceSensors(targetDeviceId, &sensorInfos, &sensorCount);
-    if (ret != OHOS::ERR_OK || sensorInfos == nullptr || sensorCount <= 0) {
+    if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("getSingleSensorByDeviceSync: GetDeviceSensors failed,\
             deviceId=%{public}d, ret=%{public}d", targetDeviceId, ret);
-        if (sensorInfos != nullptr) {
-            free(sensorInfos);
-            sensorInfos = nullptr;
-        }
         return taihe::array<::ohos::sensor::Sensor>(result);
     }
 
@@ -1989,13 +1980,9 @@ int32_t GetLocalDeviceIdInner()
     int32_t sensorCount = 0;
     int32_t ret = GetDeviceSensors(targetDeviceId, &sensorInfos, &sensorCount);
     std::vector<::ohos::sensor::Sensor> result;
-    if (ret != OHOS::ERR_OK || sensorInfos == nullptr || sensorCount <= 0) {
+    if (ret != OHOS::ERR_OK) {
         SEN_HILOGE("getSensorListByDeviceSync: GetDeviceSensors failed, deviceId=%{public}d, ret=%{public}d",
             targetDeviceId, ret);
-        if (sensorInfos != nullptr) {
-            free(sensorInfos);
-            sensorInfos = nullptr;
-        }
         return taihe::array<::ohos::sensor::Sensor>(result);
     }
 
@@ -2017,6 +2004,9 @@ int32_t GetLocalDeviceIdInner()
             .maxSamplePeriod = sensorInfos[i].maxSamplePeriod,
             .precision = sensorInfos[i].precision,
             .power = sensorInfos[i].power,
+            .sensorIndex = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].sensorIndex),
+            .deviceId = taihe::optional<int>(std::in_place_t{}, sensorInfos[i].deviceId),
+            .isMockSensor = taihe::optional<bool>(std::in_place_t{}, sensorInfos[i].isMockSensor),
         };
         result.push_back(sensorInfo);
     }
@@ -2106,8 +2096,6 @@ TH_EXPORT_CPP_API_OnColorChange(OnColor);
 TH_EXPORT_CPP_API_OffColorChange(OffColor);
 TH_EXPORT_CPP_API_OnFusionPressureChange(OnFusionPressure);
 TH_EXPORT_CPP_API_OffFusionPressureChange(OffFusionPressure);
-TH_EXPORT_CPP_API_getSingleSensorSyncFunc(getSingleSensorSyncFunc);
-TH_EXPORT_CPP_API_getSensorListSyncFunc(getSensorListSyncFunc);
 TH_EXPORT_CPP_API_getSingleSensorByDeviceSync(getSingleSensorByDeviceSync);
 TH_EXPORT_CPP_API_getSensorListByDeviceSync(getSensorListByDeviceSync);
 TH_EXPORT_CPP_API_OnSensorStatusChange(OnSensorStatusChange);
