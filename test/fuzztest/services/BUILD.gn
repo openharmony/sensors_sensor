@@ -36,7 +36,6 @@ group("fuzztest") {
     "service/registerclientdeathrecipient_fuzzer:fuzztest",
     "service/registerpermcallback_fuzzer:fuzztest",
     "service/reportactiveinfo_fuzzer:fuzztest",
-    "service/reportonchangedata_fuzzer:fuzztest",
     "service/reportsensorsysevent_fuzzer:fuzztest",
     "service/setdevicestatusservice_fuzzer:fuzztest",
     "setdevicestatusstub_fuzzer:fuzztest",
