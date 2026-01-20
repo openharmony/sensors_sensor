@@ -1346,6 +1346,39 @@ struct Sensor {
      */
     power: f64;
 
+     /**
+     * Index of sensors of the same type.
+     * @type { number }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 23
+     */
+    sensorIndex: Optional<i32>;
+
+    /**
+     * Device ID which the sensors attached.
+     * @type { number }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 23
+     */
+    deviceId: Optional<i32>;
+
+    /**
+     * Name of the device.
+     *
+     * @type { String }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 23
+     */
+    deviceName: Optional<String>;
+
+    /**
+     * Is the device a local device or an external device
+     * @type { boolean }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @since 23
+     */
+    isLocalSensor: Optional<bool>;
+
     /**
      * Is the device a mock device or a real device.
      * @type { bool }
@@ -1724,9 +1757,7 @@ function OffColorChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optiona
 function OnFusionPressureChange(f: (info: FusionPressureResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
 function OffFusionPressureChange(sensorInfoParam: Optional<SensorInfoParam>, opq: Optional<@sts_type("Function1<FusionPressureResponse, void>") Opaque>);
 
-function getSingleSensorSyncFunc(type: SensorId): Sensor;
-function getSensorListSyncFunc(): Array<Sensor>;
 function getSingleSensorByDeviceSync(type: SensorId, deviceId: Optional<i32>): Array<Sensor>;
 function getSensorListByDeviceSync(deviceId: Optional<i32>): Array<Sensor>;
 function OnSensorStatusChange(f: (info: SensorStatusEvent) => void, @sts_last opq: Opaque);
-function OffSensorStatusChange(f: (info: SensorStatusEvent) => void, @sts_last opq: Opaque);
+function OffSensorStatusChange(opq: Optional<@sts_type("Function1<SensorStatusEvent, void>") Opaque>);
