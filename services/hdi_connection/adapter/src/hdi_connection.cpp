@@ -101,7 +101,7 @@ bool HdiConnection::GetHdiInterface()
                 HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
                     HiSysEvent::EventType::FAULT, "PKG_NAME", "RegSensorPlugCallback", "ERROR_CODE", ret);
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
-                retrun false;
+                return false;
             }
             isRegisterPlugCallBack_ = true;
         }
