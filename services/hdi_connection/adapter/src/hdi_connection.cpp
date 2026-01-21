@@ -78,20 +78,32 @@ bool HdiConnection::GetHdiInterface()
         g_plugCallback = new (std::nothrow) SensorPlugCallback();
         CHKPR(g_plugCallback, ERR_NO_INIT);
         RegisterHdiDeathRecipient();
-        if (!isRegisterHdiService_) {
+        if (!isRegisterDataCallBack_) {
             SensorXcollie registerXcollie("HdiConnection:GetHdiInterface:RegisterAsync", XCOLLIE_TIMEOUT_5S);
             int32_t ret = g_sensorInterface->RegisterAsync(DEFAULT_GROUP_ID, g_eventCallback);
             if (ret != ERR_OK) {
                 SEN_HILOGE("RegisterAsync callback fail");
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+                HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
+                    HiSysEvent::EventType::FAULT, "PKG_NAME", "RegisterDataReport", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
                 return false;
             }
-            isRegisterHdiService_ = true;
+            isRegisterDataCallBack_ = true;
+        }
+        if (!isRegisterPlugCallBack_) {
             SensorXcollie regSensorPlugCallBackXcollie("HdiConnection:GetHdiInterface:RegSensorPlugCallBack",
                 XCOLLIE_TIMEOUT_5S);
-            ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
+            int32_t ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
             if (ret != ERR_OK) {
                 SEN_HILOGE("RegisterAsync plug callback fail");
+#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
+                HiSysEventWrite(HiviewDFX::HiSysEvent::Domain::SENSOR, "HDF_SERVICE_EXCEPTION",
+                    HiSysEvent::EventType::FAULT, "PKG_NAME", "RegSensorPlugCallback", "ERROR_CODE", ret);
+#endif // HIVIEWDFX_HISYSEVENT_ENABLE
+                retrun false;
             }
+            isRegisterPlugCallBack_ = true;
         }
         return true;
     }
@@ -298,7 +310,7 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
         SEN_HILOGE("RegisterAsync is failed");
         return ret;
     }
-    isRegisterHdiService_ = true;
+    isRegisterDataCallBack_ = true;
     reportDataCb_ = cb;
     reportDataCallback_ = reportDataCallback;
     return ERR_OK;
@@ -322,7 +334,7 @@ int32_t HdiConnection::DestroyHdiConnection()
                 SEN_HILOGE("UnregisterAsync is failed");
                 return ret;
             }
-            isRegisterHdiService_ = false;
+            isRegisterDataCallBack_ = false;
         }
         SensorXcollie unRegSensorPlugCallBackXcollie("HdiConnection:UnRegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->UnRegSensorPlugCallBack(g_plugCallback);
@@ -334,6 +346,7 @@ int32_t HdiConnection::DestroyHdiConnection()
             SEN_HILOGE("UnRegSensorPlugCallback is failed");
             return ret;
         }
+        isRegisterPlugCallBack_ = false;
         g_sensorInterface = nullptr;
         g_plugCallback = nullptr;
         g_eventCallback = nullptr;
@@ -363,6 +376,7 @@ int32_t HdiConnection::RegSensorPlugCallback(DevicePlugCallback cb)
         SEN_HILOGE("RegSensorPlugCallback is failed");
         return ret;
     }
+    isRegisterPlugCallBack_ = true;
     return ERR_OK;
 }
 
@@ -464,7 +478,8 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
         g_eventCallback = nullptr;
         g_sensorInterface = nullptr;
         g_plugCallback = nullptr;
-        isRegisterHdiService_ = false;
+        isRegisterDataCallBack_ = false;
+        isRegisterPlugCallBack_ = false;
     }
     Reconnect();
 }
@@ -520,6 +535,7 @@ void HdiConnection::Reconnect()
                 SEN_HILOGE("RegisterAsync callback fail");
                 return;
             }
+            isRegisterDataCallBack_ = true;
         }
         SensorXcollie regSensorPlugCallBackXcollie("HdiConnection:Reconnect:RegSensorPlugCallBack", XCOLLIE_TIMEOUT_5S);
         ret = g_sensorInterface->RegSensorPlugCallBack(g_plugCallback);
@@ -527,7 +543,7 @@ void HdiConnection::Reconnect()
             SEN_HILOGE("RegisterAsync plug callback fail");
             return;
         }
-        isRegisterHdiService_ = true;
+        isRegisterPlugCallBack_ = true;
     }
     std::vector<Sensor> sensorList;
     ret = GetSensorList(sensorList);
