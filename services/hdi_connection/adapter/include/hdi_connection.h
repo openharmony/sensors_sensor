@@ -49,6 +49,7 @@ private:
     static DevicePlugCallback reportPlugDataCb_;
     static sptr<ReportDataCallback> reportDataCallback_;
     sptr<IRemoteObject::DeathRecipient> hdiDeathObserver_ = nullptr;
+    bool isRegisterHdiService_ = false;
     bool GetHdiInterface();
     bool InitHdiInterface();
     void RegisterHdiDeathRecipient();
