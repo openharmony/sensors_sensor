@@ -23,6 +23,7 @@
 #include "system_ability_definition.h"
 
 #include "sensor_errors.h"
+#include "sensor_utils.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorDataManager"
@@ -34,6 +35,7 @@ namespace {
 const std::string SETTING_COLUMN_KEYWORD = "KEYWORD";
 const std::string SETTING_COLUMN_VALUE = "VALUE";
 const std::string SETTING_COMPATIBLE_APP_STRATEGY_KEY = "COMPATIBLE_APP_STRATEGY";
+const std::string SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY = "APP_LOGICAL_DEVICE_CONFIGURATION";
 const std::string SETTING_URI_PROXY = "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
 constexpr const char *SETTINGS_DATA_EXT_URI = "datashare:///com.ohos.settingsdata.DataAbility";
 constexpr int32_t DECEM_BASE = 10;
@@ -52,7 +54,7 @@ SensorDataManager::~SensorDataManager()
     }
 }
 
-bool SensorDataManager::Init()
+bool SensorDataManager::Init(int32_t deviceMode)
 {
     auto sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (sm == nullptr) {
@@ -64,13 +66,23 @@ bool SensorDataManager::Init()
         SEN_HILOGE("GetSystemAbility return nullptr");
         return false;
     }
-    SensorObserver::UpdateFunc updateFunc = [&]() {
-        std::string compatibleAppStraegy;
-        if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStraegy) != ERR_OK) {
-            SEN_HILOGE("Get compatible app strategy failed");
+    deviceMode_.store(deviceMode);
+    SensorObserver::UpdateFunc updateFunc = [this]() {
+        std::string compatibleAppStrategy;
+        int32_t currentDeviceMode = deviceMode_.load();
+        if (currentDeviceMode == SINGLE_DISPLAY_THREE_FOLD) {
+            if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStrategy) != ERR_OK) {
+                SEN_HILOGE("Get compatible app strategy failed");
+            }
+            ParseCompatibleAppStrategyList(compatibleAppStrategy);
         }
-        ParseCompatibleAppStragegyList(compatibleAppStraegy);
-        SEN_HILOGI("compatibleAppStraegy:%{public}s", compatibleAppStraegy.c_str());
+        if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD) {
+            if (GetStringValue(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY, compatibleAppStrategy) != ERR_OK) {
+                SEN_HILOGE("Get app logical device configuration failed");
+            }
+            ParseAppLogicalDeviceList(compatibleAppStrategy);
+        }
+        SEN_HILOGI("compatibleAppStrategy:%{public}s", compatibleAppStrategy.c_str());
     };
     auto observer_ = CreateObserver(updateFunc);
     if (observer_ == nullptr) {
@@ -218,20 +230,22 @@ int32_t SensorDataManager::RegisterObserver(const sptr<SensorObserver> &observer
         IPCSkeleton::SetCallingIdentity(callingIdentity);
         return ERR_NO_INIT;
     }
-    auto uriCompatibleAppStraegy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
-    helper->RegisterObserver(uriCompatibleAppStraegy, observer);
-    helper->NotifyChange(uriCompatibleAppStraegy);
+    int32_t currentDeviceMode = deviceMode_.load();
+    if (currentDeviceMode == SINGLE_DISPLAY_THREE_FOLD) {
+        auto uriCompatibleAppStrategy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
+        helper->RegisterObserver(uriCompatibleAppStrategy, observer);
+        helper->NotifyChange(uriCompatibleAppStrategy);
+    }
+    if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD) {
+        auto uriAppLogicalStrategy = AssembleUri(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY);
+        helper->RegisterObserver(uriAppLogicalStrategy, observer);
+        helper->NotifyChange(uriAppLogicalStrategy);
+    }
     std::thread execCb(SensorDataManager::ExecRegisterCb, observer);
     execCb.detach();
     ReleaseDataShareHelper(helper);
     IPCSkeleton::SetCallingIdentity(callingIdentity);
     SEN_HILOGI("Succeed to register observer of uri");
-    std::string compatibleAppStraegy;
-    if (GetStringValue(SETTING_COMPATIBLE_APP_STRATEGY_KEY, compatibleAppStraegy) != ERR_OK) {
-        SEN_HILOGE("Get compatible app strategy failed");
-    }
-    SEN_HILOGI("compatibleAppStraegy:%{public}s", compatibleAppStraegy.c_str());
-    ParseCompatibleAppStragegyList(compatibleAppStraegy);
     return ERR_OK;
 }
 
@@ -251,33 +265,69 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
         IPCSkeleton::SetCallingIdentity(callingIdentity);
         return ERR_NO_INIT;
     }
-    auto uriCompatibleAppStraegy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
-    helper->UnregisterObserver(uriCompatibleAppStraegy, observer);
+    if (deviceMode_.load() == SINGLE_DISPLAY_THREE_FOLD) {
+        auto uriCompatibleAppStrategy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
+        helper->UnregisterObserver(uriCompatibleAppStrategy, observer);
+    }
+    if (deviceMode_.load() == SINGLE_DISPLAY_HP_FOLD) {
+        auto uriCompatibleAppStrategy = AssembleUri(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY);
+        helper->UnregisterObserver(uriCompatibleAppStrategy, observer);
+    }
+
     ReleaseDataShareHelper(helper);
     IPCSkeleton::SetCallingIdentity(callingIdentity);
     SEN_HILOGI("Succeed to unregister observer");
     return ERR_OK;
 }
 
-void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compatibleAppStraegy)
+void SensorDataManager::ParseCompatibleAppStrategyList(const std::string &compatibleAppStrategy)
 {
-    {
-        std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
-        if (!compatibleAppStragegyList_.empty()) {
-            compatibleAppStragegyList_.clear();
-        }
+    std::lock_guard<std::mutex> compatibleAppStrategyLock(compatibleAppStrategyMutex_);
+    if (!compatibleAppStrategyList_.empty()) {
+        compatibleAppStrategyList_.clear();
     }
-    nlohmann::json compatibleAppStragegyJson = nlohmann::json::parse(compatibleAppStraegy, nullptr, false);
-    if (compatibleAppStragegyJson.is_discarded()) {
+    nlohmann::json compatibleAppStrategyJson = nlohmann::json::parse(compatibleAppStrategy, nullptr, false);
+    if (compatibleAppStrategyJson.is_discarded()) {
         SEN_HILOGE("Parse json failed");
         return;
     }
-    for (auto it = compatibleAppStragegyJson.begin(); it != compatibleAppStragegyJson.end(); ++it) {
+    for (auto it = compatibleAppStrategyJson.begin(); it != compatibleAppStrategyJson.end(); ++it) {
         const std::string& key = it.key();
         SEN_HILOGD("key:%{public}s", key.c_str());
         const nlohmann::json& value = it.value();
         std::string name = "";
+        GetJsonValue(value, "name", name);
+        if (name.empty()) {
+            continue;
+        }
         bool exemptNaturalDirectionCorrect = false;
+        GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
+        CompatibleAppData data;
+        if (exemptNaturalDirectionCorrect) {
+            data.name = name;
+            data.policy = 0;
+            SEN_HILOGI("name:%{public}s", name.c_str());
+            compatibleAppStrategyList_.emplace_back(data);
+        }
+    }
+}
+
+void SensorDataManager::ParseAppLogicalDeviceList(const std::string &compatibleAppStrategy)
+{
+    std::lock_guard<std::mutex> compatibleAppStrategyLock(compatibleAppStrategyMutex_);
+    if (!compatibleAppStrategyList_.empty()) {
+        compatibleAppStrategyList_.clear();
+    }
+    nlohmann::json compatibleAppStrategyJson = nlohmann::json::parse(compatibleAppStrategy, nullptr, false);
+    if (compatibleAppStrategyJson.is_discarded()) {
+        SEN_HILOGE("Parse json failed");
+        return;
+    }
+    for (auto it = compatibleAppStrategyJson.begin(); it != compatibleAppStrategyJson.end(); ++it) {
+        const std::string& key = it.key();
+        SEN_HILOGD("key:%{public}s", key.c_str());
+        const nlohmann::json& value = it.value();
+        std::string name = "";
         GetJsonValue(value, "name", name);
         if (name.empty()) {
             continue;
@@ -292,22 +342,20 @@ void SensorDataManager::ParseCompatibleAppStragegyList(const std::string &compat
                 SEN_HILOGD("policy:%{public}d", policy);
             }
         }
-        GetJsonValue(value, "exemptNaturalDirectionCorrect", exemptNaturalDirectionCorrect);
         CompatibleAppData data;
-        if (policy != 0 || exemptNaturalDirectionCorrect) {
-            std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
+        if (policy != 0) {
             data.name = name;
             data.policy = policy;
             SEN_HILOGI("name:%{public}s, policy:%{public}d", name.c_str(), policy);
-            compatibleAppStragegyList_.emplace_back(data);
+            compatibleAppStrategyList_.emplace_back(data);
         }
     }
 }
 
-std::vector<CompatibleAppData> SensorDataManager::GetCompatibleAppStragegyList()
+std::vector<CompatibleAppData> SensorDataManager::GetCompatibleAppStrategyList()
 {
-    std::lock_guard<std::mutex> compatibleAppStraegyLock(compatibleAppStraegyMutex_);
-    return compatibleAppStragegyList_;
+    std::lock_guard<std::mutex> compatibleAppStrategyLock(compatibleAppStrategyMutex_);
+    return compatibleAppStrategyList_;
 }
 }  // namespace Sensors
 }  // namespace OHOS

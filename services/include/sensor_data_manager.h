@@ -34,8 +34,8 @@ class SensorDataManager {
     DECLARE_DELAYED_SINGLETON(SensorDataManager);
 public:
     DISALLOW_COPY_AND_MOVE(SensorDataManager);
-    bool Init();
-    std::vector<CompatibleAppData> GetCompatibleAppStragegyList();
+    bool Init(int32_t deviceMode);
+    std::vector<CompatibleAppData> GetCompatibleAppStrategyList();
     template<typename T>
     static bool GetJsonValue(const nlohmann::json& payload, const std::string& key, T& result)
     {
@@ -72,11 +72,13 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(const std::string &tableUrl);
     bool ReleaseDataShareHelper(std::shared_ptr<DataShare::DataShareHelper> &helper);
     sptr<SensorObserver> CreateObserver(const SensorObserver::UpdateFunc &func);
-    void ParseCompatibleAppStragegyList(const std::string &compatibleAppStraegy);
+    void ParseCompatibleAppStrategyList(const std::string &compatibleAppStrategy);
+    void ParseAppLogicalDeviceList(const std::string &compatibleAppStrategy);
     sptr<IRemoteObject> remoteObj_ { nullptr };
     sptr<SensorObserver> observer_ { nullptr };
-    std::mutex compatibleAppStraegyMutex_;
-    std::vector<CompatibleAppData> compatibleAppStragegyList_;
+    std::mutex compatibleAppStrategyMutex_;
+    std::vector<CompatibleAppData> compatibleAppStrategyList_;
+    std::atomic_int32_t deviceMode_;
 };
 #define SENSOR_DATA_MGR DelayedSingleton<SensorDataManager>::GetInstance()
 }  // namespace Sensors
