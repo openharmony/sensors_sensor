@@ -15,6 +15,8 @@
 
 #include "sensor_data_manager.h"
 
+#include <charconv>
+
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
@@ -265,11 +267,12 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
         IPCSkeleton::SetCallingIdentity(callingIdentity);
         return ERR_NO_INIT;
     }
-    if (deviceMode_.load() == SINGLE_DISPLAY_THREE_FOLD) {
+    int32_t currentDeviceMode = deviceMode_.load();
+    if (currentDeviceMode == SINGLE_DISPLAY_THREE_FOLD) {
         auto uriCompatibleAppStrategy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
         helper->UnregisterObserver(uriCompatibleAppStrategy, observer);
     }
-    if (deviceMode_.load() == SINGLE_DISPLAY_HP_FOLD) {
+    if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD) {
         auto uriCompatibleAppStrategy = AssembleUri(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY);
         helper->UnregisterObserver(uriCompatibleAppStrategy, observer);
     }
@@ -332,24 +335,43 @@ void SensorDataManager::ParseAppLogicalDeviceList(const std::string &compatibleA
         if (name.empty()) {
             continue;
         }
-        int32_t policy = 0;
-        if (value.contains("customLogicDirection")) {
-            nlohmann::json policyJson = value.at("customLogicDirection");
-            for (auto& [key, valueTmp] : policyJson.items()) {
-                if (valueTmp.is_number()) {
-                    policy = valueTmp.get<int32_t>();
-                }
-                SEN_HILOGD("policy:%{public}d", policy);
-            }
+        if (!value.contains("useLogicCamera")) {
+            continue;
         }
+        int32_t isOpenPolicy = ParseJsonValue(value, "useLogicCamera");
+        int32_t policy = ParseJsonValue(value, "customLogicDirection");
         CompatibleAppData data;
-        if (policy != 0) {
+        if (isOpenPolicy != 0) {
             data.name = name;
             data.policy = policy;
             SEN_HILOGI("name:%{public}s, policy:%{public}d", name.c_str(), policy);
             compatibleAppStrategyList_.emplace_back(data);
         }
     }
+}
+
+int32_t SensorDataManager::ParseJsonValue(const nlohmann::json &value, const std::string &strKey)
+{
+    int32_t tempValue = 0;
+    if (value.contains(strKey)) {
+        nlohmann::json policyJson = value.at(strKey);
+        for (auto& [key, valueTmp] : policyJson.items()) {
+            int32_t keyInt = -1;
+            auto res = std::from_chars(key.data(), key.data() + key.size(), keyInt);
+            if (res.ec != std::errc()) {
+                SEN_HILOGE("Failed to convert string %{public}s to number", key.c_str());
+                continue;
+            }
+            auto mode = static_cast<Sensors::FoldDisplayMode>(keyInt);
+            if (mode == Sensors::FoldDisplayMode::FULL || mode == Sensors::FoldDisplayMode::GLOBAL_FULL) {
+                if (valueTmp.is_number()) {
+                    tempValue = valueTmp.get<int32_t>();
+                }
+            }
+            SEN_HILOGI("parse json key:%{public}s, value:%{public}d", strKey.c_str(), tempValue);
+        }
+    }
+    return tempValue;
 }
 
 std::vector<CompatibleAppData> SensorDataManager::GetCompatibleAppStrategyList()

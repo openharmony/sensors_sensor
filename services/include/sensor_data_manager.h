@@ -74,6 +74,7 @@ private:
     sptr<SensorObserver> CreateObserver(const SensorObserver::UpdateFunc &func);
     void ParseCompatibleAppStrategyList(const std::string &compatibleAppStrategy);
     void ParseAppLogicalDeviceList(const std::string &compatibleAppStrategy);
+    int32_t ParseJsonValue(const nlohmann::json &value, const std::string &strKey);
     sptr<IRemoteObject> remoteObj_ { nullptr };
     sptr<SensorObserver> observer_ { nullptr };
     std::mutex compatibleAppStrategyMutex_;
