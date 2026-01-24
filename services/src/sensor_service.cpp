@@ -37,6 +37,7 @@
 #include "sensor_shake_control_manager.h"
 #include "sensor_data_manager.h"
 #include "sensor_dump.h"
+#include "sensor_utils.h"
 #include "system_ability_definition.h"
 
 #undef LOG_TAG
@@ -52,9 +53,6 @@ constexpr int32_t INVALID_PID = -1;
 constexpr int64_t MAX_EVENT_COUNT = 1000;
 constexpr int32_t SENSOR_ONLINE = 1;
 std::atomic_bool g_isRegister = false;
-constexpr int32_t SINGLE_DISPLAY_SMALL_FOLD = 4;
-constexpr int32_t SINGLE_DISPLAY_THREE_FOLD = 6;
-constexpr int32_t SINGLE_DISPLAY_HP_FOLD = 7;
 const std::string DEFAULTS_FOLD_TYPE = "0,0,0,0";
 const std::set<int32_t> g_systemApiSensorCall = {
     SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_HEADPOSTURE
@@ -260,7 +258,8 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
                 SEN_HILOGI("SENSOR_DATA_MGR already init");
                 return;
             }
-            if (SENSOR_DATA_MGR->Init()) {
+            int32_t deviceMode = GetDeviceType();
+            if (SENSOR_DATA_MGR->Init(deviceMode)) {
                 SEN_HILOGI("SENSOR_DATA_MGR init success");
                 isDataShareReady_ = true;
             } else {
