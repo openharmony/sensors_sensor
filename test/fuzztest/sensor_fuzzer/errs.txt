@@ -1,0 +1,449 @@
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+371
+HandleGetActiveSensorInfos(session, fdp);
+372
+break;
+373
+case ActionType::RESET_SENSORS:
+374
+HandleResetSensors(session, fdp);
+375
+break;
+376
+case ActionType::SUSPEND_SENSORS:
+377
+HandleSuspendSensors(session, fdp);
+378
+break;
+379
+case ActionType::RESUME_SENSORS:
+380
+HandleResumeSensors(session, fdp);
+381
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+374
+HandleResetSensors(session, fdp);
+375
+break;
+376
+case ActionType::SUSPEND_SENSORS:
+377
+HandleSuspendSensors(session, fdp);
+378
+break;
+379
+case ActionType::RESUME_SENSORS:
+380
+HandleResumeSensors(session, fdp);
+381
+break;
+382
+case ActionType::REGISTER_CALLBACK:
+383
+HandleRegisterCallback(session, fdp);
+384
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+344
+// ======= 执行单个动作 =======
+345
+static void ExecuteAction(ActionType action, FuzzSession &session,
+346
+FuzzedDataProvider &fdp)
+347
+{
+348
+switch (action) {
+349
+case ActionType::GET_ALL_SENSORS:
+350
+HandleGetAllSensors(session, fdp);
+351
+break;
+352
+case ActionType::SUBSCRIBE_SENSOR:
+353
+HandleSubscribeSensor(session, fdp);
+354
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+356
+HandleUnsubscribeSensor(session, fdp);
+357
+break;
+358
+case ActionType::ACTIVATE_SENSOR:
+359
+HandleActivateSensor(session, fdp);
+360
+break;
+361
+case ActionType::DEACTIVATE_SENSOR:
+362
+HandleDeactivateSensor(session, fdp);
+363
+break;
+364
+case ActionType::SET_BATCH:
+365
+HandleSetBatch(session, fdp);
+366
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+377
+HandleSuspendSensors(session, fdp);
+378
+break;
+379
+case ActionType::RESUME_SENSORS:
+380
+HandleResumeSensors(session, fdp);
+381
+break;
+382
+case ActionType::REGISTER_CALLBACK:
+383
+HandleRegisterCallback(session, fdp);
+384
+break;
+385
+case ActionType::UNREGISTER_CALLBACK:
+386
+HandleUnregisterCallback(session, fdp);
+387
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+368
+HandleSetMode(session, fdp);
+369
+break;
+370
+case ActionType::GET_ACTIVE_SENSOR_INFOS:
+371
+HandleGetActiveSensorInfos(session, fdp);
+372
+break;
+373
+case ActionType::RESET_SENSORS:
+374
+HandleResetSensors(session, fdp);
+375
+break;
+376
+case ActionType::SUSPEND_SENSORS:
+377
+HandleSuspendSensors(session, fdp);
+378
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+380
+HandleResumeSensors(session, fdp);
+381
+break;
+382
+case ActionType::REGISTER_CALLBACK:
+383
+HandleRegisterCallback(session, fdp);
+384
+break;
+385
+case ActionType::UNREGISTER_CALLBACK:
+386
+HandleUnregisterCallback(session, fdp);
+387
+break;
+388
+case ActionType::SET_DEVICE_STATUS:
+389
+HandleSetDeviceStatus(session, fdp);
+390
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+353
+HandleSubscribeSensor(session, fdp);
+354
+break;
+355
+case ActionType::UNSUBSCRIBE_SENSOR:
+356
+HandleUnsubscribeSensor(session, fdp);
+357
+break;
+358
+case ActionType::ACTIVATE_SENSOR:
+359
+HandleActivateSensor(session, fdp);
+360
+break;
+361
+case ActionType::DEACTIVATE_SENSOR:
+362
+HandleDeactivateSensor(session, fdp);
+363
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+386
+HandleUnregisterCallback(session, fdp);
+387
+break;
+388
+case ActionType::SET_DEVICE_STATUS:
+389
+HandleSetDeviceStatus(session, fdp);
+390
+break;
+391
+default:
+392
+break;
+393
+}
+394
+}
+395
+396
+// ======= 更新会话状态 =======
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+362
+HandleDeactivateSensor(session, fdp);
+363
+break;
+364
+case ActionType::SET_BATCH:
+365
+HandleSetBatch(session, fdp);
+366
+break;
+367
+case ActionType::SET_MODE:
+368
+HandleSetMode(session, fdp);
+369
+break;
+370
+case ActionType::GET_ACTIVE_SENSOR_INFOS:
+371
+HandleGetActiveSensorInfos(session, fdp);
+372
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+383
+HandleRegisterCallback(session, fdp);
+384
+break;
+385
+case ActionType::UNREGISTER_CALLBACK:
+386
+HandleUnregisterCallback(session, fdp);
+387
+break;
+388
+case ActionType::SET_DEVICE_STATUS:
+389
+HandleSetDeviceStatus(session, fdp);
+390
+break;
+391
+default:
+392
+break;
+393
+}
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+347
+{
+348
+switch (action) {
+349
+case ActionType::GET_ALL_SENSORS:
+350
+HandleGetAllSensors(session, fdp);
+351
+break;
+352
+case ActionType::SUBSCRIBE_SENSOR:
+353
+HandleSubscribeSensor(session, fdp);
+354
+break;
+355
+case ActionType::UNSUBSCRIBE_SENSOR:
+356
+HandleUnsubscribeSensor(session, fdp);
+357
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+365
+HandleSetBatch(session, fdp);
+366
+break;
+367
+case ActionType::SET_MODE:
+368
+HandleSetMode(session, fdp);
+369
+break;
+370
+case ActionType::GET_ACTIVE_SENSOR_INFOS:
+371
+HandleGetActiveSensorInfos(session, fdp);
+372
+break;
+373
+case ActionType::RESET_SENSORS:
+374
+HandleResetSensors(session, fdp);
+375
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+359
+HandleActivateSensor(session, fdp);
+360
+break;
+361
+case ActionType::DEACTIVATE_SENSOR:
+362
+HandleDeactivateSensor(session, fdp);
+363
+break;
+364
+case ActionType::SET_BATCH:
+365
+HandleSetBatch(session, fdp);
+366
+break;
+367
+case ActionType::SET_MODE:
+368
+HandleSetMode(session, fdp);
+369
+break;
+test/fuzztest/sensor_fuzzer/sensor_fuzzer.cpp
+G.FMT.13-CPP case/default语句相对switch缩进一层
+修改点个数 1
+Current indentation of case/default is [4], it should be [8].
+ 一般
+未解决
+ 规则详情
+ AI修改建议
+350
+HandleGetAllSensors(session, fdp);
+351
+break;
+352
+case ActionType::SUBSCRIBE_SENSOR:
+353
+HandleSubscribeSensor(session, fdp);
+354
+break;
+355
+case ActionType::UNSUBSCRIBE_SENSOR:
+356
+HandleUnsubscribeSensor(session, fdp);
+357
+break;
+358
+case ActionType::ACTIVATE_SENSOR:
+359
+HandleActivateSensor(session, fdp);
+360
+break;
