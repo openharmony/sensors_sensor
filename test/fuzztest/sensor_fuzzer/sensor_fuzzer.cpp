@@ -111,7 +111,7 @@ void SetUpPermissions()
         return;
     }
 
-    const char** perms = new (std::nothrow) const char*[PERM_ARRAY_SIZE];
+    const char** perms = new (std::nothrow) const char* [PERM_ARRAY_SIZE];
     if (perms == nullptr) {
         return;
     }
