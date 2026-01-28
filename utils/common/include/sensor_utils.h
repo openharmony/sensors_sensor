@@ -34,7 +34,17 @@ enum class DMDeviceStatus : uint32_t {
     STATUS_TENT_HOVER,
     STATUS_TENT,
     STATUS_GLOBAL_FULL,
-    STATUS_HOPE_FULL
+    STATUS_EXPAND,
+    STATUS_COORDINATION
+};
+
+enum class FoldDisplayMode: uint32_t {
+    UNKNOWN = 0,
+    FULL = 1,
+    MAIN = 2,
+    SUB = 3,
+    COORDINATION = 4,
+    GLOBAL_FULL = 5,
 };
 } // namespace Sensors
 } // namespace OHOS

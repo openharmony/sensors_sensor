@@ -323,7 +323,7 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
             if (it != appList.end()) {
                 uint32_t state = clientInfo_.GetDeviceStatus();
                 if (clientInfo_.GetDeviceType() == SINGLE_DISPLAY_HP_FOLD &&
-                    static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_HOPE_FULL) {
+                    static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_EXPAND) {
                         sensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
                 }
                 if (clientInfo_.GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD) {
