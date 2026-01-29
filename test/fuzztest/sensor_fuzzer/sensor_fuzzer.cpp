@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ using OHOS::Security::AccessToken::AccessTokenID;
 
 namespace {
 
-// ======= 常量定义区 =======
 constexpr size_t MAX_OPS = 20;
 constexpr size_t MAX_USER_NAME_LEN = 64;
 constexpr int32_t DEFAULT_SENSOR_TYPE = SENSOR_TYPE_ID_ACCELEROMETER;
@@ -57,7 +56,6 @@ constexpr int32_t PERM_INDEX_ACCELEROMETER = 0;
 constexpr int32_t PERM_INDEX_GYROSCOPE = 1;
 constexpr int32_t PERM_INDEX_MANAGE_SENSOR = 2;
 
-// ======= 动作类型枚举 =======
 enum class ActionType : uint8_t {
     GET_ALL_SENSORS = 0,
     SUBSCRIBE_SENSOR,
@@ -76,7 +74,6 @@ enum class ActionType : uint8_t {
     ACTION_MAX
 };
 
-// ======= 辅助结构体：存储会话状态 =======
 struct FuzzSession {
     int32_t sensorTypeId;
     int32_t sensorMode;
@@ -94,13 +91,11 @@ void SensorDataCallbackImpl(SensorEvent* event)
     if (event == nullptr) {
         return;
     }
-    // 空实现，只用于测试
 }
 
 // ======= 传感器活跃信息回调 =======
 void SensorActiveInfoCallbackImpl(SensorActiveInfo& activeInfo)
 {
-    // 空实现，只用于测试
 }
 
 // ======= 权限设置 =======
@@ -110,16 +105,13 @@ void SetUpPermissions()
     if (isPermSet) {
         return;
     }
-
     const char** perms = new (std::nothrow) const char* [PERM_ARRAY_SIZE];
     if (perms == nullptr) {
         return;
     }
-
     perms[PERM_INDEX_ACCELEROMETER] = "ohos.permission.ACCELEROMETER";
     perms[PERM_INDEX_GYROSCOPE] = "ohos.permission.GYROSCOPE";
     perms[PERM_INDEX_MANAGE_SENSOR] = "ohos.permission.MANAGE_SENSOR";
-
     TokenInfoParams infoInstance = {
         .dcapsNum = 0,
         .permsNum = PERMS_NUM,
@@ -130,11 +122,9 @@ void SetUpPermissions()
         .processName = "SensorFuzzTest",
         .aplStr = "system_core",
     };
-
     uint64_t tokenId = GetAccessTokenId(&infoInstance);
     SetSelfTokenID(tokenId);
     AccessTokenKit::ReloadNativeTokenInfo();
-
     delete[] perms;
     isPermSet = true;
 }
@@ -161,37 +151,23 @@ bool IsValidSensorTypeId(int32_t sensorTypeId)
 FuzzSession InitSession(FuzzedDataProvider& fdp)
 {
     FuzzSession session;
-
-    // 设置权限
     SetUpPermissions();
-
-    // 获取有效传感器ID
     session.sensorTypeId = fdp.ConsumeIntegral<int32_t>();
     if (!IsValidSensorTypeId(session.sensorTypeId)) {
         session.sensorTypeId = DEFAULT_SENSOR_TYPE;
     }
-
-    // 初始化其他参数
     session.sensorMode = fdp.ConsumeIntegralInRange<int32_t>(
         static_cast<int32_t>(SENSOR_DEFAULT_MODE), static_cast<int32_t>(SENSOR_FIFO_MODE));
-
     session.pid = fdp.ConsumeIntegralInRange<int32_t>(MIN_PID, MAX_PID);
-
     session.samplingInterval = fdp.ConsumeIntegralInRange<int64_t>(MIN_SAMPLING_INTERVAL, MAX_SAMPLING_INTERVAL);
-
     session.reportInterval = fdp.ConsumeIntegralInRange<int64_t>(MIN_SAMPLING_INTERVAL, MAX_SAMPLING_INTERVAL);
-
-    // 确保reportInterval >= samplingInterval
     if (session.reportInterval < session.samplingInterval) {
         session.reportInterval = session.samplingInterval;
     }
-
-    // 初始化SensorUser
     std::string userName = fdp.ConsumeRandomLengthString(MAX_USER_NAME_LEN);
     if (userName.empty()) {
         userName = "SensorFuzzTest";
     }
-    // 安全复制字符串，确保不越界
     size_t copyLen = std::min(userName.length(), size_t(NAME_MAX_LEN - 1));
     errno_t ret = memcpy_s(session.sensorUser.name, NAME_MAX_LEN, userName.c_str(), copyLen);
     if (ret != EOK) {
@@ -202,16 +178,12 @@ FuzzSession InitSession(FuzzedDataProvider& fdp)
     session.sensorUser.callback = SensorDataCallbackImpl;
     session.sensorUser.plugCallback = nullptr;
     session.sensorUser.userData = nullptr;
-
     session.isSubscribed = false;
     session.isActivated = false;
-
     return session;
 }
 
-// ======= 各种动作处理函数 =======
-
-// 动作1: 获取所有传感器
+// 枚举系统传感器及元数据，供订阅前校验类型
 static void HandleGetAllSensors(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     SensorInfo* sensorInfo = nullptr;
@@ -219,7 +191,7 @@ static void HandleGetAllSensors(FuzzSession& session, FuzzedDataProvider& fdp)
     (void)GetAllSensors(&sensorInfo, &count);
 }
 
-// 动作2: 订阅传感器
+// 注册订阅、建立数据通道，须先订阅才能激活
 static void HandleSubscribeSensor(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     if (!session.isSubscribed) {
@@ -228,7 +200,7 @@ static void HandleSubscribeSensor(FuzzSession& session, FuzzedDataProvider& fdp)
     }
 }
 
-// 动作3: 取消订阅传感器
+// 解除订阅并释放通道，已激活则一并停用
 static void HandleUnsubscribeSensor(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     if (session.isSubscribed) {
@@ -238,7 +210,7 @@ static void HandleUnsubscribeSensor(FuzzSession& session, FuzzedDataProvider& fd
     }
 }
 
-// 动作4: 激活传感器
+// 开启数据上报至回调，须先订阅
 static void HandleActivateSensor(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     if (session.isSubscribed && !session.isActivated) {
@@ -247,7 +219,7 @@ static void HandleActivateSensor(FuzzSession& session, FuzzedDataProvider& fdp)
     }
 }
 
-// 动作5: 停用传感器
+// 停止上报但保持订阅，可再次激活
 static void HandleDeactivateSensor(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     if (session.isActivated) {
@@ -256,23 +228,21 @@ static void HandleDeactivateSensor(FuzzSession& session, FuzzedDataProvider& fdp
     }
 }
 
-// 动作6: 设置采样和上报间隔
+// 设置采样/批量上报间隔，影响功耗与时效，仅订阅后有效
 static void HandleSetBatch(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     if (session.isSubscribed) {
         // 重新生成间隔值
         int64_t newSampling = fdp.ConsumeIntegralInRange<int64_t>(MIN_SAMPLING_INTERVAL, MAX_SAMPLING_INTERVAL);
         int64_t newReport = fdp.ConsumeIntegralInRange<int64_t>(MIN_SAMPLING_INTERVAL, MAX_SAMPLING_INTERVAL);
-
         if (newReport < newSampling) {
             newReport = newSampling;
         }
-
         (void)SetBatch(session.sensorTypeId, &session.sensorUser, newSampling, newReport);
     }
 }
 
-// 动作7: 设置传感器模式
+// 设置上报模式（默认/FIFO），影响缓冲策略，仅订阅后有效
 static void HandleSetMode(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     if (session.isSubscribed) {
@@ -282,7 +252,7 @@ static void HandleSetMode(FuzzSession& session, FuzzedDataProvider& fdp)
     }
 }
 
-// 动作8: 获取激活传感器信息
+// 查询指定进程已激活传感器列表及采样参数
 static void HandleGetActiveSensorInfos(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     SensorActiveInfo* activeInfos = nullptr;
@@ -290,37 +260,37 @@ static void HandleGetActiveSensorInfos(FuzzSession& session, FuzzedDataProvider&
     (void)GetActiveSensorInfos(session.pid, &activeInfos, &count);
 }
 
-// 动作9: 重置传感器
+// 重置休眠态传感器，用于异常恢复
 static void HandleResetSensors(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     (void)ResetSensors();
 }
 
-// 动作10: 暂停传感器
+// 按进程暂停其全部传感器上报（如切后台）
 static void HandleSuspendSensors(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     (void)SuspendSensors(session.pid);
 }
 
-// 动作11: 恢复传感器
+// 恢复该进程传感器上报
 static void HandleResumeSensors(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     (void)ResumeSensors(session.pid);
 }
 
-// 动作12: 注册活跃信息回调
+// 订阅活跃信息回调，接收激活/停用等通知
 static void HandleRegisterCallback(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     (void)Register(SensorActiveInfoCallbackImpl);
 }
 
-// 动作13: 取消注册回调
+// 取消活跃信息回调
 static void HandleUnregisterCallback(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     (void)Unregister(SensorActiveInfoCallbackImpl);
 }
 
-// 动作14: 设置设备状态
+// 通知设备状态（如熄屏、飞行模式），影响传感器策略
 static void HandleSetDeviceStatus(FuzzSession& session, FuzzedDataProvider& fdp)
 {
     uint32_t deviceStatus = fdp.ConsumeIntegral<uint32_t>();
@@ -384,14 +354,10 @@ static void UpdateSessionState(FuzzSession& session, FuzzedDataProvider& fdp)
     if (!fdp.ConsumeBool()) {
         return;
     }
-
-    // 重新验证并更新传感器ID
     int32_t newSensorId = fdp.ConsumeIntegral<int32_t>();
     if (!IsValidSensorTypeId(newSensorId)) {
         return;
     }
-
-    // 如果已订阅旧传感器，先取消
     if (session.isSubscribed) {
         HandleUnsubscribeSensor(session, fdp);
     }
@@ -405,10 +371,7 @@ static void ExecuteOperationSequence(FuzzSession& session, FuzzedDataProvider& f
         uint8_t actionValue = fdp.ConsumeIntegral<uint8_t>() % static_cast<uint8_t>(ActionType::ACTION_MAX);
         ActionType action = static_cast<ActionType>(actionValue);
         ExecuteAction(action, session, fdp);
-
         UpdateSessionState(session, fdp);
-
-        // 短暂休眠，模拟真实使用
         if (fdp.ConsumeBool() && i < ops - 1) {
             int32_t sleepMs = fdp.ConsumeIntegralInRange<int32_t>(MIN_SLEEP_MS, MAX_SLEEP_MS);
             std::this_thread::sleep_for(std::chrono::milliseconds(sleepMs));
@@ -422,7 +385,6 @@ static void CleanupSession(FuzzSession& session, FuzzedDataProvider& fdp)
     if (!session.isSubscribed) {
         return;
     }
-
     if (session.isActivated) {
         HandleDeactivateSensor(session, fdp);
     }
@@ -445,11 +407,9 @@ bool SensorAgentFuzzTest(const uint8_t* data, size_t size)
     if (data == nullptr || size == 0) {
         return false;
     }
-
     FuzzedDataProvider fdp(data, size);
     FuzzSession session = InitSession(fdp);
     DriveSensorAgent(session, fdp);
-
     return true;
 }
 
