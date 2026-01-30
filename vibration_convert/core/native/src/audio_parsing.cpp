@@ -89,7 +89,6 @@ int32_t AudioParsing::ParseAudioFile()
         SEN_HILOGE("Invalid parameter");
         return Sensors::PARAMETER_ERROR;
     }
-
     ssize_t ret = read(rawFd_.fd, &attributeChunk_, sizeof(AttributeChunk));
     if (ret <= 0) {
         SEN_HILOGE("read audio attribute failed, errno:%{public}d", errno);
@@ -105,13 +104,11 @@ int32_t AudioParsing::ParseAudioFile()
     int32_t *dataBuffer = static_cast<int32_t *>(malloc(attributeChunk_.dataSize));
     CHKPR(dataBuffer, Sensors::ERROR);
     (void)memset_s(dataBuffer, attributeChunk_.dataSize, 0, attributeChunk_.dataSize);
-
     if (rawFd_.length < attributeChunk_.dataSize) {
         free(dataBuffer);
         SEN_HILOGE("Invalid parameter");
         return Sensors::PARAMETER_ERROR;
     }
-
     ret = read(rawFd_.fd, dataBuffer, attributeChunk_.dataSize);
     if (ret <= 0) {
         free(dataBuffer);
@@ -180,11 +177,13 @@ int32_t AudioParsing::ConvertAudioToHaptic(const AudioSetting &audioSetting, std
 {
     CALL_LOG_ENTER;
     if (audioData_.audioDatas.size() < MIN_SAMPLE_COUNT) {
-        SEN_HILOGE("audioDatas less then MIN_SAMPLE_COUNT, audioDatas.size():%{public}zu", audioData_.audioDatas.size());
+        SEN_HILOGE("audioDatas less then MIN_SAMPLE_COUNT, audioDatas.size():%{public}zu",
+            audioData_.audioDatas.size());
         return Sensors::ERROR;
     }
     VibrationConvertCore vibrationConvertCore;
-    if (vibrationConvertCore.ConvertAudioToHaptic(audioSetting, audioData_.audioDatas, hapticEvents) != Sensors::SUCCESS) {
+    if (vibrationConvertCore.ConvertAudioToHaptic(audioSetting, audioData_.audioDatas, hapticEvents) !=
+        Sensors::SUCCESS) {
         SEN_HILOGE("ConvertAudioToHaptic failed");
         return Sensors::ERROR;
     }

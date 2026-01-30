@@ -297,7 +297,7 @@ double VibrationConvertCore::CalcRmsLowerData(size_t dataSize, const std::vector
     if (newDrwIdxs.size() > 0) {
         for (int32_t i = 0; i < RMSE_LOWDELTA_ITERATION_TIMES; i++) {
             int32_t j = newDrwIdxs[0];
-            lowerDelta = rmseRange * (RMSE_LOWDELTA_RATIO_HIGH - i * RMSE_LOWDELTA_RATIO_STEP ) + rmseMin;
+            lowerDelta = rmseRange * (RMSE_LOWDELTA_RATIO_HIGH - i * RMSE_LOWDELTA_RATIO_STEP) + rmseMin;
             if ((rmses[j] > lowerDelta) || (rmses[j + 1] > lowerDelta)) {
                 break;
             }
@@ -868,9 +868,11 @@ void VibrationConvertCore::OutputTransientEvents(const std::vector<UnionTransien
         return;
     }
     if (onsetBacktrackFlag) {
-        OutputTransientEventsAlign(unionTransientEvents, intensityDatas, freqNorms, transientIndexs, transientEventTimes);
+        OutputTransientEventsAlign(unionTransientEvents, intensityDatas, freqNorms, transientIndexs,
+            transientEventTimes);
     } else {
-        OutputTransientEventsDirect(unionTransientEvents, intensityDatas, freqNorms, transientIndexs, transientEventTimes);
+        OutputTransientEventsDirect(unionTransientEvents, intensityDatas, freqNorms, transientIndexs,
+            transientEventTimes);
     }
 }
 
@@ -998,7 +1000,7 @@ void VibrationConvertCore::OutputTransientEventsDirect(const std::vector<UnionTr
             int32_t index = unionTransientEvents[i].onsetIdx;
             transientEventTimes.push_back(intensityDatas[index].rmseTimeNorm);
             transientIndexs.push_back(index);
-             AddTransientEventData(TransientEvent(intensityDatas[index].rmseTimeNorm,
+            AddTransientEventData(TransientEvent(intensityDatas[index].rmseTimeNorm,
                 intensityDatas[index].rmseIntensityNorm, freqNorms[index]));
         }
     }
@@ -1137,8 +1139,10 @@ void VibrationConvertCore::CombinateContinuousEvents(const std::vector<Continuou
             }
         }
         if (slopCmbFlag && ((begIdx != 0) && (begIdx != (k - 1)))) {
-            double slope1 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity) / FRAME_DURATION;
-            double slope2 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity) / FRAME_DURATION;
+            double slope1 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity) /
+                FRAME_DURATION;
+            double slope2 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity) /
+                FRAME_DURATION;
             if (((slope1 * slope2) > 0) && (std::abs(slope2 - slope1) < slopDelta)) {
                 ++mergeCnt;
                 ++begIdx;
