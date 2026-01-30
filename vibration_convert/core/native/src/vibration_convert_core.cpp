@@ -1139,10 +1139,10 @@ void VibrationConvertCore::CombinateContinuousEvents(const std::vector<Continuou
             }
         }
         if (slopCmbFlag && ((begIdx != 0) && (begIdx != (k - 1)))) {
-            double slope1 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity)
-                / FRAME_DURATION;
-            double slope2 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity)
-                / FRAME_DURATION;
+            double slope1 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity) /
+                FRAME_DURATION;
+            double slope2 = (continuousEvents[begIdx].intensity - continuousEvents[begIdx - 1].intensity) /
+                FRAME_DURATION;
             if (((slope1 * slope2) > 0) && (std::abs(slope2 - slope1) < slopDelta)) {
                 ++mergeCnt;
                 ++begIdx;

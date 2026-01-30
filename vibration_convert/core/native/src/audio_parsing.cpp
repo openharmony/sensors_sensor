@@ -182,8 +182,8 @@ int32_t AudioParsing::ConvertAudioToHaptic(const AudioSetting &audioSetting, std
         return Sensors::ERROR;
     }
     VibrationConvertCore vibrationConvertCore;
-    if (vibrationConvertCore.ConvertAudioToHaptic(audioSetting, audioData_.audioDatas, hapticEvents)
-        != Sensors::SUCCESS) {
+    if (vibrationConvertCore.ConvertAudioToHaptic(audioSetting, audioData_.audioDatas, hapticEvents) !=
+        Sensors::SUCCESS) {
         SEN_HILOGE("ConvertAudioToHaptic failed");
         return Sensors::ERROR;
     }
