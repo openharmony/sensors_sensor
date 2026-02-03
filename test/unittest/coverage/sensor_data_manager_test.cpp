@@ -30,8 +30,8 @@ using namespace testing::ext;
 using namespace OHOS::HiviewDFX;
 
 namespace {
-    static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
-    constexpr int32_t APP_LIST_SIZE_ZERO = 0;
+static sptr<IRemoteObject> g_remote = new (std::nothrow) IPCObjectStub();
+constexpr int32_t APP_LIST_SIZE_ZERO = 0;
 } // namespace
 
 class SensorDataManagerTest : public testing::Test {
@@ -52,6 +52,7 @@ void SensorDataManagerTest::TearDown() {}
 
 HWTEST_F(SensorDataManagerTest, InitTest_001, TestSize.Level1)
 {
+    SEN_HILOGI("InitTest_001 in");
     int32_t deviceMode = SINGLE_DISPLAY_THREE_FOLD;
     bool ret = SENSOR_DATA_MGR->Init(deviceMode);
     SEN_HILOGI("ret:%{public}s", ret ? "true" : "false");
@@ -89,7 +90,7 @@ HWTEST_F(SensorDataManagerTest, CreateObserverTest_001, TestSize.Level1)
     SensorObserver::UpdateFunc updateFunc = [&]() {
     };
     auto observer = SENSOR_DATA_MGR->CreateObserver(updateFunc);
-    EXPECT_EQ(observer, nullptr);
+    EXPECT_NE(observer, nullptr);
 }
 
 HWTEST_F(SensorDataManagerTest, ParseCompatibleAppStrategyListTest_001, TestSize.Level1)
@@ -110,7 +111,7 @@ HWTEST_F(SensorDataManagerTest, ParseCompatibleAppStrategyListTest_001, TestSize
             "name": "com.test.app6",
             "mode": 8,
             "exemptNaturalDirectionCorrect": false
-        },
+        }
     })";
     SENSOR_DATA_MGR->ParseCompatibleAppStrategyList(jsonStr);
     EXPECT_NE(SENSOR_DATA_MGR->compatibleAppStrategyList_.size(), APP_LIST_SIZE_ZERO);
@@ -139,7 +140,7 @@ HWTEST_F(SensorDataManagerTest, CreateDataShareHelperTest_002, TestSize.Level1)
     SENSOR_DATA_MGR->Init(SINGLE_DISPLAY_THREE_FOLD);
     std::string uriProxy = "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
     auto helper = SENSOR_DATA_MGR->CreateDataShareHelper(uriProxy);
-    EXPECT_EQ(helper, nullptr);
+    EXPECT_NE(helper, nullptr);
 }
 
 HWTEST_F(SensorDataManagerTest, ReleaseDataShareHelperTest_001, TestSize.Level1)
@@ -157,7 +158,7 @@ HWTEST_F(SensorDataManagerTest, ReleaseDataShareHelperTest_002, TestSize.Level1)
     std::string uriProxy = "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
     auto helper = SENSOR_DATA_MGR->CreateDataShareHelper(uriProxy);
     bool ret =  SENSOR_DATA_MGR->ReleaseDataShareHelper(helper);
-    EXPECT_NE(helper, false);
+    EXPECT_NE(ret, false);
 }
 
 HWTEST_F(SensorDataManagerTest, RegisterObserverTest_001, TestSize.Level1)
@@ -205,7 +206,7 @@ HWTEST_F(SensorDataManagerTest, AssembleUriTest_001, TestSize.Level1)
 {
     SEN_HILOGI("AssembleUriTest_001 in");
     std::string uriStr = "test";
-    EXPECT_NO_FATAL_FAILURE(SENSOR_DATA_MGR->AssembleUri(observer));
+    EXPECT_NO_FATAL_FAILURE(SENSOR_DATA_MGR->AssembleUri(uriStr));
 }
 
 HWTEST_F(SensorDataManagerTest, ParseAppLogicalDeviceListTest_001, TestSize.Level1)
@@ -222,7 +223,7 @@ HWTEST_F(SensorDataManagerTest, ParseAppLogicalDeviceListTest_001, TestSize.Leve
                 "1": 3
             },
             "cameraPageDisable": {
-                "1": 2
+                "1": 1
             },
             "cameraPageMode": {
                 "1": 2
