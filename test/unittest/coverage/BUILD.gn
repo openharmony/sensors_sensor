@@ -70,6 +70,39 @@ ohos_unittest("ReportDataCallbackTest") {
   ]
 }
 
+ohos_unittest("SensorDataManagerTest") {
+  module_out_path = "sensor/sensor/coverage"
+
+  sources = ["$SUBSYSTEM_DIR/test/unittest/coverage/sensor_data_manager_test.cpp"]
+  include_dirs = [
+    "${target_gen_dir}",
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/services/include",
+  ]
+
+  cflags = [
+    "-Dprivate=public",
+    "-Dprotected=public",
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/services:libsensor_service_static",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+    "init:libbeget_proxy",
+  ]
+}
+
 ohos_unittest("SensorShakeControlManagerTest") {
   module_out_path = "sensor/sensor/coverage"
 
