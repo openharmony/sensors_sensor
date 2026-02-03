@@ -72,7 +72,6 @@ ohos_unittest("ReportDataCallbackTest") {
 
 ohos_unittest("SensorDataManagerTest") {
   module_out_path = "sensor/sensor/coverage"
-
   sources = ["$SUBSYSTEM_DIR/test/unittest/coverage/sensor_data_manager_test.cpp"]
   include_dirs = [
     "${target_gen_dir}",
@@ -91,14 +90,15 @@ ohos_unittest("SensorDataManagerTest") {
 
   deps = [
     "$SUBSYSTEM_DIR/services:libsensor_service_static",
-    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "data_share::datashare_consumer",
     "googletest:gmock",
     "googletest:gtest_main",
     "hilog:libhilog",
+    "ipc:ipc_single",
     "init:libbeget_proxy",
   ]
 }
