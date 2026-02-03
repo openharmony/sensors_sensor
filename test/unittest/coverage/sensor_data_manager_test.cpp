@@ -157,7 +157,7 @@ HWTEST_F(SensorDataManagerTest, ReleaseDataShareHelperTest_002, TestSize.Level1)
     SENSOR_DATA_MGR->Init(SINGLE_DISPLAY_THREE_FOLD);
     std::string uriProxy = "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
     auto helper = SENSOR_DATA_MGR->CreateDataShareHelper(uriProxy);
-    bool ret =  SENSOR_DATA_MGR->ReleaseDataShareHelper(helper);
+    bool ret = SENSOR_DATA_MGR->ReleaseDataShareHelper(helper);
     EXPECT_NE(ret, false);
 }
 
