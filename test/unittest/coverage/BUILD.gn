@@ -135,6 +135,7 @@ group("unittest") {
   deps = [
     ":ReportDataCallbackTest",
     ":SensorBasicDataChannelTest",
+    ":SensorDataManagerTest",
     ":SensorShakeControlManagerTest",
   ]
 }
