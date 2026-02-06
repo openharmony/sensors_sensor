@@ -1432,6 +1432,15 @@ struct Options {
      * @since 11
      */
     interval: MapOption;
+
+    /**
+     * Parameters of sensor on the device.
+     * @type { SensorInfoParam }
+     * @syscap SystemCapability.Sensors.Sensor
+     * @atomicservice
+     * @since 19
+     */
+    sensorInfoParam: Optional<SensorInfoParam>;
 }
 
 struct SensorInfoParam {
