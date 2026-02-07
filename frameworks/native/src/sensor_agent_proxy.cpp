@@ -709,7 +709,7 @@ int32_t SensorAgentProxy::Unregister(SensorActiveInfoCB callback)
 int32_t SensorAgentProxy::ResetSensors() const
 {
     SensorXcollie sensorXcollie("SensorAgentProxy:ResetSensors", XCOLLIE_TIMEOUT_5S);
-    ret = SEN_CLIENT.ResetSensors();
+    int32_t ret = SEN_CLIENT.ResetSensors();
     if (ret != ERR_OK) {
         SEN_HILOGE("Reset sensors failed, ret:%{public}d", ret);
     }
