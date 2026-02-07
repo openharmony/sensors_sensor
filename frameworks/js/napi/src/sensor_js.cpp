@@ -1493,8 +1493,12 @@ static napi_value GetSingleSensorSync(napi_env env, napi_callback_info info)
     napi_get_undefined(env, &result);
     napi_value thisVar = nullptr;
     napi_status status = napi_get_cb_info(env, info, &argc, args, &thisVar, nullptr);
-    if (status != napi_ok || argc == 0) {
-        ThrowErr(env, PARAMETER_ERROR, "napi_get_cb_info fail or number of parameter invalid");
+    if (status != napi_ok) {
+        ThrowErr(env, PARAMETER_ERROR, "Get the parameter info fail");
+        return result;
+    }
+    if (argc == 0) {
+        ThrowErr(env, PARAMETER_ERROR, "Number of parameter invalid");
         return result;
     }
     int32_t sensorTypeId = INVALID_SENSOR_TYPE;

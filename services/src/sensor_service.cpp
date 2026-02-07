@@ -233,7 +233,7 @@ int32_t SensorService::SubscribeCommonEvent(const std::string &eventName,
 } // LCOV_EXCL_STOP
 
 void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
-{
+{ // LCOV_EXCL_START
     const auto &want = data.GetWant();
     std::string action = want.GetAction();
     if (action == "usual.event.BOOT_COMPLETED") {
@@ -245,7 +245,7 @@ void SensorService::OnReceiveBootEvent(const EventFwk::CommonEventData &data)
             InitShakeControl();
         }
     }
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
 { // LCOV_EXCL_START
@@ -267,7 +267,7 @@ void SensorService::OnReceiveEvent(const EventFwk::CommonEventData &data)
             }
         }
     }
-}
+} // LCOV_EXCL_STOP
 
 void SensorService::OnReceiveUserSwitchEvent(const EventFwk::CommonEventData &data)
 {
@@ -287,7 +287,7 @@ bool SensorService::LoadSecurityPrivacyManager()
         return false;
     }
     return true;
-} // LCOV_EXCL_STOP
+}
 
 void SensorService::UpdateDeviceStatus()
 { // LCOV_EXCL_START
@@ -296,6 +296,10 @@ void SensorService::UpdateDeviceStatus()
     auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
     if (res.ec != std::errc()) {
         SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
+        return;
+    }
+    if (statusNum < 0) {
+        SEN_HILOGE("Invalid device status:%{public}d", statusNum);
         return;
     }
     uint32_t status = static_cast<uint32_t>(statusNum);
@@ -729,7 +733,7 @@ ErrCode SensorService::SensorReportEvent(const SensorDescription &sensorDesc, in
 ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_t pid)
 {
     CALL_LOG_ENTER;
-    if (!(CheckSensorId(sensorDesc) || ((!CheckSensorId(sensorDesc)) && clientInfo_.GetSensorState(sensorDesc)))) {
+    if ((!CheckSensorId(sensorDesc)) && (!clientInfo_.GetSensorState(sensorDesc))) {
         SEN_HILOGE("sensorDesc is invalid");
         return ERR_NO_INIT;
     }
@@ -760,7 +764,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     clientInfo_.ClearDataQueue(sensorDesc);
     int32_t ret = sensorManager_.AfterDisableSensor(sensorDesc);
 #ifdef MEMMGR_ENABLE
-    if (isMemoryMgrServiceActive_ && !clientInfo_.IsClientSubscribe() && isCritical_) {
+    if (isMemoryMgrServiceActive_ && !clientInfo_.IsSubscribe() && isCritical_) {
         if (Memory::MemMgrClient::GetInstance().SetCritical(getpid(), false, SENSOR_SERVICE_ABILITY_ID) != ERR_OK) {
             SEN_HILOGE("SetCritical failed");
             return ret;

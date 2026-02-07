@@ -780,22 +780,6 @@ void SensorServiceClient::Disconnect()
     Close();
 }
 
-int32_t SensorServiceClient::CreateSocketClientFd(int32_t &clientFd)
-{
-#ifdef HIVIEWDFX_HITRACE_ENABLE
-    StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
-#endif // HIVIEWDFX_HITRACE_ENABLE
-    CHKPR(sensorClientStub_, INVALID_POINTER);
-    auto remoteObject = sensorClientStub_->AsObject();
-    CHKPR(remoteObject, INVALID_POINTER);
-    int ret = sensorServer_->CreateSocketChannel(remoteObject, clientFd);
-    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL, ret);
-#ifdef HIVIEWDFX_HITRACE_ENABLE
-    FinishTrace(HITRACE_TAG_SENSORS);
-#endif // HIVIEWDFX_HITRACE_ENABLE
-    return ret;
-}
-
 int32_t SensorServiceClient::CreateSocketChannel()
 {
     CALL_LOG_ENTER;
@@ -807,8 +791,14 @@ int32_t SensorServiceClient::CreateSocketChannel()
     std::lock_guard<std::mutex> clientLock(clientMutex_);
     CHKPR(sensorServer_, ERROR);
     int32_t clientFd = -1;
-    ret = CreateSocketClientFd(clientFd);
+#ifdef HIVIEWDFX_HITRACE_ENABLE
+    StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
+#endif // HIVIEWDFX_HITRACE_ENABLE
+    CHKPR(sensorClientStub_, INVALID_POINTER);
+    int ret = sensorServer_->CreateSocketChannel(sensorClientStub_->AsObject(), clientFd);
+    WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL, ret);
     fdsan_exchange_owner_tag(clientFd, 0, TAG);
+    FinishTrace(HITRACE_TAG_SENSORS);
     if (ret != ERR_OK || clientFd < 0) {
         Close();
         SEN_HILOGE("Create socket channel failed, ret:%{public}d", ret);

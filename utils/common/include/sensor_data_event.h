@@ -59,14 +59,14 @@ struct ExtraSensorInfo {
 };
 
 struct SensorPlugData {
-    int32_t deviceId;          /**< Device ID */
-    int32_t sensorTypeId;      /**< Sensor type ID */
-    int32_t sensorId;          /**< Sensor ID */
-    int32_t location;          /**< Is the device a local device or an external device */
-    std::string deviceName;    /**< Device name */
-    int32_t status;            /**< Device on or out status */
-    int32_t reserved;          /**< Reserved */
-    int64_t timestamp;         /**< Time when sensor plug data was reported */
+    int32_t deviceId = -1;          /**< Device ID */
+    int32_t sensorTypeId = -1;      /**< Sensor type ID */
+    int32_t sensorId = -1;          /**< Sensor ID */
+    int32_t location = -1;          /**< Is the device a local device or an external device */
+    std::string deviceName = "";    /**< Device name */
+    int32_t status = -1;            /**< Device on or out status */
+    int32_t reserved = -1;          /**< Reserved */
+    int64_t timestamp = -1;         /**< Time when sensor plug data was reported */
 };
 } // namespace Sensors
 } // namespace OHOS

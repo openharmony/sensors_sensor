@@ -52,9 +52,9 @@ constexpr int32_t DEFAULT_SENSORID = 0;
 constexpr int32_t DEFAULT_LOCATION = 1;
 static int32_t localDeviceId_ = -1;
 #endif // BUILD_VARIANT_ENG
-constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 constexpr uint32_t CONVERT_ROTATION_270 = 3;
 constexpr int32_t CONVERT_ROTATION_0 = 0;
+constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 } // namespace
 
 int32_t SensorHdiConnection::ConnectHdi()
@@ -63,7 +63,7 @@ int32_t SensorHdiConnection::ConnectHdi()
     int32_t ret = ConnectHdiService();
     if (ret != ERR_OK) {
         SEN_HILOGE("Connect hdi service failed, try to connect compatible connection, ret:%{public}d", ret);
-#ifdef BUILD_VARIANT_ENG 
+#ifdef BUILD_VARIANT_ENG
         iSensorHdiConnection_ = std::make_unique<CompatibleConnection>();
         ret = ConnectHdiService();
         if (ret != ERR_OK) {
@@ -102,7 +102,7 @@ int32_t SensorHdiConnection::TransformSensorData(uint32_t state, uint32_t policy
     CHKPR(iSensorHdiConnection_, CONNECT_TRANSFORM_ERR);
     CHKPR(sensorData, ERROR);
     if (policy == CONVERT_ROTATION_0 || policy > CONVERT_ROTATION_270) {
-        SEN_HILOGE("No need to convert sensor data");
+        SEN_HILOGD("No need to convert sensor data");
         return ERR_OK;
     }
     int32_t ret = iSensorHdiConnection_->TransformSensorData(state, policy, sensorData);
