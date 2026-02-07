@@ -105,8 +105,8 @@ __attribute__((no_sanitize("cfi"))) void MotionTransformIfRequired(const std::st
 
 __attribute__((no_sanitize("cfi"))) void MotionSensorRevision(uint32_t state, SensorData* sensorData)
 {
-    if (g_motionSensorRevision == nullptr) {
-        SEN_HILOGD("g_motionSensorRevision is nullptr");
+    if (g_motionSensorRevision == nullptr || sensorData == nullptr) {
+        SEN_HILOGD("g_motionSensorRevision or sensorData is nullptr");
         return;
     }
     MotionSensorRevisionPtr func = (MotionSensorRevisionPtr)(dlsym(g_motionSensorRevision, "RevisionSensorData"));

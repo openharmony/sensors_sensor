@@ -40,11 +40,10 @@ std::unordered_map<int32_t, std::string> PermissionUtil::sensorPermissions_ = {
 
 int32_t PermissionUtil::CheckSensorPermission(AccessTokenID callerToken, int32_t sensorTypeId)
 {
-    auto iter = sensorPermissions_.find(sensorTypeId);
-    if (iter == sensorPermissions_.end()) {
+    if (sensorPermissions_.find(sensorTypeId) == sensorPermissions_.end()) {
         return PERMISSION_GRANTED;
     }
-    std::string permissionName = iter->second;
+    std::string permissionName = sensorPermissions_[sensorTypeId];
     int32_t ret = AccessTokenKit::VerifyAccessToken(callerToken, permissionName);
     if ((permissionName == ACTIVITY_MOTION_PERMISSION)
         || (permissionName == READ_HEALTH_DATA_PERMISSION)) {
