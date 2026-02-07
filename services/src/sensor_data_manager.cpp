@@ -172,7 +172,7 @@ std::shared_ptr<DataShare::DataShareHelper> SensorDataManager::CreateDataShareHe
 
 bool SensorDataManager::ReleaseDataShareHelper(std::shared_ptr<DataShare::DataShareHelper> &helper)
 {
-    if (helper == nulltpr) {
+    if (helper == nullptr) {
         SEN_HILOGE("helper is nullptr");
         return false;
     }

@@ -795,7 +795,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
     StartTrace(HITRACE_TAG_SENSORS, "CreateSocketChannel");
 #endif // HIVIEWDFX_HITRACE_ENABLE
     CHKPR(sensorClientStub_, INVALID_POINTER);
-    int ret = sensorServer_->CreateSocketChannel(sensorClientStub_->AsObject(), clientFd);
+    ret = sensorServer_->CreateSocketChannel(sensorClientStub_->AsObject(), clientFd);
     WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_CREATE_SOCKET_CHANNEL, ret);
     fdsan_exchange_owner_tag(clientFd, 0, TAG);
     FinishTrace(HITRACE_TAG_SENSORS);
