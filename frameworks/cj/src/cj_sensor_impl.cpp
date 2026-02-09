@@ -39,6 +39,38 @@ void CJSensorImpl::CJDataCallbackImpl(SensorEvent *event)
     CJ_SENSOR_IMPL->EmitCallBack(event);
 }
 
+int32_t CJSensorImpl::SubscribeSensorImplEnhanced(int64_t interval, SensorDescription &sensorDesc)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = SubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &cjUser_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("SubscribeSensor failed");
+        return ret;
+    }
+    ret = SetBatchEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &cjUser_, interval, 0);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("SetBatch failed");
+        return ret;
+    }
+    return ActivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &cjUser_);
+}
+
+int32_t CJSensorImpl::UnsubscribeSensorImplEnhanced(SensorDescription &sensorDesc)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = DeactivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &cjUser_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("DeactivateSensor failed");
+        return ret;
+    }
+    return UnsubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &cjUser_);
+}
+
 int32_t CJSensorImpl::SubscribeSensorImpl(int32_t sensorId, int64_t interval)
 {
     CALL_LOG_ENTER;
@@ -159,9 +191,47 @@ int32_t CJSensorImpl::OffSensorChange(int32_t sensorId)
     return ERR_OK;
 }
 
+int32_t CJSensorImpl::OnSensorChangeEnhanced(int64_t interval, CSensorDescription& param,
+    void (*callback)(SensorEvent *event))
+{
+    CALL_LOG_ENTER;
+    SensorDescription sensorDesc;
+    sensorDesc.deviceId = param.deviceId;
+    sensorDesc.sensorType = param.sensorType;
+    sensorDesc.sensorId = param.sensorId;
+    sensorDesc.location = param.location;
+    int32_t ret = SubscribeSensorImplEnhanced(interval, sensorDesc);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("SubscribeSensor failed.");
+        return ret;
+    }
+
+    AddCallback2MapEnhanced(sensorDesc, CJLambda::Create(callback));
+    return ERR_OK;
+}
+
+int32_t CJSensorImpl::OffSensorChangeEnhanced(CSensorDescription& param)
+{
+    CALL_LOG_ENTER;
+    SensorDescription sensorDesc;
+    sensorDesc.deviceId = param.deviceId;
+    sensorDesc.sensorType = param.sensorType;
+    sensorDesc.sensorId = param.sensorId;
+    sensorDesc.location = param.location;
+    int32_t ret = UnsubscribeSensorImplEnhanced(sensorDesc);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("unsubscribe sensor failed, %{public}d.", sensorDesc.sensorType);
+        return ret;
+    }
+
+    DelCallbackEnhanced(sensorDesc);
+    return ERR_OK;
+}
+
 void CJSensorImpl::EmitCallBack(SensorEvent *event)
 {
-    auto callback = FindCallback(event->sensorTypeId);
+    auto callback = FindCallback(SensorDescription{event->deviceId, event->sensorTypeId, event->sensorId,
+        event->location});
     if (callback == std::nullopt) {
         SEN_HILOGE("EmitCallBack failed, %{public}d not find.", event->sensorTypeId);
         return;
@@ -182,11 +252,23 @@ void CJSensorImpl::DelCallback(int32_t type)
     eventMap_.erase(type);
 }
 
-std::optional<SensorCallbackType> CJSensorImpl::FindCallback(int32_t type)
+void CJSensorImpl::AddCallback2MapEnhanced(SensorDescription sensorDesc, SensorCallbackType callback)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    callbackMap_[sensorDesc]= callback;
+}
+
+void CJSensorImpl::DelCallbackEnhanced(SensorDescription sensorDesc)
 {
     std::lock_guard<std::mutex> mutex(mutex_);
-    auto iter = eventMap_.find(type);
-    if (iter != eventMap_.end()) {
+    callbackMap_.erase(sensorDesc);
+}
+
+std::optional<SensorCallbackType> CJSensorImpl::FindCallback(SensorDescription sensorDesc)
+{
+    std::lock_guard<std::mutex> mutex(mutex_);
+    auto iter = callbackMap_.find(sensorDesc);
+    if (iter != callbackMap_.end()) {
         return iter->second;
     }
 

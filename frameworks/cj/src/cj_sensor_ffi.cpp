@@ -17,9 +17,30 @@
 
 #include "cj_sensor_impl.h"
 #include "sensor_errors.h"
+#include "sensor_agent.h"
 
 using OHOS::Sensors::CJSensorImpl;
 using OHOS::Sensors::PARAMETER_ERROR;
+constexpr int32_t IS_LOCAL_DEVICE = 1;
+
+bool GetLocationDeviceId(int32_t &deviceId)
+{
+    SensorInfo *sensorInfos = nullptr;
+    int32_t count = 0;
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("GetAllSensors failed");
+        return false;
+    }
+    for (int32_t i = 0; i < count; ++i) {
+        if (sensorInfos[i].location == IS_LOCAL_DEVICE) {
+            SEN_HILOGD("The location deviceId is %{public}d", sensorInfos[i].deviceId);
+            deviceId = sensorInfos[i].deviceId;
+            return true;
+        }
+    }
+    return false;
+}
 
 extern "C" {
 int32_t FfiSensorSubscribeSensor(int32_t sensorId, int64_t interval, void (*callback)(SensorEvent *event))
@@ -30,6 +51,17 @@ int32_t FfiSensorSubscribeSensor(int32_t sensorId, int64_t interval, void (*call
 int32_t FfiSensorUnSubscribeSensor(int32_t sensorId)
 {
     return CJ_SENSOR_IMPL->OffSensorChange(sensorId);
+}
+
+SENSOR_FFI_EXPORT int32_t FfiSensorSubscribeSensorEnhanced(int64_t interval, CSensorDescription param, int64_t id)
+{
+    void (*callback)(SensorEvent *event) = (void (*)(SensorEvent *))id;
+    return CJ_SENSOR_IMPL->OnSensorChangeEnhanced(interval, param, callback);
+}
+
+SENSOR_FFI_EXPORT int32_t FfiSensorUnSubscribeSensorEnhanced(CSensorDescription param)
+{
+    return CJ_SENSOR_IMPL->OffSensorChangeEnhanced(param);
 }
 
 CGeomagneticData FfiSensorGetGeomagneticInfo(CLocationOptions location, int64_t timeMillis)
@@ -114,5 +146,10 @@ int32_t FfiSensorGetAllSensors(CSensorArray *sensors)
     }
 
     return CJ_SENSOR_IMPL->GetAllSensorList(*sensors);
+}
+
+SENSOR_FFI_EXPORT bool FfiSensorGetLocationDeviceId(int32_t *deviceId)
+{
+    return GetLocationDeviceId(*deviceId);
 }
 }
