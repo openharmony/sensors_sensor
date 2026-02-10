@@ -841,7 +841,7 @@ void ClientInfo::SaveSensorClient(const sptr<IRemoteObject> &sensorClient)
     CALL_LOG_ENTER;
     CHKPV(sensorClient);
     std::lock_guard<std::mutex> lock(sensorClientMutex_);
-    if (static_cast<uint32_t>(sensorClients_.size()) >= MAX_SUPPORT_CLIENT_NUM) {
+    if (sensorClients_.size() >= MAX_SUPPORT_CLIENT_NUM) {
         SEN_HILOGE("The maximum number of supported clients has been exceeded");
         return;
     }
