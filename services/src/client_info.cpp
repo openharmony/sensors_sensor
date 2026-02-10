@@ -37,6 +37,7 @@ constexpr int32_t MIN_MAP_SIZE = 0;
 constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
+constexpr uint32_t MAX_SUPPORT_CLIENT_NUM = 1024;
 } // namespace
 
 std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
@@ -840,6 +841,10 @@ void ClientInfo::SaveSensorClient(const sptr<IRemoteObject> &sensorClient)
     CALL_LOG_ENTER;
     CHKPV(sensorClient);
     std::lock_guard<std::mutex> lock(sensorClientMutex_);
+    if (sensorClients_.size() >= MAX_SUPPORT_CLIENT_NUM) {
+        SEN_HILOGE("The maximum number of supported clients has been exceeded");
+        return;
+    }
     sensorClients_.push_back(sensorClient);
 }
 
