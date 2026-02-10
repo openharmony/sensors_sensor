@@ -316,7 +316,7 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 #ifdef MSDP_MOTION_ENABLE
         if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
             MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
-            std::vector<CompatibleAppData> appList = SENSOR_DATA_MGR->GetCompatibleAppStragegyList();
+            std::vector<CompatibleAppData> appList = SENSOR_DATA_MGR->GetCompatibleAppStrategyList();
             auto it = std::find_if(appList.begin(), appList.end(), [this, channel](const CompatibleAppData &app) {
                 return app.name == channel->GetPackageName();
             });

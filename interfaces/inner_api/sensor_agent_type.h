@@ -536,7 +536,7 @@ typedef struct HeadPostureData {
 } HeadPostureData;
 
 typedef struct DropDetectionData {
-    float status = 0.0;
+    float status = 0.0F;
 } DropDetectionData;
 
 typedef struct SensorActiveInfo {

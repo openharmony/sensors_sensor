@@ -217,7 +217,8 @@ enum SensorId: i32 {
     /**
      * Fusion pressure sensor.
      * @syscap SystemCapability.Sensors.Sensor
-     * @since 22
+     * @since 22 dynamic
+     * @since 23 static
      */
     FUSION_PRESSURE = 283
 }
@@ -1222,7 +1223,8 @@ struct FusionPressureResponse {
      * Fusion pressure percent data.
      * @type { f64 }
      * @syscap SystemCapability.Sensors.Sensor
-     * @since 22
+     * @since 22 dynamic
+     * @since 23 static
      */
     fusionPressure: f64;
 }
@@ -1346,7 +1348,7 @@ struct Sensor {
      */
     power: f64;
 
-     /**
+    /**
      * Index of sensors of the same type.
      * @type { number }
      * @syscap SystemCapability.Sensors.Sensor

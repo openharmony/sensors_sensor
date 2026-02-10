@@ -40,9 +40,7 @@ const std::string SETTING_COMPATIBLE_APP_STRATEGY_KEY = "COMPATIBLE_APP_STRATEGY
 const std::string SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY = "APP_LOGICAL_DEVICE_CONFIGURATION";
 const std::string SETTING_URI_PROXY = "datashare:///com.ohos.settingsdata/entry/settingsdata/SETTINGSDATA?Proxy=true";
 constexpr const char *SETTINGS_DATA_EXT_URI = "datashare:///com.ohos.settingsdata.DataAbility";
-constexpr int32_t DECEM_BASE = 10;
 constexpr int32_t DATA_SHARE_READY = 0;
-constexpr int32_t DATA_SHARE_NOT_READY = 1055;
 }  // namespace
 
 SensorDataManager::SensorDataManager()
@@ -51,6 +49,7 @@ SensorDataManager::SensorDataManager()
 SensorDataManager::~SensorDataManager()
 {
     remoteObj_ = nullptr;
+    std::lock_guard<std::mutex> observerMutex(observerMutex_);
     if (UnregisterObserver(observer_) != ERR_OK) {
         SEN_HILOGE("UnregisterObserver failed");
     }
@@ -86,7 +85,8 @@ bool SensorDataManager::Init(int32_t deviceMode)
         }
         SEN_HILOGI("compatibleAppStrategy:%{public}s", compatibleAppStrategy.c_str());
     };
-    auto observer_ = CreateObserver(updateFunc);
+    std::lock_guard<std::mutex> observerMutex(observerMutex_);
+    observer_ = CreateObserver(updateFunc);
     if (observer_ == nullptr) {
         SEN_HILOGE("observer is null");
         return false;
@@ -98,38 +98,12 @@ bool SensorDataManager::Init(int32_t deviceMode)
     return true;
 }
 
-int32_t SensorDataManager::GetIntValue(const std::string &key, int32_t &value)
-{
-    int64_t valueLong;
-    int32_t ret = GetLongValue(key, valueLong);
-    if (ret != ERR_OK) {
-        return ret;
-    }
-    value = static_cast<int32_t>(valueLong);
-    return ERR_OK;
-}
-
-int32_t SensorDataManager::GetLongValue(const std::string &key, int64_t &value)
-{
-    std::string valueStr;
-    int32_t ret = GetStringValue(key, valueStr);
-    if (ret != ERR_OK) {
-#ifdef HIVIEWDFX_HISYSEVENT_ENABLE
-        HiSysEventWrite(HiSysEvent::Domain::SENSOR, "SERVICE_EXCEPTION", HiSysEvent::EventType::FAULT,
-            "PKG_NAME", "GetStringValue", "ERROR_CODE", ret);
-#endif // HIVIEWDFX_HISYSEVENT_ENABLE
-        SEN_HILOGE("GetStringValue failed, ret:%{public}d", ret);
-        return ret;
-    }
-    value = static_cast<int64_t>(strtoll(valueStr.c_str(), nullptr, DECEM_BASE));
-    return ERR_OK;
-}
-
 int32_t SensorDataManager::GetStringValue(const std::string &key, std::string &value)
 {
     std::string callingIdentity = IPCSkeleton::ResetCallingIdentity();
     auto helper = CreateDataShareHelper(SETTING_URI_PROXY);
     if (helper == nullptr) {
+        SEN_HILOGE("helper is nullptr");
         IPCSkeleton::SetCallingIdentity(callingIdentity);
         return ERROR;
     }
@@ -188,18 +162,20 @@ std::shared_ptr<DataShare::DataShareHelper> SensorDataManager::CreateDataShareHe
         return nullptr;
     }
     auto [ret, helper] = DataShare::DataShareHelper::Create(remoteObj_, tableUrl, SETTINGS_DATA_EXT_URI);
-    if (ret == DATA_SHARE_READY) {
-        return helper;
-    } else if (ret == DATA_SHARE_NOT_READY) {
+    if (ret != DATA_SHARE_READY) {
         SEN_HILOGE("Create data_share helper failed, uri proxy:%{public}s", tableUrl.c_str());
         return nullptr;
     }
-    SEN_HILOGI("Data_share create unknown");
-    return nullptr;
+    SEN_HILOGI("Data_share create success");
+    return helper;
 }
 
 bool SensorDataManager::ReleaseDataShareHelper(std::shared_ptr<DataShare::DataShareHelper> &helper)
 {
+    if (helper == nullptr) {
+        SEN_HILOGE("helper is nullptr");
+        return false;
+    }
     if (!helper->Release()) {
         SEN_HILOGW("Release helper fail");
         return false;

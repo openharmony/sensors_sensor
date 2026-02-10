@@ -65,8 +65,6 @@ private:
     static void ExecRegisterCb(const sptr<SensorObserver> &observer);
     int32_t RegisterObserver(const sptr<SensorObserver> &observer);
     int32_t UnregisterObserver(const sptr<SensorObserver> &observer);
-    int32_t GetIntValue(const std::string &key, int32_t &value);
-    int32_t GetLongValue(const std::string &key, int64_t &value);
     int32_t GetStringValue(const std::string &key, std::string &value);
     Uri AssembleUri(const std::string &key);
     std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(const std::string &tableUrl);
@@ -76,6 +74,7 @@ private:
     void ParseAppLogicalDeviceList(const std::string &compatibleAppStrategy);
     int32_t ParseJsonValue(const nlohmann::json &value, const std::string &strKey);
     sptr<IRemoteObject> remoteObj_ { nullptr };
+    std::mutex observerMutex_;
     sptr<SensorObserver> observer_ { nullptr };
     std::mutex compatibleAppStrategyMutex_;
     std::vector<CompatibleAppData> compatibleAppStrategyList_;

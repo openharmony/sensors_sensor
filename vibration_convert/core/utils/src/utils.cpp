@@ -77,7 +77,7 @@ std::vector<double> TransposeMatrix(size_t rows, const std::vector<double> &valu
     size_t valuesSize = values.size();
     SEN_HILOGD("valuesSize:%{public}zu", valuesSize);
     if ((rows == 0) || (valuesSize == 0) || (valuesSize > MAX_SIZE)) {
-        SEN_HILOGE("Parameter is invalid");
+        SEN_HILOGE("Parameter error");
         return {};
     }
     std::vector<double> dst(valuesSize, 0.0);

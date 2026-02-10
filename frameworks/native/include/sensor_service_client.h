@@ -62,7 +62,6 @@ private:
     int32_t InitServiceClient();
     void UpdateSensorInfoMap(const SensorDescription &sensorDesc, int64_t samplingPeriod, int64_t maxReportDelay);
     void DeleteSensorInfoItem(const SensorDescription &sensorDesc);
-    int32_t CreateSocketClientFd(int32_t &clientFd);
     int32_t CreateSocketChannel();
     void ReenableSensor();
     void WriteHiSysIPCEvent(ISensorServiceIpcCode code, int32_t ret);
