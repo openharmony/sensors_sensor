@@ -36,6 +36,8 @@
         "samgr",
         "eventhandler",
         "init",
+        "selinux_adapter",
+        "cJSON",
         "runtime_core",
         "os_account"
       ],
