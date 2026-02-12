@@ -53,7 +53,7 @@ constexpr int32_t DEFAULT_LOCATION = 1;
 static int32_t localDeviceId_ = -1;
 #endif // BUILD_VARIANT_ENG
 constexpr uint32_t CONVERT_ROTATION_270 = 3;
-constexpr int32_t CONVERT_ROTATION_0 = 0;
+constexpr uint32_t CONVERT_ROTATION_0 = 0;
 constexpr int32_t HDI_DISABLE_SENSOR_TIMEOUT = -23;
 } // namespace
 
