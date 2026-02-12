@@ -727,8 +727,7 @@ int32_t SensorAgentProxy::SubscribeSensorPlug(const SensorUser *user)
     CALL_LOG_ENTER;
     CHKPR(user, OHOS::Sensors::ERROR);
     CHKPR(user->plugCallback, OHOS::Sensors::ERROR);
-    int32_t ret = 0;
-    ret = SEN_CLIENT.CreateClientRemoteObject();
+    int32_t ret = SEN_CLIENT.CreateClientRemoteObject();
     if (ret != ERR_OK) {
         SEN_HILOGE("CreateClientRemoteObject failed, ret:%{public}d", ret);
         return ret;
