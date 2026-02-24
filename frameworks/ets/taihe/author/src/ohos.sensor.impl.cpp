@@ -1749,9 +1749,9 @@ void CallBackSensorStatusChange(std::map<std::string, responseSensorData> data, 
     ohos::sensor::SensorStatusEvent responseData = {
         .timestamp = std::get<int64_t>(data["timestamp"]),
         .sensorId = std::get<int32_t>(data["sensorId"]),
-        .deviceId = std::get<int32_t>(data["deviceId"]),
         .sensorIndex = std::get<int32_t>(data["sensorIndex"]),
         .isSensorOnline = std::get<bool>(data["isSensorOnline"]),
+        .deviceId = std::get<int32_t>(data["deviceId"]),
         .deviceName = std::get<string>(data["deviceName"]),
     };
 
