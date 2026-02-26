@@ -32,6 +32,7 @@
 #include "sensor_errors.h"
 #include "sensor_log.h"
 #include "stdexcept"
+#include "sensor.h"
 #include "taihe/runtime.hpp"
 
 #undef LOG_TAG
@@ -81,6 +82,8 @@ constexpr int32_t CALLBACK_MAX_DATA_LENGTH = 16;
 constexpr int32_t DEFAULT_DEVICE_ID = -1;
 constexpr int32_t INVALID_SENSOR_TYPE = -1;
 constexpr int32_t IS_LOCAL_DEVICE = 1;
+constexpr int32_t NON_LOCAL_DEVICE = 0;
+constexpr int32_t DEFAULT_SENSOR_ID = 0;
 
 std::mutex g_statusChangeMutex;
 std::vector<sptr<CallbackObject>> g_statusChangeCallbackInfos;
@@ -253,7 +256,7 @@ array<double> getRotationMatrixSync(array_view<double> rotation)
     return transformFloatToDouble(rotationMatrix);
 }
 
-array<Sensor> getSensorListSync()
+array<ohos::sensor::Sensor> getSensorListSync()
 {
     SensorInfo *sensorInfos = nullptr;
     int32_t count = 0;
@@ -1148,14 +1151,50 @@ const SensorUser user = {
     .plugCallback = PlugDataCallbackImpl
 };
 
-int32_t UnsubscribeSensor(int32_t sensorTypeId)
+bool GetLocationDeviceId(int32_t &deviceId)
 {
-    int32_t ret = DeactivateSensor(sensorTypeId, &user);
+    SensorInfo *sensorInfos = nullptr;
+    int32_t count = 0;
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("GetAllSensors failed");
+        return false;
+    }
+    for (int32_t i = 0; i < count; ++i) {
+        if (sensorInfos[i].location == IS_LOCAL_DEVICE) {
+            SEN_HILOGD("The location deviceId is %{public}d", sensorInfos[i].deviceId);
+            deviceId = sensorInfos[i].deviceId;
+            return true;
+        }
+    }
+    free(sensorInfos);
+    sensorInfos = nullptr;
+    return false;
+}
+
+void GetSensorType(int32_t sensorTypeId, SensorDescription &sensorDesc)
+{
+    sensorDesc.sensorType = sensorTypeId;
+    int32_t localDeviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(localDeviceId)) {
+        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
+    }
+    sensorDesc.deviceId = localDeviceId;
+    sensorDesc.sensorId = DEFAULT_SENSOR_ID;
+    sensorDesc.location = IS_LOCAL_DEVICE;
+    return;
+}
+
+int32_t UnsubscribeSensor(const SensorDescription &sensorDesc)
+{
+    int32_t ret = DeactivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
     if (ret != ERR_OK) {
         SEN_HILOGE("DeactivateSensor failed");
         return ret;
     }
-    return UnsubscribeSensor(sensorTypeId, &user);
+    return UnsubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
 }
 
 void EmitOnceCallback(SensorEvent *event)
@@ -1179,24 +1218,29 @@ void EmitOnceCallback(SensorEvent *event)
     }
     g_onceCallbackInfos.erase(sensorTypeId);
 
+    SensorDescription sensorDesc;
+    GetSensorType(sensorTypeId, sensorDesc);
     CHKCV((!CheckSubscribe(sensorTypeId)), "Has client subscribe, not need cancel subscribe");
     CHKCV((!CheckSystemSubscribe(sensorTypeId)), "Has client subscribe system api, not need cancel subscribe");
-    UnsubscribeSensor(sensorTypeId);
+    UnsubscribeSensor(sensorDesc);
 }
 
-int32_t SubscribeSensor(int32_t sensorTypeId, int64_t interval, RecordSensorCallback callback)
+int32_t SubscribeSensor(const SensorDescription &sensorDesc, int64_t interval, RecordSensorCallback callback)
 {
-    int32_t ret = SubscribeSensor(sensorTypeId, &user);
+    int32_t ret = SubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
     if (ret != ERR_OK) {
         SEN_HILOGE("SubscribeSensor failed");
         return ret;
     }
-    ret = SetBatch(sensorTypeId, &user, interval, 0);
+    ret = SetBatchEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user, interval, 0);
     if (ret != ERR_OK) {
         SEN_HILOGE("SetBatch failed");
         return ret;
     }
-    return ActivateSensor(sensorTypeId, &user);
+    return ActivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+        sensorDesc.location}, &user);
 }
 
 void UpdateCallbackInfos(int32_t sensorTypeId, callbackType callback, uintptr_t opq)
@@ -1232,11 +1276,30 @@ void UpdateCallbackInfos(int32_t sensorTypeId, callbackType callback, uintptr_t 
 void OnCommon(int32_t sensorTypeId, callbackType cb, uintptr_t opq, optional_view<Options> options)
 {
     int64_t interval = REPORTING_INTERVAL;
+    SensorDescription sensorDesc;
+    sensorDesc.sensorType = sensorTypeId;
+    sensorDesc.sensorId = DEFAULT_SENSOR_ID;
+    sensorDesc.deviceId = DEFAULT_DEVICE_ID;
+    sensorDesc.location = IS_LOCAL_DEVICE;
     if (options.has_value() && !GetInterval(options.value(), interval)) {
         SEN_HILOGW("Get interval failed");
     }
     SEN_HILOGD("Interval is %{public}" PRId64, interval);
-    int32_t ret = SubscribeSensor(sensorTypeId, interval, DataCallbackImpl);
+    if (options.has_value() && options.value().sensorInfoParam.has_value()) {
+        const auto& param = options.value().sensorInfoParam.value();
+        if (param.deviceId.has_value()) {
+            sensorDesc.deviceId = param.deviceId.value();
+        }
+        if (param.sensorIndex.has_value()) {
+            sensorDesc.sensorId = param.sensorIndex.value();
+        }
+        if (sensorDesc.deviceId != DEFAULT_DEVICE_ID) {
+            sensorDesc.location = NON_LOCAL_DEVICE;
+        }
+    }
+    SEN_HILOGD("deviceId is %{public}d, sensorId is %{public}d, location is %{public}d",\
+        sensorDesc.deviceId, sensorDesc.sensorId, sensorDesc.location);
+    int32_t ret = SubscribeSensor(sensorDesc, interval, DataCallbackImpl);
     if (ret == PARAMETER_ERROR) {
         SEN_HILOGD("SubscribeSensor fail, actual error code:%{public}d", ret);
         ret = SERVICE_EXCEPTION;
@@ -1288,7 +1351,8 @@ void OnceCommon(int32_t sensorTypeId, callbackType cb, uintptr_t opq)
 {
     if (!CheckSubscribe(sensorTypeId)) {
         SEN_HILOGD("No subscription to change sensor data, registration is required");
-        int32_t ret = SubscribeSensor(sensorTypeId, REPORTING_INTERVAL, DataCallbackImpl);
+        int32_t ret = SubscribeSensor({DEFAULT_DEVICE_ID, sensorTypeId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE},
+            REPORTING_INTERVAL, DataCallbackImpl);
         if (ret == PARAMETER_ERROR) {
             SEN_HILOGD("SubscribeSensor fail, actual error code:%{public}d", ret);
             ret = SERVICE_EXCEPTION;
@@ -1371,7 +1435,9 @@ void OffCommon(int32_t sensorTypeId, optional_view<uintptr_t> opq)
         SEN_HILOGW("There are other client subscribe system js api as well, not need unsubscribe");
         return;
     }
-    int32_t ret = UnsubscribeSensor(sensorTypeId);
+    SensorDescription sensorDesc;
+    GetSensorType(sensorTypeId, sensorDesc);
+    int32_t ret = UnsubscribeSensor(sensorDesc);
     if (ret == PARAMETER_ERROR) {
         SEN_HILOGD("UnsubscribeSensor fail, actual error code:%{public}d", ret);
         ret = SERVICE_EXCEPTION;
