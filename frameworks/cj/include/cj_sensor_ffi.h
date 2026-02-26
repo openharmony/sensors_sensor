@@ -18,6 +18,7 @@
 
 #include "cj_sensor_visibility.h"
 #include "sensor_agent_type.h"
+#include "sensor.h"
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -73,6 +74,13 @@ typedef struct {
     CSensor *head;
     int64_t size;
 } CSensorArray;
+
+typedef struct {
+    int32_t deviceId;
+    int32_t sensorType;
+    int32_t sensorId;
+    int32_t location;
+} CSensorDescription;
 
 SENSOR_FFI_EXPORT int32_t FfiSensorSubscribeSensor(int32_t sensorId, int64_t interval,
                                                    void (*callback)(SensorEvent *event));

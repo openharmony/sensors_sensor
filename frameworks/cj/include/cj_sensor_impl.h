@@ -35,6 +35,8 @@ public:
     DISALLOW_COPY_AND_MOVE(CJSensorImpl);
     int32_t OnSensorChange(int32_t sensorId, int64_t interval, void (*callback)(SensorEvent *event));
     int32_t OffSensorChange(int32_t sensorId);
+    int32_t OnSensorChangeEnhanced(int64_t interval, CSensorDescription& param, void (*callback)(SensorEvent *event));
+    int32_t OffSensorChangeEnhanced(CSensorDescription& param);
     void EmitCallBack(SensorEvent *event);
 
     CGeomagneticData GetGeomagneticInfo(CLocationOptions location, int64_t timeMillis);
@@ -57,10 +59,15 @@ private:
 
     int32_t SubscribeSensorImpl(int32_t sensorId, int64_t interval);
     int32_t UnsubscribeSensorImpl(int32_t sensorTypeId);
+    int32_t SubscribeSensorImplEnhanced(int64_t interval, SensorDescription &sensorDesc);
+    int32_t UnsubscribeSensorImplEnhanced(SensorDescription &sensorDesc);
+    std::map<SensorDescription, SensorCallbackType> callbackMap_;
 
     void DelCallback(int32_t type);
+    void DelCallbackEnhanced(SensorDescription sensorDesc);
     void AddCallback2Map(int32_t type, SensorCallbackType callback);
-    std::optional<SensorCallbackType> FindCallback(int32_t type);
+    void AddCallback2MapEnhanced(SensorDescription sensorDesc, SensorCallbackType callback);
+    std::optional<SensorCallbackType> FindCallback(SensorDescription sensorDesc);
 
     char *MallocCString(const std::string origin);
     void Transform2CSensor(const SensorInfo &in, CSensor &out);
