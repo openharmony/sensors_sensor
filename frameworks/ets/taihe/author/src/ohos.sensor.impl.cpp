@@ -1175,7 +1175,7 @@ void GetSensorType(int32_t sensorTypeId, SensorDescription &sensorDesc)
     sensorDesc.sensorType = sensorTypeId;
     int32_t localDeviceId = DEFAULT_DEVICE_ID;
     if (!GetLocationDeviceId(localDeviceId)) {
-        SEN_HILOGW("Cant fand local deviceId, default loacl deviceId :%{public}d", localDeviceId);
+        SEN_HILOGW("Can't find local deviceId, default local deviceId :%{public}d", localDeviceId);
     }
     sensorDesc.deviceId = localDeviceId;
     sensorDesc.sensorId = DEFAULT_SENSOR_ID;
