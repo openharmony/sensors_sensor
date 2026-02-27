@@ -1167,8 +1167,6 @@ bool GetLocationDeviceId(int32_t &deviceId)
             return true;
         }
     }
-    free(sensorInfos);
-    sensorInfos = nullptr;
     return false;
 }
 
@@ -1941,7 +1939,6 @@ int32_t GetLocalDeviceIdInner()
                 break;
             }
         }
-        free(localSensors);
     }
     SEN_HILOGD("GetLocalDeviceIdInner: local deviceId=%{public}d", localDeviceId);
     return localDeviceId;
