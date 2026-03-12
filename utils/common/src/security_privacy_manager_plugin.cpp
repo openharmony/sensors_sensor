@@ -53,6 +53,7 @@ bool LoadSecurityPrivacyServer(void)
     int32_t retryTimes = 3;
     do {
         cnt++;
+        dlerror();
         g_handle = dlopen(SECURITY_PRIVACY_SDK_SO_PATH.c_str(), RTLD_LAZY);
         SEN_HILOGI("dlopen %{public}s, retry cnt: %{public}d", SECURITY_PRIVACY_SDK_SO_PATH.c_str(), cnt);
         usleep(SLEEP_TIME_US);

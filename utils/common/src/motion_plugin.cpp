@@ -40,6 +40,7 @@ bool LoadMotionSensor(void)
     int32_t retryTimes = 3;
     do {
         cnt++;
+        dlerror();
         g_handle = dlopen(PLUGIN_SO_PATH.c_str(), RTLD_LAZY);
         SEN_HILOGI("dlopen %{public}s, retry cnt: %{public}d", PLUGIN_SO_PATH.c_str(), cnt);
         usleep(SLEEP_TIME_US);
@@ -67,6 +68,7 @@ bool LoadMotionSensorRevision(void)
     int32_t retryTimes = 3;
     do {
         cnt++;
+        dlerror();
         g_motionSensorRevision = dlopen(PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), RTLD_LAZY);
         SEN_HILOGI("dlopen %{public}s, retry cnt: %{public}d", PLUGIN_MOTION_SENSOR_REVISION_SO_PATH.c_str(), cnt);
         usleep(SLEEP_TIME_US);
