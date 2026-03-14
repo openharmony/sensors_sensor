@@ -19,6 +19,9 @@
 #include "sensor_errors.h"
 #include "sensor_agent.h"
 
+#undef LOG_TAG
+#define LOG_TAG "Sensor-FFI"
+
 using OHOS::Sensors::CJSensorImpl;
 using OHOS::Sensors::PARAMETER_ERROR;
 constexpr int32_t IS_LOCAL_DEVICE = 1;
