@@ -626,6 +626,10 @@ HWTEST_F(SensorAgentTest, SetModeEnhancedTest_002, TestSize.Level1)
     ASSERT_EQ(ret, OHOS::ERR_OK);
     ret = SetModeEnhanced(sensorIdentifier, &user, 1);
     ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = DeactivateSensorEnhanced(sensorIdentifier, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = UnsubscribeSensorEnhanced(sensorIdentifier, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
 }
 
 HWTEST_F(SensorAgentTest, SubscribeSensorPlugTest_001, TestSize.Level1)
