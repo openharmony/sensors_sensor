@@ -21,6 +21,9 @@
 #include "sensor_algorithm.h"
 #include "sensor_errors.h"
 
+#undef LOG_TAG
+#define LOG_TAG "Sensor-FFI"
+
 namespace OHOS {
 namespace Sensors {
 namespace {
@@ -28,6 +31,9 @@ constexpr int32_t ROTATION_VECTOR_LENGTH = 3;
 constexpr int32_t QUATERNION_LENGTH = 4;
 constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 constexpr int32_t DATA_LENGTH = 16;
+constexpr int32_t DEFAULT_DEVICE_ID = -1;
+constexpr int32_t DEFAULT_SENSOR_ID = 0;
+constexpr int32_t IS_LOCAL_DEVICE = 1;
 } // namespace
 
 CJSensorImpl::CJSensorImpl() {}
@@ -243,13 +249,15 @@ void CJSensorImpl::EmitCallBack(SensorEvent *event)
 void CJSensorImpl::AddCallback2Map(int32_t type, SensorCallbackType callback)
 {
     std::lock_guard<std::mutex> mutex(mutex_);
-    eventMap_[type] = callback;
+    SensorDescription sensorDesc = SensorDescription{DEFAULT_DEVICE_ID, type, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE};
+    callbackMap_[sensorDesc]= callback;
 }
 
 void CJSensorImpl::DelCallback(int32_t type)
 {
     std::lock_guard<std::mutex> mutex(mutex_);
-    eventMap_.erase(type);
+    SensorDescription sensorDesc = SensorDescription{DEFAULT_DEVICE_ID, type, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE};
+    callbackMap_.erase(sensorDesc);
 }
 
 void CJSensorImpl::AddCallback2MapEnhanced(SensorDescription sensorDesc, SensorCallbackType callback)
