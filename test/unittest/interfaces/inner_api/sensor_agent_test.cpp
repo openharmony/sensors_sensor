@@ -338,8 +338,10 @@ HWTEST_F(SensorAgentTest, SetModeTest_001, TestSize.Level1)
     int32_t mode { 0 };
     ret = SetMode(SENSOR_ID, &user, mode);
     ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
+    ret = DeactivateSensor(SENSOR_ID, &user);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
     ret = UnsubscribeSensor(SENSOR_ID, &user);
-    ASSERT_NE(ret, OHOS::Sensors::SUCCESS);
+    ASSERT_EQ(ret, OHOS::Sensors::SUCCESS);
 }
 
 HWTEST_F(SensorAgentTest, SetModeTest_002, TestSize.Level1)
@@ -544,6 +546,10 @@ HWTEST_F(SensorAgentTest, SubscribeSensorEnhancedTest_002, TestSize.Level1)
     SensorUser user;
     user.callback = SensorDataCallbackImpl;
     int32_t ret = SubscribeSensorEnhanced(sensorIdentifier, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = DeactivateSensorEnhanced(sensorIdentifier, &user);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+    ret = UnsubscribeSensorEnhanced(sensorIdentifier, &user);
     ASSERT_EQ(ret, OHOS::ERR_OK);
 }
 

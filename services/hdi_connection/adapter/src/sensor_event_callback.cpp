@@ -19,6 +19,7 @@
 #include "hdi_connection.h"
 #include "print_sensor_data.h"
 #include "sensor_errors.h"
+#include "securec.h"
 
 #undef LOG_TAG
 #define LOG_TAG "HdiConnection"
@@ -28,7 +29,7 @@ namespace Sensors {
 using namespace OHOS::HiviewDFX;
 namespace {
 std::unique_ptr<HdiConnection> HdiConnection_ = std::make_unique<HdiConnection>();
-constexpr int32_t HEADPOSTURE_DATA_SIZE = 20;
+constexpr uint32_t HEADPOSTURE_DATA_SIZE = 20;
 const std::set<int32_t> g_sensorTypeTrigger = {
     SENSOR_TYPE_ID_PROXIMITY,
     SENSOR_TYPE_ID_DROP_DETECTION,
@@ -65,9 +66,9 @@ int32_t SensorEventCallback::OnDataEventAsync(const std::vector<HdfSensorEvents>
     CHKPR(reportDataCb_, ERR_NO_INIT);
     CHKPR(reportDataCallback_, ERR_NO_INIT);
     for (const auto &event : events) {
-        int32_t dataSize = static_cast<int32_t>(event.data.size());
-        if (dataSize == 0) {
-            SEN_HILOGI("Data is empty");
+        uint32_t dataSize = static_cast<uint32_t>(event.data.size());
+        if (dataSize == 0 || dataSize > SENSOR_MAX_LENGTH || event.dataLen > SENSOR_MAX_LENGTH) {
+            SEN_HILOGI("Data is invalid");
             return ERR_INVALID_VALUE;
         }
         SensorData sensorData;
@@ -77,6 +78,10 @@ int32_t SensorEventCallback::OnDataEventAsync(const std::vector<HdfSensorEvents>
         }
         CHKPR(sensorData.data, ERR_NO_INIT);
         if (sensorData.sensorTypeId == SENSOR_TYPE_ID_HEADPOSTURE) {
+            if (dataSize < SENSOR_HEADPOSTURE_LENGTH) {
+                SEN_HILOGI("HeadPosture data is invalid");
+                return ERR_INVALID_VALUE;
+            }
             sensorData.dataLen = HEADPOSTURE_DATA_SIZE;
             const float *inputFloatPtr = reinterpret_cast<const float *>(event.data.data());
             float *outputFloatPtr = reinterpret_cast<float *>(sensorData.data);
@@ -90,8 +95,9 @@ int32_t SensorEventCallback::OnDataEventAsync(const std::vector<HdfSensorEvents>
             outputFloatPtr[3] = *(inputFloatPtr + 5);
             outputFloatPtr[4] = *(inputFloatPtr + 6);
         } else {
-            for (int32_t i = 0; i < dataSize; i++) {
-                sensorData.data[i] = event.data[i];
+            if (memcpy_s(sensorData.data, SENSOR_MAX_LENGTH, event.data.data(), dataSize) != EOK) {
+                SEN_HILOGE("failed to copy sensor data");
+                return ERR_INVALID_VALUE;
             }
         }
         PrintSensorData::GetInstance().ControlSensorHdiPrint(sensorData);

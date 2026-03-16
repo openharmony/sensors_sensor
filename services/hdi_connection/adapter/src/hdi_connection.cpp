@@ -612,7 +612,7 @@ void CreateInSensorData(SensorData* sensorData, HdfSensorData& in)
     in.timestamp = sensorData->timestamp;
     in.option = sensorData->option;
     in.mode = sensorData->mode;
-    for (int32_t i = 0; i < SENSOR_MAX_LENGTH; i++) {
+    for (uint32_t i = 0; i < SENSOR_MAX_LENGTH; i++) {
         in.data.emplace_back(sensorData->data[i]);
     }
     in.deviceId = sensorData->deviceId;
