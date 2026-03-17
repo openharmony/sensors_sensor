@@ -21,7 +21,8 @@ namespace Sensors {
 constexpr int32_t RESERVED_DATA_LEN = 3;
 constexpr int32_t EXTRA_INFO_DATA_LEN = 14;
 constexpr int32_t DEFAULT_SENSOR_DATA_DIMS = 16;
-constexpr int32_t SENSOR_MAX_LENGTH = 64;
+constexpr uint32_t SENSOR_MAX_LENGTH = 64;
+constexpr uint32_t SENSOR_HEADPOSTURE_LENGTH = 28;
 
 enum {
     WAKE_UP_SENSOR = 1u,
