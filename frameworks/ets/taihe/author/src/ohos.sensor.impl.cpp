@@ -1258,7 +1258,9 @@ void UpdateCallbackInfos(int32_t sensorTypeId, callbackType callback, uintptr_t 
             return (env->Reference_StrictEquals(callbackRef, obj->ref, &isEqual) == ANI_OK) && isEqual;
         });
     if (isSubscribedCallback) {
-        env->GlobalReference_Delete(callbackRef);
+        if (env->GlobalReference_Delete(callbackRef) != ANI_OK) {
+            SEN_HILOGW("Delete global reference failed");
+        }
         SEN_HILOGE("Callback is already subscribed, sensorTypeId:%{public}d", sensorTypeId);
         return;
     }
@@ -1332,7 +1334,9 @@ void UpdateOnceCallback(int32_t sensorTypeId, callbackType cb, uintptr_t opq)
             return (env->Reference_StrictEquals(callbackRef, obj->ref, &isEqual) == ANI_OK) && isEqual;
         });
     if (isSubscribedCallback) {
-        env->GlobalReference_Delete(callbackRef);
+        if (env->GlobalReference_Delete(callbackRef) != ANI_OK) {
+            SEN_HILOGW("Delete global reference failed");
+        }
         SEN_HILOGE("Callback is already subscribed, sensorTypeId:%{public}d", sensorTypeId);
         return;
     }
@@ -1375,7 +1379,9 @@ int32_t RemoveAllCallback(int32_t sensorTypeId)
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
         if (auto *env = taihe::get_env()) {
-            env->GlobalReference_Delete((*iter)->ref);
+            if (env->GlobalReference_Delete((*iter)->ref) != ANI_OK) {
+                SEN_HILOGW("Delete global reference failed");
+            }
         }
         iter = callbackInfos.erase(iter);
     }
@@ -1403,7 +1409,9 @@ int32_t RemoveCallback(int32_t sensorTypeId, uintptr_t opq)
         CHKPC(*iter);
         ani_boolean isEqual = false;
         if ((env->Reference_StrictEquals(callbackRef, (*iter)->ref, &isEqual) == ANI_OK) && isEqual) {
-            env->GlobalReference_Delete((*iter)->ref);
+            if (env->GlobalReference_Delete((*iter)->ref) != ANI_OK) {
+                SEN_HILOGW("Delete global reference failed");
+            }
             iter = callbackInfos.erase(iter);
             SEN_HILOGD("Remove callback success");
             break;
@@ -1411,7 +1419,9 @@ int32_t RemoveCallback(int32_t sensorTypeId, uintptr_t opq)
             ++iter;
         }
     }
-    env->GlobalReference_Delete(callbackRef);
+    if (env->GlobalReference_Delete(callbackRef) != ANI_OK) {
+        SEN_HILOGW("Delete global reference failed");
+    }
     if (callbackInfos.empty()) {
         SEN_HILOGD("No subscription to change sensor data");
         g_onCallbackInfos.erase(sensorTypeId);
@@ -1842,14 +1852,18 @@ void UpdateStatusChangeCallbackInfos(callbackType callback, uintptr_t opq)
         return (env->Reference_StrictEquals(callbackRef, obj->ref, &isEqual) == ANI_OK) && isEqual;
     });
     if (isSubscribed) {
-        env->GlobalReference_Delete(callbackRef);
+        if (env->GlobalReference_Delete(callbackRef) != ANI_OK) {
+            SEN_HILOGW("Delete global reference failed");
+        }
         SEN_HILOGE("Status change callback is already subscribed");
         return;
     }
 
     sptr<CallbackObject> callbackInfo = new (std::nothrow) CallbackObject(callback, callbackRef);
     if (callbackInfo == nullptr) {
-        env->GlobalReference_Delete(callbackRef);
+        if (env->GlobalReference_Delete(callbackRef) != ANI_OK) {
+            SEN_HILOGW("Delete global reference failed");
+        }
         SEN_HILOGE("Create status change CallbackObject failed");
         return;
     }
@@ -1875,7 +1889,9 @@ int32_t RemoveStatusChangeCallback(uintptr_t opq)
         CHKPC(*iter);
         ani_boolean isEqual = false;
         if ((env->Reference_StrictEquals(callbackRef, (*iter)->ref, &isEqual) == ANI_OK) && isEqual) {
-            env->GlobalReference_Delete((*iter)->ref);
+            if (env->GlobalReference_Delete((*iter)->ref) != ANI_OK) {
+                SEN_HILOGW("Delete global reference failed");
+            }
             iter = g_statusChangeCallbackInfos.erase(iter);
             SEN_HILOGD("Remove status change callback success");
         } else {
@@ -1883,7 +1899,9 @@ int32_t RemoveStatusChangeCallback(uintptr_t opq)
         }
     }
 
-    env->GlobalReference_Delete(callbackRef);
+    if (env->GlobalReference_Delete(callbackRef) != ANI_OK) {
+        SEN_HILOGW("Delete global reference failed");
+    }
     return static_cast<int32_t>(g_statusChangeCallbackInfos.size());
 }
 
@@ -1896,7 +1914,9 @@ int32_t RemoveAllStatusChangeCallback()
     for (auto &info : g_statusChangeCallbackInfos) {
         CHKPC(info);
         if (env != nullptr) {
-            env->GlobalReference_Delete(info->ref);
+            if (env->GlobalReference_Delete(info->ref) != ANI_OK) {
+                SEN_HILOGW("Delete global reference failed");
+            }
         }
     }
 
