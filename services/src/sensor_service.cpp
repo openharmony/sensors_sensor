@@ -1272,24 +1272,25 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo &info)
 {
     CALL_LOG_ENTER;
     if (info.status == SENSOR_ONLINE) {
-        auto it = sensorMap_.find({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
-            info.deviceSensorInfo.sensorId, info.deviceSensorInfo.location});
-        if (it == sensorMap_.end()) {
+        if (!DeviceSensorInfoExistInSensorMap(info)) {
             GetSensorListByDevice(info.deviceSensorInfo.deviceId);
         }
     } else {
         if (!sensorHdiConnection_.PlugEraseSensorData(info)) {
             SEN_HILOGW("sensorHdiConnection Cache update failure");
         }
-        std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
-        auto it = std::find_if(sensors_.begin(), sensors_.end(), [&](const Sensor& sensor) {
-            return sensor.GetDeviceId() == info.deviceSensorInfo.deviceId &&
-                sensor.GetSensorTypeId() == info.deviceSensorInfo.sensorType &&
-                sensor.GetSensorId() == info.deviceSensorInfo.sensorId;
-        });
-        if (it != sensors_.end()) {
-            sensors_.erase(it);
+        {
+            std::lock_guard<std::mutex> sensorLock(sensorsMutex_);
+            auto it = std::find_if(sensors_.begin(), sensors_.end(), [&](const Sensor& sensor) {
+                return sensor.GetDeviceId() == info.deviceSensorInfo.deviceId &&
+                    sensor.GetSensorTypeId() == info.deviceSensorInfo.sensorType &&
+                    sensor.GetSensorId() == info.deviceSensorInfo.sensorId;
+            });
+            if (it != sensors_.end()) {
+                sensors_.erase(it);
+            }
         }
+        std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
         auto iter = sensorMap_.find({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
             info.deviceSensorInfo.sensorId, info.deviceSensorInfo.location});
         if (iter != sensorMap_.end()) {
@@ -1311,6 +1312,14 @@ void SensorService::ReportPlugEventCallback(const SensorPlugInfo &info)
         .timestamp = static_cast<int64_t>(curTime.tv_sec * 1000 + curTime.tv_usec / 1000) //1000:milliSecond
     };
     clientInfo_.SendMsgToClient(sensorPlugData);
+}
+
+bool SensorService::DeviceSensorInfoExistInSensorMap(const SensorPlugInfo &info)
+{
+    std::lock_guard<std::mutex> sensorMapLock(sensorMapMutex_);
+    auto it = sensorMap_.find({info.deviceSensorInfo.deviceId, info.deviceSensorInfo.sensorType,
+        info.deviceSensorInfo.sensorId, info.deviceSensorInfo.location});
+    return it != sensorMap_.end();
 }
 
 void SensorService::SetCritical()
