@@ -626,7 +626,7 @@ void CreateOutSensorData(const HdfSensorData &out, SensorData* sensorData)
         SEN_HILOGE("sensorData is nullptr");
         return;
     }
-    int32_t dataSize = static_cast<int32_t>(out.data.size());
+    uint32_t dataSize = static_cast<uint32_t>(out.data.size());
     if (dataSize == 0) {
         SEN_HILOGE("Data is empty");
         return;
@@ -636,7 +636,7 @@ void CreateOutSensorData(const HdfSensorData &out, SensorData* sensorData)
         SEN_HILOGE("Data is invalid");
         return;
     }
-    for (int32_t i = 0; i < dataSize; i++) {
+    for (uint32_t i = 0; i < dataSize; i++) {
         sensorData->data[i] = out.data[i];
     }
 }
