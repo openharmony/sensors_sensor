@@ -259,5 +259,317 @@ describe("GravityJsTest", function () {
         }
     })
 
+    /*
+    * @tc.number: GravityJsTest_006
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_006", 0, async function (done) {
+        console.info('----------------------GravityJsTest_006---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try{
+                    sensor.once(sensor.SensorId.GRAVITY, callback, 5);
+                    setTimeout(() => {
+                        expect(true).assertTrue();
+                        done();
+                    }, 500);
+                } catch (error) {
+                    console.error('Once fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
 
+    /*
+    * @tc.number: GravityJsTest_007
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_007", 0, async function (done) {
+        console.info('----------------------GravityJsTest_007---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try{
+                    sensor.once(sensor.SensorId.GRAVITY, 5);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
+
+    /*
+    * @tc.number: GravityJsTest_008
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_008", 0, async function (done) {
+        console.info('----------------------GravityJsTest_008---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try {
+                    sensor.off(-1, callback);
+                } catch (error) {
+                    expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
+
+    /*
+    * @tc.number: GravityJsTest_009
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_009", 0, async function (done) {
+        console.info('----------------------GravityJsTest_009---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try {
+                    sensor.on(sensor.SensorId.GRAVITY, callback);
+                    sensor.on(sensor.SensorId.GRAVITY, callback2);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY);
+                        done();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
+
+    /*
+    * @tc.number: GravityJsTest_010
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_010", 0, async function (done) {
+        console.info('----------------------GravityJsTest_010---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try {
+                    sensor.on(sensor.SensorId.GRAVITY, callback);
+                    sensor.on(sensor.SensorId.GRAVITY, callback2);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY, callback);
+                    }, 500);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY, callback2);
+                        done();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
+
+    /*
+    * @tc.number: GravityJsTest_011
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_011", 0, async function (done) {
+        console.info('----------------------GravityJsTest_011---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try {
+                    sensor.on(sensor.SensorId.GRAVITY, callback, {'interval': 100000000});
+                    sensor.once(sensor.SensorId.GRAVITY, callback2);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY);
+                        done();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
+
+    /*
+    * @tc.number: GravityJsTest_012
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_012", 0, async function (done) {
+        console.info('----------------------GravityJsTest_012---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try {
+                    sensor.on(sensor.SensorId.GRAVITY, callback, {'interval': 100000000});
+                    sensor.on(sensor.SensorId.GRAVITY, callback2, {'interval': 100000000});
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY, callback);
+                    }, 500);
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY, callback2);
+                        done();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
+
+    /*
+    * @tc.number: GravityJsTest_013
+    * @tc.name: GravityJsTest
+    * @tc.desc: verify app info is not null
+    * @tc.type: FUNC
+    * @tc.require: Issue Number
+    * @tc.size: MediumTest
+    * @tc.type: Function
+    * @tc.level: Level 1
+    */
+    it("GravityJsTest_013", 0, async function (done) {
+        console.info('----------------------GravityJsTest_013---------------------------');
+        try {
+            sensor.getSingleSensor(sensor.SensorId.GRAVITY, (error, data) => {
+                if (error) {
+                    console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+                try {
+                    sensor.on(sensor.SensorId.GRAVITY, callback, {'interval': 100000000});
+                    sensor.on(sensor.SensorId.GRAVITY, callback2, {'interval': 100000000});
+                    setTimeout(() => {
+                        sensor.off(sensor.SensorId.GRAVITY);
+                        done();
+                    }, 1000);
+                } catch (error) {
+                    console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
+                    expect(false).assertTrue();
+                    done();
+                }
+            });
+        } catch (error) {
+            console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
+            expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
+            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
+            done();
+        }
+    })
 })
