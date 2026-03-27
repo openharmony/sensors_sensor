@@ -143,7 +143,7 @@ int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
         SEN_HILOGE("UnsubscribeSensor failed");
         return NormalizeErrCode(ret);
     }
-    OHOS::HiviewDFX::ReportXpowerStackSysEvent("SENSOR_NATIVE", std::to_string(sensorId));
+    OHOS::HiviewDFX::ReportXPowerStackSysEvent("SENSOR_NATIVE", std::to_string(sensorId));
     return ret;
 }
 
