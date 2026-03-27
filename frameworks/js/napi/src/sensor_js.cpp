@@ -379,7 +379,7 @@ static bool GetLocationDeviceId(int32_t &deviceId)
 
 static void ReportJsStackToXpower(napi_env env, int32_t sensorType)
 {
-    OHOS::HiviewDFX::ReportXpowerJsStackSysEvent(env, "SENSOR_JS", std::to_string(sensorType));
+    OHOS::HiviewDFX::ReportXPowerJsStackSysEvent(env, "SENSOR_JS", std::to_string(sensorType));
 }
 
 static napi_value Once(napi_env env, napi_callback_info info)
