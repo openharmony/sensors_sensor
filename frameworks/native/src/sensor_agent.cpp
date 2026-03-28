@@ -15,6 +15,8 @@
 
 #include "sensor_agent.h"
 
+#include "xpower_event.h"
+
 #include "sensor_agent_proxy.h"
 #include "sensor_errors.h"
 
@@ -141,6 +143,7 @@ int32_t UnsubscribeSensor(int32_t sensorId, const SensorUser *user)
         SEN_HILOGE("UnsubscribeSensor failed");
         return NormalizeErrCode(ret);
     }
+    OHOS::HiviewDFX::ReportXPowerStackSysEvent("SENSOR_NATIVE", std::to_string(sensorId));
     return ret;
 }
 

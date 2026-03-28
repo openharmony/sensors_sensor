@@ -39,6 +39,7 @@
         "selinux_adapter",
         "cJSON",
         "runtime_core",
+        "hiview",
         "os_account"
       ],
       "third_party": []

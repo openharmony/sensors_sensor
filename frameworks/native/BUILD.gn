@@ -147,6 +147,7 @@ ohos_shared_library("sensor_interface_native") {
     "eventhandler:libeventhandler",
     "hilog:libhilog",
     "ipc:ipc_single",
+    "hiview:libxpower_event",
   ]
 
   part_name = "sensor"

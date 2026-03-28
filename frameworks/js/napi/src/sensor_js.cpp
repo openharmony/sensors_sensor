@@ -23,6 +23,7 @@
 
 #include "refbase.h"
 #include "securec.h"
+#include "xpower_event_js.h"
 
 #include "geomagnetic_field.h"
 #include "sensor_algorithm.h"
@@ -376,6 +377,11 @@ static bool GetLocationDeviceId(int32_t &deviceId)
     return false;
 }
 
+static void ReportJsStackToXpower(napi_env env, int32_t sensorType)
+{
+    OHOS::HiviewDFX::ReportXPowerJsStackSysEvent(env, "SENSOR_JS", std::to_string(sensorType));
+}
+
 static napi_value Once(napi_env env, napi_callback_info info)
 {
     CALL_LOG_ENTER;
@@ -404,6 +410,7 @@ static napi_value Once(napi_env env, napi_callback_info info)
             ThrowErr(env, ret, "SubscribeSensor fail");
             return nullptr;
         }
+        ReportJsStackToXpower(env, sensorType);
     }
     UpdateOnceCallback(env, {DEFAULT_DEVICE_ID, sensorType, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE}, args[1]);
     return nullptr;
@@ -630,6 +637,7 @@ static napi_value On(napi_env env, napi_callback_info info)
         ThrowErr(env, ret, "SubscribeSensor fail");
         return nullptr;
     }
+    ReportJsStackToXpower(env, sensorDesc.sensorType);
     UpdateCallbackInfos(env, sensorDesc, args[1]);
     return nullptr;
 }
