@@ -28,6 +28,7 @@ bool IsEqual(const T &left, const T &right)
 constexpr int32_t SINGLE_DISPLAY_SMALL_FOLD = 4;
 constexpr int32_t SINGLE_DISPLAY_THREE_FOLD = 6;
 constexpr int32_t SINGLE_DISPLAY_HP_FOLD = 7;
+constexpr int32_t SINGLE_DISPLAY_LAP_FOLD = 8;
 enum class DMDeviceStatus : uint32_t {
     UNKNOWN = 0,
     STATUS_FOLDED,

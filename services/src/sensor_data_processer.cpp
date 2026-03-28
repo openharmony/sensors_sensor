@@ -295,6 +295,34 @@ int32_t SensorDataProcesser::CacheSensorEvent(const SensorData &data, sptr<Senso
     return ret;
 }
 
+void SensorDataProcesser::TransformSensorDataProcess(sptr<SensorBasicDataChannel> channel, SensorData &sensorData)
+{
+    if (channel == nullptr) {
+        SEN_HILOGE("channel is null");
+        return;
+    }
+    if (!channel->GetSensorStatus()) {
+        SEN_HILOGW("Sensor status is not active");
+        return;
+    }
+    uint32_t state = clientInfo_.GetDeviceStatus();
+    MotionTransformIfRequired(channel->GetPackageName(), state, &sensorData);
+    std::vector<CompatibleAppData> appList = SENSOR_DATA_MGR->GetCompatibleAppStrategyList();
+    auto it = std::find_if(appList.begin(), appList.end(), [this, channel](const CompatibleAppData &app) {
+        return app.name == channel->GetPackageName();
+    });
+    if (it != appList.end()) {
+        int32_t deviceType = clientInfo_.GetDeviceType();
+        if ((deviceType == SINGLE_DISPLAY_HP_FOLD || deviceType == SINGLE_DISPLAY_LAP_FOLD) &&
+            static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_EXPAND) {
+            sensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
+        }
+        if (deviceType == SINGLE_DISPLAY_THREE_FOLD) {
+            MotionSensorRevision(state, &sensorData);
+        }
+    }
+}
+
 void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
     if (eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
@@ -313,25 +341,9 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
             continue;
         }
         SensorData sensorData = eventsBuf.circularBuf[eventsBuf.readPos];
-#ifdef MSDP_MOTION_ENABLE
         if (g_noNeedMotionTransform.find(sensorData.sensorTypeId) == g_noNeedMotionTransform.end()) {
-            MotionTransformIfRequired(channel->GetPackageName(), clientInfo_.GetDeviceStatus(), &sensorData);
-            std::vector<CompatibleAppData> appList = SENSOR_DATA_MGR->GetCompatibleAppStrategyList();
-            auto it = std::find_if(appList.begin(), appList.end(), [this, channel](const CompatibleAppData &app) {
-                return app.name == channel->GetPackageName();
-            });
-            if (it != appList.end()) {
-                uint32_t state = clientInfo_.GetDeviceStatus();
-                if (clientInfo_.GetDeviceType() == SINGLE_DISPLAY_HP_FOLD &&
-                    static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_EXPAND) {
-                        sensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
-                }
-                if (clientInfo_.GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD) {
-                    MotionSensorRevision(state, &sensorData);
-                }
-            }
+            TransformSensorDataProcess(channel, sensorData);
         }
-#endif // MSDP_MOTION_ENABLE
         if ((g_shakeSensorControlList.find(sensorData.sensorTypeId) != g_shakeSensorControlList.end())
             && (SENSOR_SHAKE_CONTROL_MGR->CheckAppIsNeedControl(channel->GetPackageName(), channel->GetAccessTokenId(),
             channel->GetUserId()))) {

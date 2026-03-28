@@ -77,7 +77,7 @@ bool SensorDataManager::Init(int32_t deviceMode)
             }
             ParseCompatibleAppStrategyList(compatibleAppStrategy);
         }
-        if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD) {
+        if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD || currentDeviceMode == SINGLE_DISPLAY_LAP_FOLD) {
             if (GetStringValue(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY, compatibleAppStrategy) != ERR_OK) {
                 SEN_HILOGE("Get app logical device configuration failed");
             }
@@ -214,7 +214,7 @@ int32_t SensorDataManager::RegisterObserver(const sptr<SensorObserver> &observer
         helper->RegisterObserver(uriCompatibleAppStrategy, observer);
         helper->NotifyChange(uriCompatibleAppStrategy);
     }
-    if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD) {
+    if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD || currentDeviceMode == SINGLE_DISPLAY_LAP_FOLD) {
         auto uriAppLogicalStrategy = AssembleUri(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY);
         helper->RegisterObserver(uriAppLogicalStrategy, observer);
         helper->NotifyChange(uriAppLogicalStrategy);
@@ -248,7 +248,7 @@ int32_t SensorDataManager::UnregisterObserver(const sptr<SensorObserver> &observ
         auto uriCompatibleAppStrategy = AssembleUri(SETTING_COMPATIBLE_APP_STRATEGY_KEY);
         helper->UnregisterObserver(uriCompatibleAppStrategy, observer);
     }
-    if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD) {
+    if (currentDeviceMode == SINGLE_DISPLAY_HP_FOLD || currentDeviceMode == SINGLE_DISPLAY_LAP_FOLD) {
         auto uriCompatibleAppStrategy = AssembleUri(SETTING_APP_LOGICAL_DEVICE_CONFIGURATION_KEY);
         helper->UnregisterObserver(uriCompatibleAppStrategy, observer);
     }
