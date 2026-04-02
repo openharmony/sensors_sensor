@@ -624,7 +624,7 @@ void EmitUvEventLoop(sptr<AsyncCallbackInfo> asyncCallbackInfo, std::shared_ptr<
         ReleaseCallback(asyncCallbackInfo);
         napi_close_handle_scope(asyncCallbackInfo->env, scope);
     };
-    auto ret = napi_send_event(asyncCallbackInfo->env, task, napi_eprio_immediate);
+    auto ret = napi_send_event(asyncCallbackInfo->env, task, napi_eprio_immediate, "sensor EmitUvEventLoop");
     if (ret != napi_ok) {
         SEN_HILOGE("Failed to SendEvent, ret:%{public}d", ret);
         asyncCallbackInfo->DecStrongRef(nullptr);
