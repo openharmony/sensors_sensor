@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Huawei Device Co., Ltd.
+# Copyright (c) 2026 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -16,7 +16,7 @@ import("//build/ohos.gni")
 import("//build/test.gni")
 import("./../../../../sensor.gni")
 
-ohos_fuzztest("CJsensorFuzzTest") {
+ohos_fuzztest("CJSensorFuzzTest") {
   module_out_path = FUZZ_MODULE_OUT_PATH
 
   fuzz_config_file = "$SUBSYSTEM_DIR/test/fuzztest/interfaces/cjsensor_fuzzer"
@@ -62,6 +62,6 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":CJsensorFuzzTest",
+    ":CJSensorFuzzTest",
   ]
 }

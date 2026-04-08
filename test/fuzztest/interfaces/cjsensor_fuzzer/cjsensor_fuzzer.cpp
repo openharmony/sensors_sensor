@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@
 #include "cj_sensor_ffi.h"
 
 #undef LOG_TAG
-#define LOG_TAG "CJsensorFuzzTest"
+#define LOG_TAG "CJSensorFuzzTest"
 
 namespace OHOS {
 namespace Sensors {
@@ -44,6 +44,10 @@ public:
     template<typename T>
     bool Get(T &out)
     {
+
+        if (data_ == nullptr || size_ < sizeof(T)) {
+            return false;
+        }
         if (size_ < sizeof(T)) {
             return false;
         }
@@ -157,7 +161,7 @@ static void SetUpTestCase()
         .dcaps = nullptr,
         .perms = perms,
         .acls = nullptr,
-        .processName = "CJsensorFuzzTest",
+        .processName = "CJSensorFuzzTest",
         .aplStr = "system_core",
     };
 
@@ -225,14 +229,12 @@ static void FuzzAngleVariation(FuzzDataProvider &provider)
 
 static void FuzzRotationMatrixOps(FuzzDataProvider &provider)
 {
-    // 1) rotationVector -> rotationMatrixOut
     CArrFloat32 rotationVector = CreateFloatArray(provider, ROTATION_VECTOR_LENGTH);
     CArrFloat32 rotationMatrixOut = {nullptr, 0};
     (void)FfiSensorGetRotationMatrix(rotationVector, &rotationMatrixOut);
     FreeCArr(rotationVector);
     FreeCArr(rotationMatrixOut);
 
-    // 2) inRotationVector + coordOptions -> transformedRotationMatrix
     CArrFloat32 inRotationVector = CreateFloatArray(provider, THREE_DIMENSIONAL_MATRIX_LENGTH);
     CCoordinatesOptions coordOptions = {};
     (void)provider.Get(coordOptions);
@@ -245,14 +247,12 @@ static void FuzzRotationMatrixOps(FuzzDataProvider &provider)
 
 static void FuzzQuaternionAndOrientation(FuzzDataProvider &provider)
 {
-    // rotationVectorForQuat -> quaternion
     CArrFloat32 rotationVectorForQuat = CreateFloatArray(provider, QUATERNION_LENGTH);
     CArrFloat32 quaternion = {nullptr, 0};
     (void)FfiSensorGetQuaternion(rotationVectorForQuat, &quaternion);
     FreeCArr(rotationVectorForQuat);
     FreeCArr(quaternion);
 
-    // rotationMatrixForOrientation -> rotationAngleOut
     CArrFloat32 rotationMatrixForOrientation = CreateFloatArray(provider, THREE_DIMENSIONAL_MATRIX_LENGTH);
     CArrFloat32 rotationAngleOut = {nullptr, 0};
     (void)FfiSensorGetOrientation(rotationMatrixForOrientation, &rotationAngleOut);
@@ -282,7 +282,7 @@ static void FuzzSensorEnumeration()
 }
 
 
-void CJsensorFuzzTest(const uint8_t *data, size_t size)
+void CJSensorFuzzTest(const uint8_t *data, size_t size)
 {
     if (data == nullptr || size < DATA_MIN_SIZE) {
         return;
@@ -306,6 +306,6 @@ void CJsensorFuzzTest(const uint8_t *data, size_t size)
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-    OHOS::Sensors::CJsensorFuzzTest(data, size);
+    OHOS::Sensors::CJSensorFuzzTest(data, size);
     return 0;
 }
