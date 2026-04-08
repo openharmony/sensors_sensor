@@ -40,7 +40,6 @@ constexpr int32_t THREE_DIMENSIONAL_MATRIX_LENGTH = 9;
 class FuzzDataProvider {
 public:
     FuzzDataProvider(const uint8_t *data, size_t size) : data_(data), size_(size) {}
-
     template<typename T>
     bool Get(T &out)
     {
