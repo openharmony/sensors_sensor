@@ -1,0 +1,67 @@
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/config/features.gni")
+import("//build/ohos.gni")
+import("//build/test.gni")
+import("./../../../../sensor.gni")
+
+ohos_fuzztest("CJSensorFuzzTest") {
+  module_out_path = FUZZ_MODULE_OUT_PATH
+
+  fuzz_config_file = "$SUBSYSTEM_DIR/test/fuzztest/interfaces/cjsensor_fuzzer"
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+    "$SUBSYSTEM_DIR/test/fuzztest/interfaces/cjsensor_fuzzer",
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/frameworks/cj/include",
+  ]
+
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+
+  # 这里只保留 fuzz 自己的 cpp
+  sources = [
+    "cjsensor_fuzzer.cpp",
+  ]
+
+  # 依赖 native 接口 + CJ FFI 模块
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native",
+    "$SUBSYSTEM_DIR/frameworks/cj:cj_sensor_ffi",  # 把这里改成你实际找到的 target 名
+  ]
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "access_token:libnativetoken_shared",
+    "access_token:libtokensetproc_shared",
+    "c_utils:utils",
+    "drivers_interface_sensor:libsensor_proxy_3.0",
+    "hilog:libhilog",
+  ]
+}
+
+group("fuzztest") {
+  testonly = true
+  deps = []
+  deps += [
+    # deps file
+    ":CJSensorFuzzTest",
+  ]
+}
