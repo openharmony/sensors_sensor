@@ -43,7 +43,6 @@ public:
     template<typename T>
     bool Get(T &out)
     {
-
         if (data_ == nullptr || size_ < sizeof(T)) {
             return false;
         }
