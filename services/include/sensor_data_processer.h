@@ -46,6 +46,7 @@ private:
                      std::vector<SensorData> events);
     void EventFilter(CircularEventBuf &eventsBuf);
     void UpdataFifoDataChannel(sptr<SensorBasicDataChannel> &channel, std::vector<sptr<FifoCacheData>> &dataCount);
+    void TransformSensorDataProcess(sptr<SensorBasicDataChannel> channel, SensorData &sensorData);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
     std::mutex dataCountMutex_;

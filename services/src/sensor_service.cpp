@@ -64,7 +64,8 @@ const std::set<int32_t> g_shakeSensorControlList = {
     SENSOR_TYPE_ID_GEOMAGNETIC_ROTATION_VECTOR
 };
 const std::set<int32_t> g_needLoadMotionLibType = {
-    SINGLE_DISPLAY_SMALL_FOLD, SINGLE_DISPLAY_THREE_FOLD, SINGLE_DISPLAY_HP_FOLD
+    SINGLE_DISPLAY_SMALL_FOLD, SINGLE_DISPLAY_THREE_FOLD,
+    SINGLE_DISPLAY_HP_FOLD, SINGLE_DISPLAY_LAP_FOLD
 };
 } // namespace
 
@@ -206,7 +207,7 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     } else {
         if (GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD) {
             MotionSensorRevision();
-        } else if (GetDeviceType() == SINGLE_DISPLAY_HP_FOLD) {
+        } else if (GetDeviceType() == SINGLE_DISPLAY_HP_FOLD || GetDeviceType() == SINGLE_DISPLAY_LAP_FOLD) {
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
             sensorHdiConnection_.ConnectSensorTransformHdi();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
