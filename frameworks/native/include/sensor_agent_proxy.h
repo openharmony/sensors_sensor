@@ -55,6 +55,8 @@ public:
     int32_t SubscribeSensorPlug(const SensorUser *user);
     int32_t UnsubscribeSensorPlug(const SensorUser *user);
     bool HandlePlugSensorData(const SensorPlugData &info);
+    int32_t BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes);
+    int32_t UnblockSensorDataByClient(int32_t targetPid);
 
 private:
     int32_t CreateSensorDataChannel();

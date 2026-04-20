@@ -840,5 +840,31 @@ bool SensorAgentProxy::HandlePlugSensorData(const SensorPlugData &info) __attrib
     }
     return true;
 }
+
+int32_t SensorAgentProxy::BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes)
+{
+    CALL_LOG_ENTER;
+    if (targetPid < 0) {
+        SEN_HILOGE("Pid is invalid, pid:%{public}d", targetPid);
+        return PARAMETER_ERROR;
+    }
+    SensorXcollie sensorXcollie("SensorAgentProxy:BlockSensorDataByPid", XCOLLIE_TIMEOUT_5S);
+    int32_t ret = SEN_CLIENT.BlockSensorDataByPid(targetPid, sensorTypes);
+    if (ret != ERR_OK) {
+        SEN_HILOGD("block sensors failed, ret:%{public}d", ret);
+    }
+    return ret;
+}
+
+int32_t SensorAgentProxy::UnblockSensorDataByClient(int32_t targetPid)
+{
+    CALL_LOG_ENTER;
+    SensorXcollie sensorXcollie("SensorAgentProxy:UnblockSensorDataByClient", XCOLLIE_TIMEOUT_5S);
+    int32_t ret = SEN_CLIENT.UnblockSensorDataByClient(targetPid);
+    if (ret != ERR_OK) {
+        SEN_HILOGD("unblock sensors failed, ret:%{public}d", ret);
+    }
+    return ret;
+}
 } // namespace Sensors
 } // namespace OHOS

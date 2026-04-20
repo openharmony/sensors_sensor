@@ -33,6 +33,7 @@ public:
     bool DumpSensorChannel(int32_t fd, ClientInfo &clientInfo);
     bool DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensors, ClientInfo &clientInfo);
     bool DumpSensorData(int32_t fd, ClientInfo &clientInfo);
+    bool DumpSensorBlockList(int32_t fd);
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorDump);

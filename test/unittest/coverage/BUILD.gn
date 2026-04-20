@@ -131,6 +131,33 @@ ohos_unittest("SensorShakeControlManagerTest") {
   ]
 }
 
+ohos_unittest("SensorDataBlockPolicyTest") {
+  module_out_path = "sensor/sensor/coverage"
+
+  sources =
+      [ "$SUBSYSTEM_DIR/test/unittest/coverage/sensor_data_block_policy_test.cpp" ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/services/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/services:libsensor_service_static",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+    "init:libbeget_proxy",
+    "ipc:ipc_single",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [
@@ -138,5 +165,6 @@ group("unittest") {
     ":SensorBasicDataChannelTest",
     ":SensorDataManagerTest",
     ":SensorShakeControlManagerTest",
+    ":SensorDataBlockPolicyTest",
   ]
 }

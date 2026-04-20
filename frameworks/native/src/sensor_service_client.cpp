@@ -886,5 +886,37 @@ bool SensorServiceClient::EraseCacheSensorList(const SensorPlugData &info)
     SEN_HILOGD("sensorList_ cannot find the sensor");
     return true;
 } // LCOV_EXCL_STOP
+
+int32_t SensorServiceClient::BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "BlockSensorDataByPid");
+    ret = sensorServer_->BlockSensorDataByPid(targetPid, sensorTypes);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    return ret;
+}
+
+int32_t SensorServiceClient::UnblockSensorDataByClient(int32_t targetPid)
+{
+    CALL_LOG_ENTER;
+    int32_t ret = InitServiceClient();
+    if (ret != ERR_OK) {
+        SEN_HILOGE("InitServiceClient failed, ret:%{public}d", ret);
+        return ret;
+    }
+    std::lock_guard<std::mutex> clientLock(clientMutex_);
+    CHKPR(sensorServer_, ERROR);
+    StartTrace(HITRACE_TAG_SENSORS, "UnblockSensorDataByClient");
+    ret = sensorServer_->UnblockSensorDataByClient(targetPid);
+    FinishTrace(HITRACE_TAG_SENSORS);
+    return ret;
+}
 } // namespace Sensors
 } // namespace OHOS

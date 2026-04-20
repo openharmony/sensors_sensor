@@ -41,5 +41,7 @@ group("fuzztest") {
     "setdevicestatusstub_fuzzer:fuzztest",
     "suspendsensorsstub_fuzzer:fuzztest",
     "transferclientremoteobjectstub_fuzzer:fuzztest",
+    "blocksensordatabypidstub_fuzzer:fuzztest",
+    "unblocksensordatabyclientstub_fuzzer:fuzztest"
   ]
 }
