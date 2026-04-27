@@ -70,6 +70,31 @@ ohos_unittest("ReportDataCallbackTest") {
   ]
 }
 
+ohos_unittest("MotionRevisionTest") {
+  module_out_path = "sensor/sensor/coverage"
+
+  sources =
+      [ "$SUBSYSTEM_DIR/test/unittest/coverage/sensor_motion_revision_test.cpp" ]
+
+  include_dirs = [
+    "$SUBSYSTEM_DIR/utils/common/include",
+    "$SUBSYSTEM_DIR/frameworks/native/include",
+    "$SUBSYSTEM_DIR/interfaces/inner_api",
+  ]
+
+  deps = [
+    "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
+    "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
+  ]
+
+  external_deps = [
+    "c_utils:utils",
+    "googletest:gmock",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+  ]
+}
+
 ohos_unittest("SensorDataManagerTest") {
   module_out_path = "sensor/sensor/coverage"
   sources = ["$SUBSYSTEM_DIR/test/unittest/coverage/sensor_data_manager_test.cpp"]
@@ -136,6 +161,7 @@ group("unittest") {
   deps = [
     ":ReportDataCallbackTest",
     ":SensorBasicDataChannelTest",
+    ":MotionRevisionTest",
     ":SensorDataManagerTest",
     ":SensorShakeControlManagerTest",
   ]
