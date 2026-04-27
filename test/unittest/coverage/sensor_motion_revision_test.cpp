@@ -65,14 +65,14 @@ void SensorMotionRevisionTest::ReceiveData(int32_t length) {}
 
 HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_001, TestSize.Level1)
 {
-    SEN_HILOGI("SensorMotionRevisionTest_001 in");
+    SEN_HILOGI("SensorMotionRevisionTestTest_001 in");
     bool ret = LoadMotionSensorRevision();
     ASSERT_EQ(ret, true);
 }
 
 HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_002, TestSize.Level1)
 {
-    SEN_HILOGI("SensorMotionRevisionTest_002 in");
+    SEN_HILOGI("SensorMotionRevisionTestTest_002 in");
     bool ret = LoadMotionSensorRevision();
     ASSERT_EQ(ret, true);
     UnloadMotionSensorRevision();
@@ -80,16 +80,16 @@ HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_002, TestSize.Level1
 
 HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_003, TestSize.Level1)
 {
-    SEN_HILOGI("SensorMotionRevisionTest_002 in");
+    SEN_HILOGI("SensorMotionRevisionTestTest_002 in");
     bool ret = LoadMotionSensorRevision();
     ASSERT_EQ(ret, true);
     SensorData data;
     data.sensorTypeId = 1;
-    data.Version = 2;
+    data.version = 2;
     data.timestamp = 123456789;
     data.option = 200000000;
     data.mode = 1;
-    float values[3] = {0.264569, -0.361812, 9.84289889};
+    float values[3] = {0.264569, -0.361812, 9.842889};
     size_t floatSize = 3 * sizeof(float);
     memcpy_s(data.data, floatSize, values, floatSize);
     data.dataLen = 3;
@@ -103,12 +103,12 @@ HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_003, TestSize.Level1
 
 HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_004, TestSize.Level1)
 {
-    SEN_HILOGI("SensorMotionRevisionTest_002 in");
+    SEN_HILOGI("SensorMotionRevisionTestTest_002 in");
     bool ret = LoadMotionSensorRevision();
     ASSERT_EQ(ret, true);
     SensorData data;
     data.sensorTypeId = 256;
-    data.Version = 2;
+    data.version = 2;
     data.timestamp = 123456789;
     data.option = 200000000;
     data.mode = 1;
@@ -126,20 +126,20 @@ HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_004, TestSize.Level1
 
 HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_005, TestSize.Level1)
 {
-    SEN_HILOGI("SensorMotionRevisionTest_002 in");
+    SEN_HILOGI("SensorMotionRevisionTestTest_002 in");
     bool ret = LoadMotionSensorRevision();
     ASSERT_EQ(ret, true);
     SensorData data;
     data.sensorTypeId = 259;
-    data.Version = 2;
+    data.version = 2;
     data.timestamp = 123456789;
     data.option = 200000000;
     data.mode = 1;
-    float values[4] = {-0.030738f, -0.022079f, 0.988738f};
+    float values[4] = {-0.030738f, -0.022079f, 0.144792f, 0.988738f};
     size_t floatSize = 4 * sizeof(float);
     memcpy_s(data.data, floatSize, values, floatSize);
     data.dataLen = 4;
-    MotionSensorRevision(4, &data); // grlb G
+    MotionSensorRevision(4, &data); // grlb G 
     auto tmp = reinterpret_cast<float *>(data.data);
     EXPECT_FLOAT_EQ(tmp[2], -0.596760f);
     EXPECT_FLOAT_EQ(tmp[3], 0.801527f);
