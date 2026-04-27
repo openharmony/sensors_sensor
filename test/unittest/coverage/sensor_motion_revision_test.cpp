@@ -139,7 +139,7 @@ HWTEST_F(SensorMotionRevisionTest, SensorMotionRevisionTest_005, TestSize.Level1
     size_t floatSize = 4 * sizeof(float);
     memcpy_s(data.data, floatSize, values, floatSize);
     data.dataLen = 4;
-    MotionSensorRevision(4, &data); // grlb G 
+    MotionSensorRevision(4, &data); // grlb G
     auto tmp = reinterpret_cast<float *>(data.data);
     EXPECT_FLOAT_EQ(tmp[2], -0.596760f);
     EXPECT_FLOAT_EQ(tmp[3], 0.801527f);
