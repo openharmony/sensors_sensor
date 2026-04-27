@@ -18,7 +18,7 @@
 #include <gtest/gtest.h>
 #include <sys/socket.h>
 
-#include "message_parcel.h"
+#include "securec.h"
 
 #include "sensor_errors.h"
 #include "motion_plugin.h"
