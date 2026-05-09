@@ -90,7 +90,7 @@ int32_t SensorServiceClient::InitServiceClient()
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     CHKPR(systemAbilityManager, SENSOR_NATIVE_SAM_ERR);
     sensorServer_ = iface_cast<ISensorService>(systemAbilityManager->CheckSystemAbility(SENSOR_SERVICE_ABILITY_ID));
-    if (sensorServer_ == nullptr) {
+    if (sensorServer_ == nullptr || sensorServer_->AsObject() == nullptr || sensorServer_->AsObject()->IsObjectDead()) {
         if (!LoadSensorService()) {
             SEN_HILOGE("LoadSensorService failed");
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
