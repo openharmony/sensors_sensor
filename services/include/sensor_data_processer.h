@@ -18,6 +18,7 @@
 
 #include "fifo_cache_data.h"
 #include "flush_info_record.h"
+#include "sensor_data_block_policy.h"
 #include "sensor_hdi_connection.h"
 
 namespace OHOS {
@@ -47,6 +48,7 @@ private:
     void EventFilter(CircularEventBuf &eventsBuf);
     void UpdataFifoDataChannel(sptr<SensorBasicDataChannel> &channel, std::vector<sptr<FifoCacheData>> &dataCount);
     void TransformSensorDataProcess(sptr<SensorBasicDataChannel> channel, SensorData &sensorData);
+    bool IsBlockSensorData(sptr<SensorBasicDataChannel> channel, int32_t sensorTypeId);
     ClientInfo &clientInfo_ = ClientInfo::GetInstance();
     FlushInfoRecord &flushInfo_ = FlushInfoRecord::GetInstance();
     std::mutex dataCountMutex_;
@@ -56,6 +58,7 @@ private:
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
     SensorHdiConnection &sensorHdiConnection_ = SensorHdiConnection::GetInstance();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
+    SensorDataBlockPolicy &blockPolicy_ = SensorDataBlockPolicy::GetInstance();
 };
 } // namespace Sensors
 } // namespace OHOS

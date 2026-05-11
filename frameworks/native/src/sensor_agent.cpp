@@ -305,3 +305,23 @@ int32_t UnsubscribeSensorPlug(const SensorUser *user)
     }
     return ret;
 }
+
+int32_t BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes)
+{
+    int32_t ret = SENSOR_AGENT_IMPL->BlockSensorDataByPid(targetPid, sensorTypes);
+    if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("BlockSensorDataByPid failed");
+        return NormalizeErrCode(ret);
+    }
+    return ret;
+}
+
+int32_t UnblockSensorDataByClient(int32_t targetPid)
+{
+    int32_t ret = SENSOR_AGENT_IMPL->UnblockSensorDataByClient(targetPid);
+    if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("UnblockSensorDataByClient failed");
+        return NormalizeErrCode(ret);
+    }
+    return ret;
+}

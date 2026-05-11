@@ -64,6 +64,8 @@ public:
     ErrCode SetDeviceStatus(uint32_t deviceStatus) override;
     ErrCode TransferClientRemoteObject(const sptr<IRemoteObject> &sensorClient) override;
     ErrCode DestroyClientRemoteObject(const sptr<IRemoteObject> &sensorClient) override;
+    ErrCode BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes) override;
+    ErrCode UnblockSensorDataByClient(int32_t targetPid) override;
 
 private:
     DISALLOW_COPY_AND_MOVE(SensorService);

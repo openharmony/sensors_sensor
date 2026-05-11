@@ -57,6 +57,8 @@ public:
     int32_t DestroyClientRemoteObject();
     bool EraseCacheSensorList(const SensorPlugData &info);
     int32_t GetLocalDeviceId(int32_t &deviceId);
+    int32_t BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes);
+    int32_t UnblockSensorDataByClient(int32_t targetPid);
 
 private:
     int32_t InitServiceClient();

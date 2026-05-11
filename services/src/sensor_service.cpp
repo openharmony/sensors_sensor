@@ -36,6 +36,7 @@
 #include "security_privacy_manager_plugin.h"
 #include "sensor_shake_control_manager.h"
 #include "sensor_data_manager.h"
+#include "sensor_data_block_policy.h"
 #include "sensor_dump.h"
 #include "sensor_utils.h"
 #include "system_ability_definition.h"
@@ -976,6 +977,9 @@ void SensorService::ProcessDeathObserver(const wptr<IRemoteObject> &object)
         return;
     } // LCOV_EXCL_STOP
     POWER_POLICY.DeleteDeathPidSensorInfo(pid);
+    // Clear all blocking policies issued by this client (when screen casting service dies)
+    auto &blockPolicy = SensorDataBlockPolicy::GetInstance();
+    blockPolicy.ClearBlockPolicyByClient(pid);
     SEN_HILOGI("pid is %{public}d", pid);
     std::vector<SensorDescription> activeSensors = clientInfo_.GetSensorIdByPid(pid);
     for (size_t i = 0; i < activeSensors.size(); ++i) { // LCOV_EXCL_START
@@ -1340,5 +1344,88 @@ void SensorService::SetCritical()
     }
 #endif // MEMMGR_ENABLE
 } // LCOV_EXCL_STOP
+
+ErrCode SensorService::BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes)
+{
+    CALL_LOG_ENTER;
+    // Permission check: must be system service + MANAGE_SENSOR permission
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    auto callerToken = IPCSkeleton::GetCallingTokenID();
+    if (!permissionUtil.IsNativeToken(callerToken) ||
+        permissionUtil.CheckManageSensorPermission(callerToken) != PERMISSION_GRANTED) {
+        SEN_HILOGE("Permission denied: not system service or no MANAGE_SENSOR permission");
+        return PERMISSION_DENIED;
+    }
+
+    if (!IsSystemServiceCalling()) {
+        SEN_HILOGE("Only system service can call this API");
+        return PERMISSION_DENIED;
+    }
+
+    if (targetPid <= 0) {
+        SEN_HILOGE("Invalid targetPid:%{public}d", targetPid);
+        return PARAMETER_ERROR;
+    }
+
+    if (sensorTypes.empty()) {
+        SEN_HILOGE("SensorTypes is empty");
+        return PARAMETER_ERROR;
+    }
+
+    // Get caller PID (screen casting service)
+    int32_t clientPid = IPCSkeleton::GetCallingPid();
+    if (clientPid <= 0) {
+        SEN_HILOGE("Invalid clientPid:%{public}d", clientPid);
+        return PARAMETER_ERROR;
+    }
+
+    // Call blocking policy management class
+    auto &blockPolicy = SensorDataBlockPolicy::GetInstance();
+    ErrCode ret = blockPolicy.BlockSensorDataByPid(targetPid, sensorTypes, clientPid);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("BlockSensorDataByPid failed, targetPid:%{public}d, ret:%{public}d", targetPid, ret);
+        return ret;
+    }
+
+    SEN_HILOGI("BlockSensorDataByPid success, targetPid:%{public}d, clientPid:%{public}d, sensorCount:%{public}zu",
+               targetPid, clientPid, sensorTypes.size());
+    return ERR_OK;
+}
+
+ErrCode SensorService::UnblockSensorDataByClient(int32_t targetPid)
+{
+    CALL_LOG_ENTER;
+    // Permission check: must be system service + MANAGE_SENSOR permission
+    PermissionUtil &permissionUtil = PermissionUtil::GetInstance();
+    auto callerToken = IPCSkeleton::GetCallingTokenID();
+    if (!permissionUtil.IsNativeToken(callerToken) ||
+        permissionUtil.CheckManageSensorPermission(callerToken) != PERMISSION_GRANTED) {
+        SEN_HILOGE("Permission denied: not system service or no MANAGE_SENSOR permission");
+        return PERMISSION_DENIED;
+    }
+
+    if (!IsSystemServiceCalling()) {
+        SEN_HILOGE("Only system service can call this API");
+        return PERMISSION_DENIED;
+    }
+
+    // Get caller PID (screen casting service)
+    int32_t clientPid = IPCSkeleton::GetCallingPid();
+    if (clientPid <= 0) {
+        SEN_HILOGE("Invalid clientPid:%{public}d", clientPid);
+        return PARAMETER_ERROR;
+    }
+
+    // Call blocking policy management class
+    auto &blockPolicy = SensorDataBlockPolicy::GetInstance();
+    ErrCode ret = blockPolicy.UnblockSensorDataByClient(clientPid, targetPid);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("UnblockSensorDataByClient failed, clientPid:%{public}d, ret:%{public}d", clientPid, ret);
+        return ret;
+    }
+
+    SEN_HILOGI("UnblockSensorDataByClient success, clientPid:%{public}d", clientPid);
+    return ERR_OK;
+}
 } // namespace Sensors
 } // namespace OHOS

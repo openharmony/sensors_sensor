@@ -21,6 +21,7 @@
 
 #include "securec.h"
 #include "sensor_errors.h"
+#include "sensor_data_block_policy.h"
 
 #undef LOG_TAG
 #define LOG_TAG "SensorDump"
@@ -96,11 +97,12 @@ void SensorDump::RunSensorDump(int32_t fd, int32_t optionIndex, const std::vecto
         {"open", no_argument, 0, 'o'},
         {"help", no_argument, 0, 'h'},
         {"list", no_argument, 0, 'l'},
+        {"listBlock", no_argument, 0, 'b'},
         {NULL, 0, 0, 0}
     };
     optind = 1;
     int32_t c;
-    while ((c = getopt_long(args.size(), argv, "cdohl", dumpOptions, &optionIndex)) != -1) {
+    while ((c = getopt_long(args.size(), argv, "cdohlb", dumpOptions, &optionIndex)) != -1) {
         switch (c) {
             case 'c': {
                 DumpSensorChannel(fd, clientInfo_);
@@ -122,6 +124,10 @@ void SensorDump::RunSensorDump(int32_t fd, int32_t optionIndex, const std::vecto
             }
             case 'l': {
                 DumpSensorList(fd, sensors_);
+                break;
+            }
+            case 'b': {
+                DumpSensorBlockList(fd);
                 break;
             }
             default: {
@@ -191,6 +197,7 @@ void SensorDump::DumpHelp(int32_t fd)
 #ifdef BUILD_VARIANT_ENG 
     dprintf(fd, "      -d, --data: dump the last 10 packages sensor data\n");
 #endif // BUILD_VARIANT_ENG
+    dprintf(fd, "      -b, --listBlock: dump the block sensor info\n");
 }
 
 bool SensorDump::DumpSensorList(int32_t fd, const std::vector<Sensor> &sensors)
@@ -256,6 +263,16 @@ bool SensorDump::DumpOpeningSensor(int32_t fd, const std::vector<Sensor> &sensor
                     sensor.GetDeviceId(), sensorTypeId, sensor.GetSensorId(), sensor.GetLocation()}).size());
         }
     }
+    return true;
+}
+
+bool SensorDump::DumpSensorBlockList(int32_t fd)
+{
+    auto &blockPolicy = SensorDataBlockPolicy::GetInstance();
+
+    // When policy is empty
+    std::string dumpInfo = blockPolicy.DumpBlockPolicies();
+    dprintf(fd, "%s", dumpInfo.c_str());
     return true;
 }
 

@@ -25,6 +25,7 @@
 #include "motion_plugin.h"
 #include "print_sensor_data.h"
 #include "sensor_data_manager.h"
+#include "sensor_data_block_policy.h"
 #include "sensor_shake_control_manager.h"
 #include "sensor_utils.h"
 
@@ -324,6 +325,17 @@ void SensorDataProcesser::TransformSensorDataProcess(sptr<SensorBasicDataChannel
     }
 }
 
+bool SensorDataProcesser::IsBlockSensorData(sptr<SensorBasicDataChannel> channel, int32_t sensorTypeId)
+{
+    auto clientInfo = clientInfo_.GetAppInfoByChannel(channel);
+    if (clientInfo.pid > 0 && blockPolicy_.IsSensorDataBlocked(clientInfo.pid, sensorTypeId)) {
+        SEN_HILOGD("Sensor data blocked for pid:%{public}d, sensorType:%{public}d",
+            clientInfo.pid, sensorTypeId);
+        return true;
+    }
+    return false;
+}
+
 void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
 {
     if (eventsBuf.circularBuf[eventsBuf.readPos].sensorTypeId == SENSOR_TYPE_ID_HALL_EXT) {
@@ -349,6 +361,9 @@ void SensorDataProcesser::EventFilter(CircularEventBuf &eventsBuf)
             && (SENSOR_SHAKE_CONTROL_MGR->CheckAppIsNeedControl(channel->GetPackageName(), channel->GetAccessTokenId(),
             channel->GetUserId()))) {
             SEN_HILOGD("Shake the sensor data for control, bundleName:%{public}s", channel->GetPackageName().c_str());
+            continue;
+        }
+        if (IsBlockSensorData(channel, sensorData.sensorTypeId)) {
             continue;
         }
         SendEvents(channel, sensorData);

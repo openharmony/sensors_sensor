@@ -309,6 +309,24 @@ int32_t SubscribeSensorPlug(const SensorUser *user);
  */
 int32_t UnsubscribeSensorPlug(const SensorUser *user);
 
+/**
+ * @brief Block sensor data reporting for specified application
+ *
+ * @param targetPid Target application PID (application requiring data blocking)
+ * @param sensorTypes List of sensor types to block (e.g. SENSOR_TYPE_ID_ACCELEROMETER)
+ * @return Returns <b>0</b> if the blocking is successful; returns a non-zero value otherwise.
+ * @since 26.0.0
+ */
+int32_t BlockSensorDataByPid(int32_t targetPid, const std::vector<int32_t> &sensorTypes);
+
+/**
+ * @brief Cancel all sensor data blocking policies issued by current client
+ *
+ * @param targetPid Target application PID
+ * @return Returns <b>0</b> if the unblocking is successful; returns a non-zero value otherwise.
+ * @since 26.0.0
+ */
+int32_t UnblockSensorDataByClient(int32_t targetPid);
 #ifdef __cplusplus
 #if __cplusplus
 }

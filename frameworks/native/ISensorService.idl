@@ -36,4 +36,6 @@ interface OHOS.Sensors.ISensorService {
     void SetDeviceStatus([in] unsigned int deviceStatus);
     void TransferClientRemoteObject([in] IRemoteObject sensorClient);
     void DestroyClientRemoteObject([in] IRemoteObject sensorClient);
+    void BlockSensorDataByPid([in] int targetPid, [in] int[] sensorTypes);
+    void UnblockSensorDataByClient([in] int targetPid);
  }
