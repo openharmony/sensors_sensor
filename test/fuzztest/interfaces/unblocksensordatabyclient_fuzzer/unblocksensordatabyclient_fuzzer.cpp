@@ -42,7 +42,11 @@ void GetObject(const uint8_t *data, size_t size, T &object)
     if (objectSize > size) {
         return;
     }
-    memcpy_s(&object, objectSize, data, objectSize);
+    errno_t ret = memcpy_s(&object, objectSize, data, objectSize);
+    if (ret != EOK) {
+        SEN_HILOGE("Copy data failed");
+        return;
+    }
 }
 
 void SetUpTestCase()
