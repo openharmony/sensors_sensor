@@ -29,5 +29,7 @@ group("fuzztest") {
     "getsensorlistbydeviceproxy_fuzzer:fuzztest",
     "resetsensors_fuzzer:fuzztest",
     "cjsensor_fuzzer:CJSensorFuzzTest",
+    "blocksensordatabypid_fuzzer:fuzztest",
+    "unblocksensordatabyclient_fuzzer:fuzztest",
   ]
 }

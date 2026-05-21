@@ -671,5 +671,134 @@ HWTEST_F(SensorAgentTest, UnsubscribeSensorPlugTest_002, TestSize.Level1)
     ret = UnsubscribeSensorPlug(&user);
     ASSERT_EQ(ret, OHOS::ERR_OK);
 }
+
+/*
+ * Feature: sensor
+ * Function: BlockSensorDataByPid
+ * FunctionPoints: Check the interface function
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data blocking by pid function.
+ */
+HWTEST_F(SensorAgentTest, BlockSensorDataByPidTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("BlockSensorDataByPidTest_001 in");
+    int32_t targetPid = 1001;
+    std::vector<int32_t> sensorTypes = {SENSOR_TYPE_ID_ACCELEROMETER};
+    int32_t ret = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+}
+
+/*
+ * Feature: sensor
+ * Function: BlockSensorDataByPid
+ * FunctionPoints: Check the interface function with invalid parameters
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data blocking by pid function with invalid pid.
+ */
+HWTEST_F(SensorAgentTest, BlockSensorDataByPidTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("BlockSensorDataByPidTest_002 in");
+    int32_t targetPid = -1;
+    std::vector<int32_t> sensorTypes = {SENSOR_TYPE_ID_ACCELEROMETER};
+    int32_t ret = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+/*
+ * Feature: sensor
+ * Function: BlockSensorDataByPid
+ * FunctionPoints: Check the interface function with empty sensor types
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data blocking by pid function with empty sensor types.
+ */
+HWTEST_F(SensorAgentTest, BlockSensorDataByPidTest_003, TestSize.Level1)
+{
+    SEN_HILOGI("BlockSensorDataByPidTest_003 in");
+    int32_t targetPid = 1001;
+    std::vector<int32_t> sensorTypes; // empty vector
+    int32_t ret = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+/*
+ * Feature: sensor
+ * Function: BlockSensorDataByPid
+ * FunctionPoints: Check the interface function with multiple sensor types
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data blocking by pid function with multiple sensor types.
+ */
+HWTEST_F(SensorAgentTest, BlockSensorDataByPidTest_004, TestSize.Level1)
+{
+    SEN_HILOGI("BlockSensorDataByPidTest_004 in");
+    int32_t targetPid = 1001;
+    std::vector<int32_t> sensorTypes = {
+        SENSOR_TYPE_ID_ACCELEROMETER,
+        SENSOR_TYPE_ID_GYROSCOPE,
+        SENSOR_TYPE_ID_MAGNETIC_FIELD
+    };
+    int32_t ret = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_EQ(ret, OHOS::ERR_OK);
+}
+
+/*
+ * Feature: sensor
+ * Function: UnblockSensorDataByClient
+ * FunctionPoints: Check the interface function
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data unblocking by client function.
+ */
+HWTEST_F(SensorAgentTest, UnblockSensorDataByClientTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("UnblockSensorDataByClientTest_001 in");
+    int32_t targetPid = 1001;
+    // First block the sensor data
+    std::vector<int32_t> sensorTypes = {SENSOR_TYPE_ID_ACCELEROMETER};
+    int32_t ret1 = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_EQ(ret1, OHOS::ERR_OK);
+    // Then unblock the sensor data
+    int32_t ret2 = UnblockSensorDataByClient(targetPid);
+    ASSERT_EQ(ret2, OHOS::ERR_OK);
+}
+
+/*
+ * Feature: sensor
+ * Function: UnblockSensorDataByClient
+ * FunctionPoints: Check the interface function with invalid pid
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data unblocking by client function with invalid pid.
+ */
+HWTEST_F(SensorAgentTest, UnblockSensorDataByClientTest_002, TestSize.Level1)
+{
+    SEN_HILOGI("UnblockSensorDataByClientTest_002 in");
+    int32_t targetPid = -1;
+    int32_t ret = UnblockSensorDataByClient(targetPid);
+    ASSERT_NE(ret, OHOS::ERR_OK);
+}
+
+/*
+ * Feature: sensor
+ * Function: BlockSensorDataByPid and UnblockSensorDataByClient
+ * FunctionPoints: Check the interface function integration
+ * EnvConditions: mobile that can run ohos test framework
+ * CaseDescription: Verify the sensor data blocking and unblocking integration.
+ */
+HWTEST_F(SensorAgentTest, BlockUnblockSensorDataIntegrationTest_001, TestSize.Level1)
+{
+    SEN_HILOGI("BlockUnblockSensorDataIntegrationTest_001 in");
+    int32_t targetPid = 1002;
+    std::vector<int32_t> sensorTypes = {SENSOR_TYPE_ID_ACCELEROMETER, SENSOR_TYPE_ID_GYROSCOPE};
+
+    // Block sensor data
+    int32_t ret1 = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_EQ(ret1, OHOS::ERR_OK);
+
+    // Unblock sensor data
+    int32_t ret2 = UnblockSensorDataByClient(targetPid);
+    ASSERT_EQ(ret2, OHOS::ERR_OK);
+
+    // Block again after unblock
+    int32_t ret3 = BlockSensorDataByPid(targetPid, sensorTypes);
+    ASSERT_EQ(ret3, OHOS::ERR_OK);
+}
 } // namespace Sensors
 } // namespace OHOS
