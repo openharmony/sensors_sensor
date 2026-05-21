@@ -19,7 +19,7 @@
 #include "nativetoken_kit.h"
 #include "securec.h"
 #include "token_setproc.h"
-#include "vector"
+#include <vector>
 
 #include "sensor_agent.h"
 #include "sensor_errors.h"
