@@ -487,6 +487,7 @@ void HdiConnection::ProcessDeathObserver(const wptr<IRemoteObject> &object)
 void HdiConnection::ReEnableSensor()
 {
     std::lock_guard<std::mutex> sensorInfoLock(g_sensorBasicInfoMutex);
+    CHKPV(g_sensorInterface);
     for (const auto &sensorInfo: g_sensorBasicInfoMap) {
         SensorBasicInfo info = sensorInfo.second;
         if (!info.GetSensorState()) {
@@ -528,6 +529,7 @@ void HdiConnection::Reconnect()
     }
     {
         std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
+        CHKPV(g_sensorInterface);
         {
             SensorXcollie registerXcollie("HdiConnection:Reconnect:RegisterAsync", XCOLLIE_TIMEOUT_5S);
             ret = g_sensorInterface->RegisterAsync(DEFAULT_GROUP_ID, g_eventCallback);
