@@ -22,7 +22,9 @@
         "bundle_framework",
         "common_event_service",
         "c_utils",
+        "cJSON",
         "data_share",
+        "ets_frontend",
         "hilog",
         "hisysevent",
         "napi",
@@ -37,7 +39,6 @@
         "eventhandler",
         "init",
         "selinux_adapter",
-        "cJSON",
         "runtime_core",
         "hiview",
         "os_account"
