@@ -94,6 +94,7 @@ ohos_unittest("SensorDataManagerTest") {
   ]
 
   external_deps = [
+    "ability_runtime:dataobs_manager",
     "c_utils:utils",
     "data_share:datashare_consumer",
     "googletest:gmock",

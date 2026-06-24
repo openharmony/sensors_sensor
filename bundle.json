@@ -19,6 +19,7 @@
     ],
     "deps": {
       "components": [
+        "ability_runtime",
         "bundle_framework",
         "common_event_service",
         "c_utils",
@@ -28,6 +29,8 @@
         "hilog",
         "hisysevent",
         "napi",
+        "node",
+        "libuv",
         "drivers_interface_sensor",
         "access_token",
         "hicollie",
