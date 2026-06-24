@@ -180,7 +180,12 @@ int32_t CJSensorImpl::OnSensorChange(int32_t sensorId, int64_t interval, void (*
         return ret;
     }
 
-    AddCallback2Map(sensorId, CJLambda::Create(callback));
+    int32_t deviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(deviceId)) {
+        SEN_HILOGW("Cant find local deviceId, default deviceId :%{public}d", deviceId);
+    }
+    SensorDescription sensorDesc = {deviceId, sensorId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE};
+    AddCallback2MapEnhanced(sensorDesc, CJLambda::Create(callback));
     return ERR_OK;
 }
 
@@ -193,7 +198,12 @@ int32_t CJSensorImpl::OffSensorChange(int32_t sensorId)
         return ret;
     }
 
-    DelCallback(sensorId);
+    int32_t deviceId = DEFAULT_DEVICE_ID;
+    if (!GetLocationDeviceId(deviceId)) {
+        SEN_HILOGW("Cant find local deviceId, default deviceId :%{public}d", deviceId);
+    }
+    SensorDescription sensorDesc = {deviceId, sensorId, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE};
+    DelCallbackEnhanced(sensorDesc);
     return ERR_OK;
 }
 
@@ -246,20 +256,6 @@ void CJSensorImpl::EmitCallBack(SensorEvent *event)
     callback.value()(event);
 }
 
-void CJSensorImpl::AddCallback2Map(int32_t type, SensorCallbackType callback)
-{
-    std::lock_guard<std::mutex> mutex(mutex_);
-    SensorDescription sensorDesc = SensorDescription{DEFAULT_DEVICE_ID, type, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE};
-    callbackMap_[sensorDesc]= callback;
-}
-
-void CJSensorImpl::DelCallback(int32_t type)
-{
-    std::lock_guard<std::mutex> mutex(mutex_);
-    SensorDescription sensorDesc = SensorDescription{DEFAULT_DEVICE_ID, type, DEFAULT_SENSOR_ID, IS_LOCAL_DEVICE};
-    callbackMap_.erase(sensorDesc);
-}
-
 void CJSensorImpl::AddCallback2MapEnhanced(SensorDescription sensorDesc, SensorCallbackType callback)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -270,6 +266,24 @@ void CJSensorImpl::DelCallbackEnhanced(SensorDescription sensorDesc)
 {
     std::lock_guard<std::mutex> mutex(mutex_);
     callbackMap_.erase(sensorDesc);
+}
+
+bool CJSensorImpl::GetLocationDeviceId(int32_t &deviceId)
+{
+    SensorInfo *sensorInfos = nullptr;
+    int32_t count = 0;
+    int32_t ret = GetAllSensors(&sensorInfos, &count);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("GetAllSensors failed");
+        return false;
+    }
+    for (int32_t i = 0; i < count; ++i) {
+        if (sensorInfos[i].location == IS_LOCAL_DEVICE) {
+            deviceId = sensorInfos[i].deviceId;
+            return true;
+        }
+    }
+    return false;
 }
 
 std::optional<SensorCallbackType> CJSensorImpl::FindCallback(SensorDescription sensorDesc)
