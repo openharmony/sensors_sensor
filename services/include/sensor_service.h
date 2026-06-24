@@ -107,7 +107,6 @@ private:
     int32_t GetDeviceType();
     void SetCritical();
     void LoadMotionTransform(int32_t systemAbilityId);
-    void MotionSensorRevision();
     void UpdateDeviceStatus();
     int32_t SubscribeCommonEvent(const std::string &eventName, EventReceiver receiver);
     void OnReceiveEvent(const EventFwk::CommonEventData &data);

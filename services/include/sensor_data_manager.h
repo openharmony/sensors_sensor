@@ -70,7 +70,6 @@ private:
     std::shared_ptr<DataShare::DataShareHelper> CreateDataShareHelper(const std::string &tableUrl);
     bool ReleaseDataShareHelper(std::shared_ptr<DataShare::DataShareHelper> &helper);
     sptr<SensorObserver> CreateObserver(const SensorObserver::UpdateFunc &func);
-    void ParseCompatibleAppStrategyList(const std::string &compatibleAppStrategy);
     void ParseAppLogicalDeviceList(const std::string &compatibleAppStrategy);
     int32_t ParseJsonValue(const nlohmann::json &value, const std::string &strKey);
     sptr<IRemoteObject> remoteObj_ { nullptr };

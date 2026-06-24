@@ -88,7 +88,6 @@ SensorService::SensorService()
 SensorService::~SensorService()
 {
     UnloadMotionSensor();
-    UnloadMotionSensorRevision();
     UnloadSecurityPrivacyServer();
 }
 
@@ -206,9 +205,8 @@ void SensorService::OnAddSystemAbility(int32_t systemAbilityId, const std::strin
     if (!IsCameraCorrectionEnable()) {
         LoadMotionTransform(systemAbilityId);
     } else {
-        if (GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD) {
-            MotionSensorRevision();
-        } else if (GetDeviceType() == SINGLE_DISPLAY_HP_FOLD || GetDeviceType() == SINGLE_DISPLAY_LAP_FOLD) {
+        if (GetDeviceType() == SINGLE_DISPLAY_THREE_FOLD || GetDeviceType() == SINGLE_DISPLAY_HP_FOLD ||
+            GetDeviceType() == SINGLE_DISPLAY_LAP_FOLD) {
 #ifdef HDF_DRIVERS_INTERFACE_SENSOR
             sensorHdiConnection_.ConnectSensorTransformHdi();
 #endif // HDF_DRIVERS_INTERFACE_SENSOR
@@ -319,16 +317,6 @@ void SensorService::LoadMotionTransform(int32_t systemAbilityId)
         } else if (!LoadMotionSensor()) {
             SEN_HILOGI("LoadMotionSensor fail");
         }
-    }
-#endif // MSDP_MOTION_ENABLE
-} // LCOV_EXCL_STOP
-
-void SensorService::MotionSensorRevision()
-{ // LCOV_EXCL_START
-    SEN_HILOGI("MotionSensorRevision in");
-#ifdef MSDP_MOTION_ENABLE
-    if (!LoadMotionSensorRevision()) {
-        SEN_HILOGI("LoadMotionSensorRevision fail");
     }
 #endif // MSDP_MOTION_ENABLE
 } // LCOV_EXCL_STOP
