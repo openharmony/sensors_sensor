@@ -45,7 +45,9 @@ ohos_shared_library("libsensor") {
     "hiview:libxpower_event_js",
     "hilog:libhilog",
     "ipc:ipc_single",
+    "libuv:uv",
     "napi:ace_napi",
+    "node:node_header_notice",
   ]
   relative_install_dir = "module"
   part_name = "sensor"
