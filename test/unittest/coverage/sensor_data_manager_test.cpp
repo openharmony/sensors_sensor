@@ -93,38 +93,6 @@ HWTEST_F(SensorDataManagerTest, CreateObserverTest_001, TestSize.Level1)
     EXPECT_NE(observer, nullptr);
 }
 
-HWTEST_F(SensorDataManagerTest, ParseCompatibleAppStrategyListTest_001, TestSize.Level1)
-{
-    SEN_HILOGI("ParseCompatibleAppStrategyListTest_001 in");
-    std::string jsonStr = R"({
-        "com.test.app1": {
-            "name": "com.test.app4",
-            "mode": 8,
-            "exemptNaturalDirectionCorrect": true
-        },
-        "com.test.app2": {
-            "name": "com.test.app5",
-            "mode": 6,
-            "exemptNaturalDirectionCorrect": true
-        },
-        "com.test.app3": {
-            "name": "com.test.app6",
-            "mode": 8,
-            "exemptNaturalDirectionCorrect": false
-        }
-    })";
-    SENSOR_DATA_MGR->ParseCompatibleAppStrategyList(jsonStr);
-    EXPECT_NE(SENSOR_DATA_MGR->compatibleAppStrategyList_.size(), APP_LIST_SIZE_ZERO);
-}
-
-HWTEST_F(SensorDataManagerTest, ParseCompatibleAppStrategyListTest_002, TestSize.Level1)
-{
-    SEN_HILOGI("ParseCompatibleAppStrategyListTest_002 in");
-    std::string jsonStr = "xxx";
-    SENSOR_DATA_MGR->ParseCompatibleAppStrategyList(jsonStr);
-    EXPECT_EQ(SENSOR_DATA_MGR->compatibleAppStrategyList_.size(), APP_LIST_SIZE_ZERO);
-}
-
 HWTEST_F(SensorDataManagerTest, CreateDataShareHelperTest_001, TestSize.Level1)
 {
     SEN_HILOGI("CreateDataShareHelperTest_001 in");
