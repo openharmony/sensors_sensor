@@ -63,11 +63,10 @@ private:
     int32_t UnsubscribeSensorImplEnhanced(SensorDescription &sensorDesc);
     std::map<SensorDescription, SensorCallbackType> callbackMap_;
 
-    void DelCallback(int32_t type);
     void DelCallbackEnhanced(SensorDescription sensorDesc);
-    void AddCallback2Map(int32_t type, SensorCallbackType callback);
     void AddCallback2MapEnhanced(SensorDescription sensorDesc, SensorCallbackType callback);
     std::optional<SensorCallbackType> FindCallback(SensorDescription sensorDesc);
+    static bool GetLocationDeviceId(int32_t &deviceId);
 
     char *MallocCString(const std::string origin);
     void Transform2CSensor(const SensorInfo &in, CSensor &out);
