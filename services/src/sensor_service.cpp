@@ -734,6 +734,7 @@ ErrCode SensorService::DisableSensor(const SensorDescription &sensorDesc, int32_
     }
     ReportSensorSysEvent(sensorDesc.sensorType, false, pid);
     std::lock_guard<std::mutex> serviceLock(serviceLock_);
+    POWER_POLICY.DeleteDisablePidSensorInfo(sensorDesc, pid);
     if (sensorManager_.IsOtherClientUsingSensor(sensorDesc, pid)) {
         SEN_HILOGW("Other client is using this sensor now, can't disable");
         return ERR_OK;
