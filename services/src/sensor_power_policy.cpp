@@ -263,5 +263,26 @@ void SensorPowerPolicy::DeleteDeathPidSensorInfo(int32_t pid)
         pidSensorInfoMap_.erase(pidSensorInfoIt);
     }
 }
+
+void SensorPowerPolicy::DeleteDisablePidSensorInfo(const SensorDescription& sensorDesc, int32_t pid)
+{
+    CALL_LOG_ENTER;
+    std::lock_guard<std::mutex> pidSensorInfoLock(pidSensorInfoMutex_);
+    auto pidSensorInfoIt = pidSensorInfoMap_.find(pid);
+    if (pidSensorInfoIt == pidSensorInfoMap_.end()) {
+        SEN_HILOGD("Delete disable pid sensor info failed, pid:%{public}d", pid);
+        return;
+    }
+    auto sensorDescIt = pidSensorInfoIt->second.find(sensorDesc);
+    if (sensorDescIt != pidSensorInfoIt->second.end()) {
+        SEN_HILOGI("Delete disable pid sensor info, pid:%{public}d, sensorType:%{public}d",
+            pid, sensorDesc.sensorType);
+        pidSensorInfoIt->second.erase(sensorDescIt);
+    }
+    if (pidSensorInfoIt->second.size() == 0) {
+        SEN_HILOGI("Delete disable pid sensor info, pid:%{public}d", pid);
+        pidSensorInfoMap_.erase(pidSensorInfoIt);
+    }
+}
 } // namespace Sensors
 } // namespace OHOS
