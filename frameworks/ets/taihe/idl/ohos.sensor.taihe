@@ -1519,9 +1519,13 @@ struct SensorStatusEvent {
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getRotationMatrix")
-@gen_promise("getRotationMatrix")
+@rename("getRotationMatrix")
+@async
 function getRotationMatrixSyncGrav(gravity: Array<f64>, geomagnetic: Array<f64>): RotationMatrixResponse;
+
+@rename("getRotationMatrix")
+@promise
+function getRotationMatrixPromiseGrav(gravity: Array<f64>, geomagnetic: Array<f64>): RotationMatrixResponse;
 
 /**
  * Computes the device's orientation based on the rotation matrix.
@@ -1533,9 +1537,13 @@ function getRotationMatrixSyncGrav(gravity: Array<f64>, geomagnetic: Array<f64>)
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getOrientation")
-@gen_promise("getOrientation")
+@rename("getOrientation")
+@async
 function getOrientationSync(rotationMatrix: Array<f64>): Array<f64>;
+
+@rename("getOrientation")
+@promise
+function getOrientationPromise(rotationMatrix: Array<f64>): Array<f64>;
 
 /**
  * Convert rotation vector to rotation matrix.
@@ -1547,9 +1555,13 @@ function getOrientationSync(rotationMatrix: Array<f64>): Array<f64>;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getRotationMatrix")
-@gen_promise("getRotationMatrix")
+@rename("getRotationMatrix")
+@async
 function getRotationMatrixSync(rotationVector: Array<f64>): Array<f64>;
+
+@rename("getRotationMatrix")
+@promise
+function getRotationMatrixPromise(rotationVector: Array<f64>): Array<f64>;
 
 /**
  * Obtains all sensor information on the device.
@@ -1560,9 +1572,15 @@ function getRotationMatrixSync(rotationVector: Array<f64>): Array<f64>;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getSensorList")
-@gen_promise("getSensorList")
 function getSensorListSync(): Array<Sensor>;
+
+@rename("getSensorList")
+@async
+function getSensorListAsync(): Array<Sensor>;
+
+@rename("getSensorList")
+@promise
+function getSensorListPromise(): Array<Sensor>;
 
 /**
  * Obtains the sensor information of a specified type.
@@ -1576,9 +1594,15 @@ function getSensorListSync(): Array<Sensor>;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 12
  */
-@gen_async("getSingleSensor")
-@gen_promise("getSingleSensor")
 function getSingleSensorSync(type: SensorId): Sensor;
+
+@rename("getSingleSensor")
+@async
+function getSingleSensorAsync(type: SensorId): Sensor;
+
+@rename("getSingleSensor")
+@promise
+function getSingleSensorPromise(type: SensorId): Sensor;
 
 /**
  * convert a rotation vector to a normalized quaternion.
@@ -1591,9 +1615,13 @@ function getSingleSensorSync(type: SensorId): Sensor;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getQuaternion")
-@gen_promise("getQuaternion")
+@rename("getQuaternion")
+@async
 function getQuaternionSync(rotationVector: Array<f64>): Array<f64>;
+
+@rename("getQuaternion")
+@promise
+function getQuaternionPromise(rotationVector: Array<f64>): Array<f64>;
 
 /**
  * Rotate the provided rotation matrix so that it can be represented in a different way coordinate System.
@@ -1607,9 +1635,13 @@ function getQuaternionSync(rotationVector: Array<f64>): Array<f64>;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("transformRotationMatrix")
-@gen_promise("transformRotationMatrix")
+@rename("transformRotationMatrix")
+@async
 function transformRotationMatrixSync(inRotationVector: Array<f64>, coordinates: CoordinatesOptions): Array<f64>;
+
+@rename("transformRotationMatrix")
+@promise
+function transformRotationMatrixPromise(inRotationVector: Array<f64>, coordinates: CoordinatesOptions): Array<f64>;
 
 /**
  * Get the angle variation between two rotation matrices.
@@ -1623,9 +1655,13 @@ function transformRotationMatrixSync(inRotationVector: Array<f64>, coordinates: 
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getAngleVariation")
-@gen_promise("getAngleVariation")
+@rename("getAngleVariation")
+@async
 function getAngleVariationSync(currentRotationMatrix: Array<f64>, preRotationMatrix: Array<f64>): Array<f64>;
+
+@rename("getAngleVariation")
+@promise
+function getAngleVariationPromise(currentRotationMatrix: Array<f64>, preRotationMatrix: Array<f64>): Array<f64>;
 
 /**
  * Computes the geomagnetic inclination in radians from the inclination matrix.
@@ -1638,9 +1674,13 @@ function getAngleVariationSync(currentRotationMatrix: Array<f64>, preRotationMat
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getInclination")
-@gen_promise("getInclination")
+@rename("getInclination")
+@async
 function getInclinationSync(inclinationMatrix: Array<f64>): f64;
+
+@rename("getInclination")
+@promise
+function getInclinationPromise(inclinationMatrix: Array<f64>): f64;
 
 /**
  * Obtains the altitude at which the device is located based on the current atmospheric pressure.
@@ -1654,9 +1694,13 @@ function getInclinationSync(inclinationMatrix: Array<f64>): f64;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getDeviceAltitude")
-@gen_promise("getDeviceAltitude")
+@rename("getDeviceAltitude")
+@async
 function getDeviceAltitudeSync(seaPressure: f64, currentPressure: f64): f64;
+
+@rename("getDeviceAltitude")
+@promise
+function getDeviceAltitudePromise(seaPressure: f64, currentPressure: f64): f64;
 
 /**
  * Obtains the geomagnetic field at a specific location on the Earth.
@@ -1671,9 +1715,13 @@ function getDeviceAltitudeSync(seaPressure: f64, currentPressure: f64): f64;
  * @syscap SystemCapability.Sensors.Sensor
  * @since 9
  */
-@gen_async("getGeomagneticInfo")
-@gen_promise("getGeomagneticInfo")
+@rename("getGeomagneticInfo")
+@async
 function getGeomagneticInfoSync(locationOptions: LocationOptions, timeMillis: i64): GeomagneticResponse;
+
+@rename("getGeomagneticInfo")
+@promise
+function getGeomagneticInfoPromise(locationOptions: LocationOptions, timeMillis: i64): GeomagneticResponse;
 
 function OnWearDetectionChange(f: (info: WearDetectionResponse) => void, @sts_last opq: Opaque, options: Optional<Options>);
 function OnceWearDetectionChange(f: (info: WearDetectionResponse) => void, @sts_last opq: Opaque);
