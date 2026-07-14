@@ -1284,7 +1284,6 @@ void OnCommon(int32_t sensorTypeId, callbackType cb, uintptr_t opq, optional_vie
     if (options.has_value() && !GetInterval(options.value(), interval)) {
         SEN_HILOGW("Get interval failed");
     }
-    SEN_HILOGD("Interval is %{public}" PRId64, interval);
     if (options.has_value() && options.value().sensorInfoParam.has_value()) {
         const auto& param = options.value().sensorInfoParam.value();
         if (param.deviceId.has_value()) {
@@ -2100,16 +2099,29 @@ int32_t GetLocalDeviceIdInner()
 // Since there macros are auto-generate, lint will cause false positive.
 // NOLINTBEGIN
 TH_EXPORT_CPP_API_getRotationMatrixSyncGrav(getRotationMatrixSyncGrav);
+TH_EXPORT_CPP_API_getRotationMatrixPromiseGrav(getRotationMatrixSyncGrav);
 TH_EXPORT_CPP_API_getOrientationSync(getOrientationSync);
+TH_EXPORT_CPP_API_getOrientationPromise(getOrientationSync);
 TH_EXPORT_CPP_API_getRotationMatrixSync(getRotationMatrixSync);
+TH_EXPORT_CPP_API_getRotationMatrixPromise(getRotationMatrixSync);
 TH_EXPORT_CPP_API_getSensorListSync(getSensorListSync);
+TH_EXPORT_CPP_API_getSensorListAsync(getSensorListSync);
+TH_EXPORT_CPP_API_getSensorListPromise(getSensorListSync);
 TH_EXPORT_CPP_API_getSingleSensorSync(getSingleSensorSync);
+TH_EXPORT_CPP_API_getSingleSensorAsync(getSingleSensorSync);
+TH_EXPORT_CPP_API_getSingleSensorPromise(getSingleSensorSync);
 TH_EXPORT_CPP_API_getQuaternionSync(getQuaternionSync);
+TH_EXPORT_CPP_API_getQuaternionPromise(getQuaternionSync);
 TH_EXPORT_CPP_API_transformRotationMatrixSync(transformRotationMatrixSync);
+TH_EXPORT_CPP_API_transformRotationMatrixPromise(transformRotationMatrixSync);
 TH_EXPORT_CPP_API_getAngleVariationSync(getAngleVariationSync);
+TH_EXPORT_CPP_API_getAngleVariationPromise(getAngleVariationSync);
 TH_EXPORT_CPP_API_getInclinationSync(getInclinationSync);
+TH_EXPORT_CPP_API_getInclinationPromise(getInclinationSync);
 TH_EXPORT_CPP_API_getDeviceAltitudeSync(getDeviceAltitudeSync);
+TH_EXPORT_CPP_API_getDeviceAltitudePromise(getDeviceAltitudeSync);
 TH_EXPORT_CPP_API_getGeomagneticInfoSync(getGeomagneticInfoSync);
+TH_EXPORT_CPP_API_getGeomagneticInfoPromise(getGeomagneticInfoSync);
 TH_EXPORT_CPP_API_OnWearDetectionChange(OnWearDetection);
 TH_EXPORT_CPP_API_OnceWearDetectionChange(OnceWearDetection);
 TH_EXPORT_CPP_API_OffWearDetectionChange(OffWearDetection);
