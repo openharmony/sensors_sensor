@@ -465,8 +465,8 @@ int32_t SensorHdiConnection::DestroyHdiConnection()
         ret = iSensorCompatibleHdiConnection_->DestroyHdiConnection();
         if (ret != ERR_OK) {
             SEN_HILOGE("Destroy hdi connection failed in compatible");
+            return DEVICE_ERR;
         }
-        return DEVICE_ERR;
     }
 #endif // BUILD_VARIANT_ENG
     return ret;

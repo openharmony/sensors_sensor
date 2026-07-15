@@ -111,12 +111,12 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannel(MessageParcel &data)
         return ERR_OK;
     }
     sendFd_ = data.ReadFileDescriptor();
-    fdsan_exchange_owner_tag(sendFd_, 0, TAG);
     if (sendFd_ < 0) {
         SEN_HILOGE("ReadFileDescriptor is failed");
         sendFd_ = -1;
         return SENSOR_CHANNEL_READ_DESCRIPTOR_ERR;
     }
+    fdsan_exchange_owner_tag(sendFd_, 0, TAG);
     return ERR_OK;
 }
 
@@ -129,12 +129,12 @@ int32_t SensorBasicDataChannel::CreateSensorBasicChannelBySendFd(int32_t sendFd)
         return ERR_OK;
     }
     sendFd_ = sendFd;
-    fdsan_exchange_owner_tag(sendFd_, 0, TAG);
     if (sendFd_ < 0) {
         SEN_HILOGE("ReadFileDescriptor is failed");
         sendFd_ = -1;
         return SENSOR_CHANNEL_READ_DESCRIPTOR_ERR;
     }
+    fdsan_exchange_owner_tag(sendFd_, 0, TAG);
     return ERR_OK;
 }
 

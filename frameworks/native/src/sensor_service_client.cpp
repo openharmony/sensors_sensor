@@ -251,6 +251,10 @@ std::vector<Sensor> SensorServiceClient::GetSensorListByDevice(int32_t deviceId)
 {
     CALL_LOG_ENTER;
     std::vector<Sensor> singleDevSensors;
+    if (sensorServer_ == nullptr) {
+        SEN_HILOGE("sensorServer_ is nullptr");
+        return {};
+    }
     int32_t ret = sensorServer_->GetSensorListByDevice(deviceId, singleDevSensors);
     if (ret != ERR_OK) {
         SEN_HILOGE("GetSensorListByDevice failed, ret:%{public}d", ret);

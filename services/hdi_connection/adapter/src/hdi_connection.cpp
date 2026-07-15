@@ -74,9 +74,14 @@ bool HdiConnection::GetHdiInterface()
     if (g_sensorInterface != nullptr) {
         SEN_HILOGI("Connect v3_0 hdi success");
         g_eventCallback = new (std::nothrow) SensorEventCallback();
-        CHKPR(g_eventCallback, ERR_NO_INIT);
+        if (g_eventCallback == nullptr) {
+            return false;
+        }
         g_plugCallback = new (std::nothrow) SensorPlugCallback();
-        CHKPR(g_plugCallback, ERR_NO_INIT);
+        if (g_plugCallback == nullptr) {
+            g_eventCallback = nullptr;
+            return false;
+        }
         RegisterHdiDeathRecipient();
         if (!isRegisterDataCallBack_) {
             SensorXcollie registerXcollie("HdiConnection:GetHdiInterface:RegisterAsync", XCOLLIE_TIMEOUT_5S);
@@ -300,6 +305,7 @@ int32_t HdiConnection::RegisterDataReport(ReportDataCb cb, sptr<ReportDataCallba
     }
     std::lock_guard<std::mutex> sensorInterfaceLock(g_sensorInterfaceMutex);
     CHKPR(g_sensorInterface, ERR_NO_INIT);
+    CHKPR(g_eventCallback, ERR_NO_INIT);
     SensorXcollie sensorXcollie("HdiConnection:RegisterDataReport", XCOLLIE_TIMEOUT_5S);
     int32_t ret = g_sensorInterface->RegisterAsync(0, g_eventCallback);
     if (ret != 0) {
