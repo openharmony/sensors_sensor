@@ -45,7 +45,8 @@
         "selinux_adapter",
         "runtime_core",
         "hiview",
-        "os_account"
+        "os_account",
+        "taihe_ffi_gen"
       ],
       "third_party": []
     },
