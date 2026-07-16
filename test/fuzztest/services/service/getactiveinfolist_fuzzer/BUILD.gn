@@ -59,6 +59,7 @@ ohos_fuzztest("GetActiveInfoListFuzzTest") {
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
+    "bounds_checking_function:libsec_shared",
     "cJSON:cjson_static",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",

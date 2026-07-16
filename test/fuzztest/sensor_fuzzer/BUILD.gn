@@ -49,6 +49,7 @@ ohos_fuzztest("SensorFuzzTest") {
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
+    "bounds_checking_function:libsec_shared",
     "c_utils:utils",
     "drivers_interface_sensor:libsensor_proxy_3.0",
     "hilog:libhilog",
