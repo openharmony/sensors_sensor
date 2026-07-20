@@ -355,9 +355,10 @@ int32_t CJSensorImpl::GetAngleModify(const CArrFloat32 &curRotationMatrix, const
 
 int32_t CJSensorImpl::GetRotationMatrix(const CArrFloat32 &rotationCArr, CArrFloat32 &rotation)
 {
+    std::vector<float> rotationVector = ConvertCArr2Vector(rotationCArr);
     std::vector<float> rotationMatrix(THREE_DIMENSIONAL_MATRIX_LENGTH);
     SensorAlgorithm sensorAlgorithm;
-    int32_t ret = sensorAlgorithm.CreateRotationMatrix(ConvertCArr2Vector(rotationCArr), rotationMatrix);
+    int32_t ret = sensorAlgorithm.CreateRotationMatrix(rotationVector, rotationMatrix);
     if (ret != ERR_OK) {
         SEN_HILOGE("Get rotation matrix failed, ret:%{public}d", ret);
         return ret;
@@ -450,24 +451,31 @@ int32_t CJSensorImpl::GetAllSensorList(CSensorArray &sensorList)
         return ERR_OK;
     }
 
-    sensorList.head = static_cast<CSensor *>(malloc(sizeof(CSensor) * count));
+    std::vector<SensorInfo> localSensorInfos(sensorInfos, sensorInfos + count);
+    std::vector<SensorInfo> validSensorInfos;
+    for (const auto &info : localSensorInfos) {
+        if ((info.sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) ||
+            (info.sensorTypeId == SENSOR_TYPE_ID_PROXIMITY1) ||
+            (info.sensorTypeId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) {
+            continue;
+        }
+        validSensorInfos.push_back(info);
+    }
+    int32_t validCount = static_cast<int32_t>(validSensorInfos.size());
+    if (validCount == 0) {
+        return ERR_OK;
+    }
+
+    sensorList.head = static_cast<CSensor *>(calloc(static_cast<size_t>(validCount), sizeof(CSensor)));
     if (sensorList.head == nullptr) {
         SEN_HILOGE("Malloc failed.");
         return ERR_OK;
     }
 
-    int32_t size = 0;
-    for (int32_t i = 0; i < count; ++i) {
-        if ((sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_AMBIENT_LIGHT1) ||
-            (sensorInfos[i].sensorTypeId == SENSOR_TYPE_ID_PROXIMITY1) ||
-            (sensorInfos[i].sensorTypeId > GL_SENSOR_TYPE_PRIVATE_MIN_VALUE)) {
-            SEN_HILOGD("This sensor is secondary ambient light");
-            continue;
-        }
-        Transform2CSensor(sensorInfos[i], sensorList.head[size]);
-        ++size;
+    for (int32_t i = 0; i < validCount; ++i) {
+        Transform2CSensor(validSensorInfos[i], sensorList.head[i]);
     }
-    sensorList.size = size;
+    sensorList.size = validCount;
 
     return ERR_OK;
 }
