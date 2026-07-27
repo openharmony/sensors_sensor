@@ -314,10 +314,10 @@ void SensorDataProcesser::TransformSensorDataProcess(sptr<SensorBasicDataChannel
     });
     if (it != appList.end()) {
         int32_t deviceType = clientInfo_.GetDeviceType();
-        if ((deviceType == SINGLE_DISPLAY_THREE_FOLD || deviceType == SINGLE_DISPLAY_HP_FOLD ||
-            deviceType == SINGLE_DISPLAY_LAP_FOLD) &&
-            (static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_EXPAND ||
-            static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_GLOBAL_FULL)) {
+        if ((static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_GLOBAL_FULL &&
+            (deviceType == SINGLE_DISPLAY_THREE_FOLD || deviceType == SINGLE_DISPLAY_LAP_FOLD)) ||
+            (static_cast<Sensors::DMDeviceStatus>(state) == Sensors::DMDeviceStatus::STATUS_EXPAND &&
+            deviceType == SINGLE_DISPLAY_HP_FOLD)) {
             sensorHdiConnection_.TransformSensorData(state, it->policy, &sensorData);
         }
     }
