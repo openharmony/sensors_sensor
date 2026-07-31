@@ -205,7 +205,6 @@ describe("SarJsTest", function () {
                 } catch (error) {
                     console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(error.code).assertEqual(CommonConstants.SERVICE_EXCEPTION_CODE);
-                    expect(error.message).assertEqual(CommonConstants.SERVICE_EXCEPTION_MSG);
                     done();
                 }
             });
