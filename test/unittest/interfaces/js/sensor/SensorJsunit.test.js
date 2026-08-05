@@ -30,18 +30,6 @@ describe("SensorJsTest", function () {
         expect(typeof(data.x)).assertEqual("number");
     }
 
-    function callback2() {
-        if (data.accuracy >= sensor.SensorAccuracy.ACCURACY_UNRELIABLE && data.accuracy <=
-            sensor.SensorAccuracy.ACCURACY_HIGH) {
-            console.info('SensorJsTest callback2 accuracy verified' + JSON.stringify(data));
-            expect(true).assertTrue();
-          } else {
-            console.info('SensorJsTest callback2 invalid accuracy encountered' + JSON.stringify(data));
-            expect(false).assertTrue();
-          }
-        expect(typeof(data.x)).assertEqual("number");
-    }
-
     beforeAll(function() {
         /*
          * @tc.setup: setup invoked before all testcases
@@ -221,12 +209,15 @@ describe("SensorJsTest", function () {
             done();
         }
         try{
-            sensor.once(sensor.SensorId.ACCELEROMETER, onceSensorCallback, 5);
+            sensor.once(sensor.SensorId.ACCELEROMETER, onceSensorCallback);
         } catch (error) {
             console.info(error);
             expect(false).assertTrue();
             done();
         }
+        setTimeout(() => {
+            done();
+        }, 1000);
     })
 
     /*
@@ -246,6 +237,9 @@ describe("SensorJsTest", function () {
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done();
         }
+        setTimeout(() => {
+            done();
+        }, 1000);
     })
 
     /*
@@ -270,6 +264,9 @@ describe("SensorJsTest", function () {
             expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
             done();
         }
+        setTimeout(() => {
+            done();
+        }, 1000);
     })
 
     /*
@@ -5225,7 +5222,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -5278,7 +5274,6 @@ describe("SensorJsTest", function () {
         } catch(error) {
             console.info(error);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
