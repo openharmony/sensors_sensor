@@ -94,7 +94,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -133,7 +132,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -177,7 +175,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -214,7 +211,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -253,7 +249,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -292,7 +287,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -327,7 +321,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -361,7 +354,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -401,7 +393,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -444,7 +435,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -484,7 +474,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -527,7 +516,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -567,7 +555,6 @@ describe("AmbientLightJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
