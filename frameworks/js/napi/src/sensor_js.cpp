@@ -668,11 +668,13 @@ static int32_t RemovePlugCallback(napi_env env, napi_value callback)
     for (auto iter = g_plugCallbackInfo.begin(); iter != g_plugCallbackInfo.end();) {
         CHKPC(*iter);
         if ((*iter)->env != env) {
+            ++iter;
             continue;
         }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
+            ++iter;
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
