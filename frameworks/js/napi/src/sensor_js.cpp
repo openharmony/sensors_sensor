@@ -752,11 +752,13 @@ static int32_t RemoveCallback(napi_env env, SensorDescription sensorDesc, napi_v
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
         CHKPC(*iter);
         if ((*iter)->env != env) {
+            ++iter;
             continue;
         }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
+            ++iter;
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
