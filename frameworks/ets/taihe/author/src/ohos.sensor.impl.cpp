@@ -1376,7 +1376,11 @@ int32_t RemoveAllCallback(int32_t sensorTypeId)
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<CallbackObject>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            iter = callbackInfos.erase(iter);
+            continue;
+        }
         if (auto *env = taihe::get_env()) {
             if (env->GlobalReference_Delete((*iter)->ref) != ANI_OK) {
                 SEN_HILOGW("Delete global reference failed");
@@ -1405,7 +1409,11 @@ int32_t RemoveCallback(int32_t sensorTypeId, uintptr_t opq)
     }
     std::vector<sptr<CallbackObject>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            ++iter;
+            continue;
+        }
         ani_boolean isEqual = false;
         if ((env->Reference_StrictEquals(callbackRef, (*iter)->ref, &isEqual) == ANI_OK) && isEqual) {
             if (env->GlobalReference_Delete((*iter)->ref) != ANI_OK) {
@@ -1885,7 +1893,11 @@ int32_t RemoveStatusChangeCallback(uintptr_t opq)
     }
 
     for (auto iter = g_statusChangeCallbackInfos.begin(); iter != g_statusChangeCallbackInfos.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            ++iter;
+            continue;
+        }
         ani_boolean isEqual = false;
         if ((env->Reference_StrictEquals(callbackRef, (*iter)->ref, &isEqual) == ANI_OK) && isEqual) {
             if (env->GlobalReference_Delete((*iter)->ref) != ANI_OK) {
