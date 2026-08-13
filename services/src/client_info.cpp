@@ -717,6 +717,7 @@ void ClientInfo::UpdateDataQueue(int32_t sensorType, SensorData &data)
 
 std::unordered_map<SensorDescription, std::queue<SensorData>> ClientInfo::GetDumpQueue()
 {
+    std::lock_guard<std::mutex> queueLock(dataQueueMutex_);
     return dumpQueue_;
 }
 

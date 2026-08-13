@@ -64,6 +64,7 @@ taihe_shared_library("sensor_taihe_native") {
     "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native"
   ]
   external_deps = [
+    "bounds_checking_function:libsec_shared",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",

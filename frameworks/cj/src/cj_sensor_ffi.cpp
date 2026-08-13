@@ -95,7 +95,14 @@ int32_t FfiSensorGetRotationMatrix(CArrFloat32 rotationVector, CArrFloat32 *rota
         return PARAMETER_ERROR;
     }
 
-    return CJ_SENSOR_IMPL->GetRotationMatrix(rotationVector, *rotation);
+    CArrFloat32 rotationMatrix = {nullptr, 0};
+    int32_t ret = CJ_SENSOR_IMPL->GetRotationMatrix(rotationVector, rotationMatrix);
+    if (ret != OHOS::ERR_OK) {
+        SEN_HILOGE("Get rotation matrix failed, ret:%{public}d", ret);
+        return ret;
+    }
+    *rotation = rotationMatrix;
+    return ret;
 }
 
 int32_t FfiSensorTransformRotationMatrix(CArrFloat32 inRotationVector, CCoordinatesOptions coordinates,

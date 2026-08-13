@@ -286,6 +286,10 @@ int32_t SensorDataManager::ParseJsonValue(const nlohmann::json &value, const std
     int32_t tempValue = 0;
     if (value.contains(strKey)) {
         nlohmann::json policyJson = value.at(strKey);
+        if (!policyJson.is_object()) {
+            SEN_HILOGE("Field %{public}s is not a JSON object", strKey.c_str());
+            return tempValue;
+        }
         for (auto& [key, valueTmp] : policyJson.items()) {
             int32_t keyInt = -1;
             auto res = std::from_chars(key.data(), key.data() + key.size(), keyInt);
