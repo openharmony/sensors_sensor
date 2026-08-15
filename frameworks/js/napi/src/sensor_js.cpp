@@ -735,6 +735,7 @@ static napi_value OffPlugSensor(napi_env env, size_t argc, const napi_value type
 static int32_t RemoveAllCallback(napi_env env, SensorDescription sensorDesc)
 {
     CALL_LOG_ENTER;
+    SEN_HILOGI("SubEvent op=off_all kit=Sensor Service Kit event=%{public}d", sensorDesc.sensorType);
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {

@@ -1373,6 +1373,7 @@ void OnceWearDetection(callback_view<void(WearDetectionResponse const &)> f, uin
 
 int32_t RemoveAllCallback(int32_t sensorTypeId)
 {
+    SEN_HILOGI("SubEvent op=off_all kit=Sensor Service Kit event=%{public}d", sensorTypeId);
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<CallbackObject>> callbackInfos = g_onCallbackInfos[sensorTypeId];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
