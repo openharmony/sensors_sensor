@@ -41,6 +41,10 @@
 #include "sensor_agent_type.h"
 
 #ifdef __cplusplus
+#include <vector>
+#endif
+
+#ifdef __cplusplus
 #if __cplusplus
 extern "C" {
 #endif

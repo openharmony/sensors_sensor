@@ -113,6 +113,7 @@ int32_t SensorServiceClient::InitServiceClient()
 bool SensorServiceClient::LoadSensorService()
 { // LCOV_EXCL_START
     SEN_HILOGI("LoadSensorService in");
+    sensorServer_ = nullptr;
     sptr<ISystemAbilityManager> samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgr == nullptr) {
         SEN_HILOGE("samgr is nullptr");
@@ -816,6 +817,7 @@ int32_t SensorServiceClient::CreateSocketChannel()
 #endif // HIVIEWDFX_HITRACE_ENABLE
     {
         std::lock_guard<std::mutex> clientLock(clientMutex_);
+        CHKPR(sensorServer_, ERROR);
         ret = sensorServer_->EnableActiveInfoCB();
     }
     WriteHiSysIPCEvent(ISensorServiceIpcCode::COMMAND_ENABLE_ACTIVE_INFO_C_B, ret);
