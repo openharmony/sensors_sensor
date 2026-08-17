@@ -647,7 +647,11 @@ static int32_t RemoveAllPlugCallback(napi_env env)
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> plugCallbackLock(g_plugMutex);
     for (auto iter = g_plugCallbackInfo.begin(); iter != g_plugCallbackInfo.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            iter = g_plugCallbackInfo.erase(iter);
+            continue;
+        }
         if ((*iter)->env != env) {
             ++iter;
             continue;
@@ -666,13 +670,19 @@ static int32_t RemovePlugCallback(napi_env env, napi_value callback)
     CALL_LOG_ENTER;
     std::lock_guard<std::mutex> plugCallbackLock(g_plugMutex);
     for (auto iter = g_plugCallbackInfo.begin(); iter != g_plugCallbackInfo.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            ++iter;
+            continue;
+        }
         if ((*iter)->env != env) {
+            ++iter;
             continue;
         }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
+            ++iter;
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
@@ -728,7 +738,11 @@ static int32_t RemoveAllCallback(napi_env env, SensorDescription sensorDesc)
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            iter = callbackInfos.erase(iter);
+            continue;
+        }
         if ((*iter)->env != env) {
             ++iter;
             continue;
@@ -750,13 +764,19 @@ static int32_t RemoveCallback(napi_env env, SensorDescription sensorDesc, napi_v
     std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_onCallbackInfos[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            ++iter;
+            continue;
+        }
         if ((*iter)->env != env) {
+            ++iter;
             continue;
         }
         napi_value sensorCallback = nullptr;
         if (napi_get_reference_value(env, (*iter)->callback[0], &sensorCallback) != napi_ok) {
             SEN_HILOGE("napi_get_reference_value fail");
+            ++iter;
             continue;
         }
         if (IsSameValue(env, callback, sensorCallback)) {
@@ -1760,7 +1780,11 @@ static bool RemoveSubscribeCallback(napi_env env, SensorDescription sensorDesc)
     std::lock_guard<std::mutex> subscribeCallbackLock(g_mutex);
     std::vector<sptr<AsyncCallbackInfo>> callbackInfos = g_subscribeCallbacks[sensorDesc];
     for (auto iter = callbackInfos.begin(); iter != callbackInfos.end();) {
-        CHKPC(*iter);
+        if (*iter == nullptr) {
+            SEN_HILOGW("callback is null, skip then continue");
+            iter = callbackInfos.erase(iter);
+            continue;
+        }
         if ((*iter)->env != env) {
             ++iter;
             continue;
