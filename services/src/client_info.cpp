@@ -37,7 +37,6 @@ constexpr int32_t MIN_MAP_SIZE = 0;
 constexpr uint32_t NO_STORE_EVENT = -2;
 constexpr uint32_t MAX_SUPPORT_CHANNEL = 200;
 constexpr uint32_t MAX_DUMP_DATA_SIZE = 10;
-constexpr uint32_t MAX_SUPPORT_CLIENT_NUM = 1024;
 } // namespace
 
 std::unordered_map<std::string, std::set<int32_t>> ClientInfo::userGrantPermMap_ = {
@@ -519,9 +518,13 @@ bool ClientInfo::SaveClientPid(const sptr<IRemoteObject> &sensorClient, int32_t 
     CHKPF(sensorClient);
     std::lock_guard<std::mutex> lock(clientPidMutex_);
     auto it = clientPidMap_.find(sensorClient);
-    if (it == clientPidMap_.end()) {
-        clientPidMap_.insert(std::make_pair(sensorClient, pid));
+    if (it != clientPidMap_.end()) {
+        it->second = pid;
         return true;
+    }
+    if (clientPidMap_.size() >= MAX_SUPPORT_CHANNEL) {
+        SEN_HILOGE("The maximum number of client pids has been exceeded");
+        return false;
     }
     clientPidMap_.insert(std::make_pair(sensorClient, pid));
     return true;
@@ -842,7 +845,7 @@ void ClientInfo::SaveSensorClient(const sptr<IRemoteObject> &sensorClient)
     CALL_LOG_ENTER;
     CHKPV(sensorClient);
     std::lock_guard<std::mutex> lock(sensorClientMutex_);
-    if (sensorClients_.size() >= MAX_SUPPORT_CLIENT_NUM) {
+    if (sensorClients_.size() >= MAX_SUPPORT_CHANNEL) {
         SEN_HILOGE("The maximum number of supported clients has been exceeded");
         return;
     }
@@ -863,8 +866,12 @@ void ClientInfo::DestroySensorClient(const sptr<IRemoteObject> &sensorClient)
 void ClientInfo::SendMsgToClient(SensorPlugData info)
 {
     CALL_LOG_ENTER;
-    std::lock_guard<std::mutex> lock(sensorClientMutex_);
-    for (const auto &client : sensorClients_) {
+    std::vector<sptr<IRemoteObject>> clients;
+    {
+        std::lock_guard<std::mutex> lock(sensorClientMutex_);
+        clients = sensorClients_;
+    }
+    for (const auto &client : clients) {
         sptr<ISensorClient> clientProxy = iface_cast<ISensorClient>(client);
         if (clientProxy != nullptr) {
             clientProxy->ProcessPlugEvent(info);
