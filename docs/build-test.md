@@ -37,7 +37,7 @@ hdc shell "ps -ef | grep sensors"
 | 测试类型 | 路径 | target |
 |----------|------|--------|
 | JS 接口单元测试 | test/unittest/interfaces/js/ | unittest |
-| NDK 接口单元测试 | test/unittest/interfaces/kits/ | unittest |
+| C API单元测试 | test/unittest/interfaces/kits/ | unittest |
 | 内部 API 单元测试 | test/unittest/interfaces/inner_api/ | unittest |
 | 服务层 Fuzz | test/fuzztest/services/ | fuzztest |
 | 接口 Fuzz | test/fuzztest/interfaces/ | fuzztest |

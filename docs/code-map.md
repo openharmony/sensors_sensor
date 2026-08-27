@@ -1,4 +1,4 @@
-# 代码地图
+# 代码结构
 
 > sensors_sensor 仓库目录分层与模块职责。
 
@@ -26,7 +26,7 @@ sensor/
 │   └── interfaces/js/           # JS NAPI 接口
 ├── interfaces/                  # 外部接口定义
 │   ├── inner_api/               # 内部 API 头文件（sensor_agent.h）
-│   └── kits/c/                  # NDK 公共 API（oh_sensor.h）
+│   └── kits/c/                  # C 公共 API（oh_sensor.h）
 ├── sa_profile/                  # 系统能力配置（SA 3601）
 ├── test/                        # 测试
 │   ├── unittest/                # 单元测试
@@ -40,7 +40,7 @@ sensor/
 | 模块 | 路径 | 职责 | 入口文件 |
 |------|------|------|----------|
 | Sensor JS API | `frameworks/js/napi/` | JS/ArkTS 传感器接口绑定，on/once/off/查询/算法/状态监控 | `src/sensor_js.cpp` |
-| Sensor Native Framework | `frameworks/native/` | Native API 封装 + Proxy-Stub IPC 客户端 + NDK 接口 + 数据通道 + 算法 | `src/sensor_agent.cpp`、`src/sensor_agent_proxy.cpp` |
+| Sensor Native Framework | `frameworks/native/` | Native API 封装 + Proxy-Stub IPC 客户端 + C API + 数据通道 + 算法 | `src/sensor_agent.cpp`、`src/sensor_agent_proxy.cpp` |
 | Cangjie 绑定 | `frameworks/cj/` | Cangjie 语言传感器 FFI 绑定（其他团队维护，本仓不改动） | `src/` |
 | Taihe/ETS 绑定 | `frameworks/ets/taihe/` | Taihe 声明式传感器接口（涉及接口层修改时需同步） | - |
 | Sensor Service | `services/` | SA 3601 服务端，传感器注册/连接/分发/电源/数据通道 | `src/sensor_service.cpp` |

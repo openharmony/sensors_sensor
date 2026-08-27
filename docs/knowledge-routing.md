@@ -10,7 +10,7 @@
 | 编译命令、产物路径、测试 target | docs/build-test.md | hb build、sensor_target、SA 3601 |
 | 约束、反模式、依赖禁忌 | docs/constraints.md | 权限校验、四元组、memcpy_s |
 | 传感器订阅/取消/数据回调（on/once/off） | docs/api/js-napi.md | SensorDescription四元组、g_onCallbackInfos、EmitUvEventLoop |
-| Native API / NDK 接口（C/C++） | docs/api/native-api.md | sensor_agent.h、oh_sensor.h、GetAllSensors |
+| Native API / C API（C/C++） | docs/api/native-api.md | sensor_agent.h、oh_sensor.h、GetAllSensors |
 | IPC 接口定义与 Proxy/Stub | docs/architecture/ipc-design.md | ISensorService.idl、Proxy-Stub、TransferDataChannel |
 | 数据从硬件到应用完整链路 | docs/architecture/data-flow.md | HDI→SensorDataProcesser→NetPacket→Socket→SensorEvent |
 | HDI 连接/重连/容错机制 | docs/architecture/hdi-connection.md | ISensorInterface V3.0、25次重试、ReEnableSensor |

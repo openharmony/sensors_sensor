@@ -30,7 +30,7 @@ hdc shell "hidumper -s 3601"    # 验证 SA 存活
 |------|------|
 | 目录分层、模块职责 | docs/code-map.md |
 | JS API（on/once/off/查询/状态监控） | docs/api/js-napi.md |
-| Native API / NDK 接口 | docs/api/native-api.md |
+| Native API / C API | docs/api/native-api.md |
 | 传感器算法（地磁/海拔/四元数） | docs/api/sensor-algorithm.md |
 | IPC 接口与 Proxy/Stub | docs/architecture/ipc-design.md |
 | 数据流（硬件→HDI→Service→应用） | docs/architecture/data-flow.md |

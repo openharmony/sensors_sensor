@@ -1,4 +1,4 @@
-# Native API / NDK 接口
+# Native API / C API
 
 > C/C++ 传感器接口，位于 `frameworks/native/`。
 
@@ -25,7 +25,7 @@
 
 详见 codewiki modules.md §2 §5.1(公共 API)。
 
-## NDK 接口（kits/c）
+## C API（kits/c）
 
 头文件：`interfaces/kits/c/oh_sensor.h`、`oh_sensor_type.h`
 
@@ -40,7 +40,7 @@
 | `OH_SensorEvent_GetAccuracy(event, accuracy)` | 获取精度 |
 | `OH_SensorEvent_GetData(event, data, length)` | 获取事件数据 |
 
-详见 codewiki modules.md §2 §5.2(NDK API)。
+详见 codewiki modules.md §2 §5.2(C API)。
 
 ## SensorUser 结构
 

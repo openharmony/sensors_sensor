@@ -2,7 +2,7 @@
 
 ## 整体架构
 
-四层结构：应用层（JS/ArkTS/NDK）→ 接口层（NAPI/Native）→ 服务层（Sensor Service SA 3601）→ 驱动层（HDI/Sensor Driver）
+四层结构：应用层（JS/ArkTS/C/C++）→ 接口层（NAPI/Native）→ 服务层（Sensor Service SA 3601）→ 驱动层（HDI/Sensor Driver）
 
 **进程模型**：SA 3601 运行在 `sensors` 进程（不是 foundation 进程）。客户端代码（Proxy/DataChannel）运行在调用者进程中，如 foundation 或应用进程。
 
@@ -56,7 +56,7 @@ Subscribed → UnsubscribeSensor → Idle (最后订阅者)
 ## 服务连接与重连
 
 - 客户端通过 `SystemAbilityManager` 获取 SA 3601 代理
-- 首次调用 `TransferClientRemoteObject` 传递 Stub，建立双向通信
+- 第一次调用 `TransferClientRemoteObject` 传递 Stub，建立双向通信
 - 服务死亡时 `ProcessDeathObserver` 触发，重建数据通道
 - HDI 服务死亡时自动重连，最多 25 次，重连后 `ReEnableSensor()` 恢复
 
