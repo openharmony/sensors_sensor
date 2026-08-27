@@ -28,7 +28,7 @@
 | SA 3601 | SensorService 系统能力 ID，运行在 sensors 进程 |
 | HDI | Hardware Driver Interface，硬件驱动接口 |
 | ISensorInterface V3.0 | HDI 传感器接口主版本，对应 `hdi_connection/hardware/` |
-| CompatibleConnection V1.0 | HDI 兼容连接，对应 `hdi_connection/adapter/` |
+| CompatibleConnection V1.0 | HDI 兼容连接，旧设备兜底，对应 `hdi_connection/adapter/` |
 | Mock 传感器 | ENG 版本虚拟传感器，`HdiServiceImpl` 实现，用于开发测试 |
 | 触发型传感器 | 上报一次数据后自动去使能的传感器类型 |
 | SensorDescription 四元组 | `{deviceId, sensorType, sensorId, location}` 唯一标识传感器实例 |
@@ -39,6 +39,8 @@
 | CircularEventBuf | 环形缓冲区，CIRCULAR_BUF_LEN=1024，覆盖式写入 |
 | NetPacket | IPC 数据包，PackHead + Body，带长度校验 |
 | StreamSocket | AF_UNIX SOCK_SEQPACKET 数据通道 |
-| sensor_rust_socket_ipc | bundle.json feature flag，启用 Rust Socket IPC |
+| sensor_rust_socket_ipc | bundle.json feature flag（已废弃，rust 代码已删除，flag 未清理干净） |
 | Taihe | OpenHarmony 声明式 ETS 接口规范 |
-| Cangjie | 华为仓颉编程语言，`frameworks/cj/` 提供传感器 FFI 绑定 |
+| Cangjie | 华为仓颉编程语言，`frameworks/cj/` 提供传感器 FFI 绑定（其他团队维护） |
+| SensorShakeControlManager | 摇一摇数据管控，受产品策略控制，生效时摇一摇数据被管控 |
+| SensorDataBlockPolicy | 数据阻断策略，inner API 控制某些应用不上报某些传感器数据 |

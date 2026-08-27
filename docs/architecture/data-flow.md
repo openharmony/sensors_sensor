@@ -4,6 +4,8 @@
 
 四层结构：应用层（JS/ArkTS/NDK）→ 接口层（NAPI/Native）→ 服务层（Sensor Service SA 3601）→ 驱动层（HDI/Sensor Driver）
 
+**进程模型**：SA 3601 运行在 `sensors` 进程（不是 foundation 进程）。客户端代码（Proxy/DataChannel）运行在调用者进程中，如 foundation 或应用进程。
+
 详见 codewiki core.md §3.1(整体架构)。
 
 ## 数据流向
@@ -68,6 +70,22 @@ Subscribed → UnsubscribeSensor → Idle (最后订阅者)
 - 这些接口专为功耗管理侧调用而设计
 
 详见 codewiki core.md §7.4.1(电源管理)。
+
+## 摇一摇管控
+
+`SensorShakeControlManager`（`services/include/sensor_shake_control_manager.h`）负责摇一摇数据管控：
+
+- 受产品控制策略控制，决定是否生效
+- 当管控生效时，摇一摇相关的传感器数据会被管控（不上报给应用）
+- 开发涉及摇一摇/加速度计相关需求时需注意此管控逻辑
+
+## 数据阻断策略
+
+`SensorDataBlockPolicy`（`services/include/sensor_data_block_policy.h`）：
+
+- 由 inner API 控制给某些应用不上报某些传感器数据
+- 开发需求时需注意：新增传感器数据上报路径需检查是否受数据阻断策略影响
+- `fifo_cache_data` 相关的 FIFO 缓存数据上报目前不支持
 
 ## 模块依赖关系
 

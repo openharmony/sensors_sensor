@@ -37,6 +37,15 @@
 - NAPI 模块注册 `napi_add_env_cleanup_hook` 清理钩子，JS 环境销毁时清理回调（来源：modules.md §1 §7.4）
 - once 模式回调执行后必须检查是否需要 `UnsubscribeSensor`（来源：modules.md §1 §8.5）
 
+### 数据阻断与管控
+- `SensorDataBlockPolicy` 由 inner API 控制某些应用不上报某些传感器数据，新增数据上报路径需检查是否受此策略影响
+- `SensorShakeControlManager` 受产品策略控制，生效时摇一摇相关传感器数据会被管控
+- `fifo_cache_data` 相关的 FIFO 缓存数据上报目前不支持
+
+### HDI 版本
+- V3.0 为主路径（`hdi_connection/hardware/`），V1.0 为旧设备兜底（`hdi_connection/adapter/`）
+- V3.1 目前不涉及切换；新功能涉及 HDI 时由 HDI 侧一起修改，不单独在 sensor 仓改 HDI 接口
+
 ## 反模式
 
 | 反模式 | 正确做法 |
@@ -53,6 +62,8 @@
 ## 依赖禁忌
 
 - `frameworks/` **不可**直接依赖 `services/` 的内部头文件，只通过 IPC 接口通信
-- `services/hdi_connection/adapter/`（V1.0 兼容）和 `hardware/`（V3.0）**不可**互相依赖
-- `vibration_convert/` **不可**依赖 `services/`，它是独立算法模块
+- `services/hdi_connection/adapter/`（V1.0 兜底）和 `hardware/`（V3.0）**不可**互相依赖
+- `vibration_convert/` **不可**依赖 `services/`，它是独立算法模块（暂无应用，新需求走 miscdevice 仓）
 - `utils/` **不可**依赖 `frameworks/` 或 `services/`，是最底层基础库
+- `frameworks/cj/` 由其他团队维护，本仓不改动
+- 涉及接口层修改时，需同步修改 `frameworks/ets/taihe/`
