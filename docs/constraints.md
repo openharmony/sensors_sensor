@@ -54,7 +54,7 @@
 | 预先分配分发/渲染上下文 | 保持懒分配，普通默认路径不应预分配 |
 | 绕过 `subscribeMap_` 直接调用底层 `EnableSensor` | 必须先 Subscribe 再 Activate，通过 `SensorAgentProxy` 统一管理 |
 | 把系统 API 传感器逻辑折叠进通用 on/off 路径 | 系统 API 和公共 API 回调表（`g_subscribeCallbacks` vs `g_onCallbackInfos`）分开维护 |
-| 忽略 once 模式的自动取消订阅 | once 回调执行后必须检查无其他订阅时调用 `UnsubscribeSensor` |
+| 忽略 once 模式的自动取消订阅 | once 回调执行后必须检查无其余订阅时调用 `UnsubscribeSensor` |
 | 在 HDI 回调线程直接处理数据 | 应通过 `SensorDataProcesser` 过滤/转换后再投递 |
 | 直接 `memcpy` 传感器数据 | 使用 `memcpy_s` 安全拷贝 |
 | 修改 `SensorDescriptionIPC` 字段顺序而不更新 IDL | IDL（`ISensorService.idl`）是 IPC 契约，字段顺序必须一致 |
@@ -65,5 +65,5 @@
 - `services/hdi_connection/adapter/`（V1.0 兜底）和 `hardware/`（V3.0）**不可**互相依赖
 - `vibration_convert/` **不可**依赖 `services/`，它是独立算法模块（暂无应用，新需求走 miscdevice 仓）
 - `utils/` **不可**依赖 `frameworks/` 或 `services/`，是最底层基础库
-- `frameworks/cj/` 由其他团队维护，本仓不改动
+- `frameworks/cj/` 由其余团队维护，不在本仓修改范围，本仓不改动
 - 涉及接口层修改时，需同步修改 `frameworks/ets/taihe/`

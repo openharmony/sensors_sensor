@@ -7,7 +7,7 @@
 | 模式 | 函数 | 说明 |
 |------|------|------|
 | 持续订阅 | `sensor.on(sensorTypeId, callback, options?)` | 数据持续回调 |
-| 单次订阅 | `sensor.once(sensorTypeId, callback)` | 首个数据到达后自动取消 |
+| 单次订阅 | `sensor.once(sensorTypeId, callback)` | 第一个数据到达后自动取消 |
 | 取消订阅 | `sensor.off(sensorTypeId, callback?, options?)` | 移除回调 |
 
 详见 codewiki modules.md §1 §2.1(传感器订阅与数据回调)、§8.1(传感器订阅时序图)。

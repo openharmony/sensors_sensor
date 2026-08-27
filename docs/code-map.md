@@ -41,7 +41,7 @@ sensor/
 |------|------|------|----------|
 | Sensor JS API | `frameworks/js/napi/` | JS/ArkTS 传感器接口绑定，on/once/off/查询/算法/状态监控 | `src/sensor_js.cpp` |
 | Sensor Native Framework | `frameworks/native/` | Native API 封装 + Proxy-Stub IPC 客户端 + C API + 数据通道 + 算法 | `src/sensor_agent.cpp`、`src/sensor_agent_proxy.cpp` |
-| Cangjie 绑定 | `frameworks/cj/` | Cangjie 语言传感器 FFI 绑定（其他团队维护，本仓不改动） | `src/` |
+| Cangjie 绑定 | `frameworks/cj/` | Cangjie 语言传感器 FFI 绑定（其余团队维护，本仓不改动） | `src/` |
 | Taihe/ETS 绑定 | `frameworks/ets/taihe/` | Taihe 声明式传感器接口（涉及接口层修改时需同步） | - |
 | Sensor Service | `services/` | SA 3601 服务端，传感器注册/连接/分发/电源/数据通道 | `src/sensor_service.cpp` |
 | HDI Connection | `services/hdi_connection/` | HDI 驱动连接/重连/容错，V3.0 为主路径，V1.0 为设备兜底 | `interface/src/sensor_hdi_connection.cpp` |

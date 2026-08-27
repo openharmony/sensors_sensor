@@ -41,6 +41,6 @@
 | StreamSocket | AF_UNIX SOCK_SEQPACKET 数据通道 |
 | sensor_rust_socket_ipc | bundle.json feature flag（已废弃，rust 代码已删除，flag 未清理干净） |
 | Taihe | OpenHarmony 声明式 ETS 接口规范 |
-| Cangjie | 华为仓颉编程语言，`frameworks/cj/` 提供传感器 FFI 绑定（其他团队维护） |
+| Cangjie | 华为仓颉编程语言，`frameworks/cj/` 提供传感器 FFI 绑定（其余团队维护） |
 | SensorShakeControlManager | 摇一摇数据管控，受产品策略控制，生效时摇一摇数据被管控 |
 | SensorDataBlockPolicy | 数据阻断策略，inner API 控制某些应用不上报某些传感器数据 |
