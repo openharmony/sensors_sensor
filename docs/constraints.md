@@ -20,8 +20,9 @@
 - NAPI 回调必须使用 `napi_open_handle_scope` / `napi_close_handle_scope` 包裹（来源：modules.md §1 §8.3）
 
 ### 数据结构
-- 传感器描述符 = `{deviceId, sensorType, sensorId, location}` 四元组，作为 `subscribeMap_` 的 key，不可拆分使用（来源：core.md §5.1.1）
-- `SensorDescriptionIPC` 通过 IPC Parcel 传递，字段顺序必须与 IDL 定义一致（来源：modules.md §2 §5.3）
+- `SensorDescription` = `{deviceId, sensorType, sensorId, location}` 四元组，逻辑上唯一标识传感器实例，作为 `subscribeMap_` 的 key，不可拆分使用（来源：core.md §5.1.1）
+- `SensorDescriptionIPC` 是 `SensorDescription` 的 IPC Parcel 序列化结构，通过 `ISensorService.idl` 传递，字段顺序必须与 IDL 定义一致（来源：modules.md §2 §5.3）
+- `SensorDescription`（逻辑描述符）和 `SensorDescriptionIPC`（IPC 序列化结构）是同一数据的两种表示，文档中 `SensorDescription` 泛指两者
 
 ### HDI 连接
 - HDI 服务死亡时自动重连，最多重试 25 次，超出后写 HiSysEvent（来源：core.md §3.5）

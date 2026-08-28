@@ -55,9 +55,10 @@ struct SensorUser {
 ## 错误码归一化
 
 `NormalizeErrCode`（`frameworks/native/src/sensor_agent.cpp`）将底层错误码统一为：
-- `PERMISSION_DENIED` (201)
-- `PARAMETER_ERROR` (401)
-- `NON_SYSTEM_API` (202)
-- `SERVICE_EXCEPTION` (默认)
+- `PERMISSION_DENIED` (201) — 权限不足
+- `NON_SYSTEM_API` (202) — 非系统 API
+- `PARAMETER_ERROR` (401) — 参数错误
+- `SERVICE_EXCEPTION` (12900001，旧码 14500101) — 服务异常（默认兜底）
+- `SENSOR_NO_SUPPORT` (12900002，旧码 14500102) — 传感器不支持
 
 详见 codewiki modules.md §2 §7.3(服务端校验)。

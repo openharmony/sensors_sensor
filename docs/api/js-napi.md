@@ -78,7 +78,7 @@ sensor.off("sensorStatusChange", callback?)
 | 201 | PERMISSION_DENIED | 权限不足 |
 | 202 | NON_SYSTEM_API | 非系统 API |
 | 401 | PARAMETER_ERROR | 参数错误 |
-| 12900001 | SERVICE_EXCEPTION | 服务异常 |
-| 12900002 | SENSOR_NO_SUPPORT | 传感器不支持 |
+| 12900001 | SERVICE_EXCEPTION | 服务异常（旧码 14500101） |
+| 12900002 | SENSOR_NO_SUPPORT | 传感器不支持（旧码 14500102） |
 
 通过 `napi_throw` 抛给 JS 层，应用用 `try-catch` 捕获。详见 codewiki modules.md §1 §7.3(错误处理机制)。

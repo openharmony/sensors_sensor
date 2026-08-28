@@ -25,13 +25,13 @@
 
 | 术语 | 含义 |
 |------|------|
-| SA 3601 | SensorService 系统能力 ID，运行在 sensors 进程 |
+| SA 3601 | SensorService 系统能力 ID；服务运行在 `sensors` 进程（不是 foundation 进程），客户端代码运行在调用者进程。文档中"Sensor Service"泛指此 SA |
 | HDI | Hardware Driver Interface，硬件驱动接口 |
 | ISensorInterface V3.0 | HDI 传感器接口主版本，对应 `hdi_connection/hardware/` |
 | CompatibleConnection V1.0 | HDI 兼容连接，旧设备兜底，对应 `hdi_connection/adapter/` |
 | Mock 传感器 | ENG 版本虚拟传感器，`HdiServiceImpl` 实现，用于开发测试 |
 | 触发型传感器 | 上报一次数据后自动去使能的传感器类型 |
-| SensorDescription 四元组 | `{deviceId, sensorType, sensorId, location}` 唯一标识传感器实例 |
+| SensorDescription | `{deviceId, sensorType, sensorId, location}` 四元组，逻辑标识传感器实例；IPC 传递时序列化为 `SensorDescriptionIPC` |
 | Proxy-Stub | IPC 通信的代理-存根模式，客户端 Proxy 调用，服务端 Stub 响应 |
 | EmitUvEventLoop | NAPI 跨线程回调到 JS 线程的机制，基于 `napi_send_event` |
 | WMM | World Magnetic Model，地磁场计算模型（2020-2025） |
