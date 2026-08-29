@@ -24,14 +24,20 @@
 
 ## 系统 API 限制
 
-部分传感器接口仅限系统应用：
+部分传感器接口仅限系统应用。系统 API 传感器限制集合定义在 `services/src/sensor_service.cpp`：
 
 ```cpp
-// services/src/sensor_service.cpp
-if (IsSystemApiSensor(sensorType) && !IsSystemCalling()) {
-    return NON_SYSTEM_API;  // 错误码 202
-}
+const std::set<int32_t> g_systemApiSensorCall = {
+    SENSOR_TYPE_ID_COLOR, SENSOR_TYPE_ID_SAR, SENSOR_TYPE_ID_HEADPOSTURE
+};
 ```
+
+限制逻辑在 `CheckAuthAndParameter` 和 `DisableSensor` 两处：
+- `g_systemApiSensorCall.find(sensorType)` 检查 + `IsSystemCalling()` 判断
+- 非系统应用访问这些传感器类型时返回 `NON_SYSTEM_API`（错误码 202）
+- `IsSystemCalling()`：TOKEN_NATIVE 视为系统调用，系统应用通过 TokenIdKit 判断
+
+**将传感器暴露给三方应用**：从 `g_systemApiSensorCall` 集合中移除该类型，并检查 `frameworks/js/napi/src/sensor_napi_utils.cpp` 的 `g_sensorAttributeList` 是否已包含该传感器的数据属性映射。
 
 ## 错误码
 

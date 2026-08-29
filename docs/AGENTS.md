@@ -48,3 +48,5 @@ hdc shell "hidumper -s 3601"    # 验证 SA 存活
 - HDI 重连最多 25 次，超出写 HiSysEvent
 - 使用 `memcpy_s` 而非 `memcpy`；NAPI 回调不可在数据线程直接调用 JS
 - 订阅顺序必须 Subscribe → SetBatch → Activate
+- 系统 API 传感器（COLOR/SAR/HEADPOSTURE）限制在 g_systemApiSensorCall 集合中，非系统应用访问返回 202（详见 docs/security/permission.md）
+- 将传感器暴露给三方应用时需从 g_systemApiSensorCall 移除该类型，并检查 NAPI 数据属性映射是否已存在

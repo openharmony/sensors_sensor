@@ -19,6 +19,9 @@
 | 振动转换（音频→触觉） | docs/features/vibration-convert.md | WAV→STFT→FFT/MFCC→PeakFinder→HapticEvent |
 | 订阅状态机与生命周期 | docs/architecture/data-flow.md §状态机 | Idle→Subscribed→Activated、subscribeMap_ |
 | 功耗管理/冻结恢复 | docs/architecture/data-flow.md §功耗 | Suspend/Resume、SensorPowerPolicy |
+| 系统 API 传感器管控/传感器暴露给三方/系统API限制 | docs/security/permission.md + docs/constraints.md | g_systemApiSensorCall、SENSOR_TYPE_ID_COLOR/SAR/HEADPOSTURE、IsSystemCalling、NON_SYSTEM_API(202) |
+| 摇一摇数据管控 | docs/architecture/data-flow.md §摇一摇 | SensorShakeControlManager、g_shakeSensorControlList |
+| 数据阻断策略 | docs/architecture/data-flow.md §数据阻断 | SensorDataBlockPolicy、BlockSensorDataByPid |
 | 故障排查/日志/调试 | docs/build-test.md §调试 | hidumper -s 3601、hilog |
 
 ## 术语表
@@ -44,3 +47,6 @@
 | Cangjie | 华为仓颉编程语言，`frameworks/cj/` 提供传感器 FFI 绑定（其余团队维护） |
 | SensorShakeControlManager | 摇一摇数据管控，受产品策略控制，生效时摇一摇数据被管控 |
 | SensorDataBlockPolicy | 数据阻断策略，inner API 控制某些应用不上报某些传感器数据 |
+| g_systemApiSensorCall | 系统API传感器限制集合，定义在 services/src/sensor_service.cpp，包含 SENSOR_TYPE_ID_COLOR/SAR/HEADPOSTURE，非系统应用访问时返回 NON_SYSTEM_API(202) |
+| IsSystemCalling | 系统调用判断，TOKEN_NATIVE 视为系统调用，系统应用通过 TokenIdKit 判断 |
+| NON_SYSTEM_API | 错误码 202，非系统应用调用系统API传感器时返回 |
