@@ -1,0 +1,64 @@
+# Native API / C API
+
+> C/C++ 传感器接口，位于 `frameworks/native/`。
+
+## 公共 API（inner_api）
+
+头文件：`interfaces/inner_api/sensor_agent.h`、`sensor_agent_type.h`
+
+| 函数 | 说明 |
+|------|------|
+| `GetAllSensors(SensorInfo **info, int32_t *count)` | 获取当前设备所有传感器（不跨设备） |
+| `GetDeviceSensors(deviceId, info, count)` | 获取指定设备的传感器（跨设备查询） |
+| `SubscribeSensor(sensorId, user)` | 订阅传感器 |
+| `UnsubscribeSensor(sensorId, user)` | 取消订阅 |
+| `ActivateSensor(sensorId, user)` | 启用传感器 |
+| `DeactivateSensor(sensorId, user)` | 停用传感器 |
+| `SetBatch(sensorId, user, samplingInterval, reportInterval)` | 配置采样和报告延迟 |
+| `SetMode(sensorId, user, mode)` | 设置传感器模式 |
+| `SubscribeSensorPlug(user)` | 订阅插拔事件 |
+| `UnsubscribeSensorPlug(user)` | 取消订阅插拔事件 |
+| `SuspendSensors(pid)` / `ResumeSensors(pid)` | 进程级冻结/恢复 |
+| `GetActiveSensorInfos(pid, info, count)` | 获取活跃传感器信息 |
+| `ResetSensors()` | 重置所有传感器（清除所有订阅关系、停用所有已启用传感器、重置采样配置） |
+| `SetDeviceStatus(deviceStatus)` | 设置设备状态 |
+
+详见 codewiki modules.md §2 §5.1(公共 API)。
+
+## C API（kits/c）
+
+头文件：`interfaces/kits/c/oh_sensor.h`、`oh_sensor_type.h`
+
+| 函数 | 说明 |
+|------|------|
+| `OH_Sensor_GetInfos(sensors, count)` | 获取传感器信息 |
+| `OH_Sensor_CreateInfos(count)` / `OH_Sensor_DestroyInfos(sensors, count)` | 创建/销毁传感器信息数组 |
+| `OH_Sensor_Subscribe(id, attribute, user)` | 订阅传感器 |
+| `OH_Sensor_Unsubscribe(id, user)` | 取消订阅 |
+| `OH_SensorEvent_GetType(event, type)` | 从上报的事件中提取传感器类型 |
+| `OH_SensorEvent_GetTimestamp(event, timestamp)` | 从上报的事件中提取时间戳 |
+| `OH_SensorEvent_GetAccuracy(event, accuracy)` | 从上报的事件中提取精度 |
+| `OH_SensorEvent_GetData(event, data, length)` | 从上报的事件中提取传感器数据 |
+
+详见 codewiki modules.md §2 §5.2(C API)。
+
+## SensorUser 结构
+
+```cpp
+struct SensorUser {
+    RecordSensorCallback callback;     // 数据回调函数指针
+    SensorPlugCallback plugCallback;   // 插拔事件回调
+    void *userData;                     // 用户私有数据
+};
+```
+
+## 错误码归一化
+
+`NormalizeErrCode`（`frameworks/native/src/sensor_agent.cpp`）将底层错误码统一为：
+- `PERMISSION_DENIED` (201) — 权限不足
+- `NON_SYSTEM_API` (202) — 非系统 API
+- `PARAMETER_ERROR` (401) — 参数错误
+- `SERVICE_EXCEPTION` (12900001，旧码 14500101) — 服务异常（默认兜底）
+- `SENSOR_NO_SUPPORT` (12900002，旧码 14500102) — 传感器不支持
+
+详见 codewiki modules.md §2 §7.3(服务端校验)。
