@@ -31,7 +31,7 @@
 
 详见 codewiki modules.md §1 §2.2(传感器查询)。
 
-## 状态监控
+## 传感器状态订阅与取消订阅
 
 ```typescript
 sensor.on("sensorStatusChange", (state: SensorState) => {})
@@ -63,10 +63,20 @@ sensor.off("sensorStatusChange", callback?)
 |------------|------|
 | 加速度计 | x, y, z |
 | 陀螺仪 | x, y, z |
+| 磁场 | x, y, z |
 | 环境光 | intensity, colorTemperature, infraredLuminance |
 | 气压计 | pressure |
 | 接近 | distance |
 | 心率 | heartRate |
+| 霍尔 | |
+| 温度 | |
+| 湿度 | |
+| 方向 | |
+| 重力 | x, y, z |
+| 线性加速度 | x, y, z |
+| 旋转矢量 | x, y, z, w |
+| 计步器 | steps |
+| 显著运动 | |
 
 详见 codewiki modules.md §1 §6.3(传感器属性映射)。
 

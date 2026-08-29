@@ -9,8 +9,8 @@
 ```
 vibration_convert/
 ├── core/
-│   ├── algorithm/     # FFT/MFCC/峰值检测
-│   ├── native/        # 核心实现
+│   ├── algorithm/     # FFT/MFCC/峰值检测算法实现
+│   ├── native/        # 转换核心：VibrationConvertCore 类，协调 WAV 解析→STFT→FFT/MFCC→PeakFinder→HapticEvent 全流程
 │   └── utils/         # WAV 解析等工具
 └── interfaces/js/     # NAPI 接口
 ```

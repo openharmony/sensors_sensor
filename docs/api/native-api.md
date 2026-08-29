@@ -8,8 +8,8 @@
 
 | 函数 | 说明 |
 |------|------|
-| `GetAllSensors(SensorInfo **info, int32_t *count)` | 获取所有传感器 |
-| `GetDeviceSensors(deviceId, info, count)` | 获取指定设备传感器 |
+| `GetAllSensors(SensorInfo **info, int32_t *count)` | 获取当前设备所有传感器（不跨设备） |
+| `GetDeviceSensors(deviceId, info, count)` | 获取指定设备的传感器（跨设备查询） |
 | `SubscribeSensor(sensorId, user)` | 订阅传感器 |
 | `UnsubscribeSensor(sensorId, user)` | 取消订阅 |
 | `ActivateSensor(sensorId, user)` | 启用传感器 |
@@ -20,7 +20,7 @@
 | `UnsubscribeSensorPlug(user)` | 取消订阅插拔事件 |
 | `SuspendSensors(pid)` / `ResumeSensors(pid)` | 进程级冻结/恢复 |
 | `GetActiveSensorInfos(pid, info, count)` | 获取活跃传感器信息 |
-| `ResetSensors()` | 重置所有传感器 |
+| `ResetSensors()` | 重置所有传感器（清除所有订阅关系、停用所有已启用传感器、重置采样配置） |
 | `SetDeviceStatus(deviceStatus)` | 设置设备状态 |
 
 详见 codewiki modules.md §2 §5.1(公共 API)。
@@ -35,10 +35,10 @@
 | `OH_Sensor_CreateInfos(count)` / `OH_Sensor_DestroyInfos(sensors, count)` | 创建/销毁传感器信息数组 |
 | `OH_Sensor_Subscribe(id, attribute, user)` | 订阅传感器 |
 | `OH_Sensor_Unsubscribe(id, user)` | 取消订阅 |
-| `OH_SensorEvent_GetType(event, type)` | 获取事件类型 |
-| `OH_SensorEvent_GetTimestamp(event, timestamp)` | 获取时间戳 |
-| `OH_SensorEvent_GetAccuracy(event, accuracy)` | 获取精度 |
-| `OH_SensorEvent_GetData(event, data, length)` | 获取事件数据 |
+| `OH_SensorEvent_GetType(event, type)` | 从上报的事件中提取传感器类型 |
+| `OH_SensorEvent_GetTimestamp(event, timestamp)` | 从上报的事件中提取时间戳 |
+| `OH_SensorEvent_GetAccuracy(event, accuracy)` | 从上报的事件中提取精度 |
+| `OH_SensorEvent_GetData(event, data, length)` | 从上报的事件中提取传感器数据 |
 
 详见 codewiki modules.md §2 §5.2(C API)。
 
