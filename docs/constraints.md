@@ -101,9 +101,8 @@
 
 ### 6. 字符串转数字 — 禁止 std::stoi
 - 禁止使用 `std::stoi` 解析系统参数字符串（可能抛异常导致崩溃）
-- 必须使用 `std::from_chars` 并检查 `res.ec`：
+- 必须使用 `std::from_chars` 并检查 `res.ec` **以及** `res.ptr == last`（整 token，拒绝尾随垃圾）。生产代码走 `ParseDecimalInt32`：
   ```cpp
-  int value = 0;
-  auto res = std::from_chars(str.data(), str.data() + str.size(), value);
-  if (res.ec != std::errc()) { /* 解析失败处理 */ }
+  int32_t value = 0;
+  if (!ParseDecimalInt32(str, value)) { /* 解析失败处理 */ }
   ```
