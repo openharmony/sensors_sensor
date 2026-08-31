@@ -15,7 +15,6 @@
 
 #include "sensor_service.h"
 
-#include <charconv>
 #include <cinttypes>
 #include <string_ex.h>
 #include <sys/time.h>
@@ -105,8 +104,7 @@ bool IsCameraCorrectionEnable()
 { // LCOV_EXCL_START
     std::string isEnable = OHOS::system::GetParameter("const.system.sensor_correction_enable", "0");
     int32_t correctionEnable = 0;
-    auto res = std::from_chars(isEnable.data(), isEnable.data() + isEnable.size(), correctionEnable);
-    if (res.ec != std::errc()) {
+    if (!ParseDecimalInt32(isEnable, correctionEnable)) {
         SEN_HILOGE("Failed to convert string %{public}s to number", isEnable.c_str());
         return false;
     }
@@ -125,8 +123,7 @@ int32_t SensorService::GetDeviceType()
             return ERROR;
         }
         int32_t firstValueNum = 0;
-        auto res = std::from_chars(firstValue.data(), firstValue.data() + firstValue.size(), firstValueNum);
-        if (res.ec != std::errc()) {
+        if (!ParseDecimalInt32(firstValue, firstValueNum)) {
             SEN_HILOGE("Failed to convert string %{public}s to number", firstValue.c_str());
             return ERROR;
         }
@@ -292,9 +289,8 @@ bool SensorService::LoadSecurityPrivacyManager()
 void SensorService::UpdateDeviceStatus()
 { // LCOV_EXCL_START
     std::string statusStr = GetDmsDeviceStatus();
-    int32_t statusNum;
-    auto res = std::from_chars(statusStr.data(), statusStr.data() + statusStr.size(), statusNum);
-    if (res.ec != std::errc()) {
+    int32_t statusNum = 0;
+    if (!ParseDecimalInt32(statusStr, statusNum)) {
         SEN_HILOGE("Failed to convert string %{public}s to number", statusStr.c_str());
         return;
     }
