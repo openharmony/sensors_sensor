@@ -58,10 +58,19 @@ int32_t CJSensorImpl::SubscribeSensorImplEnhanced(int64_t interval, SensorDescri
         sensorDesc.location}, &cjUser_, interval, 0);
     if (ret != ERR_OK) {
         SEN_HILOGE("SetBatch failed");
+        UnsubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+            sensorDesc.location}, &cjUser_);
         return ret;
     }
-    return ActivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+    ret = ActivateSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
         sensorDesc.location}, &cjUser_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("ActivateSensor failed");
+        UnsubscribeSensorEnhanced({sensorDesc.deviceId, sensorDesc.sensorType, sensorDesc.sensorId,
+            sensorDesc.location}, &cjUser_);
+        return ret;
+    }
+    return ERR_OK;
 }
 
 int32_t CJSensorImpl::UnsubscribeSensorImplEnhanced(SensorDescription &sensorDesc)
@@ -88,10 +97,17 @@ int32_t CJSensorImpl::SubscribeSensorImpl(int32_t sensorId, int64_t interval)
     ret = SetBatch(sensorId, &cjUser_, interval, 0);
     if (ret != ERR_OK) {
         SEN_HILOGE("SetBatch failed");
+        UnsubscribeSensor(sensorId, &cjUser_);
         return ret;
     }
 
-    return ActivateSensor(sensorId, &cjUser_);
+    ret = ActivateSensor(sensorId, &cjUser_);
+    if (ret != ERR_OK) {
+        SEN_HILOGE("ActivateSensor failed");
+        UnsubscribeSensor(sensorId, &cjUser_);
+        return ret;
+    }
+    return ERR_OK;
 }
 
 int32_t CJSensorImpl::UnsubscribeSensorImpl(int32_t sensorTypeId)
