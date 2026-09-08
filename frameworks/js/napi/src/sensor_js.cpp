@@ -151,8 +151,11 @@ static void EmitOnCallback(SensorEvent *event)
         }
         onCallbackInfos = iter->second;
     }
+    // Move each snapshot reference into EmitUvEventLoop: its parameter destruction happens after
+    // the queued-task reference is taken, so the data thread never performs the final release and
+    // ~AsyncCallbackInfo (which deletes napi references on its own env's JS thread) cannot run here.
     for (auto &onCallbackInfo : onCallbackInfos) {
-        EmitUvEventLoop(onCallbackInfo, cb);
+        EmitUvEventLoop(std::move(onCallbackInfo), cb);
     }
 }
 
