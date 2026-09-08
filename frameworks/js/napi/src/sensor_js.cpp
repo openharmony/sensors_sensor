@@ -137,16 +137,20 @@ static void EmitSubscribeCallback(SensorEvent *event)
 static void EmitOnCallback(SensorEvent *event)
 {
     CHKPV(event);
-    if (!CheckSubscribe({event->deviceId, event->sensorTypeId, event->sensorId, event->location})) {
-        return;
-    }
-    std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
     std::shared_ptr<CallbackSensorData> cb = std::make_shared<CallbackSensorData>();
     if (!CopySensorData(event, cb)) {
         SEN_HILOGE("Copy sensor data failed");
         return;
     }
-    auto onCallbackInfos = g_onCallbackInfos[{event->deviceId, event->sensorTypeId, event->sensorId, event->location}];
+    std::vector<sptr<AsyncCallbackInfo>> onCallbackInfos;
+    {
+        std::lock_guard<std::mutex> onCallbackLock(g_onMutex);
+        auto iter = g_onCallbackInfos.find({event->deviceId, event->sensorTypeId, event->sensorId, event->location});
+        if (iter == g_onCallbackInfos.end()) {
+            return;
+        }
+        onCallbackInfos = iter->second;
+    }
     for (auto &onCallbackInfo : onCallbackInfos) {
         EmitUvEventLoop(onCallbackInfo, cb);
     }
