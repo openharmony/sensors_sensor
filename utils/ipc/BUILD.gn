@@ -49,6 +49,8 @@ ohos_shared_library("libsensor_ipc") {
 
   defines = sensor_default_defines
 
+  version_script = "libsensor_ipc.map"
+
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "bounds_checking_function:libsec_shared",

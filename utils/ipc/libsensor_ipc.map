@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+{
+    global:
+        extern "C++" {
+            OHOS::Sensors::StreamBuffer*;
+            OHOS::Sensors::CircleStreamBuffer*;
+            OHOS::Sensors::StreamSession*;
+            "OHOS::Sensors::StreamSocket::OnReadPackets(OHOS::Sensors::CircleStreamBuffer&, std::__h::function<void (OHOS::Sensors::NetPacket&)>)";
+            "OHOS::Sensors::StreamSocket::Close()";
+            "OHOS::Sensors::StreamSocket::StreamSocket()";
+            "OHOS::Sensors::StreamSocket::~StreamSocket()";
+            "OHOS::Sensors::NetPacket::NetPacket(OHOS::Sensors::MessageId)";
+            "OHOS::Sensors::NetPacket::NetPacket(OHOS::Sensors::NetPacket const&)";
+            "OHOS::Sensors::StreamSocket::GetFd() const";
+            "OHOS::Sensors::NetPacket::GetPacketLength() const";
+            "OHOS::Sensors::NetPacket::GetData() const";
+            "OHOS::Sensors::NetPacket::GetSize() const";
+            "OHOS::Sensors::NetPacket::GetMsgId() const";
+            "OHOS::Sensors::NetPacket::MakeData(OHOS::Sensors::StreamBuffer&) const";
+            "std::__h::basic_stringbuf<char, std::__h::char_traits<char>, std::__h::allocator<char>>::str() const";
+            "std::__h::basic_stringbuf<char, std::__h::char_traits<char>, std::__h::allocator<char>>::seekoff(long long, std::__h::ios_base::seekdir, unsigned int)";
+            "std::__h::basic_stringbuf<char, std::__h::char_traits<char>, std::__h::allocator<char>>::overflow(int)";
+            "std::__h::basic_stringbuf<char, std::__h::char_traits<char>, std::__h::allocator<char>>::pbackfail(int)";
+            "std::__h::basic_stringbuf<char, std::__h::char_traits<char>, std::__h::allocator<char>>::underflow()";
+            "Construction vtable for std::__h::basic_ostream<char, std::__h::char_traits<char>>-in-std::__h::basic_ostringstream<char, std::__h::char_traits<char>, std::__h::allocator<char>>";
+            "VTT for std::__h::basic_ostringstream<char, std::__h::char_traits<char>, std::__h::allocator<char>>";
+            "vtable for OHOS::Sensors::StreamBuffer";
+            "vtable for OHOS::Sensors::StreamSocket";
+            "vtable for OHOS::Sensors::CircleStreamBuffer";
+            "vtable for std::__h::basic_stringbuf<char, std::__h::char_traits<char>, std::__h::allocator<char>>";
+            "vtable for std::__h::basic_ostringstream<char, std::__h::char_traits<char>, std::__h::allocator<char>>";
+        };
+    local:
+        *;
+};

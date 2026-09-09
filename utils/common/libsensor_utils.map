@@ -1,0 +1,87 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+{
+    global:
+        extern "C++" {
+            OHOS::Sensors::SensorBasicDataChannel*;
+            OHOS::Sensors::SensorBasicInfo*;
+            OHOS::Sensors::ActiveInfo*;
+            OHOS::Sensors::SensorChannelInfo*;
+            OHOS::Sensors::Sensor*;
+            "OHOS::Singleton<OHOS::HiviewDFX::XCollie>::instance";
+            "OHOS::Sensors::SensorXcollie::SensorXcollie(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, unsigned int, std::__h::function<void (void*)>, void*, unsigned int)";
+            "OHOS::Sensors::SensorXcollie::~SensorXcollie()";
+            "OHOS::Sensors::PermissionUtil::IsNativeToken(unsigned int)";
+            "OHOS::Sensors::PermissionUtil::sensorPermissions";
+            "OHOS::Sensors::PermissionUtil::AddPermissionRecord(unsigned int, std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, bool)";
+            "OHOS::Sensors::PermissionUtil::CheckSensorPermission(unsigned int, int)";
+            "OHOS::Sensors::PermissionUtil::CheckManageSensorPermission(unsigned int)";
+            "OHOS::Sensors::ModifyAppPolicy(int, OHOS::Sensors::AppPolicyEventExt const&)";
+            "OHOS::Sensors::PrintSensorData::PrintHdiData(OHOS::Sensors::SensorData const&)";
+            "OHOS::Sensors::PrintSensorData::ProcessHdiDFX(OHOS::Sensors::SensorData const&)";
+            "OHOS::Sensors::PrintSensorData::ResetHdiTimes(int)";
+            "OHOS::Sensors::PrintSensorData::PrintClientData(SensorEvent const&)";
+            "OHOS::Sensors::PrintSensorData::PrintSensorInfo(SensorInfo*, int)";
+            "OHOS::Sensors::PrintSensorData::ResetHdiCounter(int)";
+            "OHOS::Sensors::PrintSensorData::GetDataDimension(int)";
+            "OHOS::Sensors::PrintSensorData::IsContinuousType(int)";
+            "OHOS::Sensors::PrintSensorData::ProcessClientDFX(SensorEvent const&)";
+            "OHOS::Sensors::PrintSensorData::SavePrintUserInfo(void (*)(SensorEvent*))";
+            "OHOS::Sensors::PrintSensorData::PrintSensorDataLog(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, OHOS::Sensors::SensorData const&)";
+            "OHOS::Sensors::PrintSensorData::RemovePrintUserInfo(void (*)(SensorEvent*))";
+            "OHOS::Sensors::PrintSensorData::ControlSensorHdiPrint(OHOS::Sensors::SensorData const&)";
+            "OHOS::Sensors::PrintSensorData::ControlSensorClientPrint(void (*)(SensorEvent*), SensorEvent const&)";
+            "OHOS::Sensors::LoadMotionSensor()";
+            "OHOS::Sensors::AppPolicyCallback::OnResult(int)";
+            "OHOS::Sensors::AppPolicyCallback::AppPolicyCallback()";
+            "OHOS::Sensors::AppPolicyCallback::~AppPolicyCallback()";
+            "OHOS::Sensors::AppPolicyCallback::~AppPolicyCallback()";
+            "OHOS::Sensors::AppPolicyCallback::~AppPolicyCallback()";
+            "OHOS::Sensors::CreateAppPolicyDB(int, std::__h::shared_ptr<OHOS::Sensors::AppPolicyCallback> const&)";
+            "OHOS::Sensors::ReportDataCallback::GetEventData()";
+            "OHOS::Sensors::ReportDataCallback::ReportEventCallback(OHOS::Sensors::SensorData*, OHOS::sptr<OHOS::Sensors::ReportDataCallback>)";
+            "OHOS::Sensors::ReportDataCallback::ReportDataCallback()";
+            "OHOS::Sensors::ReportDataCallback::~ReportDataCallback()";
+            "OHOS::Sensors::UnloadMotionSensor()";
+            "OHOS::Sensors::SensorDescriptionIPC::Unmarshalling(OHOS::Parcel&)";
+            "OHOS::Sensors::SensorDescriptionIPC::SensorDescriptionIPC(int, int, int, int)";
+            "OHOS::Sensors::SensorDescriptionIPC::SensorDescriptionIPC()";
+            "OHOS::Sensors::LoadSecurityPrivacyServer()";
+            "OHOS::Sensors::MotionTransformIfRequired(std::__h::basic_string<char, std::__h::char_traits<char>, std::__h::allocator<char>> const&, unsigned int, OHOS::Sensors::SensorData*)";
+            "OHOS::Sensors::RegisterAppPolicyObserver(int, std::__h::function<void ()> const&)";
+            "OHOS::Sensors::QueryAppPolicyByPolicyName(int, OHOS::Sensors::PolicyName, std::__h::vector<OHOS::Sensors::AppPolicyEventExt, std::__h::allocator<OHOS::Sensors::AppPolicyEventExt>>&)";
+            "OHOS::Sensors::UnloadSecurityPrivacyServer()";
+            "OHOS::Sensors::UnregisterAppPolicyObserver(int)";
+            "OHOS::HiviewDFX::HiSysEvent::Domain::SENSOR";
+            "OHOS::Sensors::SensorDescriptionIPC::Marshalling(OHOS::Parcel&) const";
+            "Construction thunk: OHOS::Sensors::ActiveInfo -> OHOS::Parcelable";
+            "Construction thunk: OHOS::Sensors::SensorDescriptionIPC -> OHOS::Parcelable";
+            "Construction thunk: OHOS::Sensors::Sensor -> OHOS::Parcelable";
+            "VTT for OHOS::Sensors::ActiveInfo";
+            "VTT for OHOS::Sensors::SensorDescriptionIPC";
+            "VTT for OHOS::Sensors::Sensor";
+            "vtable for OHOS::Sensors::ActiveInfo";
+            "vtable for OHOS::Sensors::AppPolicyCallback";
+            "vtable for OHOS::Sensors::ReportDataCallback";
+            "vtable for OHOS::Sensors::SensorDescriptionIPC";
+            "vtable for OHOS::Sensors::SensorBasicDataChannel";
+            "vtable for OHOS::Sensors::Sensor";
+            "OHOS::Sensors::InnerFunctionTracer::InnerFunctionTracer(char const*, char const*)::hilogFmt135";
+            "OHOS::Sensors::InnerFunctionTracer::~InnerFunctionTracer()::hilogFmt143";
+        };
+    local:
+        *;
+};

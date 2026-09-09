@@ -59,6 +59,7 @@ taihe_shared_library("sensor_taihe_native") {
     "author/src/ani_constructor.cpp",
     "author/src/ohos.sensor.impl.cpp",
   ]
+  version_script = "libsensor_taihe_native.map"
   deps = [
     ":run_taihe",
     "$SUBSYSTEM_DIR/frameworks/native:sensor_interface_native"

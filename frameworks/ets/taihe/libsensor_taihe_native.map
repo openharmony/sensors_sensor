@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+{
+    global:
+        ANI_Constructor;
+        _Unwind_DeleteException;
+        _Unwind_ForcedUnwind;
+        _Unwind_GetGR;
+        _Unwind_GetIP;
+        _Unwind_GetLanguageSpecificData;
+        _Unwind_GetRegionStart;
+        _Unwind_RaiseException;
+        _Unwind_Resume;
+        _Unwind_SetGR;
+        _Unwind_SetIP;
+        unw_local_addr_space;
+        extern "C++" {
+            "taihe::from_ani_t<ohos::sensor::Options>::operator()(__ani_env*, __ani_object*) const::field_0_from_ani";
+            "taihe::into_ani_t<ohos::sensor::LightResponse>::operator()(__ani_env*, ohos::sensor::LightResponse const&) const::field_3_into_ani";
+            "taihe::into_ani_t<ohos::sensor::LightResponse>::operator()(__ani_env*, ohos::sensor::LightResponse const&) const::field_4_into_ani";
+            "taihe::into_ani_t<ohos::sensor::RotationMatrixResponse>::operator()(__ani_env*, ohos::sensor::RotationMatrixResponse const&) const::field_0_into_ani";
+            "taihe::into_ani_t<ohos::sensor::RotationMatrixResponse>::operator()(__ani_env*, ohos::sensor::RotationMatrixResponse const&) const::field_1_into_ani";
+            "taihe::into_ani_t<ohos::sensor::Sensor>::operator()(__ani_env*, ohos::sensor::Sensor const&) const::field_10_into_ani";
+            "taihe::into_ani_t<ohos::sensor::Sensor>::operator()(__ani_env*, ohos::sensor::Sensor const&) const::field_11_into_ani";
+            "taihe::from_ani_t<ohos::sensor::Options>::operator()(__ani_env*, __ani_object*) const::{lambda(__ani_env*, __ani_ref*)#1}::operator()(__ani_env*, __ani_ref*) const::item_from_ani_inner";
+            "taihe::into_ani_t<ohos::sensor::Sensor>::operator()(__ani_env*, ohos::sensor::Sensor const&) const::{lambda(__ani_env*, taihe::optional_view<bool>)#2}::operator()(__ani_env*, taihe::optional_view<bool>) const::item_into_ani";
+            "taihe::into_ani_t<ohos::sensor::Sensor>::operator()(__ani_env*, ohos::sensor::Sensor const&) const::{lambda(__ani_env*, taihe::optional_view<bool>)#1}::operator()(__ani_env*, taihe::optional_view<bool>) const::item_into_ani";
+        };
+    local:
+        *;
+};
