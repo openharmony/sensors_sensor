@@ -62,6 +62,8 @@ ohos_shared_library("libsensor_service") {
 
   defines = sensor_default_defines
 
+  version_script = "libsensor_service.map"
+
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:sensor_service_stub",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",

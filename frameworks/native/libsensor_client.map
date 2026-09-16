@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+{
+    global:
+        extern "C++" {
+            OHOS::Sensors::SensorAgentProxy*;
+            OHOS::Sensors::SensorServiceProxy*;
+            OHOS::Sensors::SensorServiceClient*;
+            "OHOS::DelayedSingleton<OHOS::Sensors::SensorAgentProxy>::mutex_";
+            "OHOS::DelayedSingleton<OHOS::Sensors::SensorAgentProxy>::instance_";
+            "OHOS::Singleton<OHOS::Sensors::PrintSensorData>::instance_";
+            "OHOS::Singleton<OHOS::Sensors::SensorServiceClient>::instance_";
+            "OHOS::Sensors::FdListener::OnReadable(int)";
+            "OHOS::Sensors::FdListener::OnShutdown(int)";
+            "OHOS::Sensors::FdListener::SetChannel(OHOS::Sensors::SensorDataChannel*)";
+            "OHOS::Sensors::ISensorService::LABEL";
+            "OHOS::Sensors::SensorClientStub::OnRemoteRequest(unsigned int, OHOS::MessageParcel&, OHOS::MessageParcel&, OHOS::MessageOption&)";
+            "OHOS::Sensors::SensorClientStub::ProcessPlugEvent(OHOS::Sensors::SensorPlugData const&)";
+            "OHOS::Sensors::SensorDataChannel::AddFdListener(int, std::__h::function<void (char const*, unsigned long)>, std::__h::function<void ()>)";
+            "OHOS::Sensors::SensorDataChannel::DelFdListener(int)";
+            "OHOS::Sensors::SensorDataChannel::InnerSensorDataChannel()";
+            "OHOS::Sensors::SensorDataChannel::CreateSensorDataChannel(std::__h::function<void (SensorEvent*, int, void*)>, void*)";
+            "OHOS::Sensors::SensorDataChannel::DestroySensorDataChannel()";
+            "OHOS::Sensors::SensorDataChannel::RestoreSensorDataChannel()";
+            "OHOS::Sensors::SensorDataChannel::~SensorDataChannel()";
+            "OHOS::Sensors::SensorEventHandler::ProcessEvent(std::__h::unique_ptr<OHOS::AppExecFwk::InnerEvent, void (*)(OHOS::AppExecFwk::InnerEvent*)> const&)";
+            "OHOS::Sensors::SensorEventHandler::SensorEventHandler(std::__h::shared_ptr<OHOS::AppExecFwk::EventRunner> const&)";
+            "OHOS::Sensors::SensorFileDescriptorListener::OnReadable(int)";
+            "OHOS::Sensors::SensorFileDescriptorListener::OnShutdown(int)";
+            "OHOS::Sensors::SensorFileDescriptorListener::SetChannel(OHOS::Sensors::SensorDataChannel*)";
+            "OHOS::Sensors::SensorFileDescriptorListener::ExcuteCallback(int)";
+            "OHOS::Sensors::SensorFileDescriptorListener::SensorFileDescriptorListener()";
+            "OHOS::Sensors::SensorFileDescriptorListener::~SensorFileDescriptorListener()";
+            "OHOS::HiviewDFX::HiSysEvent::Domain::SENSOR";
+            "OHOS::Sensors::SensorDataChannel::GetDisconnectFun() const";
+            "OHOS::Sensors::SensorDataChannel::GetReceiveMessageFun() const";
+            "construction vtable for OHOS::IRemoteStub<OHOS::Sensors::ISensorClient>-in-OHOS::Sensors::SensorClientStub";
+            "construction vtable for OHOS::IPCObjectStub-in-OHOS::Sensors::SensorClientStub";
+            "construction vtable for OHOS::IRemoteObject-in-OHOS::Sensors::SensorClientStub";
+            "construction vtable for OHOS::Sensors::ISensorClient-in-OHOS::Sensors::SensorClientStub";
+            "construction vtable for OHOS::IRemoteBroker-in-OHOS::Sensors::SensorClientStub";
+            "construction vtable for OHOS::Parcelable-in-OHOS::Sensors::SensorClientStub";
+            "construction vtable for OHOS::Sensors::ISensorService-in-OHOS::Sensors::SensorServiceProxy";
+            "construction vtable for OHOS::IRemoteProxy<OHOS::Sensors::ISensorService>-in-OHOS::Sensors::SensorServiceProxy";
+            "construction vtable for OHOS::IRemoteBroker-in-OHOS::Sensors::SensorServiceProxy";
+            "VTT for OHOS::Sensors::SensorClientStub";
+            "VTT for OHOS::Sensors::SensorServiceProxy";
+            "vtable for OHOS::Sensors::FdListener";
+            "vtable for OHOS::Sensors::SensorClientStub";
+            "vtable for OHOS::Sensors::SensorDataChannel";
+            "vtable for OHOS::Sensors::SensorEventHandler";
+            "vtable for OHOS::Sensors::SensorServiceProxy";
+            "vtable for OHOS::Sensors::SensorServiceClient";
+            "vtable for OHOS::Sensors::SensorFileDescriptorListener";
+            "non-virtual thunk to OHOS::Sensors::SensorClientStub::ProcessPlugEvent(OHOS::Sensors::SensorPlugData const&)";
+            "non-virtual thunk to OHOS::Sensors::SensorServiceClient::~SensorServiceClient()";
+            "OHOS::Sensors::StreamBuffer::Read<int>(int&)::hilogFmt91";
+            "OHOS::Sensors::StreamBuffer::Read<long>(long&)::hilogFmt91";
+            "OHOS::Sensors::StreamBuffer::operator>><int>(int&)::hilogFmt156";
+            "OHOS::Sensors::StreamBuffer::operator>><long>(long&)::hilogFmt156";
+            "OHOS::Sensors::InnerFunctionTracer::InnerFunctionTracer(char const*, char const*)::hilogFmt135";
+            "OHOS::Sensors::InnerFunctionTracer::~InnerFunctionTracer()::hilogFmt143";
+        };
+    local:
+        *;
+};

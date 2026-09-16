@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+{
+    global:
+        OH_Sensor_GetInfos;
+        OH_Sensor_CreateInfos;
+        OH_Sensor_DestroyInfos;
+        OH_Sensor_Subscribe;
+        OH_Sensor_Unsubscribe;
+        OH_SensorInfo_GetName;
+        OH_SensorInfo_GetVendorName;
+        OH_SensorInfo_GetType;
+        OH_SensorInfo_GetResolution;
+        OH_SensorInfo_GetMinSamplingInterval;
+        OH_SensorInfo_GetMaxSamplingInterval;
+        OH_SensorEvent_GetType;
+        OH_SensorEvent_GetTimestamp;
+        OH_SensorEvent_GetAccuracy;
+        OH_SensorEvent_GetData;
+        OH_SensorSubscriptionId_GetType;
+        OH_SensorSubscriptionId_SetType;
+        OH_SensorSubscriptionAttribute_SetSamplingInterval;
+        OH_SensorSubscriptionAttribute_GetSamplingInterval;
+        OH_SensorSubscriber_SetCallback;
+        OH_SensorSubscriber_GetCallback;
+        OH_Sensor_CreateSubscriptionId;
+        OH_Sensor_DestroySubscriptionId;
+        OH_Sensor_CreateSubscriptionAttribute;
+        OH_Sensor_DestroySubscriptionAttribute;
+        OH_Sensor_CreateSubscriber;
+        OH_Sensor_DestroySubscriber;
+    local:
+        *;
+};

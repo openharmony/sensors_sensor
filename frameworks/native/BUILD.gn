@@ -74,6 +74,8 @@ ohos_shared_library("libsensor_client") {
 
   defines = sensor_default_defines
 
+  version_script = "libsensor_client.map"
+
   deps = [
     ":sensor_service_interface",
     "$SUBSYSTEM_DIR/utils/common:libsensor_utils",
@@ -141,6 +143,8 @@ ohos_shared_library("sensor_interface_native") {
     ubsan = true
   }
 
+  version_script = "libsensor_agent.map"
+
   deps = [ "$SUBSYSTEM_DIR/frameworks/native:libsensor_client" ]
 
   external_deps = [
@@ -174,6 +178,8 @@ ohos_shared_library("ohsensor") {
     cfi_cross_dso = true
     debug = false
   }
+
+  version_script = "libohsensor.map"
 
   deps = [
     "$SUBSYSTEM_DIR/frameworks/native:libsensor_client",
