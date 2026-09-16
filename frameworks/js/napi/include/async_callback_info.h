@@ -116,23 +116,54 @@ public:
     ~AsyncCallbackInfo()
     {
         CALL_LOG_ENTER;
-        if (type != ONCE_CALLBACK) {
-            if (asyncWork != nullptr) {
-                SEN_HILOGD("Delete async work");
-                napi_delete_async_work(env, asyncWork);
-                asyncWork = nullptr;
-            }
-            for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
-                if (callback[i] != nullptr) {
-                    SEN_HILOGD("Delete reference, i:%{public}d", i);
-                    napi_delete_reference(env, callback[i]);
-                    callback[i] = nullptr;
-                }
-            }
+        if (type == ONCE_CALLBACK) {
+            return;
         }
+        DeleteAsyncWork();
+        DeleteCallbackReferences();
     }
 
 private:
+    void DeleteAsyncWork()
+    {
+        if (asyncWork == nullptr) {
+            return;
+        }
+        SEN_HILOGD("Delete async work");
+        napi_async_work work = asyncWork;
+        asyncWork = nullptr;
+        napi_env workEnv = env;
+        auto ret = napi_send_event(workEnv, [workEnv, work]() {
+            napi_delete_async_work(workEnv, work);
+        }, napi_eprio_immediate, "AsyncCallbackInfo delete async work");
+        if (ret != napi_ok) {
+            SEN_HILOGE("Failed to send event for delete_async_work, ret:%{public}d", ret);
+        }
+    }
+
+    void DeleteCallbackReferences()
+    {
+        for (int32_t i = 0; i < CALLBACK_NUM; ++i) {
+            DeleteSingleCallback(i);
+        }
+    }
+
+    void DeleteSingleCallback(int32_t i)
+    {
+        if (callback[i] == nullptr) {
+            return;
+        }
+        SEN_HILOGD("Delete reference, i:%{public}d", i);
+        napi_ref ref = callback[i];
+        callback[i] = nullptr;
+        napi_env refEnv = env;
+        auto ret = napi_send_event(refEnv, [refEnv, ref]() {
+            napi_delete_reference(refEnv, ref);
+        }, napi_eprio_immediate, "AsyncCallbackInfo delete reference");
+        if (ret != napi_ok) {
+            SEN_HILOGE("Failed to send event for delete_reference, ret:%{public}d", ret);
+        }
+    }
 };
 } // namespace Sensors
 } // namespace OHOS

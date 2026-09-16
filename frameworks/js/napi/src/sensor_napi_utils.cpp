@@ -496,7 +496,13 @@ void ReleaseCallback(sptr<AsyncCallbackInfo> asyncCallbackInfo)
         CHKPV(env);
         napi_ref callback = asyncCallbackInfo->callback[0];
         if (callback != nullptr) {
-            napi_delete_reference(env, callback);
+            asyncCallbackInfo->callback[0] = nullptr;
+            auto ret = napi_send_event(env, [env, callback]() {
+                napi_delete_reference(env, callback);
+            }, napi_eprio_immediate, "ReleaseCallback delete reference");
+            if (ret != napi_ok) {
+                SEN_HILOGE("Failed to send event for ReleaseCallback, ret:%{public}d", ret);
+            }
         }
     }
 }
