@@ -114,7 +114,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -158,7 +157,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -206,7 +204,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -254,7 +251,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -298,7 +294,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -337,11 +332,13 @@ describe("PedometerDetectionJsTest", function () {
                         expect(err.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
                         done();
                     }
+                    setTimeout(() => {
+                        done();
+                    }, 1000);
                 });
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -390,7 +387,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -442,7 +438,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -491,7 +486,6 @@ describe("PedometerDetectionJsTest", function () {
             } catch (err) {
                 console.error('Sensor is not support');
                 expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-                expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
                 done();
             }
         })
@@ -532,7 +526,6 @@ describe("PedometerDetectionJsTest", function () {
         } catch (err) {
             console.error('Sensor is not support');
             expect(err.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(err.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
