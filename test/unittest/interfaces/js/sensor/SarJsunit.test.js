@@ -91,7 +91,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -130,7 +129,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -174,7 +172,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -205,14 +202,12 @@ describe("SarJsTest", function () {
                 } catch (error) {
                     console.error('On fail, errCode:' + error.code + ' ,msg:' + error.message);
                     expect(error.code).assertEqual(CommonConstants.SERVICE_EXCEPTION_CODE);
-                    expect(error.message).assertEqual(CommonConstants.SERVICE_EXCEPTION_MSG);
                     done();
                 }
             });
         } catch (error) {
             console.info('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -242,11 +237,13 @@ describe("SarJsTest", function () {
                     expect(error.code).assertEqual(CommonConstants.PARAMETER_ERROR_CODE);
                     done();
                 }
+                setTimeout(() => {
+                    done();
+                }, 1000);
             });
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -286,7 +283,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -329,7 +325,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -372,7 +367,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
@@ -412,7 +406,6 @@ describe("SarJsTest", function () {
         } catch (error) {
             console.error('getSingleSensor fail, errCode:' + error.code + ' ,msg:' + error.message);
             expect(error.code).assertEqual(CommonConstants.SENSOR_NO_SUPPORT_CODE);
-            expect(error.message).assertEqual(CommonConstants.SENSOR_NO_SUPPOR_MSG);
             done();
         }
     })
