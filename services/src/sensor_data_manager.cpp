@@ -15,8 +15,6 @@
 
 #include "sensor_data_manager.h"
 
-#include <charconv>
-
 #ifdef HIVIEWDFX_HISYSEVENT_ENABLE
 #include "hisysevent.h"
 #endif // HIVIEWDFX_HISYSEVENT_ENABLE
@@ -292,8 +290,7 @@ int32_t SensorDataManager::ParseJsonValue(const nlohmann::json &value, const std
         }
         for (auto& [key, valueTmp] : policyJson.items()) {
             int32_t keyInt = -1;
-            auto res = std::from_chars(key.data(), key.data() + key.size(), keyInt);
-            if (res.ec != std::errc()) {
+            if (!ParseDecimalInt32(key, keyInt)) {
                 SEN_HILOGE("Failed to convert string %{public}s to number", key.c_str());
                 continue;
             }

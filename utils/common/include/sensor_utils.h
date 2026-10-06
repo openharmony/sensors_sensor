@@ -16,6 +16,11 @@
 #ifndef SENSOR_UTILS_H
 #define SENSOR_UTILS_H
 
+#include <charconv>
+#include <cstdint>
+#include <string>
+#include <system_error>
+
 namespace OHOS {
 namespace Sensors {
 
@@ -23,6 +28,22 @@ template<typename T>
 bool IsEqual(const T &left, const T &right)
 {
     return std::abs(left - right) <= std::numeric_limits<T>::epsilon();
+}
+
+inline bool ParseDecimalInt32(const std::string &text, int32_t &out)
+{
+    if (text.empty()) {
+        return false;
+    }
+    int32_t value = 0;
+    const char *first = text.data();
+    const char *last = first + text.size();
+    auto result = std::from_chars(first, last, value);
+    if (result.ec != std::errc() || result.ptr != last) {
+        return false;
+    }
+    out = value;
+    return true;
 }
 
 constexpr int32_t SINGLE_DISPLAY_SMALL_FOLD = 4;
